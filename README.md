@@ -1,3 +1,14 @@
+# Liberu CRM
+
+### Other active projects
+* https://github.com/liberu-accounting/accounting-laravel
+* https://github.com/liberu-automation/automation-laravel
+* https://github.com/liberu-cms/cms-laravel
+* https://github.com/liberu-ecommerce/ecommerce-laravel
+* https://github.com/liberu-maintenance/maintenance-laravel
+* https://github.com/liberu-real-estate/real-estate-laravel
+
+
 ### Description
 Welcome to Liberu CRM, our innovative open-source project that reimagines Contact Relationship Management with the power of Laravel 11, PHP 8.3, Livewire 3, and Filament 3. Liberu CRM isn't just a tool for managing contacts; it's a dynamic platform designed to foster meaningful connections, streamline interactions, and elevate the way relationships are nurtured and maintained.
 
