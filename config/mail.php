@@ -36,14 +36,15 @@ return [
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'url' => env(name: 'MAIL_URL'),
+            'host' => env(name: 'MAIL_HOST', default: 'smtp.mailgun.org'),
+            'port' => env(name: 'MAIL_PORT', default: 587),
+            'encryption' => env(name: 'MAIL_ENCRYPTION', default: 'tls'),
+            'username' => env(name: 'MAIL_USERNAME'),
+            'password' => env(name: 'MAIL_PASSWORD'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'local_domain' => env(name: 'MAIL_EHLO_DOMAIN'),
+            'auth_mode' => env(name: 'MAIL_AUTH_MODE', default: null),
         ],
 
         'ses' => [
@@ -52,10 +53,10 @@ return [
 
         'postmark' => [
             'transport' => 'postmark',
-            // 'message_stream_id' => null,
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
+            'message_stream_id' => env(name: 'POSTMARK_MESSAGE_STREAM_ID'),
+            'client' => [
+                'timeout' => env(name: 'MAILGUN_TIMEOUT', default: 5),
+            ],
         ],
 
         'mailgun' => [
@@ -81,10 +82,8 @@ return [
 
         'failover' => [
             'transport' => 'failover',
-            'mailers' => [
-                'smtp',
-                'log',
-            ],
+            'mailers' => ['smtp', 'log'],
+            'strategy' => 'circuit',
         ],
 
         'roundrobin' => [
@@ -124,7 +123,7 @@ return [
     */
 
     'markdown' => [
-        'theme' => 'default',
+        'theme' => env(name: 'MAIL_MARKDOWN_THEME', default: 'default'),
 
         'paths' => [
             resource_path('views/vendor/mail'),
