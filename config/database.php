@@ -124,8 +124,8 @@ return [
         'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
-            'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'cluster' => env(name: 'REDIS_CLUSTER', default: 'redis'),
+            'prefix' => env(name: 'REDIS_PREFIX', default: Str::slug(name: env('APP_NAME', 'laravel'), separator: '_').'_database_'),
         ],
 
         'default' => [
