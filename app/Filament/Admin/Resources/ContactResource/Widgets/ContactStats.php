@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * ContactStats widget.
+ *
+ * A Filament widget for displaying statistical data about contacts, such as total number,
+ * recent additions, and categorizations. This widget enhances the dashboard by providing
+ * quick insights into the contact data.
+ */
+
 namespace App\Filament\Admin\Resources\ContactResource\Widgets;
 
 use Filament\Widgets\Widget;
