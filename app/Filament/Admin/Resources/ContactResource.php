@@ -2,14 +2,18 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
 use App\Models\Contact;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Columns\TextColumn;
+use Filament\Resources\Actions;
+use Filament\Resources\Widgets\StatsOverviewWidget;
+use Filament\Resources\Widgets\Widget;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ContactResource\Pages;
@@ -17,7 +21,7 @@ use App\Filament\Admin\Resources\ContactResource\RelationManagers;
 
 class ContactResource extends Resource
 {
-    protected static ?string $model = Contact::class;
+    protected static readonly ?string $model = Contact::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

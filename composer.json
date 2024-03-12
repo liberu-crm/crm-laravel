@@ -8,11 +8,11 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8",
-        "laravel/framework": "dev-master",
-        "laravel/sanctum": "dev-master",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.9"
     },
     "require-dev": {
