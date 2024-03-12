@@ -31,9 +31,9 @@ return [
     |
     */
 
-    'deprecations' => [
+    'deprecations' => fn() => [
         'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
-        'trace' => false,
+        'trace' => env('LOG_DEPRECATIONS_TRACE', false),
     ],
 
     /*
@@ -84,8 +84,18 @@ return [
 
         'papertrail' => [
             'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
+            'level' => match(env('LOG_LEVEL')) {
+                'debug' => Monolog\Logger::DEBUG,
+                'info' => Monolog\Logger::INFO,
+                'notice' => Monolog\Logger::NOTICE,
+                'warning' => Monolog\Logger::WARNING,
+                'error' => Monolog\Logger::ERROR,
+                'critical' => Monolog\Logger::CRITICAL,
+                'alert' => Monolog\Logger::ALERT,
+                'emergency' => Monolog\Logger::EMERGENCY,
+                default => Monolog\Logger::DEBUG,
+            },
+            'handler' => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
@@ -96,9 +106,19 @@ return [
 
         'stderr' => [
             'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => match(env('LOG_LEVEL')) {
+                'debug' => Monolog\Logger::DEBUG,
+                'info' => Monolog\Logger::INFO,
+                'notice' => Monolog\Logger::NOTICE,
+                'warning' => Monolog\Logger::WARNING,
+                'error' => Monolog\Logger::ERROR,
+                'critical' => Monolog\Logger::CRITICAL,
+                'alert' => Monolog\Logger::ALERT,
+                'emergency' => Monolog\Logger::EMERGENCY,
+                default => Monolog\Logger::DEBUG,
+            },
             'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'formatter' => env('LOG_STDERR_FORMATTER', null),
             'with' => [
                 'stream' => 'php://stderr',
             ],
@@ -123,8 +143,9 @@ return [
             'handler' => NullHandler::class,
         ],
 
-        'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+        'emergency' => fn() => [
+            'path' => storage_path('logs/laravel_emergency.log'),
+            'level' => Monolog\Logger::EMERGENCY,
         ],
     ],
 
