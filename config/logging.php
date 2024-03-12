@@ -79,6 +79,7 @@ return [
             'username' => 'Laravel Log',
             'emoji' => ':boom:',
             'level' => env('LOG_LEVEL', 'critical'),
+            'context' => true, // Enable context-based logging
             'replace_placeholders' => true,
         ],
 
@@ -129,3 +130,8 @@ return [
     ],
 
 ];
+        'context' => [
+            'driver' => 'custom',
+            'via' => App\Logging\CreateCustomLogger::class,
+            'level' => 'debug',
+        ],
