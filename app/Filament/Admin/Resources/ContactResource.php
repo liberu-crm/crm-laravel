@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * ContactResource class.
+ *
+ * Represents the Filament resource for managing contacts in the admin panel. This class
+ * handles the definition of forms, tables, and actions related to contacts.
+ */
+
+/**
+ * Defines the Filament resource for Contacts.
+ *
+ * This resource configures the forms, tables, and actions for managing Contact entities
+ * within the Filament admin panel. It leverages the Filament package to provide a
+ * rich and interactive user interface.
+ */
 namespace App\Filament\Admin\Resources;
 
 use App\Models\Contact;
