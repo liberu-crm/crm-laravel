@@ -1,5 +1,5 @@
 {
-    "name": "laravel/laravel",
+    "name": "liberu-crm/crm-laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
     "keywords": [
@@ -12,8 +12,9 @@
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^11.0",
-        "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.9"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.9",
+	"livewire/livewire": "^3.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
