@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * ListContacts class.
+ *
+ * Provides the implementation for listing contacts in the Filament admin panel. This page
+ * allows users to view, search, filter, and delete contacts.
+ */
+
 namespace App\Filament\Admin\Resources\ContactResource\Pages;
 
 use App\Filament\Admin\Resources\ContactResource;
@@ -35,7 +42,6 @@ class ListContacts extends ListRecords
                 ->date(),
         ];
     }
-
     protected function getTableBulkActions(): array
     {
         return [
