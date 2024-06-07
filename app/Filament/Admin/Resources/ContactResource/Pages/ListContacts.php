@@ -33,30 +33,3 @@ class ListContacts extends ListRecords
         ];
     }
 }
-    use HasGlobalSearch, HasFilters, HasSorting, CanDeleteRecords, CanViewRecords;
-
-    protected function getTableFilters(): array
-    {
-        return [
-            Filter::make('created_at')
-                ->date(),
-        ];
-    }
-    protected function getTableBulkActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
-
-    protected function getGlobalSearchColumns(): array
-    {
-        return ['name', 'email'];
-    }
-
-    public static function getRoutes(): \Illuminate\Routing\RouteCollectionInterface
-    {
-        return Route::middleware(['auth', 'can:viewContacts'])->group(function () {
-            Route::get('/contacts', static::class)->name('contacts.list');
-        });
-    }
