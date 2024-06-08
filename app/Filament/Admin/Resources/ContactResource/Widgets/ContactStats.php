@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Filament\Admin\Resources\ContactResource\Widgets;
 
 use Filament\Widgets\Widget;
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ContactStats extends Widget
 {
-    protected static ?string $view = 'filament.widgets.contact-stats';
+    protected static string $view = 'filament.widgets.contact-stats';
 
     public function render(): \Illuminate\View\View
     {
