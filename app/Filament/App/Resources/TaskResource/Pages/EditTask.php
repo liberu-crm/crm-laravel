@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TaskResource\Pages;
+namespace App\Filament\App\Resources\TaskResource\Pages;
 
-use App\Filament\Admin\Resources\TaskResource;
+use App\Filament\App\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

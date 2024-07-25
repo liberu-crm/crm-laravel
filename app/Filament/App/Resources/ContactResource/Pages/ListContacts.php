@@ -7,9 +7,9 @@
  * allows users to view, search, filter, and delete contacts.
  */
 
-namespace App\Filament\Admin\Resources\ContactResource\Pages;
+namespace App\Filament\App\Resources\ContactResource\Pages;
 
-use App\Filament\Admin\Resources\ContactResource;
+use App\Filament\App\Resources\ContactResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Concerns\CanDeleteRecords;
