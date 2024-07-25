@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\OpportunityResource\Pages;
+namespace App\Filament\App\Resources\OpportunityResource\Pages;
 
-use App\Filament\Admin\Resources\OpportunityResource;
+use App\Filament\App\Resources\OpportunityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 

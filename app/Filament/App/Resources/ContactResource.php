@@ -14,7 +14,7 @@
  * within the Filament admin panel. It leverages the Filament package to provide a
  * rich and interactive user interface.
  */
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use App\Models\Contact;
 use Filament\Forms\Form;
@@ -27,8 +27,8 @@ use Filament\Resources\Widgets\Widget;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\ContactResource\Pages;
-use App\Filament\Admin\Resources\ContactResource\RelationManagers;
+use App\Filament\App\Resources\ContactResource\Pages;
+use App\Filament\App\Resources\ContactResource\RelationManagers;
 
 class ContactResource extends Resource
 {

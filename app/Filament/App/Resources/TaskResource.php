@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use App\Models\Task;
@@ -16,8 +16,8 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\TaskResource\Pages;
-use App\Filament\Admin\Resources\TaskResource\RelationManagers;
+use App\Filament\App\Resources\TaskResource\Pages;
+use App\Filament\App\Resources\TaskResource\RelationManagers;
 
 class TaskResource extends Resource
 {
