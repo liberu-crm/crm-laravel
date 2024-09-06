@@ -1,32 +1,16 @@
 <?php
 
-/**
- * ContactResource class.
- *
- * Represents the Filament resource for managing contacts in the admin panel. This class
- * handles the definition of forms, tables, and actions related to contacts.
- */
-
-/**
- * Defines the Filament resource for Contacts.
- *
- * This resource configures the forms, tables, and actions for managing Contact entities
- * within the Filament admin panel. It leverages the Filament package to provide a
- * rich and interactive user interface.
- */
 namespace App\Filament\App\Resources;
 
 use App\Models\Contact;
 use Filament\Forms\Form;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Resources\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Actions;
-use Filament\Resources\Widgets\StatsOverviewWidget;
 use Filament\Resources\Widgets\Widget;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\ContactResource\Pages;
 use App\Filament\App\Resources\ContactResource\RelationManagers;
 

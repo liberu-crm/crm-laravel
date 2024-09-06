@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 class SiteSettings extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = ['*'];
 }

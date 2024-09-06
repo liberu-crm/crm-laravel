@@ -11,7 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Filament\App\Resources\ActivationResource\Pages;
@@ -27,7 +27,7 @@ class ActivationResource extends Resource
     {
         return $form
             ->schema([
-                BelongsToSelect::make('user_id')
+                Select::make('user_id')
                     ->relationship('user', 'email')
                     ->preload(),
                 TextInput::make('token'),
@@ -45,9 +45,8 @@ class ActivationResource extends Resource
                 TextColumn::make('ip_address')
                     ->searchable()
                     ->sortable(),
-                BelongsTo::make('user')
+                TextColumn::make('user.name')
                     ->label('User')
-                    ->relationship('user', 'email')
             ])
             ->filters([
                 //
