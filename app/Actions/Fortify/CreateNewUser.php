@@ -36,7 +36,7 @@ class CreateNewUser implements CreatesNewUsers
                     Rule::unique(User::class),
                 ],
                 'password' => $this->passwordRules(),
-                'role' => ['required', 'string', Rule::in(['tenant', 'buyer', 'seller', 'landlord', 'contractor'])],
+                // 'role' => ['required', 'string', Rule::in(['tenant', 'buyer', 'seller', 'landlord', 'contractor'])],
             ])->validate();
 
            
@@ -49,25 +49,10 @@ class CreateNewUser implements CreatesNewUsers
                     $team = $this->assignOrCreateTeam($user);
                     $user->switchTeam($team);
                     setPermissionsTeamId($team->id);
-                    $user->assignRole($input['role']);
+                    $user->assignRole("free");
                 });
             });
-            // $user = DB::transaction(function () use ($input) {
-            //     return tap(,
-            //     , function (User $user) use ($input) {
-            //         $team = $this->assignOrCreateTeam($user);
-            //         $user->switchTeam($team);
-            //         setPermissionsTeamId($team->id);
-            //         $user->assignRole($input['role']);
-            //     });
-            // });
-
-            Log::info('User created successfully', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'role' => $input['role'],
-            ]);
-    
+           
             return $user;
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('User creation validation failed', [
@@ -83,12 +68,6 @@ class CreateNewUser implements CreatesNewUsers
                 'bindings' => $e->getBindings(),
             ]);
             throw new Exception($this->getDatabaseErrorMessage($e));
-        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
-            Log::error('Invalid role specified during user creation', [
-                'role' => $input['role'] ?? 'not provided',
-                'message' => $e->getMessage(),
-            ]);
-            throw new Exception('Invalid role specified. Please choose a valid role.');
         } catch (Exception $e) {
             Log::error('Unexpected error during user creation', [
                 'message' => $e->getMessage(),

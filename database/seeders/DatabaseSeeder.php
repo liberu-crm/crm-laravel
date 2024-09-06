@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SiteSettingsSeeder::class,
             MenuSeeder::class,
+            TeamSeeder::class,
             RolesSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
