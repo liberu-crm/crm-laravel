@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Opportunity extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'opportunity_id';
 
