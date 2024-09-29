@@ -61,6 +61,7 @@ return [
             'app_secret' => $config ? $config->client_secret : env('FACEBOOK_APP_SECRET'),
             'page_id' => $config && isset($config->additional_settings['page_id']) ? $config->additional_settings['page_id'] : env('FACEBOOK_PAGE_ID'),
             'page_access_token' => $config && isset($config->additional_settings['page_access_token']) ? $config->additional_settings['page_access_token'] : env('FACEBOOK_PAGE_ACCESS_TOKEN'),
+            'graph_version' => env('FACEBOOK_GRAPH_VERSION', 'v12.0'),
         ];
     },
     'mailchimp' => function () {
