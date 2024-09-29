@@ -51,6 +51,12 @@ return [
         'app_sid' => env('TWILIO_APP_SID'),
     ],
 
+    'power_dialer' => [
+        'default_message' => env('POWER_DIALER_DEFAULT_MESSAGE', 'Hello, this is an automated call from our CRM system.'),
+        'call_timeout' => env('POWER_DIALER_CALL_TIMEOUT', 30),
+        'record_calls' => env('POWER_DIALER_RECORD_CALLS', false),
+    ],
+
     'facebook' => function () {
         $config = OAuthConfiguration::getConfig('facebook');
         return [
