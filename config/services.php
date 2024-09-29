@@ -6,6 +6,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+
     | Third Party Services
     |--------------------------------------------------------------------------
     |
@@ -49,6 +50,8 @@ return [
         'auth_token' => env('TWILIO_AUTH_TOKEN'),
         'phone_number' => env('TWILIO_PHONE_NUMBER'),
         'app_sid' => env('TWILIO_APP_SID'),
+        'twiml_app_sid' => env('TWILIO_TWIML_APP_SID'),
+        'webhook_url' => env('TWILIO_WEBHOOK_URL'),
     ],
 
     'facebook' => function () {
