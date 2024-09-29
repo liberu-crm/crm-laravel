@@ -81,6 +81,7 @@ class ContactManagementUITest extends TestCase
         $response = $this->actingAs($this->user)
             ->get('/contacts');
 
+
         $response->assertStatus(200);
         $response->assertSee('Next');
         $response->assertDontSee(Contact::orderBy('id', 'desc')->first()->name);
@@ -135,5 +136,79 @@ class ContactManagementUITest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Provide feedback');
+    }
+
+    public function test_enhanced_search_functionality()
+    {
+        $contact1 = Contact::factory()->create([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'phone_number' => '1234567890',
+            'company_size' => 'Small',
+            'industry' => 'Technology'
+        ]);
+        $contact2 = Contact::factory()->create([
+            'name' => 'Jane Smith',
+            'email' => 'jane@example.com',
+            'phone_number' => '9876543210',
+            'company_size' => 'Large',
+            'industry' => 'Finance'
+        ]);
+
+        $searchTerms = ['John', 'Smith', 'example.com', '1234', 'Small', 'Finance'];
+
+        foreach ($searchTerms as $term) {
+            $response = $this->actingAs($this->user)->get("/contacts?search={$term}");
+            $response->assertStatus(200);
+            $response->assertSee($term);
+        }
+    }
+
+    public function test_autocomplete_functionality()
+    {
+        Contact::factory()->create(['name' => 'John Doe']);
+        Contact::factory()->create(['name' => 'Jane Doe']);
+
+        $response = $this->actingAs($this->user)->get('/contacts/autocomplete?query=Jo');
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['name' => 'John Doe']);
+        $response->assertJsonMissing(['name' => 'Jane Doe']);
+    }
+
+    public function test_advanced_filtering()
+    {
+        $contact1 = Contact::factory()->create([
+            'name' => 'John Doe',
+            'industry' => 'Technology',
+            'company_size' => 'Small'
+        ]);
+        $contact2 = Contact::factory()->create([
+            'name' => 'Jane Smith',
+            'industry' => 'Finance',
+            'company_size' => 'Large'
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->get('/contacts?industry=Technology&company_size=Small');
+
+        $response->assertStatus(200);
+        $response->assertSee($contact1->name);
+        $response->assertDontSee($contact2->name);
+    }
+
+    public function test_search_performance()
+    {
+        Contact::factory()->count(1000)->create();
+
+        $start = microtime(true);
+
+        $response = $this->actingAs($this->user)
+            ->get('/contacts?search=John');
+
+        $end = microtime(true);
+        $executionTime = ($end - $start);
+
+        $response->assertStatus(200);
+        $this->assertLessThan(1, $executionTime, 'Search took longer than 1 second');
     }
 }
