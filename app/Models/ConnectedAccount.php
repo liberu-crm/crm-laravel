@@ -30,6 +30,8 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         'secret',
         'refresh_token',
         'expires_at',
+        'account_type',
+        'is_primary',
     ];
 
     /**
@@ -40,6 +42,7 @@ class ConnectedAccount extends SocialstreamConnectedAccount
     protected $casts = [
         'created_at' => 'datetime',
         'expires_at' => 'datetime',
+        'is_primary' => 'boolean',
     ];
 
     /**
@@ -52,4 +55,35 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         'updated' => ConnectedAccountUpdated::class,
         'deleted' => ConnectedAccountDeleted::class,
     ];
+
+    /**
+     * Get the user that owns the connected account.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope a query to only include accounts of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOfType($query, $type)
+    {
+        return $query->where('account_type', $type);
+    }
+
+    /**
+     * Scope a query to only include primary accounts.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePrimary($query)
+    {
+        return $query->where('is_primary', true);
+    }
 }
