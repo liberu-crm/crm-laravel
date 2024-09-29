@@ -21,6 +21,13 @@ class Task extends Model
         'contact_id',
         'company_id',
         'opportunity_id',
+        'reminder_date',
+        'reminder_sent',
+    ];
+
+    protected $casts = [
+        'reminder_date' => 'datetime',
+        'reminder_sent' => 'boolean',
     ];
 
     public function contact()
