@@ -10,8 +10,9 @@ class MessageService
     protected $gmailClient;
     protected $gmailService;
     protected $whatsappService;
+    protected $facebookMessengerService;
 
-    public function __construct(WhatsAppBusinessService $whatsappService)
+    public function __construct(WhatsAppBusinessService $whatsappService, FacebookMessengerService $facebookMessengerService)
     {
         $this->gmailClient = new Google_Client();
         $this->gmailClient->setApplicationName(config('services.gmail.application_name'));
@@ -22,16 +23,19 @@ class MessageService
 
         $this->gmailService = new Google_Service_Gmail($this->gmailClient);
         $this->whatsappService = $whatsappService;
+        $this->facebookMessengerService = $facebookMessengerService;
     }
 
     public function getUnreadMessages()
     {
         $emailMessages = $this->getUnreadEmailMessages();
         $whatsappMessages = $this->whatsappService->getUnreadMessages();
+        $facebookMessages = $this->facebookMessengerService->getUnreadMessages();
 
         return [
             'email' => $emailMessages,
             'whatsapp' => $whatsappMessages,
+            'facebook' => $facebookMessages,
         ];
     }
 
@@ -50,25 +54,31 @@ class MessageService
 
     public function getMessage($messageId, $type = 'email')
     {
-        if ($type === 'email') {
-            $user = 'me';
-            return $this->gmailService->users_messages->get($user, $messageId);
-        } elseif ($type === 'whatsapp') {
-            return $this->whatsappService->getMessage($messageId);
+        switch ($type) {
+            case 'email':
+                $user = 'me';
+                return $this->gmailService->users_messages->get($user, $messageId);
+            case 'whatsapp':
+                return $this->whatsappService->getMessage($messageId);
+            case 'facebook':
+                return $this->facebookMessengerService->getMessage($messageId);
+            default:
+                throw new \InvalidArgumentException("Invalid message type: {$type}");
         }
-
-        throw new \InvalidArgumentException("Invalid message type: {$type}");
     }
-
 
     public function sendReply($messageId, $body, $type = 'email')
     {
-        if ($type === 'email') {
-            // Implement email reply logic here
-        } elseif ($type === 'whatsapp') {
-            return $this->whatsappService->sendReply($messageId, $body);
+        switch ($type) {
+            case 'email':
+                // Implement email reply logic here
+                break;
+            case 'whatsapp':
+                return $this->whatsappService->sendReply($messageId, $body);
+            case 'facebook':
+                return $this->facebookMessengerService->sendReply($messageId, $body);
+            default:
+                throw new \InvalidArgumentException("Invalid message type: {$type}");
         }
-
-        throw new \InvalidArgumentException("Invalid message type: {$type}");
     }
 }
