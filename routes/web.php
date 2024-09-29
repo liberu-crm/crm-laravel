@@ -34,6 +34,10 @@ Route::middleware(['auth'])->group(function () {
         return view('analytics-dashboard');
     })->name('analytics-dashboard');
 
+    // Team Invitation routes
+    Route::post('/team-invitations', [TeamInvitationController::class, 'sendInvitation'])->name('team-invitations.send');
+    Route::post('/team-invitations/{invitation}/accept', [TeamInvitationController::class, 'acceptInvitation'])->name('team-invitations.accept');
+
     // Twilio routes
     Route::prefix('twilio')->group(function () {
         Route::post('/initiate-call', [TwilioController::class, 'initiateCall'])->name('twilio.initiate-call');
