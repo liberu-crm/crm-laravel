@@ -3,6 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 
+use App\Http\Controllers\OAuthController;
+
+// ... existing routes
+
+Route::get('/oauth/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
+Route::get('/oauth/{provider}/callback', [OAuthController::class, 'callback'])->name('oauth.callback');
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
