@@ -5,6 +5,7 @@ namespace App\Services;
 use Google_Client;
 use Google_Service_Gmail;
 use App\Models\Email;
+use App\Models\ConnectedAccount;
 
 class MessageService
 {
@@ -20,6 +21,7 @@ class MessageService
         $this->gmailClient->setScopes(Google_Service_Gmail::GMAIL_MODIFY);
         $this->gmailClient->setAuthConfig(config('services.gmail.credentials_path'));
         $this->gmailClient->setAccessType('offline');
+
         $this->gmailClient->setPrompt('select_account consent');
 
         $this->gmailService = new Google_Service_Gmail($this->gmailClient);
@@ -29,19 +31,33 @@ class MessageService
 
     public function getUnreadMessages()
     {
-        $emailMessages = $this->getUnreadEmailMessages();
-        $whatsappMessages = $this->whatsappService->getUnreadMessages();
-        $facebookMessages = $this->facebookMessengerService->getUnreadMessages();
-
-        return [
-            'email' => $emailMessages,
-            'whatsapp' => $whatsappMessages,
-            'facebook' => $facebookMessages,
+        $messages = [
+            'email' => [],
+            'whatsapp' => [],
+            'facebook' => [],
         ];
+
+        $emailAccounts = ConnectedAccount::ofType('gmail')->get();
+        foreach ($emailAccounts as $account) {
+            $messages['email'] = array_merge($messages['email'], $this->getUnreadEmailMessages($account));
+        }
+
+        $whatsappAccounts = ConnectedAccount::ofType('whatsapp')->get();
+        foreach ($whatsappAccounts as $account) {
+            $messages['whatsapp'] = array_merge($messages['whatsapp'], $this->whatsappService->getUnreadMessages($account));
+        }
+
+        $facebookAccounts = ConnectedAccount::ofType('facebook')->get();
+        foreach ($facebookAccounts as $account) {
+            $messages['facebook'] = array_merge($messages['facebook'], $this->facebookMessengerService->getUnreadMessages($account));
+        }
+
+        return $messages;
     }
 
-    protected function getUnreadEmailMessages()
+    protected function getUnreadEmailMessages(ConnectedAccount $account)
     {
+        $this->gmailClient->setAccessToken($account->token);
         $user = 'me';
         $optParams = [
             'q' => 'is:unread',
@@ -50,45 +66,54 @@ class MessageService
 
         $messages = $this->gmailService->users_messages->listUsersMessages($user, $optParams);
 
-        return $messages->getMessages();
+        return array_map(function($message) use ($account) {
+            $message->accountId = $account->id;
+            return $message;
+        }, $messages->getMessages());
     }
 
-    public function getMessage($messageId, $type = 'email')
+    public function getMessage($messageId, $type = 'email', $accountId = null)
     {
+        $account = ConnectedAccount::findOrFail($accountId);
+
         switch ($type) {
             case 'email':
+                $this->gmailClient->setAccessToken($account->token);
                 $user = 'me';
                 $message = $this->gmailService->users_messages->get($user, $messageId);
-                $this->trackEmail($message);
+                $this->trackEmail($message, $account);
                 return $message;
             case 'whatsapp':
-                return $this->whatsappService->getMessage($messageId);
+                return $this->whatsappService->getMessage($account, $messageId);
             case 'facebook':
-                return $this->facebookMessengerService->getMessage($messageId);
+                return $this->facebookMessengerService->getMessage($account, $messageId);
             default:
                 throw new \InvalidArgumentException("Invalid message type: {$type}");
         }
     }
 
-    public function sendReply($messageId, $body, $type = 'email')
+    public function sendReply($messageId, $body, $type = 'email', $accountId = null)
     {
+        $account = ConnectedAccount::findOrFail($accountId);
+
         switch ($type) {
             case 'email':
+                $this->gmailClient->setAccessToken($account->token);
                 $user = 'me';
                 $reply = $this->createReplyMessage($messageId, $body);
                 $sentMessage = $this->gmailService->users_messages->send($user, $reply);
-                $this->trackEmail($sentMessage, true);
+                $this->trackEmail($sentMessage, $account, true);
                 return $sentMessage;
             case 'whatsapp':
-                return $this->whatsappService->sendReply($messageId, $body);
+                return $this->whatsappService->sendReply($account, $messageId, $body);
             case 'facebook':
-                return $this->facebookMessengerService->sendReply($messageId, $body);
+                return $this->facebookMessengerService->sendReply($account, $messageId, $body);
             default:
                 throw new \InvalidArgumentException("Invalid message type: {$type}");
         }
     }
 
-    protected function trackEmail($message, $isSent = false)
+    protected function trackEmail($message, ConnectedAccount $account, $isSent = false)
     {
         $headers = $this->parseHeaders($message->getPayload()->getHeaders());
 
@@ -100,6 +125,7 @@ class MessageService
             'content' => $this->getEmailContent($message),
             'timestamp' => $headers['Date'] ?? now(),
             'is_sent' => $isSent,
+            'connected_account_id' => $account->id,
         ]);
     }
 
