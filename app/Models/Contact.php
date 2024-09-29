@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+use Illuminate\Support\Str;
+
 class Contact extends Model
 {
     use HasFactory;
@@ -53,6 +55,28 @@ class Contact extends Model
     {
         static::addGlobalScope('index_hint', function ($builder) {
             $builder->useIndex('contacts_email_index');
+        });
+    }
+
+    /**
+     * Scope a query to search contacts based on given criteria.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('last_name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('phone_number', 'like', '%' . $search . '%')
+                ->orWhere('company_size', 'like', '%' . $search . '%')
+                ->orWhere('industry', 'like', '%' . $search . '%')
+                ->orWhere(function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                });
         });
     }
 }

@@ -14,29 +14,36 @@ class ContactStats extends BaseWidget
 {
     protected function getStats(): array
     {
-        return Cache::remember('contact_stats', now()->addMinutes(15), function () {
-            return [
-                Stat::make('Total Contacts', $this->getTotalContacts())
-                    ->description('Total number of contacts')
-                    ->descriptionIcon('heroicon-m-user-group')
-                    ->color('primary'),
+        return [
+            $this->getCachedStat('total_contacts', 'Total Contacts', 'heroicon-m-user-group', 'primary'),
+            $this->getCachedStat('active_leads', 'Active Leads', 'heroicon-m-flag', 'warning'),
+            $this->getCachedStat('open_deals', 'Open Deals', 'heroicon-m-currency-dollar', 'success'),
+            $this->getCachedStat('recent_activities', 'Recent Activities', 'heroicon-m-clock', 'info'),
+        ];
+    }
 
-                Stat::make('Active Leads', $this->getActiveLeads())
-                    ->description('Number of active leads')
-                    ->descriptionIcon('heroicon-m-flag')
-                    ->color('warning'),
-
-                Stat::make('Open Deals', $this->getOpenDeals())
-                    ->description('Number of open deals')
-                    ->descriptionIcon('heroicon-m-currency-dollar')
-                    ->color('success'),
-
-                Stat::make('Recent Activities', $this->getRecentActivities())
-                    ->description('Activities in the last 7 days')
-                    ->descriptionIcon('heroicon-m-clock')
-                    ->color('info'),
-            ];
+    private function getCachedStat(string $key, string $label, string $icon, string $color): Stat
+    {
+        $value = Cache::remember("contact_stats_{$key}", now()->addMinutes(5), function () use ($key) {
+            return $this->{"get" . studly_case($key)}();
         });
+
+        return Stat::make($label, $value)
+            ->description($this->getDescription($key))
+            ->descriptionIcon($icon)
+            ->color($color);
+    }
+
+    private function getDescription(string $key): string
+    {
+        $descriptions = [
+            'total_contacts' => 'Total number of contacts',
+            'active_leads' => 'Number of active leads',
+            'open_deals' => 'Number of open deals',
+            'recent_activities' => 'Activities in the last 7 days',
+        ];
+
+        return $descriptions[$key] ?? '';
     }
 
     private function getTotalContacts(): int
