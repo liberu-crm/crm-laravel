@@ -48,7 +48,13 @@ return [
         'phone_number' => env('TWILIO_PHONE_NUMBER'),
     ],
 
-    'mailchimp' => [
+    'facebook' => [
+        'app_id' => env('FACEBOOK_APP_ID'),
+        'app_secret' => env('FACEBOOK_APP_SECRET'),
+        'page_id' => env('FACEBOOK_PAGE_ID'),
+        'page_access_token' => env('FACEBOOK_PAGE_ACCESS_TOKEN'),
+
+      'mailchimp' => [
         'api_key' => env('MAILCHIMP_API_KEY'),
         'server_prefix' => env('MAILCHIMP_SERVER_PREFIX'),
     ],
