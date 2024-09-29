@@ -14,11 +14,23 @@ class SocialMediaPost extends Model
         'scheduled_at',
         'platforms',
         'status',
+        'likes',
+        'shares',
+        'comments',
+        'clicks',
+        'reach',
+        'impressions',
     ];
 
     protected $casts = [
         'scheduled_at' => 'datetime',
         'platforms' => 'array',
+        'likes' => 'integer',
+        'shares' => 'integer',
+        'comments' => 'integer',
+        'clicks' => 'integer',
+        'reach' => 'integer',
+        'impressions' => 'integer',
     ];
 
     const STATUS_DRAFT = 'draft';
@@ -34,5 +46,27 @@ class SocialMediaPost extends Model
             self::STATUS_PUBLISHED,
             self::STATUS_FAILED,
         ];
+    }
+
+    public function isScheduled()
+    {
+        return $this->status === self::STATUS_SCHEDULED && $this->scheduled_at > now();
+    }
+
+    public function isPublishable()
+    {
+        return $this->status === self::STATUS_SCHEDULED && $this->scheduled_at <= now();
+    }
+
+    public function markAsPublished()
+    {
+        $this->status = self::STATUS_PUBLISHED;
+        $this->save();
+    }
+
+    public function markAsFailed()
+    {
+        $this->status = self::STATUS_FAILED;
+        $this->save();
     }
 }
