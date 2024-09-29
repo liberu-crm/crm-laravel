@@ -24,6 +24,14 @@ class Team extends JetstreamTeam
     ];
 
     /**
+     * Get the team's invitations.
+     */
+    public function teamInvitations(): HasMany
+    {
+        return $this->hasMany(TeamInvitation::class);
+    }
+
+    /**
      * The event map for the model.
      *
      * @var array<string, class-string>
