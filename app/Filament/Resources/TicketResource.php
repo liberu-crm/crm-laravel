@@ -37,6 +37,15 @@ class TicketResource extends Resource
                         'high' => 'High',
                     ])
                     ->required(),
+                Forms\Components\Select::make('source')
+                    ->options([
+                        'email' => 'Email',
+                        'whatsapp' => 'WhatsApp',
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('source_id')
+                    ->label('Source ID (Email ID or WhatsApp Number)')
+                    ->required(),
             ]);
     }
 
@@ -47,14 +56,35 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('subject'),
                 Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('priority'),
+                Tables\Columns\TextColumn::make('source'),
+                Tables\Columns\TextColumn::make('source_id'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'open' => 'Open',
+                        'in_progress' => 'In Progress',
+                        'closed' => 'Closed',
+                    ]),
+                Tables\Filters\SelectFilter::make('source')
+                    ->options([
+                        'email' => 'Email',
+                        'whatsapp' => 'WhatsApp',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('reply')
+                    ->action(function (Ticket $record, array $data) {
+                        // Implement reply logic here using MessageService
+                    })
+                    ->form([
+                        Forms\Components\Textarea::make('reply_content')
+                            ->required()
+                            ->label('Reply'),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
