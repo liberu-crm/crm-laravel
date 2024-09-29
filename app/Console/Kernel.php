@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('social-media:publish-scheduled')->everyMinute();
+        $schedule->command('social-media:update-analytics')->hourly();
     }
 
     /**
