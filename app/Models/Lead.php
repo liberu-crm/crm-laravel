@@ -5,36 +5,36 @@ namespace App\Models;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Contact extends Model
+class Lead extends Model
 {
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = 'contact_id';
-
     protected $fillable = [
-        'name',
-        'last_name',
-        'email',
-        'phone_number',
         'status',
         'source',
-        'industry',
-        'company_size',
-        'annual_revenue',
+        'potential_value',
+        'expected_close_date',
+        'contact_id',
+        'user_id',
     ];
 
-    public function notes(): HasMany
+    protected $casts = [
+        'expected_close_date' => 'date',
+        'potential_value' => 'decimal:2',
+    ];
+
+    public function contact(): BelongsTo
     {
-        return $this->hasMany(Note::class);
+        return $this->belongsTo(Contact::class);
     }
 
-    public function deals(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(Deal::class);
+        return $this->belongsTo(User::class);
     }
 
     public function activities(): MorphMany
