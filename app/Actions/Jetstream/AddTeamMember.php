@@ -28,6 +28,13 @@ class AddTeamMember implements AddsTeamMembers
 
         AddingTeamMember::dispatch($team, $newTeamMember);
 
+        $invitation = $team->teamInvitations()->where('email', $email)->first();
+
+        if ($invitation) {
+            $role = $invitation->role ?? $role;
+            $invitation->delete();
+        }
+
         $team->users()->attach(
             $newTeamMember,
             ['role' => $role]
