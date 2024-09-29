@@ -180,6 +180,43 @@ Liberu CRM now includes a powerful task reminder system with Google Calendar int
 
 For more information on using the task reminder system and Google Calendar integration, please refer to the user guide in the `docs` folder.
 
+# CRM Laravel
+
+## OAuth Configuration
+
+This application now supports configuring OAuth settings for social media accounts, advertising accounts, Mailchimp, WhatsApp Business, and Facebook Messenger directly through the browser interface.
+
+### Setting up OAuth Configurations
+
+1. Log in to the admin panel.
+2. Navigate to the OAuth Configurations section.
+3. Click on "New OAuth Configuration" to add a new provider.
+4. Fill in the required information:
+   - Service Name (e.g., facebook, google, mailchimp)
+   - Client ID
+   - Client Secret
+   - Additional Settings (if required)
+5. Save the configuration.
+
+### Using OAuth in the Application
+
+Once configured, the application will automatically use the database-stored OAuth settings for authentication and API interactions with the respective services.
+
+### Fallback to Environment Variables
+
+If a configuration is not found in the database, the application will fall back to using the settings defined in the .env file.
+
+### Supported Services
+
+- Facebook
+- Google
+- Mailchimp
+- WhatsApp Business
+- Facebook Messenger
+- (Add other supported services here)
+
+For more detailed information on setting up each service, please refer to their respective documentation.
+
 ## Contributors
 
 
