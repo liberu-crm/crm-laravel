@@ -44,6 +44,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         'name',
         'email',
         'password',
+        'google_calendar_token',
     ];
 
     public function dashboardWidgets()
@@ -61,6 +62,17 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        'google_calendar_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'google_calendar_token' => 'encrypted',
     ];
 
     /**

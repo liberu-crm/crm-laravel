@@ -158,6 +158,28 @@ The CRM now includes enhanced reporting and analytics capabilities. To access th
 
 For more detailed information on using the reporting and analytics features, please refer to the user guide in the `docs` folder.
 
+### Task Reminders and Google Calendar Integration
+
+Liberu CRM now includes a powerful task reminder system with Google Calendar integration:
+
+1. Creating Tasks with Reminders:
+   - When creating or editing a task, you can set a reminder date and time.
+   - Choose to sync the task with Google Calendar by toggling the "Sync to Google Calendar" option.
+
+2. Receiving Reminders:
+   - You'll receive email notifications for task reminders at the specified time.
+   - Reminders are also visible in the CRM's notification center.
+
+3. Google Calendar Sync:
+   - To enable Google Calendar sync, go to your user settings and connect your Google account.
+   - Tasks synced with Google Calendar will appear in your Google Calendar and update automatically when changed in the CRM.
+
+4. Managing Reminders:
+   - View all upcoming reminders in the "My Reminders" section of the dashboard.
+   - Mark reminders as complete or snooze them for later.
+
+For more information on using the task reminder system and Google Calendar integration, please refer to the user guide in the `docs` folder.
+
 ## Contributors
 
 
