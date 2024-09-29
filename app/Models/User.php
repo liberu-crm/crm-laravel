@@ -46,6 +46,11 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         'password',
     ];
 
+    public function dashboardWidgets()
+    {
+        return $this->hasMany(DashboardWidget::class);
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *
