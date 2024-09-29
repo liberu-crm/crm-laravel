@@ -26,6 +26,7 @@ return [
     ],
 
     'ses' => [
+
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
@@ -52,6 +53,10 @@ return [
         'app_secret' => env('FACEBOOK_APP_SECRET'),
         'page_id' => env('FACEBOOK_PAGE_ID'),
         'page_access_token' => env('FACEBOOK_PAGE_ACCESS_TOKEN'),
+
+      'mailchimp' => [
+        'api_key' => env('MAILCHIMP_API_KEY'),
+        'server_prefix' => env('MAILCHIMP_SERVER_PREFIX'),
     ],
 
 ];
