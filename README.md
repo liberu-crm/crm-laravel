@@ -160,6 +160,7 @@ TWILIO_WEBHOOK_URL=https://your-app-url.com/twilio/webhook
 - Make outbound calls directly from the CRM interface
 - Receive inbound calls and route them to the appropriate agent
 - Click-to-call functionality for contact phone numbers
+
 - Automatic call logging for all inbound and outbound calls
 - Call recording capabilities
 - Add notes to call logs for future reference
@@ -172,6 +173,51 @@ To use the Twilio integration:
 2. Click on the "Call" button next to their phone number
 3. Use the call management interface to control the call, start/stop recording, and add notes
 4. After the call, view the call log in the contact's activity timeline
+
+## Advertising Account Management
+
+Liberu CRM now includes powerful tools for managing advertising accounts across multiple platforms.
+
+### Supported Platforms
+
+- Google Ads
+- Facebook Ads
+- LinkedIn Ads
+- Instagram Ads
+
+### Features
+
+- Connect and manage multiple advertising accounts
+- View and manage campaigns across different platforms
+- Track key performance metrics (impressions, clicks, conversions)
+- Integrate ad performance data with CRM data for enhanced insights
+
+### Setup
+
+1. Configure the necessary API credentials for each platform in your `.env` file:
+
+```
+GOOGLE_ADS_CLIENT_ID=your_google_ads_client_id
+GOOGLE_ADS_CLIENT_SECRET=your_google_ads_client_secret
+GOOGLE_ADS_DEVELOPER_TOKEN=your_google_ads_developer_token
+
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+
+LINKEDIN_CLIENT_ID=your_linkedin_client_id
+LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
+```
+
+2. Run `php artisan migrate` to create the necessary database tables for advertising accounts
+
+### Usage
+
+1. Navigate to the Advertising Accounts section in the CRM
+2. Add a new advertising account by selecting the platform and entering the required credentials
+3. Once connected, you can view and manage campaigns, ad sets, and ads directly from the CRM interface
+4. Use the Ad Performance dashboard to track key metrics across all your advertising accounts
+
+For more detailed information on using the advertising account management features, please refer to the user guide in the `docs` folder.
 
 ## Usage
 
