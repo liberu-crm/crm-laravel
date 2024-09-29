@@ -65,11 +65,11 @@
 
                 <x-slot name="actions">
                     <x-action-message class="me-3" on="saved">
-                        {{ __('Added.') }}
+                        {{ __('Invitation sent.') }}
                     </x-action-message>
 
                     <x-button>
-                        {{ __('Add') }}
+                        {{ __('Send Invitation') }}
                     </x-button>
                 </x-slot>
             </x-form-section>
@@ -97,6 +97,7 @@
                                 <div class="text-gray-600">{{ $invitation->email }}</div>
 
                                 <div class="flex items-center">
+                                    <div class="text-sm text-gray-400">{{ $invitation->role }}</div>
                                     @if (Gate::check('removeTeamMember', $team))
                                         <!-- Cancel Team Invitation -->
                                         <button class="cursor-pointer ms-6 text-sm text-red-500 focus:outline-none"
@@ -148,6 +149,7 @@
                                             {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name }}
                                         </div>
                                     @endif
+
 
                                     <!-- Leave Team -->
                                     @if ($this->user->id === $user->id)

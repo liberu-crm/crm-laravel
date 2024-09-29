@@ -2,48 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\TeamInvitation;
+use App\Actions\Jetstream\InviteTeamMember;
 use App\Models\Team;
-use App\Models\User;
+use App\Models\TeamInvitation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Jetstream\Jetstream;
 
 class TeamInvitationController extends Controller
 {
-    public function sendInvitation(Request $request)
+    public function sendInvitation(Request $request, InviteTeamMember $inviter)
     {
         $request->validate([
-            'email'   => 'required|email',
-            'team_id' => 'required|exists:teams,id',
+            'email' => ['required', 'email'],
+            'role' => ['required', 'string'],
+            'team_id' => ['required', 'exists:teams,id'],
         ]);
 
-        $user = User::firstOrCreate(['email' => $request->email], ['password' => bcrypt(Str::random(10))]);
         $team = Team::findOrFail($request->team_id);
 
-        $invitationToken = Str::random(32);
-        $user->invitations()->create([
-            'team_id' => $team->id,
-            'token'   => $invitationToken,
-        ]);
+        Gate::forUser($request->user())->authorize('addTeamMember', $team);
 
-        Mail::to($request->email)->send(new TeamInvitation($user, $team, $invitationToken));
+        $inviter->invite(
+            $request->user(),
+            $team,
+            $request->email,
+            $request->role
+        );
 
-        return response()->json(['message' => 'Invitation sent successfully.']);
+        return back()->with('success', __('Invitation sent successfully.'));
     }
 
-    public function acceptInvitation(Request $request)
+    public function acceptInvitation(Request $request, $invitationId)
     {
-        $request->validate([
-            'token' => 'required|exists:invitations,token',
-        ]);
+        $invitation = TeamInvitation::whereHas('team', function ($query) use ($invitationId) {
+            $query->where('id', $invitationId);
+        })->firstOrFail();
 
-        $invitation = Invitation::where('token', $request->token)->firstOrFail();
-        $team = Team::findOrFail($invitation->team_id);
-        $team->members()->attach($invitation->user_id);
+        $user = Jetstream::findUserByEmailOrFail($invitation->email);
 
-        $invitation->update(['accepted' => true]);
+        $user->switchTeam($invitation->team);
 
-        return response()->json(['message' => 'Invitation accepted successfully.']);
+        $invitation->team->users()->attach(
+            $user, ['role' => $invitation->role]
+        );
+
+        $invitation->delete();
+
+        return redirect(config('fortify.home'))->with('success', __('You have joined the team!'));
     }
 }
