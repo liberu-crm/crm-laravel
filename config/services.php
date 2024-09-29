@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'gmail' => [
+        'application_name' => env('GMAIL_APPLICATION_NAME'),
+        'credentials_path' => env('GMAIL_CREDENTIALS_PATH'),
+    ],
+
 ];
