@@ -126,12 +126,52 @@ However, we understand that not everyone is comfortable with submitting code dir
 Whether through pull requests or issues, your contributions play a vital role in making our project even better. We believe in fostering an inclusive and collaborative environment where everyone's ideas are valued and respected.
 
 We look forward to your involvement, and together, we can create a vibrant and thriving project. Thank you for considering contributing to our community!
+
+## Testing
+
+Run `php artisan test` to execute the test suite, including Twilio integration tests.
 <!--/h-->
 
 ### License
 
 This project is licensed under the MIT license, granting you the freedom to utilize it for both personal and commercial projects. The MIT license ensures that you have the flexibility to adapt, modify, and distribute the project as per your needs. Feel free to incorporate it into your own ventures, whether they are personal endeavors or part of a larger commercial undertaking. The permissive nature of the MIT license empowers you to leverage this project without any unnecessary restrictions. Enjoy the benefits of this open and accessible license as you embark on your creative and entrepreneurial pursuits.
 <!--/h-->
+
+## Twilio Integration
+
+### Setup
+
+1. Sign up for a Twilio account at https://www.twilio.com/
+2. Obtain your Twilio Account SID, Auth Token, and a Twilio phone number
+3. Add the following environment variables to your `.env` file:
+
+```
+TWILIO_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_phone_number
+TWILIO_TWIML_APP_SID=your_twiml_app_sid
+TWILIO_WEBHOOK_URL=https://your-app-url.com/twilio/webhook
+```
+
+4. Run `php artisan migrate` to create the necessary database tables for call logging
+
+### Features
+
+- Make outbound calls directly from the CRM interface
+- Receive inbound calls and route them to the appropriate agent
+- Click-to-call functionality for contact phone numbers
+- Automatic call logging for all inbound and outbound calls
+- Call recording capabilities
+- Add notes to call logs for future reference
+
+### Usage
+
+To use the Twilio integration:
+
+1. Navigate to a contact's profile
+2. Click on the "Call" button next to their phone number
+3. Use the call management interface to control the call, start/stop recording, and add notes
+4. After the call, view the call log in the contact's activity timeline
 
 ## Usage
 
