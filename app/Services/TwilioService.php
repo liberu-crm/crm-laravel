@@ -34,4 +34,29 @@ class TwilioService
         }
         return $results;
     }
+
+    public function makeCall($to, $url)
+    {
+        return $this->client->calls->create($to, $this->from_number, [
+            'url' => $url,
+        ]);
+    }
+
+    public function getCallLogs($startDate = null, $endDate = null)
+    {
+        $params = [];
+        if ($startDate) {
+            $params['startTime'] = $startDate;
+        }
+        if ($endDate) {
+            $params['endTime'] = $endDate;
+        }
+
+        return $this->client->calls->read($params);
+    }
+
+    public function getCallDetails($callSid)
+    {
+        return $this->client->calls($callSid)->fetch();
+    }
 }
