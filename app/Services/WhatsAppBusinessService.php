@@ -47,4 +47,18 @@ class WhatsAppBusinessService
 
         return $response->json();
     }
+
+    public function sendMessage($to, $body)
+    {
+        $response = Http::withToken($this->accessToken)
+            ->post($this->apiUrl . '/messages', [
+                'to' => $to,
+                'type' => 'text',
+                'text' => [
+                    'body' => $body
+                ]
+            ]);
+
+        return $response->json();
+    }
 }
