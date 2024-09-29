@@ -4,10 +4,13 @@ namespace App\Filament\App\Resources;
 
 use App\Models\Contact;
 use App\Models\Email;
+use App\Services\PowerDialerService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
 use Filament\Resources\Resource;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
@@ -304,6 +307,20 @@ class ContactResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('powerDial')
+                        ->label('Power Dial')
+                        ->icon('heroicon-o-phone')
+                        ->action(function (Collection $records) {
+                            $powerDialer = new PowerDialerService();
+                            $message = 'Hello, this is an automated call from our CRM system.';
+                            $results = $powerDialer->startBulkCalls($records, $message);
+                            Notification::make()
+                                ->title('Power Dialer Started')
+                                ->body('Initiated ' . count($results) . ' calls.')
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }
