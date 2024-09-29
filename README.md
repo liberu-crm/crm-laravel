@@ -133,6 +133,31 @@ We look forward to your involvement, and together, we can create a vibrant and t
 This project is licensed under the MIT license, granting you the freedom to utilize it for both personal and commercial projects. The MIT license ensures that you have the flexibility to adapt, modify, and distribute the project as per your needs. Feel free to incorporate it into your own ventures, whether they are personal endeavors or part of a larger commercial undertaking. The permissive nature of the MIT license empowers you to leverage this project without any unnecessary restrictions. Enjoy the benefits of this open and accessible license as you embark on your creative and entrepreneurial pursuits.
 <!--/h-->
 
+## Usage
+
+### Reporting and Analytics
+
+The CRM now includes enhanced reporting and analytics capabilities. To access these features:
+
+1. Navigate to the Analytics Dashboard:
+   - Go to `/analytics-dashboard` to view key metrics and trends.
+
+2. Generate Custom Reports:
+   - Visit `/reports/contact-interactions` for Contact Interactions report
+   - Visit `/reports/sales-pipeline` for Sales Pipeline report
+   - Visit `/reports/customer-engagement` for Customer Engagement report
+
+3. Customize Reports:
+   - Use the Report Customizer component to filter and tailor reports to your needs.
+
+4. Data Visualization:
+   - The Analytics Dashboard includes interactive charts and graphs for better data interpretation.
+
+5. Export Reports:
+   - Each report page includes options to export data in various formats (CSV, PDF, Excel).
+
+For more detailed information on using the reporting and analytics features, please refer to the user guide in the `docs` folder.
+
 ## Contributors
 
 
