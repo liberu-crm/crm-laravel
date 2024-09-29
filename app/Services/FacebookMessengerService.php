@@ -4,12 +4,11 @@ namespace App\Services;
 
 use Facebook\Facebook;
 use Illuminate\Support\Facades\Http;
+use App\Models\ConnectedAccount;
 
 class FacebookMessengerService
 {
     protected $facebook;
-    protected $pageId;
-    protected $pageAccessToken;
 
     public function __construct()
     {
@@ -18,13 +17,12 @@ class FacebookMessengerService
             'app_secret' => config('services.facebook.app_secret'),
             'default_graph_version' => 'v12.0',
         ]);
-        $this->pageId = config('services.facebook.page_id');
-        $this->pageAccessToken = config('services.facebook.page_access_token');
     }
 
-    public function getUnreadMessages()
+    public function getUnreadMessages(ConnectedAccount $account)
     {
-        $response = $this->facebook->get("/{$this->pageId}/conversations?fields=messages{message,from,created_time}&unread=true", $this->pageAccessToken);
+        $this->facebook->setDefaultAccessToken($account->token);
+        $response = $this->facebook->get("/{$account->provider_id}/conversations?fields=messages{message,from,created_time}&unread=true");
         $conversations = $response->getGraphEdge();
 
         $unreadMessages = [];
@@ -36,6 +34,7 @@ class FacebookMessengerService
                     'from' => $message->getField('from')['name'],
                     'message' => $message->getField('message'),
                     'created_time' => $message->getField('created_time'),
+                    'account_id' => $account->id,
                 ];
             }
         }
@@ -43,9 +42,10 @@ class FacebookMessengerService
         return $unreadMessages;
     }
 
-    public function getMessage($messageId)
+    public function getMessage(ConnectedAccount $account, $messageId)
     {
-        $response = $this->facebook->get("/{$messageId}?fields=message,from,created_time", $this->pageAccessToken);
+        $this->facebook->setDefaultAccessToken($account->token);
+        $response = $this->facebook->get("/{$messageId}?fields=message,from,created_time");
         $message = $response->getGraphNode();
 
         return [
@@ -53,16 +53,28 @@ class FacebookMessengerService
             'from' => $message->getField('from')['name'],
             'message' => $message->getField('message'),
             'created_time' => $message->getField('created_time'),
+            'account_id' => $account->id,
         ];
     }
 
-    public function sendReply($recipientId, $message)
+    public function sendReply(ConnectedAccount $account, $recipientId, $message)
     {
-        $response = $this->facebook->post("/{$this->pageId}/messages", [
+        $this->facebook->setDefaultAccessToken($account->token);
+        $response = $this->facebook->post("/{$account->provider_id}/messages", [
             'recipient' => ['id' => $recipientId],
             'message' => ['text' => $message],
-        ], $this->pageAccessToken);
+        ]);
 
         return $response->getGraphNode();
+    }
+
+    public function getAllConnectedAccounts()
+    {
+        return ConnectedAccount::ofType('facebook')->get();
+    }
+
+    public function getPrimaryAccount()
+    {
+        return ConnectedAccount::ofType('facebook')->primary()->first();
     }
 }
