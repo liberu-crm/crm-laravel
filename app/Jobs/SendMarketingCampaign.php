@@ -48,16 +48,69 @@ class SendMarketingCampaign implements ShouldQueue
 
     protected function sendEmailCampaign(MailChimpService $mailchimp)
     {
-        // Implementation for sending email campaign
+        $list_id = $this->createOrGetMailChimpList($mailchimp);
+        $this->addRecipientsToList($mailchimp, $list_id);
+        $campaign = $this->createMailChimpCampaign($mailchimp, $list_id);
+        $mailchimp->sendCampaign($campaign['id']);
+
+        $this->campaign->recipients()->update(['status' => 'sent']);
+    }
+
+    protected function createOrGetMailChimpList(MailChimpService $mailchimp)
+    {
+        // Logic to create or get an existing list
+        // For simplicity, we'll create a new list each time
+        $list = $mailchimp->createList(
+            $this->campaign->name,
+            config('app.name'),
+            'You are receiving this email as part of our marketing campaign.',
+            config('mail.from.name'),
+            config('mail.from.address')
+        );
+        return $list['id'];
+    }
+
+    protected function addRecipientsToList(MailChimpService $mailchimp, $list_id)
+    {
+        foreach ($this->campaign->recipients as $recipient) {
+            $mailchimp->addMember($list_id, $recipient->email);
+        }
+    }
+
+    protected function createMailChimpCampaign(MailChimpService $mailchimp, $list_id)
+    {
+        return $mailchimp->createCampaign(
+            $list_id,
+            $this->campaign->subject,
+            config('mail.from.name'),
+            config('mail.from.address'),
+            $this->campaign->content
+        );
     }
 
     protected function sendSMSCampaign(TwilioService $twilio)
     {
-        // Implementation for sending SMS campaign
+        $recipients = $this->campaign->recipients()->whereNotNull('phone')->get();
+        $results = $twilio->sendBulkSMS(
+            $recipients->pluck('phone')->toArray(),
+            $this->campaign->content
+        );
+
+        foreach ($recipients as $index => $recipient) {
+            $status = $results[$index]->status === 'queued' ? 'sent' : 'failed';
+            $recipient->update(['status' => $status]);
+        }
     }
 
     protected function sendWhatsAppCampaign(WhatsAppBusinessService $whatsapp)
     {
-        // Implementation for sending WhatsApp campaign
+        $recipients = $this->campaign->recipients()->whereNotNull('phone')->get();
+
+        foreach ($recipients as $recipient) {
+            $response = $whatsapp->sendMessage($recipient->phone, $this->campaign->content);
+
+            $status = $response['messages'][0]['status'] === 'sent' ? 'sent' : 'failed';
+            $recipient->update(['status' => $status]);
+        }
     }
 }
