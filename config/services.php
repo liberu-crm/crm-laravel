@@ -36,6 +36,11 @@ return [
         'credentials_path' => env('GMAIL_CREDENTIALS_PATH'),
     ],
 
+    'whatsapp' => [
+        'api_url' => env('WHATSAPP_API_URL'),
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+    ],
+
     'twilio' => [
         'sid' => env('TWILIO_SID'),
         'auth_token' => env('TWILIO_AUTH_TOKEN'),
