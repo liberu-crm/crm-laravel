@@ -33,5 +33,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/analytics-dashboard', function () {
         return view('analytics-dashboard');
     })->name('analytics-dashboard');
+
+    // Twilio routes
+    Route::prefix('twilio')->group(function () {
+        Route::post('/initiate-call', [TwilioController::class, 'initiateCall'])->name('twilio.initiate-call');
+        Route::post('/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
+        Route::post('/twiml/inbound', [TwilioController::class, 'handleInboundCall'])->name('twilio.twiml.inbound');
+        Route::post('/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->name('twilio.recording.callback');
+        Route::post('/start-recording', [TwilioController::class, 'startRecording'])->name('twilio.start-recording');
+        Route::post('/stop-recording', [TwilioController::class, 'stopRecording'])->name('twilio.stop-recording');
+    });
 });
 require __DIR__.'/socialstream.php';require __DIR__.'/socialstream.php';require __DIR__.'/socialstream.php';

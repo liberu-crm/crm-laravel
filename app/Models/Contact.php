@@ -53,6 +53,11 @@ class Contact extends Model
         return $this->belongsTo(Team::class);
     }
 
+    public function callLogs()
+    {
+        return $this->hasMany(CallLog::class);
+    }
+
     /**
      * The "booted" method of the model.
      *

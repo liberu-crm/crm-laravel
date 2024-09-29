@@ -293,13 +293,27 @@ class ContactResource extends Resource
                     ->sortable(),
                 TextColumn::make('phone_number')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => view('components.click-to-call', ['phone' => $state])),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('call')
+                    ->icon('heroicon-o-phone')
+                    ->action(function (Contact $record, Component $livewire) {
+                        // Initiate call using Twilio
+                        $twilioService = app(TwilioService::class);
+                        $call = $twilioService->initiateCall($record->phone_number);
+                        if ($call) {
+                            $twilioService->logCall($call->sid, $record->contact_id, 'outbound', null, 'initiated');
+                            $livewire->notify('success', 'Call initiated successfully');
+                        } else {
+                            $livewire->notify('error', 'Failed to initiate call');
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
