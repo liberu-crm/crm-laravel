@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\OAuthConfiguration;
+
 return [
 
     /*
@@ -48,15 +50,28 @@ return [
         'phone_number' => env('TWILIO_PHONE_NUMBER'),
     ],
 
-    'facebook' => [
-        'app_id' => env('FACEBOOK_APP_ID'),
-        'app_secret' => env('FACEBOOK_APP_SECRET'),
-        'page_id' => env('FACEBOOK_PAGE_ID'),
-        'page_access_token' => env('FACEBOOK_PAGE_ACCESS_TOKEN'),
-    ],
-      'mailchimp' => [
-        'api_key' => env('MAILCHIMP_API_KEY'),
-        'server_prefix' => env('MAILCHIMP_SERVER_PREFIX'),
-    ],
+    'facebook' => function () {
+        $config = OAuthConfiguration::getConfig('facebook');
+        return [
+            'app_id' => $config ? $config->client_id : env('FACEBOOK_APP_ID'),
+            'app_secret' => $config ? $config->client_secret : env('FACEBOOK_APP_SECRET'),
+            'page_id' => $config && isset($config->additional_settings['page_id']) ? $config->additional_settings['page_id'] : env('FACEBOOK_PAGE_ID'),
+            'page_access_token' => $config && isset($config->additional_settings['page_access_token']) ? $config->additional_settings['page_access_token'] : env('FACEBOOK_PAGE_ACCESS_TOKEN'),
+        ];
+    },
+    'mailchimp' => function () {
+        $config = OAuthConfiguration::getConfig('mailchimp');
+        return [
+            'api_key' => $config ? $config->client_secret : env('MAILCHIMP_API_KEY'),
+            'server_prefix' => $config && isset($config->additional_settings['server_prefix']) ? $config->additional_settings['server_prefix'] : env('MAILCHIMP_SERVER_PREFIX'),
+        ];
+    },
+    'whatsapp' => function () {
+        $config = OAuthConfiguration::getConfig('whatsapp');
+        return [
+            'api_url' => $config && isset($config->additional_settings['api_url']) ? $config->additional_settings['api_url'] : env('WHATSAPP_API_URL'),
+            'access_token' => $config ? $config->client_secret : env('WHATSAPP_ACCESS_TOKEN'),
+        ];
+    },
 
 ];
