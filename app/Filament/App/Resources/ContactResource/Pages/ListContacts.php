@@ -4,7 +4,7 @@
  * ListContacts class.
  *
  * Provides the implementation for listing contacts in the Filament admin panel. This page
- * allows users to view, search, filter, and manage contacts with improved UI/UX.
+ * allows users to view, search, filter, and manage contacts with improved UI/UX and performance.
  */
 
 namespace App\Filament\App\Resources\ContactResource\Pages;
@@ -15,6 +15,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 
 class ListContacts extends ListRecords
 {
@@ -24,6 +25,30 @@ class ListContacts extends ListRecords
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ]),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
@@ -63,7 +88,16 @@ class ListContacts extends ListRecords
 
     protected function getFooter(): View
     {
-
         return view('components.user-feedback', ['action' => route('contact.feedback')]);
+    }
+
+    public function getRecords()
+    {
+        $cacheKey = 'contacts_list_' . $this->getTableRecordsPerPageSelectOptions()[0];
+        $cacheDuration = now()->addMinutes(5);
+
+        return Cache::remember($cacheKey, $cacheDuration, function () {
+            return parent::getRecords();
+        });
     }
 }
