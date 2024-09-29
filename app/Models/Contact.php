@@ -27,6 +27,8 @@ class Contact extends Model
         'annual_revenue',
     ];
 
+    protected $with = ['notes', 'deals', 'activities'];
+
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
@@ -40,5 +42,17 @@ class Contact extends Model
     public function activities(): MorphMany
     {
         return $this->morphMany(Activity::class, 'activitable');
+    }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('index_hint', function ($builder) {
+            $builder->useIndex('contacts_email_index');
+        });
     }
 }
