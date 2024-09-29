@@ -3,11 +3,14 @@
 namespace App\Filament\App\Resources;
 
 use App\Models\Contact;
+use App\Models\Email;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\App\Resources\ContactResource\RelationManagers;
 use App\Filament\App\Resources\ContactResource\Pages;
