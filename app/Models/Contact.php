@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Contact extends Model
@@ -27,9 +27,11 @@ class Contact extends Model
         'industry',
         'company_size',
         'annual_revenue',
+        'lifecycle_stage',
+        'company_id',
     ];
 
-    protected $with = ['notes', 'deals', 'activities'];
+    protected $with = ['notes', 'deals', 'activities', 'company'];
 
     protected $touches = ['team'];
 
@@ -48,12 +50,17 @@ class Contact extends Model
         return $this->morphMany(Activity::class, 'activitable');
     }
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
-    public function callLogs()
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function callLogs(): HasMany
     {
         return $this->hasMany(CallLog::class);
     }
@@ -68,6 +75,26 @@ class Contact extends Model
         static::addGlobalScope('index_hint', function ($builder) {
             $builder->useIndex('contacts_email_index');
         });
+
+        static::creating(function ($contact) {
+            $contact->associateWithCompany();
+        });
+
+        static::updating(function ($contact) {
+            $contact->associateWithCompany();
+        });
+    }
+
+    /**
+     * Associate the contact with a company based on email domain.
+     */
+    protected function associateWithCompany()
+    {
+        if ($this->email) {
+            $domain = Str::after($this->email, '@');
+            $company = Company::firstOrCreate(['domain' => $domain], ['name' => Str::before($domain, '.')]);
+            $this->company()->associate($company);
+        }
     }
 
     /**
@@ -86,6 +113,7 @@ class Contact extends Model
                 ->orWhere('phone_number', 'like', '%' . $search . '%')
                 ->orWhere('company_size', 'like', '%' . $search . '%')
                 ->orWhere('industry', 'like', '%' . $search . '%')
+                ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
                 ->orWhere(function ($query) use ($search) {
                     $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
                 });
