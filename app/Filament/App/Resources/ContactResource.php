@@ -131,33 +131,72 @@ class ContactResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('last_name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('phone_number')
                     ->tel()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\Select::make('status')
                     ->options([
                         'active' => 'Active',
                         'inactive' => 'Inactive',
                         'lead' => 'Lead',
                     ])
-                    ->required(),
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('source')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('industry')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('company_size')
-                    ->numeric(),
+                    ->numeric()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
                 Forms\Components\TextInput::make('annual_revenue')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('$')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        Livewire::dispatch('contact-updated');
+                    }),
+                Forms\Components\Livewire::make('contact-collaboration')
+                    ->component('contact-collaboration')
+                    ->columnSpan('full'),
             ]);
     }
 

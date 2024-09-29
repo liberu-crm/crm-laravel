@@ -29,6 +29,8 @@ class Contact extends Model
 
     protected $with = ['notes', 'deals', 'activities'];
 
+    protected $touches = ['team'];
+
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
@@ -42,6 +44,11 @@ class Contact extends Model
     public function activities(): MorphMany
     {
         return $this->morphMany(Activity::class, 'activitable');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     /**
