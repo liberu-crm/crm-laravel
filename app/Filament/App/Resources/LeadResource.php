@@ -6,7 +6,7 @@ use App\Filament\App\Resources\LeadResource\Pages;
 use App\Models\Lead;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\App\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 

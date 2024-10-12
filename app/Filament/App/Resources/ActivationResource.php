@@ -7,7 +7,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use App\Models\Activation;
 use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\App\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;

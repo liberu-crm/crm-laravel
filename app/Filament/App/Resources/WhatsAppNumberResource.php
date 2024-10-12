@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\WhatsAppNumberResource\Pages;
+use App\Filament\App\Resources\WhatsAppNumberResource\Pages;
 use App\Models\WhatsAppNumber;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\App\Resources\Form;
+use Filament\App\Resources\Resource;
+use Filament\App\Resources\Table;
 use Filament\Tables;
 
 class WhatsAppNumberResource extends Resource

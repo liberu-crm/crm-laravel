@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\SocialMediaPostResource\Pages;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages;
 use App\Models\SocialMediaPost;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\App\Resources\Form;
+use Filament\App\Resources\Resource;
+use Filament\App\Resources\Table;
 use Filament\Tables;
 
 class SocialMediaPostResource extends Resource
