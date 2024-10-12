@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\LandingPageResource\Pages;
+use App\Filament\App\Resources\LandingPageResource\Pages;
 use App\Models\LandingPage;
 use Filament\Forms;
 use Filament\Forms\Form;

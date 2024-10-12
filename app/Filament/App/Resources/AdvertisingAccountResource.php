@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\AdvertisingAccountResource\Pages;
+use App\Filament\App\Resources\AdvertisingAccountResource\Pages;
 use App\Models\AdvertisingAccount;
 use Filament\Forms;
 use Filament\Forms\Form;

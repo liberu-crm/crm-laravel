@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\OAuthConfigurationResource\Pages;
+use App\Filament\App\Resources\OAuthConfigurationResource\Pages;
 use App\Models\OAuthConfiguration;
 use Filament\Forms;
 use Filament\Forms\Form;
