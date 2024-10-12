@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\App\Resources\ContactResource\Pages;
+use App\Filament\Resources\ContactResource\Pages;
 use App\Models\Contact;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 

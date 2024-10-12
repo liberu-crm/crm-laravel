@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\App\Resources\MarketingCampaignResource\Pages;
+use App\Filament\Resources\MarketingCampaignResource\Pages;
 use App\Models\MarketingCampaign;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 

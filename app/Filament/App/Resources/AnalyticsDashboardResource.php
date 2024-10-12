@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\App\Resources\AnalyticsDashboardResource\Pages;
+use App\Filament\Resources\AnalyticsDashboardResource\Pages;
 use App\Models\Contact;
 use App\Models\Deal;
 use Filament\Forms;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Widgets\StatsOverviewWidget\Card;
 use Filament\Widgets\ChartWidget;
