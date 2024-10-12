@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
 use Filament\Forms;
 use App\Models\Note;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\NoteResource\Pages;
-use App\Filament\App\Resources\NoteResource\RelationManagers;
+use App\Filament\Resources\NoteResource\Pages;
+use App\Filament\Resources\NoteResource\RelationManagers;
 
 class NoteResource extends Resource
 {
