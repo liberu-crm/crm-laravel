@@ -22,16 +22,16 @@ class AnalyticsDashboardResource extends Resource
     public static function getWidgets(): array
     {
         return [
-//            Widgets\ContactStatsOverview::class,
-//            Widgets\SalesPipelineChart::class,
-//            Widgets\CustomerEngagementChart::class,
+            Widgets\ContactStatsOverview::class,
+            Widgets\SalesPipelineChart::class,
+            Widgets\CustomerEngagementChart::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-           // 'index' => Pages\ViewAnalyticsDashboard::route('/'),
+            'index' => Pages\ViewAnalyticsDashboard::route('/'),
         ];
     }
 }
