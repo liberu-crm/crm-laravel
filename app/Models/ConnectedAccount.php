@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use JoelButcher\Socialstream\ConnectedAccount as SocialstreamConnectedAccount;
@@ -13,6 +14,7 @@ class ConnectedAccount extends SocialstreamConnectedAccount
 {
     use HasFactory;
     use HasTimestamps;
+    use IsTenantModel;
 
     /**
      * The attributes that are mass assignable.

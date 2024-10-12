@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Laravel\Jetstream\Membership as JetstreamMembership;
 
 class Membership extends JetstreamMembership
