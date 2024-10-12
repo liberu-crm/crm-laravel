@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources\LandingPagesResource\Pages;
+namespace App\Filament\App\Resources\LandingPageResource\Pages;
 
-use App\Filament\App\Resources\LandingPagesResource;
+use App\Filament\App\Resources\LandingPageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateLandingPages extends CreateRecord
+class CreateLandingPage extends CreateRecord
 {
-    protected static string $resource = LandingPagesResource::class;
+    protected static string $resource = LandingPageResource::class;
 }

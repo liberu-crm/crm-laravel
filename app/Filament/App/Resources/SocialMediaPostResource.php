@@ -112,7 +112,7 @@ class SocialMediaPostResource extends Resource
         return [
             'index' => Pages\ListSocialMediaPosts::route('/'),
             'create' => Pages\CreateSocialMediaPost::route('/create'),
-            'view' => Pages\ViewSocialMediaPost::route('/{record}'),
+           // 'view' => Pages\ViewSocialMediaPost::route('/{record}'),
             'edit' => Pages\EditSocialMediaPost::route('/{record}/edit'),
         ];
     }
