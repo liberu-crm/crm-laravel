@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\App\Resources\OAuthConfigurationResource\Pages;
+use App\Filament\Resources\OAuthConfigurationResource\Pages;
 use App\Models\OAuthConfiguration;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 

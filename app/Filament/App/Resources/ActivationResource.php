@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use App\Models\Activation;
 use Filament\Tables\Table;
-use Filament\App\Resources\Resource;
+use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\App\Resources\ActivationResource\Pages;
-use App\Filament\App\Resources\ActivationResource\RelationManagers;
+use App\Filament\Resources\ActivationResource\Pages;
+use App\Filament\Resources\ActivationResource\RelationManagers;
 
 class ActivationResource extends Resource
 {
