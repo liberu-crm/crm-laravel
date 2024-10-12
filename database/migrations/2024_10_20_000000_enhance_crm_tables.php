@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->decimal('potential_value', 15, 2)->nullable();
             $table->date('expected_close_date')->nullable();
-            $table->foreignId('contact_id')->constrained('contacts');
+//            $table->foreignId('contact_id')->constrained('contacts');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('stage');
             $table->date('close_date')->nullable();
             $table->integer('probability');
-            $table->foreignId('contact_id')->constrained('contacts');
+//            $table->foreignId('contact_id')->constrained('contacts');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });

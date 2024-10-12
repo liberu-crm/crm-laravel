@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('title');
             $table->longText('content');
             $table->json('metadata')->nullable();
-            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
