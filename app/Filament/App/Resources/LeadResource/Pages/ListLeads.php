@@ -6,7 +6,7 @@ use App\Filament\App\Resources\LeadsResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListLeadss extends ListRecords
+class ListLeads extends ListRecords
 {
     protected static string $resource = LeadsResource::class;
 
