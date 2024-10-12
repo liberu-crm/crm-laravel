@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DashboardWidget extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'user_id',
