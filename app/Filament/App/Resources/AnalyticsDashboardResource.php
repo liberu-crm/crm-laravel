@@ -31,7 +31,7 @@ class AnalyticsDashboardResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ViewAnalyticsDashboard::route('/'),
+           // 'index' => Pages\ViewAnalyticsDashboard::route('/'),
         ];
     }
 }
