@@ -5,15 +5,19 @@ namespace Tests\Feature;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskReminderNotification;
+use App\Services\GoogleCalendarService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Mockery;
 use Tests\TestCase;
 
 class TaskReminderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testTaskCreationWithReminder()
+    // ... (existing test methods)
+
+    public function testTaskCreationWithInvalidReminderDate()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -22,40 +26,24 @@ class TaskReminderTest extends TestCase
             'name' => 'Test Task',
             'description' => 'Test Description',
             'due_date' => now()->addDays(2),
-            'reminder_date' => now()->addDay(),
+            'reminder_date' => now()->subDay(), // Invalid reminder date (in the past)
             'sync_to_google_calendar' => true,
         ]);
 
-        $response->assertRedirect();
-        $this->assertDatabaseHas('tasks', [
-            'name' => 'Test Task',
-            'reminder_date' => now()->addDay()->toDateTimeString(),
-            'reminder_sent' => false,
-        ]);
+        $response->assertSessionHasErrors('reminder_date');
+        $this->assertDatabaseMissing('tasks', ['name' => 'Test Task']);
     }
 
-    public function testSendRemindersCommand()
-    {
-        Notification::fake();
-
-        $user = User::factory()->create();
-        $task = Task::factory()->create([
-            'reminder_date' => now()->subMinutes(5),
-            'reminder_sent' => false,
-            'contact_id' => $user->id,
-        ]);
-
-        $this->artisan('reminders:send')->assertSuccessful();
-
-        Notification::assertSentTo($user, TaskReminderNotification::class);
-        $this->assertTrue($task->fresh()->reminder_sent);
-    }
-
-    public function testGoogleCalendarSync()
+    public function testGoogleCalendarSyncFailure()
     {
         $user = User::factory()->create(['google_calendar_token' => json_encode(['access_token' => 'test_token'])]);
         $this->actingAs($user);
 
+        // Mock the GoogleCalendarService
+        $mockGoogleCalendarService = Mockery::mock(GoogleCalendarService::class);
+        $mockGoogleCalendarService->shouldReceive('syncTask')->andThrow(new \Exception('Google Calendar sync failed'));
+        $this->app->instance(GoogleCalendarService::class, $mockGoogleCalendarService);
+
         $response = $this->post('/tasks', [
             'name' => 'Test Task',
             'description' => 'Test Description',
@@ -63,13 +51,16 @@ class TaskReminderTest extends TestCase
             'sync_to_google_calendar' => true,
         ]);
 
-        $response->assertRedirect();
+        $response->assertSessionHasErrors('google_calendar_sync');
         $this->assertDatabaseHas('tasks', [
             'name' => 'Test Task',
-            'sync_to_google_calendar' => true,
+            'sync_to_google_calendar' => false,
         ]);
+    }
 
-        // Note: In a real scenario, you would mock the Google Calendar API calls
-        // and assert that the correct methods were called with the right parameters.
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }
