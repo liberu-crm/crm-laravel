@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\Resources\ActivationResource\Pages;
-use App\Filament\Resources\ActivationResource\RelationManagers;
+use App\Filament\App\Resources\ActivationResource\Pages;
+use App\Filament\App\Resources\ActivationResource\RelationManagers;
 
 class ActivationResource extends Resource
 {
