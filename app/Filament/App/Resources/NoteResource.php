@@ -7,7 +7,7 @@ use App\Models\Note;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\App\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
