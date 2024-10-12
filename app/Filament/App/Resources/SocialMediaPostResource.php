@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\SocialMediaPostResource\Pages;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages;
 use App\Models\SocialMediaPost;
 use Filament\Forms;
 use Filament\Forms\Form;
