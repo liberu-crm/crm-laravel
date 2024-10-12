@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Task;
 use App\Notifications\TaskReminderNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReminderService
 {
@@ -15,16 +16,27 @@ class ReminderService
             ->get();
 
         foreach ($tasks as $task) {
-            $task->contact->notify(new TaskReminderNotification($task));
-            $task->update(['reminder_sent' => true]);
+            try {
+                $task->contact->notify(new TaskReminderNotification($task));
+                $task->update(['reminder_sent' => true]);
+                Log::info("Reminder sent successfully for task ID: {$task->id}");
+            } catch (\Exception $e) {
+                Log::error("Failed to send reminder for task ID: {$task->id}. Error: {$e->getMessage()}");
+            }
         }
     }
 
     public function scheduleReminder(Task $task, Carbon $reminderDate)
     {
-        $task->update([
-            'reminder_date' => $reminderDate,
-            'reminder_sent' => false,
-        ]);
+        try {
+            $task->update([
+                'reminder_date' => $reminderDate,
+                'reminder_sent' => false,
+            ]);
+            Log::info("Reminder scheduled successfully for task ID: {$task->id}");
+        } catch (\Exception $e) {
+            Log::error("Failed to schedule reminder for task ID: {$task->id}. Error: {$e->getMessage()}");
+            throw $e;
+        }
     }
 }
