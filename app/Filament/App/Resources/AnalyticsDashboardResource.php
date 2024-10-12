@@ -22,9 +22,9 @@ class AnalyticsDashboardResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            Widgets\ContactStatsOverview::class,
-            Widgets\SalesPipelineChart::class,
-            Widgets\CustomerEngagementChart::class,
+//            Widgets\ContactStatsOverview::class,
+//            Widgets\SalesPipelineChart::class,
+//            Widgets\CustomerEngagementChart::class,
         ];
     }
 
