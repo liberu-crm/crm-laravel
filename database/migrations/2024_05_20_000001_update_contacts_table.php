@@ -10,7 +10,7 @@ class UpdateContactsTable extends Migration
     {
         Schema::table('contacts', function (Blueprint $table) {
             $table->string('lifecycle_stage')->nullable();
-            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+//            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
         });
     }
 
