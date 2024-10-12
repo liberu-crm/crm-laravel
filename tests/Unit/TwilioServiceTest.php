@@ -1,5 +1,85 @@
 <?php
 
+namespace Tests\Unit;
+
+use Tests\TestCase;
+use App\Services\TwilioService;
+use Twilio\Rest\Client;
+use Mockery;
+use Twilio\Exceptions\TwilioException;
+use Illuminate\Support\Facades\Log;
+
+class TwilioServiceTest extends TestCase
+{
+    protected $twilioService;
+    protected $mockTwilioClient;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mockTwilioClient = Mockery::mock(Client::class);
+        $this->twilioService = new TwilioService();
+        $this->twilioService->setClient($this->mockTwilioClient);
+    }
+
+    // ... (existing test methods)
+
+    public function testSendSMSWithRetry()
+    {
+        $to = '+1234567890';
+        $message = 'Test message';
+
+        $this->mockTwilioClient->shouldReceive('messages->create')
+            ->times(2)
+            ->andThrow(new TwilioException('SMS failed'))
+            ->andReturn(true);
+
+        Log::shouldReceive('warning')->twice();
+        Log::shouldReceive('info')->once();
+
+        $result = $this->twilioService->sendSMS($to, $message);
+        $this->assertTrue($result);
+    }
+
+    public function testMakeCallWithRetry()
+    {
+        $to = '+1234567890';
+        $url = 'http://example.com/twiml';
+
+        $this->mockTwilioClient->shouldReceive('calls->create')
+            ->times(3)
+            ->andThrow(new TwilioException('Call failed'));
+
+        Log::shouldReceive('warning')->times(3);
+        Log::shouldReceive('error')->once();
+
+        $this->expectException(TwilioException::class);
+        $this->twilioService->makeCall($to, $url);
+    }
+
+    public function testHandleTwilioApiException()
+    {
+        $to = '+1234567890';
+        $message = 'Test message';
+
+        $this->mockTwilioClient->shouldReceive('messages->create')
+            ->once()
+            ->andThrow(new TwilioException('API Error'));
+
+        Log::shouldReceive('warning')->once();
+        Log::shouldReceive('error')->once();
+
+        $this->expectException(TwilioException::class);
+        $this->twilioService->sendSMS($to, $message);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+}
+
 
 namespace Tests\Unit;
 

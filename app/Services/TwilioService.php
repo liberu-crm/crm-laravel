@@ -4,6 +4,75 @@ namespace App\Services;
 
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;
+use Illuminate\Support\Facades\Log;
+
+class TwilioService
+{
+    protected $client;
+    protected $from_number;
+    protected $max_retries = 3;
+
+    public function __construct()
+    {
+        $this->client = new Client(
+            config('services.twilio.sid'),
+            config('services.twilio.auth_token')
+        );
+        $this->from_number = config('services.twilio.phone_number');
+    }
+
+    public function sendSMS($to, $message)
+    {
+        $attempts = 0;
+        while ($attempts < $this->max_retries) {
+            try {
+                $result = $this->client->messages->create($to, [
+                    'from' => $this->from_number,
+                    'body' => $message,
+                ]);
+                Log::info("SMS sent successfully to {$to}");
+                return $result;
+            } catch (TwilioException $e) {
+                $attempts++;
+                Log::warning("Twilio SMS Error (Attempt {$attempts}): " . $e->getMessage());
+                if ($attempts >= $this->max_retries) {
+                    Log::error("Failed to send SMS to {$to} after {$this->max_retries} attempts");
+                    throw $e;
+                }
+                sleep(2 ** $attempts); // Exponential backoff
+            }
+        }
+    }
+
+    public function makeCall($to, $url)
+    {
+        $attempts = 0;
+        while ($attempts < $this->max_retries) {
+            try {
+                $result = $this->client->calls->create($to, $this->from_number, [
+                    'url' => $url,
+                ]);
+                Log::info("Call initiated successfully to {$to}");
+                return $result;
+            } catch (TwilioException $e) {
+                $attempts++;
+                Log::warning("Twilio Call Error (Attempt {$attempts}): " . $e->getMessage());
+                if ($attempts >= $this->max_retries) {
+                    Log::error("Failed to initiate call to {$to} after {$this->max_retries} attempts");
+                    throw $e;
+                }
+                sleep(2 ** $attempts); // Exponential backoff
+            }
+        }
+    }
+
+    // ... (rest of the methods remain unchanged)
+}
+
+namespace App\Services;
+
+use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
 class TwilioService
 {
