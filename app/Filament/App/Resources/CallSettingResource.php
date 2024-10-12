@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\CallSettingResource\Pages;
+use App\Filament\App\Resources\CallSettingResource\Pages;
 use App\Models\CallSetting;
 use Filament\Forms;
 use Filament\Forms\Form;
