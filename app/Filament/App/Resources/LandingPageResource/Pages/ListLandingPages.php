@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources\LandingPagesResource\Pages;
+namespace App\Filament\App\Resources\LandingPageResource\Pages;
 
-use App\Filament\App\Resources\LandingPagesResource;
+use App\Filament\App\Resources\LandingPageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListLandingPagess extends ListRecords
+class ListLandingPages extends ListRecords
 {
-    protected static string $resource = LandingPagesResource::class;
+    protected static string $resource = LandingPageResource::class;
 
     protected function getHeaderActions(): array
     {
