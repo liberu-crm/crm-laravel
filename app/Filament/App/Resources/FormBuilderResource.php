@@ -2,12 +2,12 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Filament\App\Resources\FormBuilderResource\Pages;
+use App\Filament\Forms\FormBuilderResource\Pages;
 use App\Models\FormBuilder;
 use Filament\Forms;
-use Filament\App\Resources\Form;
+use Filament\Forms\Form;
 use Filament\App\Resources\Resource;
-use Filament\App\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class FormBuilderResource extends Resource

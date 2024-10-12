@@ -5,9 +5,9 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\CallSettingResource\Pages;
 use App\Models\CallSetting;
 use Filament\Forms;
-use Filament\App\Resources\Form;
+use Filament\Forms\Form;
 use Filament\App\Resources\Resource;
-use Filament\App\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class CallSettingResource extends Resource

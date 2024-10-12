@@ -5,9 +5,9 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\TicketResource\Pages;
 use App\Models\Ticket;
 use Filament\Forms;
-use Filament\App\Resources\Form;
+use Filament\Forms\Form;
 use Filament\App\Resources\Resource;
-use Filament\App\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class TicketResource extends Resource
