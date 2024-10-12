@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use App\Models\Note;
@@ -13,8 +13,8 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\NoteResource\Pages;
-use App\Filament\Resources\NoteResource\RelationManagers;
+use App\Filament\App\Resources\NoteResource\Pages;
+use App\Filament\App\Resources\NoteResource\RelationManagers;
 
 class NoteResource extends Resource
 {

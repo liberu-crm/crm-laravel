@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\TicketResource\Pages;
+use App\Filament\App\Resources\TicketResource\Pages;
 use App\Models\Ticket;
 use Filament\Forms;
 use Filament\Forms\Form;
