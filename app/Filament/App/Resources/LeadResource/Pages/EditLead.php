@@ -6,7 +6,7 @@ use App\Filament\App\Resources\LeadsResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditLeads extends EditRecord
+class EditLead extends EditRecord
 {
     protected static string $resource = LeadsResource::class;
 
