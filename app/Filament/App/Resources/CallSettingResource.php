@@ -14,7 +14,7 @@ class CallSettingResource extends Resource
 {
     protected static ?string $model = CallSetting::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
     public static function form(Form $form): Form
     {

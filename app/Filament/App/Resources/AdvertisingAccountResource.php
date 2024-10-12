@@ -16,7 +16,7 @@ class AdvertisingAccountResource extends Resource
 {
     protected static ?string $model = AdvertisingAccount::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-speakerphone';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
     protected static ?string $navigationGroup = 'Advertising';
 

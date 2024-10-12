@@ -14,7 +14,7 @@ class DashboardWidgetResource extends Resource
 {
     protected static ?string $model = DashboardWidget::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-template';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
     public static function form(Form $form): Form
     {
