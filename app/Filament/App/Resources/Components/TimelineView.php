@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Components;
+namespace App\Filament\App\Resources\Components;
 
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -13,8 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\OpportunityResource\Pages;
-use App\Filament\Resources\OpportunityResource\RelationManagers;
+use App\Filament\App\Resources\OpportunityResource\Pages;
+use App\Filament\App\Resources\OpportunityResource\RelationManagers;
 
 class OpportunityResource extends Resource
 {
