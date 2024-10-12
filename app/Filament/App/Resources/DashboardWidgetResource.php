@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\DashboardWidgetResource\Pages;
+use App\Filament\App\Resources\DashboardWidgetResource\Pages;
 use App\Models\DashboardWidget;
 use Filament\Forms;
 use Filament\Forms\Form;
