@@ -114,8 +114,12 @@ class Contact extends Model
                 ->orWhere('company_size', 'like', '%' . $search . '%')
                 ->orWhere('industry', 'like', '%' . $search . '%')
                 ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
+                ->orWhere('annual_revenue', 'like', '%' . $search . '%')
                 ->orWhere(function ($query) use ($search) {
                     $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                })
+                ->orWhereHas('company', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%');
                 });
         });
     }
