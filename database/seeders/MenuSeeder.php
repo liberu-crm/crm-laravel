@@ -16,9 +16,24 @@ class MenuSeeder extends Seeder
                 'order' => 1
             ],
             [
+                'name' => 'Submit a Ticket',
+                'url' => '/#submit-ticket',
+                'order' => 2
+            ],
+            [
+                'name' => 'Knowledge Base',
+                'url' => '/knowledge-base',
+                'order' => 3
+            ],
+            [
+                'name' => 'Request a Quote',
+                'url' => '/#request-quote',
+                'order' => 4
+            ],
+            [
                 'name' => 'Properties',
                 'url' => '/properties',
-                'order' => 2,
+                'order' => 5,
                 'children' => [
                     ['name' => 'For Sale', 'url' => '/properties/for-sale', 'order' => 1],
                     ['name' => 'For Rent', 'url' => '/properties/for-rent', 'order' => 2],
@@ -27,7 +42,7 @@ class MenuSeeder extends Seeder
             [
                 'name' => 'Services',
                 'url' => '/services',
-                'order' => 3,
+                'order' => 6,
                 'children' => [
                     ['name' => 'Buying', 'url' => '/services/buying', 'order' => 1],
                     ['name' => 'Selling', 'url' => '/services/selling', 'order' => 2],
@@ -37,17 +52,17 @@ class MenuSeeder extends Seeder
             [
                 'name' => 'About',
                 'url' => '/about',
-                'order' => 4
+                'order' => 7
             ],
             [
                 'name' => 'Contact',
                 'url' => '/contact',
-                'order' => 5
+                'order' => 8
             ],
             [
                 'name' => 'Calculators',
                 'url' => '/calculators',
-                'order' => 6
+                'order' => 9
             ],
         ];
 
