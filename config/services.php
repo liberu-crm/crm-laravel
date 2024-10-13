@@ -79,4 +79,21 @@ return [
         ];
     },
 
+    'quickbooks' => function () {
+        $config = OAuthConfiguration::getConfig('quickbooks');
+        return [
+            'client_id' => $config ? $config->client_id : env('QUICKBOOKS_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('QUICKBOOKS_CLIENT_SECRET'),
+            'redirect_uri' => $config && isset($config->additional_settings['redirect_uri']) ? $config->additional_settings['redirect_uri'] : env('QUICKBOOKS_REDIRECT_URI'),
+        ];
+    },
+    'xero' => function () {
+        $config = OAuthConfiguration::getConfig('xero');
+        return [
+            'client_id' => $config ? $config->client_id : env('XERO_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('XERO_CLIENT_SECRET'),
+            'redirect_uri' => $config && isset($config->additional_settings['redirect_uri']) ? $config->additional_settings['redirect_uri'] : env('XERO_REDIRECT_URI'),
+        ];
+    },
+
 ];
