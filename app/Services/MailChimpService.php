@@ -17,6 +17,12 @@ class MailChimpService
         ]);
     }
 
+    public function getLists()
+    {
+        $response = $this->client->lists->getAllLists();
+        return collect($response->lists)->pluck('name', 'id')->toArray();
+    }
+
     public function createList($name, $company, $permission_reminder, $from_name, $from_email)
     {
         return $this->client->lists->createList([
@@ -73,5 +79,24 @@ class MailChimpService
     public function sendCampaign($campaign_id)
     {
         return $this->client->campaigns->send($campaign_id);
+    }
+
+    public function getCampaigns()
+    {
+        $response = $this->client->campaigns->list();
+        return collect($response->campaigns)->map(function ($campaign) {
+            return [
+                'id' => $campaign->id,
+                'web_id' => $campaign->web_id,
+                'name' => $campaign->settings->title,
+                'subject_line' => $campaign->settings->subject_line,
+                'status' => $campaign->status,
+            ];
+        })->toArray();
+    }
+
+    public function getCampaignReport($campaign_id)
+    {
+        return $this->client->reports->getCampaignReport($campaign_id);
     }
 }
