@@ -2,50 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
-
 use App\Http\Controllers\OAuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\QuoteRequestController;
 
 // ... existing routes
 
-Route::get('/oauth/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
-Route::get('/oauth/{provider}/callback', [OAuthController::class, 'callback'])->name('oauth.callback');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('knowledge-base.index');
+Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show'])->name('knowledge-base.show');
+Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/reports/contact-interactions', [ReportController::class, 'generateContactInteractionsReport'])->name('reports.contact-interactions');
-    Route::get('/reports/sales-pipeline', [ReportController::class, 'generateSalesPipelineReport'])->name('reports.sales-pipeline');
-    Route::get('/reports/customer-engagement', [ReportController::class, 'generateCustomerEngagementReport'])->name('reports.customer-engagement');
-
-    Route::get('/analytics-dashboard', function () {
-        return view('analytics-dashboard');
-    })->name('analytics-dashboard');
-
-    // Team Invitation routes
-    Route::post('/team-invitations', [TeamInvitationController::class, 'sendInvitation'])->name('team-invitations.send');
-    Route::post('/team-invitations/{invitation}/accept', [TeamInvitationController::class, 'acceptInvitation'])->name('team-invitations.accept');
-
-    // Twilio routes
-    Route::prefix('twilio')->group(function () {
-        Route::post('/initiate-call', [TwilioController::class, 'initiateCall'])->name('twilio.initiate-call');
-        Route::post('/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
-        Route::post('/twiml/inbound', [TwilioController::class, 'handleInboundCall'])->name('twilio.twiml.inbound');
-        Route::post('/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->name('twilio.recording.callback');
-        Route::post('/start-recording', [TwilioController::class, 'startRecording'])->name('twilio.start-recording');
-        Route::post('/stop-recording', [TwilioController::class, 'stopRecording'])->name('twilio.stop-recording');
-    });
-});
-require __DIR__.'/socialstream.php';require __DIR__.'/socialstream.php';require __DIR__.'/socialstream.php';
+// ... rest of the existing routes
