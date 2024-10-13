@@ -9,6 +9,8 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Services\AuditLogService;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\LogSuccessfulLogin;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -24,8 +26,8 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\ContactUpdated' => [
             'App\Listeners\NotifyTeamMembers',
         ],
-        'Illuminate\Auth\Events\Login' => [
-            'App\Listeners\LogSuccessfulLogin',
+        Login::class => [
+            LogSuccessfulLogin::class,
         ],
         'Illuminate\Auth\Events\Logout' => [
             'App\Listeners\LogSuccessfulLogout',
@@ -38,10 +40,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Task::observe(TaskObserver::class);
-
-        Event::listen('Illuminate\Auth\Events\Login', function ($event) {
-            app(AuditLogService::class)->log('login', 'User logged in');
-        });
 
         Event::listen('Illuminate\Auth\Events\Logout', function ($event) {
             app(AuditLogService::class)->log('logout', 'User logged out');
