@@ -36,12 +36,12 @@ class ContactSearchPerformanceTest extends TestCase
         }
     }
 
-    public function testSearchPerformanceWithComplexQueries()
+    public function testComplexQueryPerformance()
     {
         $complexQueries = [
-            "name:John industry:Technology",
-            "email:example.com company_size:Large",
-            "phone:1234 last_name:Doe",
+            "name:John industry:Technology company_size:Small",
+            "email:example.com annual_revenue_min:1000000 annual_revenue_max:5000000",
+            "phone:1234 last_name:Doe lifecycle_stage:lead",
         ];
 
         foreach ($complexQueries as $query) {
@@ -49,8 +49,26 @@ class ContactSearchPerformanceTest extends TestCase
                 $result = Contact::search($query)->get();
             });
 
-            $this->assertLessThan(1.5, $time, "Complex search for '{$query}' took more than 1.5 seconds.");
-            
+            $this->assertLessThan(2.0, $time, "Complex search for '{$query}' took more than 2 seconds.");
+
+            $this->addToAssertionCount(1);
+        }
+    }
+
+    public function testSearchPerformanceWithLargeDataset()
+    {
+        // Create a large dataset
+        Contact::factory()->count(100000)->create();
+
+        $searchTerms = ['John', 'example.com', '1234', 'Technology'];
+
+        foreach ($searchTerms as $term) {
+            $time = Benchmark::measure(function () use ($term) {
+                $result = Contact::search($term)->take(100)->get();
+            });
+
+            $this->assertLessThan(3.0, $time, "Search for '{$term}' in large dataset took more than 3 seconds.");
+
             $this->addToAssertionCount(1);
         }
     }

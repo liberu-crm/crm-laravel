@@ -12,17 +12,22 @@ class LeadFormController extends Controller
     {
         $validatedData = $request->validate($this->getValidationRules($leadForm));
 
+        $contact = $this->createOrUpdateContact($validatedData);
+
         $lead = Lead::create([
             'status' => 'new',
             'source' => 'landing_page',
-            'contact_id' => $this->createOrUpdateContact($validatedData),
+            'contact_id' => $contact->id,
             'user_id' => $leadForm->landingPage->campaign->user_id,
+            'potential_value' => $validatedData['potential_value'] ?? null,
+            'expected_close_date' => $validatedData['expected_close_date'] ?? null,
+            'lifecycle_stage' => 'lead',
         ]);
 
         // Trigger workflow actions
-        // TODO: Implement workflow triggering
+        $this->triggerWorkflow($lead);
 
-        return response()->json(['message' => 'Form submitted successfully']);
+        return response()->json(['message' => 'Form submitted successfully', 'lead_id' => $lead->id]);
     }
 
     private function getValidationRules(LeadForm $leadForm): array
@@ -36,8 +41,23 @@ class LeadFormController extends Controller
 
     private function createOrUpdateContact(array $data)
     {
-        // TODO: Implement contact creation or update logic
-        // This should create a new contact or update an existing one based on the email address
-        // Return the contact ID
+        $contact = Contact::updateOrCreate(
+            ['email' => $data['email']],
+            [
+                'name' => $data['name'] ?? null,
+                'last_name' => $data['last_name'] ?? null,
+                'phone_number' => $data['phone_number'] ?? null,
+                'company_size' => $data['company_size'] ?? null,
+                'industry' => $data['industry'] ?? null,
+            ]
+        );
+        return $contact;
+    }
+
+    private function triggerWorkflow(Lead $lead)
+    {
+        // TODO: Implement workflow triggering logic
+        // This method should handle any automated actions or notifications
+        // based on the newly created or updated lead
     }
 }
