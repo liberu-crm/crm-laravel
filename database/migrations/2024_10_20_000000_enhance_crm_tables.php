@@ -28,18 +28,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('deals', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->decimal('value', 15, 2);
-            $table->string('stage');
-            $table->date('close_date')->nullable();
-            $table->integer('probability');
-//            $table->foreignId('contact_id')->constrained('contacts');
-            $table->foreignId('user_id')->constrained('users');
-            $table->timestamps();
-        });
-
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('type');
