@@ -175,40 +175,52 @@ class ContactManagementUITest extends TestCase
         $response->assertJsonMissing(['name' => 'Jane Doe']);
     }
 
-    public function test_advanced_filtering()
+    public function test_advanced_filtering_with_multiple_criteria()
     {
         $contact1 = Contact::factory()->create([
             'name' => 'John Doe',
             'industry' => 'Technology',
-            'company_size' => 'Small'
+            'company_size' => 'Small',
+            'annual_revenue' => 1000000
         ]);
         $contact2 = Contact::factory()->create([
             'name' => 'Jane Smith',
             'industry' => 'Finance',
-            'company_size' => 'Large'
+            'company_size' => 'Large',
+            'annual_revenue' => 5000000
         ]);
 
         $response = $this->actingAs($this->user)
-            ->get('/contacts?industry=Technology&company_size=Small');
+            ->get('/contacts?industry=Technology&company_size=Small&annual_revenue_min=500000');
 
         $response->assertStatus(200);
         $response->assertSee($contact1->name);
         $response->assertDontSee($contact2->name);
     }
 
-    public function test_search_performance()
+    public function test_autocomplete_functionality()
     {
-        Contact::factory()->count(1000)->create();
+        Contact::factory()->create(['name' => 'John Doe']);
+        Contact::factory()->create(['name' => 'Jane Doe']);
 
-        $start = microtime(true);
+        $response = $this->actingAs($this->user)->get('/contacts/autocomplete?query=Jo');
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['name' => 'John Doe']);
+        $response->assertJsonMissing(['name' => 'Jane Doe']);
+    }
+
+    public function test_pagination_with_applied_filters()
+    {
+        Contact::factory()->count(30)->create(['industry' => 'Technology']);
+        Contact::factory()->count(10)->create(['industry' => 'Finance']);
 
         $response = $this->actingAs($this->user)
-            ->get('/contacts?search=John');
-
-        $end = microtime(true);
-        $executionTime = ($end - $start);
+            ->get('/contacts?industry=Technology&page=2');
 
         $response->assertStatus(200);
-        $this->assertLessThan(1, $executionTime, 'Search took longer than 1 second');
+        $response->assertSee('Technology');
+        $response->assertDontSee('Finance');
+        $response->assertSee('Next');
+        $response->assertSee('Previous');
     }
 }

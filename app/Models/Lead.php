@@ -67,4 +67,22 @@ class Lead extends Model
             $this->save();
         }
     }
+
+public function scopeSearch($query, $search)
+{
+    return $query->where(function ($query) use ($search) {
+        $query->where('status', 'like', '%' . $search . '%')
+            ->orWhere('source', 'like', '%' . $search . '%')
+            ->orWhere('potential_value', 'like', '%' . $search . '%')
+            ->orWhere('expected_close_date', 'like', '%' . $search . '%')
+            ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
+            ->orWhereHas('contact', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            });
+    });
+}
 }
