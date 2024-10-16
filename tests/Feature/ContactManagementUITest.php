@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\CustomField;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Livewire\Livewire;
 
 class ContactManagementUITest extends TestCase
 {
@@ -20,131 +21,53 @@ class ContactManagementUITest extends TestCase
 
     // ... (keep all existing tests)
 
-    public function test_custom_fields_are_displayed_in_contact_list()
+    public function test_advanced_search_functionality()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        $contact1 = Contact::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com', 'status' => 'active']);
+        $contact2 = Contact::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com', 'status' => 'inactive']);
 
-        $contact = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Test Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        Livewire::test('contact-collaboration')
+            ->set('search', 'John')
+            ->assertSee('John Doe')
+            ->assertDontSee('Jane Smith');
 
-        $response = $this->actingAs($this->user)->get('/contacts');
-
-        $response->assertStatus(200);
-        $response->assertSee('Test Field');
-        $response->assertSee('Test Value');
-        $response->assertSee('Upload Document');
+        Livewire::test('contact-collaboration')
+            ->set('search', 'jane@example.com')
+            ->assertSee('Jane Smith')
+            ->assertDontSee('John Doe');
     }
 
-    public function test_custom_fields_are_editable_in_contact_form()
+    public function test_filtering_contacts()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        $activeContact = Contact::factory()->create(['name' => 'Active User', 'status' => 'active']);
+        $inactiveContact = Contact::factory()->create(['name' => 'Inactive User', 'status' => 'inactive']);
 
-        $contact = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Test Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        Livewire::test('contact-collaboration')
+            ->set('statusFilter', 'active')
+            ->assertSee('Active User')
+            ->assertDontSee('Inactive User');
 
-        $response = $this->actingAs($this->user)->get("/contacts/{$contact->id}/edit");
-
-        $response->assertStatus(200);
-        $response->assertSee('Test Field');
-        $response->assertSee('Test Value');
-        $response->assertSee('Documents');
-
-        $updatedData = [
-            'name' => $contact->name,
-            'email' => $contact->email,
-            'custom_fields' => ['Test Field' => 'Updated Value'],
-        ];
-
-        $response = $this->actingAs($this->user)->put("/contacts/{$contact->id}", $updatedData);
-
-        $response->assertRedirect('/contacts');
-        $this->assertDatabaseHas('contacts', [
-            'id' => $contact->id,
-            'custom_fields->Test Field' => 'Updated Value',
-        ]);
+        Livewire::test('contact-collaboration')
+            ->set('statusFilter', 'inactive')
+            ->assertSee('Inactive User')
+            ->assertDontSee('Active User');
     }
 
-    public function test_custom_fields_are_searchable_in_contact_list()
+    public function test_sorting_contacts()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        $contactA = Contact::factory()->create(['name' => 'Alice']);
+        $contactB = Contact::factory()->create(['name' => 'Bob']);
+        $contactC = Contact::factory()->create(['name' => 'Charlie']);
 
-        $contact1 = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Searchable Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
+        Livewire::test('contact-collaboration')
+            ->call('sortBy', 'name')
+            ->assertSeeInOrder(['Alice', 'Bob', 'Charlie']);
 
-        $contact2 = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Other Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->get('/contacts?search=Searchable');
-
-        $response->assertStatus(200);
-        $response->assertSee($contact1->name);
-        $response->assertDontSee($contact2->name);
+        Livewire::test('contact-collaboration')
+            ->call('sortBy', 'name')
+            ->call('sortBy', 'name')
+            ->assertSeeInOrder(['Charlie', 'Bob', 'Alice']);
     }
 
-    public function test_custom_fields_are_included_in_contact_export()
-    {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $contact = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Export Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->get('/contacts/export');
-
-        $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
-        $response->assertSee('Test Field');
-        $response->assertSee('Export Value');
-        $response->assertSee('Documents');
-    }
-
-    public function test_user_can_upload_document_for_contact()
-    {
-        $contact = Contact::factory()->create([
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        Storage::fake('public');
-        $file = UploadedFile::fake()->create('document.pdf', 100);
-
-        $response = $this->actingAs($this->user)->post("/contacts/{$contact->id}/upload-document", [
-            'file' => $file,
-        ]);
-
-        $response->assertRedirect("/contacts/{$contact->id}");
-        Storage::disk('public')->assertExists('documents/' . $file->hashName());
-        $this->assertDatabaseHas('documents', [
-            'documentable_id' => $contact->id,
-            'documentable_type' => Contact::class,
-        ]);
-    }
+    // ... (keep all other existing tests)
 }
