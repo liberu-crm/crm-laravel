@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Lead;
 use App\Models\Contact;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Livewire\Livewire;
 
 class LeadManagementUITest extends TestCase
 {
@@ -128,5 +130,36 @@ class LeadManagementUITest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($lead1->contact->name);
         $response->assertDontSee($lead2->contact->name);
+      
+    public function test_lead_advanced_filtering()
+    {
+        $lead1 = Lead::factory()->create([
+            'status' => 'new',
+            'source' => 'website',
+            'potential_value' => 10000,
+        ]);
+        $lead2 = Lead::factory()->create([
+            'status' => 'qualified',
+            'source' => 'referral',
+            'potential_value' => 50000,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->get('/leads?status=qualified&source=referral&potential_value_min=40000&potential_value_max=60000');
+
+        $response->assertStatus(200);
+        $response->assertSee($lead2->contact->name);
+        $response->assertDontSee($lead1->contact->name);
+    }
+
+    public function test_lead_information_in_task_list()
+    {
+        $lead = Lead::factory()->create(['name' => 'Test Lead']);
+        $task = Task::factory()->create(['lead_id' => $lead->id, 'name' => 'Test Task']);
+
+        Livewire::test('task-list')
+            ->set('leadFilter', $lead->id)
+            ->assertSee('Test Task')
+            ->assertSee('Test Lead');
     }
 }
