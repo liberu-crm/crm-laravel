@@ -22,12 +22,14 @@ class Lead extends Model
         'user_id',
         'lifecycle_stage',
         'custom_fields',
+        'score',
     ];
 
     protected $casts = [
         'expected_close_date' => 'date',
         'potential_value' => 'decimal:2',
         'custom_fields' => 'array',
+        'score' => 'integer',
     ];
 
     const LIFECYCLE_STAGES = [
@@ -61,6 +63,33 @@ class Lead extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    public function calculateScore(): int
+    {
+        $score = 0;
+
+        // Score based on potential value
+        $score += min(100, $this->potential_value / 1000);
+
+        // Score based on lifecycle stage
+        $lifecycleStageScores = [
+            'subscriber' => 10,
+            'lead' => 20,
+            'marketing_qualified_lead' => 40,
+            'sales_qualified_lead' => 60,
+            'opportunity' => 80,
+        ];
+        $score += $lifecycleStageScores[$this->lifecycle_stage] ?? 0;
+
+        // Score based on activity count
+        $activityCount = $this->activities()->count();
+        $score += min(50, $activityCount * 5);
+
+        // Update the score
+        $this->update(['score' => $score]);
+
+        return $score;
     }
 
     public function setLifecycleStageAttribute($value)
