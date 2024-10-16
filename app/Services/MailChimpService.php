@@ -129,7 +129,18 @@ class MailChimpService
 
     public function getCampaignReport($campaign_id)
     {
-        return $this->client->reports->getCampaignReport($campaign_id);
+        $report = $this->client->reports->getCampaignReport($campaign_id);
+
+        return [
+            'campaign_id' => $campaign_id,
+            'emails_sent' => $report->emails_sent,
+            'unique_opens' => $report->opens->unique_opens,
+            'open_rate' => $report->opens->open_rate,
+            'clicks' => $report->clicks->clicks_total,
+            'click_rate' => $report->clicks->click_rate,
+            'unsubscribes' => $report->unsubscribed,
+            'bounce_rate' => $report->bounces->hard_bounces + $report->bounces->soft_bounces,
+        ];
     }
 
     public function getABTestResults($campaign_id)
@@ -149,5 +160,23 @@ class MailChimpService
             'winning_metric' => $abResults->winning_metric,
             'winning_metric_value' => $abResults->winning_metric_value,
         ];
+    }
+
+    public function trackEmailOpen($campaign_id, $email_id)
+    {
+        // Implement tracking for email opens
+        // This method would typically be called when an email is opened
+        // You might need to set up a webhook or use a tracking pixel for this
+        // For now, we'll just log the open event
+        \Log::info("Email opened: Campaign ID {$campaign_id}, Email ID {$email_id}");
+    }
+
+    public function trackEmailClick($campaign_id, $email_id, $url)
+    {
+        // Implement tracking for email clicks
+        // This method would typically be called when a link in an email is clicked
+        // You might need to set up a webhook or use tracked links for this
+        // For now, we'll just log the click event
+        \Log::info("Email link clicked: Campaign ID {$campaign_id}, Email ID {$email_id}, URL: {$url}");
     }
 }
