@@ -21,11 +21,13 @@ class Lead extends Model
         'contact_id',
         'user_id',
         'lifecycle_stage',
+        'custom_fields',
     ];
 
     protected $casts = [
         'expected_close_date' => 'date',
         'potential_value' => 'decimal:2',
+        'custom_fields' => 'array',
     ];
 
     const LIFECYCLE_STAGES = [
@@ -68,21 +70,24 @@ class Lead extends Model
         }
     }
 
-public function scopeSearch($query, $search)
-{
-    return $query->where(function ($query) use ($search) {
-        $query->where('status', 'like', '%' . $search . '%')
-            ->orWhere('source', 'like', '%' . $search . '%')
-            ->orWhere('potential_value', 'like', '%' . $search . '%')
-            ->orWhere('expected_close_date', 'like', '%' . $search . '%')
-            ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
-            ->orWhereHas('contact', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            });
-    });
-}
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->where('status', 'like', '%' . $search . '%')
+                ->orWhere('source', 'like', '%' . $search . '%')
+                ->orWhere('potential_value', 'like', '%' . $search . '%')
+                ->orWhere('expected_close_date', 'like', '%' . $search . '%')
+                ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
+                ->orWhereHas('contact', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhere(function ($query) use ($search) {
+                    $query->whereJsonContains('custom_fields', $search);
+                });
+        });
+    }
 }
