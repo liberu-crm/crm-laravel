@@ -45,9 +45,19 @@ class ViewABTestResults extends Page
                     'version_b' => $results['opens_b'],
                 ],
                 [
+                    'metric' => 'Open Rate',
+                    'version_a' => number_format($results['opens_a'] / $results['emails_sent'] * 100, 2) . '%',
+                    'version_b' => number_format($results['opens_b'] / $results['emails_sent'] * 100, 2) . '%',
+                ],
+                [
                     'metric' => 'Clicks',
                     'version_a' => $results['clicks_a'],
                     'version_b' => $results['clicks_b'],
+                ],
+                [
+                    'metric' => 'Click Rate',
+                    'version_a' => number_format($results['clicks_a'] / $results['opens_a'] * 100, 2) . '%',
+                    'version_b' => number_format($results['clicks_b'] / $results['opens_b'] * 100, 2) . '%',
                 ],
             ]);
     }
