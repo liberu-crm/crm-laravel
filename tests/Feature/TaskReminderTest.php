@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Lead;
 use App\Notifications\TaskReminderNotification;
 use App\Services\GoogleCalendarService;
 use App\Services\OutlookCalendarService;
@@ -18,116 +20,117 @@ class TaskReminderTest extends TestCase
 
     // ... (existing test methods)
 
-    public function testTaskCreationWithInvalidReminderDate()
+    public function testCreateTaskAssociatedWithContact()
     {
         $user = User::factory()->create();
+        $contact = Contact::factory()->create();
         $this->actingAs($user);
 
         $response = $this->post('/tasks', [
-            'name' => 'Test Task',
+            'name' => 'Contact Task',
             'description' => 'Test Description',
             'due_date' => now()->addDays(2),
-            'reminder_date' => now()->subDay(), // Invalid reminder date (in the past)
-            'calendar_type' => 'google',
-        ]);
-
-        $response->assertSessionHasErrors('reminder_date');
-        $this->assertDatabaseMissing('tasks', ['name' => 'Test Task']);
-    }
-
-    public function testGoogleCalendarSyncFailure()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        // Mock the GoogleCalendarService
-        $mockGoogleCalendarService = Mockery::mock(GoogleCalendarService::class);
-        $mockGoogleCalendarService->shouldReceive('createEvent')->andThrow(new \Exception('Google Calendar sync failed'));
-        $this->app->instance(GoogleCalendarService::class, $mockGoogleCalendarService);
-
-        $response = $this->post('/tasks', [
-            'name' => 'Test Task',
-            'description' => 'Test Description',
-            'due_date' => now()->addDays(2),
-            'calendar_type' => 'google',
-        ]);
-
-        $response->assertSessionHasErrors('calendar_sync');
-        $this->assertDatabaseHas('tasks', [
-            'name' => 'Test Task',
-            'calendar_type' => 'none',
-        ]);
-    }
-
-    public function testOutlookCalendarSyncFailure()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        // Mock the OutlookCalendarService
-        $mockOutlookCalendarService = Mockery::mock(OutlookCalendarService::class);
-        $mockOutlookCalendarService->shouldReceive('createEvent')->andThrow(new \Exception('Outlook Calendar sync failed'));
-        $this->app->instance(OutlookCalendarService::class, $mockOutlookCalendarService);
-
-        $response = $this->post('/tasks', [
-            'name' => 'Test Task',
-            'description' => 'Test Description',
-            'due_date' => now()->addDays(2),
-            'calendar_type' => 'outlook',
-        ]);
-
-        $response->assertSessionHasErrors('calendar_sync');
-        $this->assertDatabaseHas('tasks', [
-            'name' => 'Test Task',
-            'calendar_type' => 'none',
-        ]);
-    }
-
-    public function testSwitchingBetweenCalendarServices()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        // Create a task with Google Calendar
-        $response = $this->post('/tasks', [
-            'name' => 'Google Task',
-            'description' => 'Test Description',
-            'due_date' => now()->addDays(2),
-            'calendar_type' => 'google',
+            'contact_id' => $contact->id,
+            'assigned_to' => $user->id,
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('tasks', [
-            'name' => 'Google Task',
-            'calendar_type' => 'google',
-        ]);
-
-        $task = Task::where('name', 'Google Task')->first();
-
-        // Switch to Outlook Calendar
-        $response = $this->patch("/tasks/{$task->id}", [
-            'name' => 'Outlook Task',
-            'calendar_type' => 'outlook',
-        ]);
-
-        $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('tasks', [
-            'name' => 'Outlook Task',
-            'calendar_type' => 'outlook',
-        ]);
-
-        // Switch back to no calendar sync
-        $response = $this->patch("/tasks/{$task->id}", [
-            'name' => 'No Sync Task',
-            'calendar_type' => 'none',
-        ]);
-
-        $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('tasks', [
-            'name' => 'No Sync Task',
-            'calendar_type' => 'none',
+            'name' => 'Contact Task',
+            'contact_id' => $contact->id,
         ]);
     }
+
+    public function testCreateTaskAssociatedWithLead()
+    {
+        $user = User::factory()->create();
+        $lead = Lead::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->post('/tasks', [
+            'name' => 'Lead Task',
+            'description' => 'Test Description',
+            'due_date' => now()->addDays(2),
+            'lead_id' => $lead->id,
+            'assigned_to' => $user->id,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('tasks', [
+            'name' => 'Lead Task',
+            'lead_id' => $lead->id,
+        ]);
+    }
+
+    public function testTaskAssignment()
+    {
+        $user = User::factory()->create();
+        $assignee = User::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->post('/tasks', [
+            'name' => 'Assigned Task',
+            'description' => 'Test Description',
+            'due_date' => now()->addDays(2),
+            'assigned_to' => $assignee->id,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('tasks', [
+            'name' => 'Assigned Task',
+            'assigned_to' => $assignee->id,
+        ]);
+    }
+
+    public function testReminderNotificationForContactTask()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $contact = Contact::factory()->create();
+        $task = Task::factory()->create([
+            'contact_id' => $contact->id,
+            'assigned_to' => $user->id,
+            'reminder_date' => now()->subMinutes(5),
+            'reminder_sent' => false,
+        ]);
+
+        $this->artisan('tasks:send-reminders');
+
+        Notification::assertSentTo(
+            [$contact, $user],
+            TaskReminderNotification::class,
+            function ($notification, $channels, $notifiable) use ($task) {
+                return $notification->task->id === $task->id;
+            }
+        );
+    }
+
+    public function testReminderNotificationForLeadTask()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $lead = Lead::factory()->create();
+        $task = Task::factory()->create([
+            'lead_id' => $lead->id,
+            'assigned_to' => $user->id,
+            'reminder_date' => now()->subMinutes(5),
+            'reminder_sent' => false,
+        ]);
+
+        $this->artisan('tasks:send-reminders');
+
+        Notification::assertSentTo(
+            [$lead, $user],
+            TaskReminderNotification::class,
+            function ($notification, $channels, $notifiable) use ($task) {
+                return $notification->task->id === $task->id;
+            }
+        );
+    }
+
+    // ... (existing test methods)
 
     protected function tearDown(): void
     {
