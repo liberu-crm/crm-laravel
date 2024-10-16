@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\OpportunityResource\Pages;
 use App\Filament\App\Resources\OpportunityResource\RelationManagers;
 
+use Illuminate\Contracts\View\View;
+
 class OpportunityResource extends Resource
 {
     protected static ?string $model = Opportunity::class;
@@ -77,5 +79,10 @@ class OpportunityResource extends Resource
             'create' => Pages\CreateOpportunity::route('/create'),
             'edit' => Pages\EditOpportunity::route('/{record}/edit'),
         ];
+    }
+
+    public static function getPipelineView(): View
+    {
+        return view('livewire.opportunity-pipeline');
     }
 }
