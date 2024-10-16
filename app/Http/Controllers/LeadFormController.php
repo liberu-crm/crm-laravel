@@ -56,8 +56,17 @@ class LeadFormController extends Controller
 
     private function triggerWorkflow(Lead $lead)
     {
-        // TODO: Implement workflow triggering logic
-        // This method should handle any automated actions or notifications
-        // based on the newly created or updated lead
+        $workflows = Workflow::whereJsonContains('triggers->type', 'lead_created')->get();
+
+        foreach ($workflows as $workflow) {
+            $this->executeWorkflowActions($workflow, $lead);
+        }
+    }
+
+    private function executeWorkflowActions(Workflow $workflow, Lead $lead)
+    {
+        foreach ($workflow->actions as $action) {
+            ExecuteWorkflowAction::dispatch($action, $lead);
+        }
     }
 }

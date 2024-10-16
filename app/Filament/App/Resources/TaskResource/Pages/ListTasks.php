@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\TaskResource\Pages;
 use App\Filament\App\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\SelectFilter;
 
 class ListTasks extends ListRecords
 {
@@ -14,6 +15,15 @@ class ListTasks extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getTableFilters(): array
+    {
+        return [
+            SelectFilter::make('workflow')
+                ->relationship('workflow', 'name')
+                ->label('Workflow'),
         ];
     }
 }
