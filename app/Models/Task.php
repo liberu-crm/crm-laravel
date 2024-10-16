@@ -19,6 +19,7 @@ class Task extends Model
         'due_date',
         'status',
         'contact_id',
+        'lead_id',
         'company_id',
         'opportunity_id',
         'reminder_date',
@@ -26,16 +27,23 @@ class Task extends Model
         'google_event_id',
         'outlook_event_id',
         'calendar_type',
+        'assigned_to',
     ];
 
     protected $casts = [
         'reminder_date' => 'datetime',
         'reminder_sent' => 'boolean',
+        'due_date' => 'datetime',
     ];
 
     public function contact()
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class);
     }
 
     public function company()
@@ -46,6 +54,11 @@ class Task extends Model
     public function opportunity()
     {
         return $this->belongsTo(Opportunity::class);
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function syncWithCalendar()
@@ -76,5 +89,28 @@ class Task extends Model
             return app(OutlookCalendarService::class);
         }
         return null;
+    }
+
+    public function assign(User $user)
+    {
+        $this->assigned_to = $user->id;
+        $this->save();
+    }
+
+    public function markAsComplete()
+    {
+        $this->status = 'completed';
+        $this->save();
+    }
+
+    public function markAsIncomplete()
+    {
+        $this->status = 'incomplete';
+        $this->save();
+    }
+
+    public function isOverdue()
+    {
+        return $this->due_date && $this->due_date->isPast() && $this->status !== 'completed';
     }
 }
