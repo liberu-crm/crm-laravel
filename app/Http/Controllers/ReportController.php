@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportingService;
+use App\Services\MailChimpService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     protected $reportingService;
+    protected $mailChimpService;
 
-    public function __construct(ReportingService $reportingService)
+    public function __construct(ReportingService $reportingService, MailChimpService $mailChimpService)
     {
         $this->reportingService = $reportingService;
+        $this->mailChimpService = $mailChimpService;
     }
 
     public function generateContactInteractionsReport(Request $request)
@@ -30,5 +33,12 @@ class ReportController extends Controller
     {
         $data = $this->reportingService->getCustomerEngagementData($request->all());
         return view('reports.customer-engagement', compact('data'));
+    }
+
+    public function generateABTestResultsReport(Request $request)
+    {
+        $campaignId = $request->input('campaign_id');
+        $data = $this->mailChimpService->getABTestResults($campaignId);
+        return view('reports.ab-test-results', compact('data'));
     }
 }
