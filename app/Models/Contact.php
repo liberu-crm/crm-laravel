@@ -117,23 +117,45 @@ class Contact extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where(function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                ->orWhere('last_name', 'like', '%' . $search . '%')
-                ->orWhere('email', 'like', '%' . $search . '%')
-                ->orWhere('phone_number', 'like', '%' . $search . '%')
+            $query->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
                 ->orWhere('company_size', 'like', '%' . $search . '%')
-                ->orWhere('industry', 'like', '%' . $search . '%')
-                ->orWhere('lifecycle_stage', 'like', '%' . $search . '%')
                 ->orWhere('annual_revenue', 'like', '%' . $search . '%')
-                ->orWhere(function ($query) use ($search) {
-                    $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
-                })
                 ->orWhereHas('company', function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->whereFullText('name', $search);
                 })
                 ->orWhere(function ($query) use ($search) {
                     $query->whereJsonContains('custom_fields', $search);
                 });
         });
+    }
+
+    public function scopeFilterByStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    public function scopeFilterBySource($query, $source)
+    {
+        return $query->where('source', $source);
+    }
+
+    public function scopeFilterByLifecycleStage($query, $stage)
+    {
+        return $query->where('lifecycle_stage', $stage);
+    }
+
+    public function scopeFilterByIndustry($query, $industry)
+    {
+        return $query->where('industry', $industry);
+    }
+
+    public function scopeFilterByCompanySize($query, $size)
+    {
+        return $query->where('company_size', $size);
+    }
+
+    public function scopeFilterByAnnualRevenue($query, $min, $max)
+    {
+        return $query->whereBetween('annual_revenue', [$min, $max]);
     }
 }
