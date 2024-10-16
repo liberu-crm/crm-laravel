@@ -5,8 +5,7 @@ namespace App\Filament\App\Resources\OpportunityResource\Pages;
 use App\Filament\App\Resources\OpportunityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-
-use Illuminate\Contracts\View\View;
+use Filament\Tables\Table;
 
 class ListOpportunities extends ListRecords
 {
@@ -19,8 +18,8 @@ class ListOpportunities extends ListRecords
         ];
     }
 
-    public function table(): View
+    public function table(Table $table): Table
     {
-        return OpportunityResource::getPipelineView();
+        return OpportunityResource::getPipelineTable($table);
     }
 }
