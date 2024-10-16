@@ -53,6 +53,16 @@ class Lead extends Model
         return $this->morphMany(Activity::class, 'activitable');
     }
 
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
     public function setLifecycleStageAttribute($value)
     {
         if (!in_array($value, self::LIFECYCLE_STAGES)) {

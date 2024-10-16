@@ -70,6 +70,11 @@ class Contact extends Model
         return $this->hasMany(CallLog::class);
     }
 
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
     /**
      * The "booted" method of the model.
      *

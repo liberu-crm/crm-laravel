@@ -39,6 +39,7 @@ class ContactManagementUITest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Test Field');
         $response->assertSee('Test Value');
+        $response->assertSee('Upload Document');
     }
 
     public function test_custom_fields_are_editable_in_contact_form()
@@ -60,6 +61,7 @@ class ContactManagementUITest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Test Field');
         $response->assertSee('Test Value');
+        $response->assertSee('Documents');
 
         $updatedData = [
             'name' => $contact->name,
@@ -122,5 +124,27 @@ class ContactManagementUITest extends TestCase
         $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
         $response->assertSee('Test Field');
         $response->assertSee('Export Value');
+        $response->assertSee('Documents');
+    }
+
+    public function test_user_can_upload_document_for_contact()
+    {
+        $contact = Contact::factory()->create([
+            'team_id' => $this->user->currentTeam->id,
+        ]);
+
+        Storage::fake('public');
+        $file = UploadedFile::fake()->create('document.pdf', 100);
+
+        $response = $this->actingAs($this->user)->post("/contacts/{$contact->id}/upload-document", [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect("/contacts/{$contact->id}");
+        Storage::disk('public')->assertExists('documents/' . $file->hashName());
+        $this->assertDatabaseHas('documents', [
+            'documentable_id' => $contact->id,
+            'documentable_type' => Contact::class,
+        ]);
     }
 }
