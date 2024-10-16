@@ -8,6 +8,26 @@ use Illuminate\Http\Request;
 
 class LeadFormController extends Controller
 {
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Lead;
+use App\Models\LeadForm;
+use App\Models\Contact;
+use App\Models\Workflow;
+use App\Services\LeadScoringService;
+use Illuminate\Http\Request;
+
+class LeadFormController extends Controller
+{
+    protected $leadScoringService;
+
+    public function __construct(LeadScoringService $leadScoringService)
+    {
+        $this->leadScoringService = $leadScoringService;
+    }
+
     public function submit(Request $request, LeadForm $leadForm)
     {
         $validatedData = $request->validate($this->getValidationRules($leadForm));
@@ -23,6 +43,9 @@ class LeadFormController extends Controller
             'expected_close_date' => $validatedData['expected_close_date'] ?? null,
             'lifecycle_stage' => 'lead',
         ]);
+
+        // Score the new lead
+        $this->leadScoringService->scoreLeads($lead);
 
         // Trigger workflow actions
         $this->triggerWorkflow($lead);
