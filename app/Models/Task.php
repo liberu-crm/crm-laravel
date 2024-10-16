@@ -23,6 +23,9 @@ class Task extends Model
         'opportunity_id',
         'reminder_date',
         'reminder_sent',
+        'google_event_id',
+        'outlook_event_id',
+        'calendar_type',
     ];
 
     protected $casts = [
@@ -43,5 +46,35 @@ class Task extends Model
     public function opportunity()
     {
         return $this->belongsTo(Opportunity::class);
+    }
+
+    public function syncWithCalendar()
+    {
+        $calendarService = $this->getCalendarService();
+        if ($calendarService) {
+            if ($this->google_event_id || $this->outlook_event_id) {
+                $calendarService->updateEvent($this);
+            } else {
+                $calendarService->createEvent($this);
+            }
+        }
+    }
+
+    public function deleteFromCalendar()
+    {
+        $calendarService = $this->getCalendarService();
+        if ($calendarService && ($this->google_event_id || $this->outlook_event_id)) {
+            $calendarService->deleteEvent($this);
+        }
+    }
+
+    protected function getCalendarService()
+    {
+        if ($this->calendar_type === 'google') {
+            return app(GoogleCalendarService::class);
+        } elseif ($this->calendar_type === 'outlook') {
+            return app(OutlookCalendarService::class);
+        }
+        return null;
     }
 }
