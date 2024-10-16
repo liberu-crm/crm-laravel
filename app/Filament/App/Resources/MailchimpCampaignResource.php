@@ -24,9 +24,25 @@ class MailchimpCampaignResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'regular' => 'Regular',
+                        'abtest' => 'A/B Test',
+                    ])
+                    ->required()
+                    ->reactive(),
                 Forms\Components\TextInput::make('subject_line')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->visible(fn (callable $get) => $get('type') === 'regular'),
+                Forms\Components\TextInput::make('subject_line_a')
+                    ->required()
+                    ->maxLength(255)
+                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                Forms\Components\TextInput::make('subject_line_b')
+                    ->required()
+                    ->maxLength(255)
+                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
                 Forms\Components\Select::make('status')
                     ->options([
                         'save' => 'Save',
@@ -36,6 +52,22 @@ class MailchimpCampaignResource extends Resource
                         'sent' => 'Sent',
                     ])
                     ->required(),
+                Forms\Components\Select::make('winner_criteria')
+                    ->options([
+                        'opens' => 'Opens',
+                        'clicks' => 'Clicks',
+                        'manual' => 'Manual',
+                    ])
+                    ->required()
+                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                Forms\Components\TextInput::make('test_size')
+                    ->numeric()
+                    ->min(1)
+                    ->max(100)
+                    ->default(50)
+                    ->suffix('%')
+                    ->required()
+                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
             ]);
     }
 
@@ -45,6 +77,7 @@ class MailchimpCampaignResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('subject_line'),
+                Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('status'),
             ])
             ->filters([
@@ -55,6 +88,9 @@ class MailchimpCampaignResource extends Resource
                 Tables\Actions\Action::make('send')
                     ->action(fn (MailChimpService $service, Model $record) => $service->sendCampaign($record->id))
                     ->requiresConfirmation(),
+                Tables\Actions\Action::make('view_ab_results')
+                    ->action(fn (MailChimpService $service, Model $record) => redirect()->route('filament.app.resources.mailchimp-campaigns.ab-test-results', ['record' => $record->id]))
+                    ->visible(fn (Model $record) => $record->type === 'abtest' && $record->status === 'sent'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -76,6 +112,7 @@ class MailchimpCampaignResource extends Resource
             'index' => Pages\ListMailchimpCampaigns::route('/'),
             'create' => Pages\CreateMailchimpCampaign::route('/create'),
             'view' => Pages\ViewMailchimpCampaign::route('/{record}'),
+            'ab-test-results' => Pages\ViewABTestResults::route('/{record}/ab-test-results'),
         ];
     }
 

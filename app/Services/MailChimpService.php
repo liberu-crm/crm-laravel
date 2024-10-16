@@ -76,6 +76,37 @@ class MailChimpService
         return $campaign;
     }
 
+    public function createABTestCampaign($list_id, $subject_a, $subject_b, $from_name, $reply_to, $html_content_a, $html_content_b, $test_size = 50, $winner_criteria = 'opens')
+    {
+        $campaign = $this->client->campaigns->create([
+            'type' => 'abtest',
+            'recipients' => [
+                'list_id' => $list_id,
+            ],
+            'settings' => [
+                'subject_line' => $subject_a,
+                'from_name' => $from_name,
+                'reply_to' => $reply_to,
+            ],
+            'variate_settings' => [
+                'winner_criteria' => $winner_criteria,
+                'test_size' => $test_size,
+                'wait_time' => 1,
+                'subject_lines' => [$subject_a, $subject_b],
+            ],
+        ]);
+
+        $this->client->campaigns->setContent($campaign['id'], [
+            'html' => $html_content_a,
+        ]);
+
+        $this->client->campaigns->updateContentAB($campaign['id'], [
+            'html' => $html_content_b,
+        ]);
+
+        return $campaign;
+    }
+
     public function sendCampaign($campaign_id)
     {
         return $this->client->campaigns->send($campaign_id);
@@ -91,6 +122,7 @@ class MailChimpService
                 'name' => $campaign->settings->title,
                 'subject_line' => $campaign->settings->subject_line,
                 'status' => $campaign->status,
+                'type' => $campaign->type,
             ];
         })->toArray();
     }
@@ -98,5 +130,24 @@ class MailChimpService
     public function getCampaignReport($campaign_id)
     {
         return $this->client->reports->getCampaignReport($campaign_id);
+    }
+
+    public function getABTestResults($campaign_id)
+    {
+        $report = $this->client->reports->getCampaignReport($campaign_id);
+        $abResults = $this->client->reports->getABTestReportSummary($campaign_id);
+
+        return [
+            'campaign_id' => $campaign_id,
+            'subject_a' => $abResults->a->subject_line,
+            'subject_b' => $abResults->b->subject_line,
+            'opens_a' => $abResults->a->opens,
+            'opens_b' => $abResults->b->opens,
+            'clicks_a' => $abResults->a->clicks,
+            'clicks_b' => $abResults->b->clicks,
+            'winner' => $abResults->winning_combination_id,
+            'winning_metric' => $abResults->winning_metric,
+            'winning_metric_value' => $abResults->winning_metric_value,
+        ];
     }
 }
