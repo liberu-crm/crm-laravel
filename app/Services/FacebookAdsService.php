@@ -6,6 +6,10 @@ use App\Models\AdvertisingAccount;
 use FacebookAds\Api;
 use FacebookAds\Object\AdAccount;
 use FacebookAds\Object\Campaign;
+use FacebookAds\Object\Page;
+use FacebookAds\Object\Fields\PageFields;
+use FacebookAds\Exception\FacebookException;
+use Illuminate\Support\Facades\Log;
 
 class FacebookAdsService
 {
@@ -31,20 +35,55 @@ class FacebookAdsService
 
     public function getCampaigns()
     {
-        $adAccount = new AdAccount('act_' . $this->account->account_id);
-        $campaigns = $adAccount->getCampaigns(['id', 'name', 'status']);
+        try {
+            $adAccount = new AdAccount('act_' . $this->account->account_id);
+            $campaigns = $adAccount->getCampaigns(['id', 'name', 'status']);
 
-        $campaignData = [];
-        foreach ($campaigns as $campaign) {
-            $campaignData[] = [
-                'id' => $campaign->id,
-                'name' => $campaign->name,
-                'status' => $campaign->status,
-            ];
+            $campaignData = [];
+            foreach ($campaigns as $campaign) {
+                $campaignData[] = [
+                    'id' => $campaign->id,
+                    'name' => $campaign->name,
+                    'status' => $campaign->status,
+                ];
+            }
+
+            return $campaignData;
+        } catch (FacebookException $e) {
+            Log::error('Facebook API Error: ' . $e->getMessage());
+            throw new \Exception('Failed to fetch campaigns: ' . $e->getMessage());
         }
+    }
 
+    public function createAndSchedulePost($pageId, $postData)
+    {
+        try {
+            $page = new Page($pageId);
 
-        return $campaignData;
+            $params = [
+                'message' => $postData['message'],
+                'scheduled_publish_time' => $postData['scheduled_time'],
+                'published' => false,
+            ];
+
+            if (isset($postData['link'])) {
+                $params['link'] = $postData['link'];
+            }
+
+            if (isset($postData['image'])) {
+                $params['source'] = $postData['image'];
+            }
+
+            $result = $page->createFeed($params);
+
+            return [
+                'id' => $result->id,
+                'post_id' => $result->post_id,
+            ];
+        } catch (FacebookException $e) {
+            Log::error('Facebook API Error: ' . $e->getMessage());
+            throw new \Exception('Failed to create and schedule post: ' . $e->getMessage());
+        }
     }
 
     // Add more methods for other Facebook Ads operations as needed
