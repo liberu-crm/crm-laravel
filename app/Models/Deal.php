@@ -46,6 +46,11 @@ class Deal extends Model
         return $this->morphMany(Activity::class, 'activitable');
     }
 
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
     public function pipeline(): BelongsTo
     {
         return $this->belongsTo(Pipeline::class);
