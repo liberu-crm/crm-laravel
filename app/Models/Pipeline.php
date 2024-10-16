@@ -34,6 +34,9 @@ class Pipeline extends Model
 
     public function getAllDeals()
     {
-        return $this->deals()->with('stage')->get()->groupBy('stage_id');
+        return $this->deals()
+            ->with(['stage', 'contact', 'user'])
+            ->get()
+            ->groupBy('stage_id');
     }
 }
