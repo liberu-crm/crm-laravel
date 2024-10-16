@@ -9,21 +9,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-
+use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
+use Filament\Resources\Pages\Page;
 use App\Services\TwilioService;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 
 class LeadResource extends Resource
 {
-    // ... (existing code remains unchanged)
 
-use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
-use Filament\Resources\Pages\Page;
-
-class LeadResource extends Resource
-{
-    // ... (existing code remains unchanged)
 
     public static function table(Table $table): Table
     {
@@ -121,5 +115,3 @@ class LeadQualityReport extends Page implements HasForms
     }
 }
 
-    // ... (rest of the code remains unchanged)
-}
