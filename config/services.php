@@ -96,4 +96,17 @@ return [
         ];
     },
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
+        'credentials_path' => env('GOOGLE_CREDENTIALS_PATH'),
+    ],
+
+    'outlook' => [
+        'client_id' => env('OUTLOOK_CLIENT_ID'),
+        'client_secret' => env('OUTLOOK_CLIENT_SECRET'),
+        'redirect_uri' => env('OUTLOOK_REDIRECT_URI'),
+    ],
+
 ];

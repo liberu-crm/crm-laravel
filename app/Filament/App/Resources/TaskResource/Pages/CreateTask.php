@@ -4,9 +4,10 @@ namespace App\Filament\App\Resources\TaskResource\Pages;
 
 use App\Filament\App\Resources\TaskResource;
 use App\Services\GoogleCalendarService;
+use App\Services\OutlookCalendarService;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateTask extends CreateRecord
@@ -20,18 +21,23 @@ class CreateTask extends CreateRecord
             [
                 DateTimePicker::make('reminder_date')
                     ->label('Reminder Date'),
-                Toggle::make('sync_to_google_calendar')
-                    ->label('Sync to Google Calendar')
-                    ->default(false),
+                Select::make('calendar_type')
+                    ->label('Sync to Calendar')
+                    ->options([
+                        'none' => 'No Sync',
+                        'google' => 'Google Calendar',
+                        'outlook' => 'Outlook Calendar',
+                    ])
+                    ->default('none')
+                    ->reactive(),
             ]
         );
     }
 
     protected function afterCreate(): void
     {
-        if ($this->record->sync_to_google_calendar) {
-            $googleCalendarService = app(GoogleCalendarService::class);
-            $googleCalendarService->createEvent($this->record);
+        if ($this->record->calendar_type !== 'none') {
+            $this->record->syncWithCalendar();
         }
     }
 }
