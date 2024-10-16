@@ -41,4 +41,11 @@ class ReportController extends Controller
         $data = $this->mailChimpService->getABTestResults($campaignId);
         return view('reports.ab-test-results', compact('data'));
     }
+
+    public function generateEmailCampaignReport(Request $request)
+    {
+        $campaignId = $request->input('campaign_id');
+        $data = $this->mailChimpService->getCampaignReport($campaignId);
+        return view('reports.email-campaign-performance', compact('data'));
+    }
 }
