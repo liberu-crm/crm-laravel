@@ -21,9 +21,9 @@ class AdvertisingDashboardResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            Widgets\AdPerformanceWidget::class,
-            Widgets\CampaignOverviewWidget::class,
-            Widgets\PlatformComparisonWidget::class,
+      //      Widgets\AdPerformanceWidget::class,
+      //      Widgets\CampaignOverviewWidget::class,
+      //      Widgets\PlatformComparisonWidget::class,
         ];
     }
 
