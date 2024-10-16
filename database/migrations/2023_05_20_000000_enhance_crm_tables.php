@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->string('source');
                 $table->decimal('potential_value', 10, 2);
                 $table->date('expected_close_date');
-                $table->foreignId('contact_id')->constrained();
+//                $table->foreignId('contact_id')->constrained();
                 $table->foreignId('user_id')->constrained();
                 $table->string('lifecycle_stage');
                 $table->json('custom_fields')->nullable();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('annual_revenue', 15, 2)->nullable();
         });
 
+/**
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->string('status');
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
-
+**/
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('type');
