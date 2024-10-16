@@ -162,4 +162,27 @@ class LeadManagementUITest extends TestCase
             ->assertSee('Test Task')
             ->assertSee('Test Lead');
     }
+
+    public function test_view_lead_scores_in_ui()
+    {
+        $lead = Lead::factory()->create(['score' => 75]);
+
+        $response = $this->actingAs($this->user)
+            ->get('/leads');
+
+        $response->assertStatus(200);
+        $response->assertSee('75');
+    }
+
+    public function test_generate_lead_quality_report()
+    {
+        Lead::factory()->count(10)->create();
+
+        $response = $this->actingAs($this->user)
+            ->get('/leads/quality-report');
+
+        $response->assertStatus(200);
+        $response->assertSee('Lead Quality Report');
+        $response->assertSee('Lead Score Distribution');
+    }
 }
