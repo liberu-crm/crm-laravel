@@ -29,4 +29,27 @@ class Activity extends Model
     {
         return $this->morphTo();
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            $query->whereFullText(['type', 'description', 'outcome'], $search)
+                ->orWhere('date', 'like', '%' . $search . '%');
+        });
+    }
+
+    public function scopeFilterByType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    public function scopeFilterByDateRange($query, $start, $end)
+    {
+        return $query->whereBetween('date', [$start, $end]);
+    }
+
+    public function scopeFilterByActivitableType($query, $type)
+    {
+        return $query->where('activitable_type', $type);
+    }
 }
