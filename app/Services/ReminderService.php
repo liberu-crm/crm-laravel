@@ -17,12 +17,25 @@ class ReminderService
 
         foreach ($tasks as $task) {
             try {
-                $task->contact->notify(new TaskReminderNotification($task));
+                $this->sendReminderForTask($task);
                 $task->update(['reminder_sent' => true]);
                 Log::info("Reminder sent successfully for task ID: {$task->id}");
             } catch (\Exception $e) {
                 Log::error("Failed to send reminder for task ID: {$task->id}. Error: {$e->getMessage()}");
             }
+        }
+    }
+
+    protected function sendReminderForTask(Task $task)
+    {
+        if ($task->contact_id) {
+            $task->contact->notify(new TaskReminderNotification($task, 'contact'));
+        } elseif ($task->lead_id) {
+            $task->lead->notify(new TaskReminderNotification($task, 'lead'));
+        }
+
+        if ($task->assignedTo) {
+            $task->assignedTo->notify(new TaskReminderNotification($task, 'assigned'));
         }
     }
 

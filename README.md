@@ -219,92 +219,57 @@ LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 
 For more detailed information on using the advertising account management features, please refer to the user guide in the `docs` folder.
 
-## Usage
-
-### Reporting and Analytics
-
-The CRM now includes enhanced reporting and analytics capabilities. To access these features:
-
-1. Navigate to the Analytics Dashboard:
-   - Go to `/analytics-dashboard` to view key metrics and trends.
-
-2. Generate Custom Reports:
-   - Visit `/reports/contact-interactions` for Contact Interactions report
-   - Visit `/reports/sales-pipeline` for Sales Pipeline report
-   - Visit `/reports/customer-engagement` for Customer Engagement report
-
-3. Customize Reports:
-   - Use the Report Customizer component to filter and tailor reports to your needs.
-
-4. Data Visualization:
-   - The Analytics Dashboard includes interactive charts and graphs for better data interpretation.
-
-5. Export Reports:
-   - Each report page includes options to export data in various formats (CSV, PDF, Excel).
-
-For more detailed information on using the reporting and analytics features, please refer to the user guide in the `docs` folder.
-
-### Task Reminders and Google Calendar Integration
-
-Liberu CRM now includes a powerful task reminder system with Google Calendar integration:
-
-1. Creating Tasks with Reminders:
-   - When creating or editing a task, you can set a reminder date and time.
-   - Choose to sync the task with Google Calendar by toggling the "Sync to Google Calendar" option.
-
-2. Receiving Reminders:
-   - You'll receive email notifications for task reminders at the specified time.
-   - Reminders are also visible in the CRM's notification center.
-
-3. Google Calendar Sync:
-   - To enable Google Calendar sync, go to your user settings and connect your Google account.
-   - Tasks synced with Google Calendar will appear in your Google Calendar and update automatically when changed in the CRM.
-
-4. Managing Reminders:
-   - View all upcoming reminders in the "My Reminders" section of the dashboard.
-   - Mark reminders as complete or snooze them for later.
-
-For more information on using the task reminder system and Google Calendar integration, please refer to the user guide in the `docs` folder.
-
 # CRM Laravel
 
-## OAuth Configuration
+## Task Management System
 
-This application now supports configuring OAuth settings for social media accounts, advertising accounts, Mailchimp, WhatsApp Business, and Facebook Messenger directly through the browser interface.
+The CRM now includes a robust task management system that allows users to create, assign, and track tasks related to contacts and leads. Key features include:
 
-### Setting up OAuth Configurations
+- Create tasks associated with contacts or leads
+- Assign tasks to users
+- Set due dates and reminders for tasks
+- Mark tasks as complete or incomplete
+- Filter and search tasks
+- Receive notifications for task reminders
 
-1. Log in to the admin panel.
-2. Navigate to the OAuth Configurations section.
-3. Click on "New OAuth Configuration" to add a new provider.
-4. Fill in the required information:
-   - Service Name (e.g., facebook, google, mailchimp)
-   - Client ID
-   - Client Secret
-   - Additional Settings (if required)
-5. Save the configuration.
+### Using the Task Management System
 
-### Using OAuth in the Application
+1. To create a new task, navigate to the Tasks page and click on "Create New Task".
+2. Fill in the task details, including name, description, due date, and optional reminder date.
+3. Associate the task with a contact or lead if applicable.
+4. Assign the task to a user.
+5. Tasks can be edited, marked as complete/incomplete, or deleted from the task list.
+6. Use the search and filter options to find specific tasks.
 
-Once configured, the application will automatically use the database-stored OAuth settings for authentication and API interactions with the respective services.
+### Task Reminders
 
-### Fallback to Environment Variables
+Task reminders are sent automatically based on the reminder date set for each task. Reminders are sent to:
+- The assigned user
+- The associated contact or lead (if applicable)
 
-If a configuration is not found in the database, the application will fall back to using the settings defined in the .env file.
+Ensure that your email settings are configured correctly to receive these notifications.
 
-### Supported Services
+## Development
 
-- Facebook
-- Google
-- Mailchimp
-- WhatsApp Business
-- Facebook Messenger
-- (Add other supported services here)
+To set up the project for development:
 
-For more detailed information on setting up each service, please refer to their respective documentation.
+1. Clone the repository
+2. Install dependencies: `composer install`
+3. Set up your `.env` file
+4. Run migrations: `php artisan migrate`
+5. Seed the database (if applicable): `php artisan db:seed`
+6. Start the development server: `php artisan serve`
 
-## Contributors
+### Running Tests
 
+To run the test suite:
 
-<a href = "https://github.com/liberu-crm/crm-laravel/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=liberu-crm/crm-laravel"/>
+```
+php artisan test
+```
+
+This will run all feature and unit tests, including the new tests for the task management system.
+
+## Contributing
+
+Please refer to our contributing guidelines for information on how to propose changes and improvements to the CRM.
