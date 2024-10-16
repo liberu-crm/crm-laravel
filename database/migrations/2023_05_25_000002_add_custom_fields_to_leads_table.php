@@ -8,9 +8,9 @@ class AddCustomFieldsToLeadsTable extends Migration
 {
     public function up()
     {
-        Schema::table('leads', function (Blueprint $table) {
-            $table->json('custom_fields')->nullable();
-        });
+//        Schema::table('leads', function (Blueprint $table) {
+//            $table->json('custom_fields')->nullable();
+//        });
     }
 
     public function down()
