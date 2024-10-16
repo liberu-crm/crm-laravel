@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Lead;
 use App\Notifications\TaskReminderNotification;
 use App\Services\ReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +25,45 @@ class ReminderServiceTest extends TestCase
         $this->reminderService = new ReminderService();
     }
 
-    // ... (existing test methods)
+    public function testSendRemindersForContactTask()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $contact = Contact::factory()->create();
+        $task = Task::factory()->create([
+            'reminder_date' => now()->subMinutes(5),
+            'reminder_sent' => false,
+            'contact_id' => $contact->id,
+            'assigned_to' => $user->id,
+        ]);
+
+        $this->reminderService->sendReminders();
+
+        Notification::assertSentTo($contact, TaskReminderNotification::class);
+        Notification::assertSentTo($user, TaskReminderNotification::class);
+        $this->assertTrue($task->fresh()->reminder_sent);
+    }
+
+    public function testSendRemindersForLeadTask()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $lead = Lead::factory()->create();
+        $task = Task::factory()->create([
+            'reminder_date' => now()->subMinutes(5),
+            'reminder_sent' => false,
+            'lead_id' => $lead->id,
+            'assigned_to' => $user->id,
+        ]);
+
+        $this->reminderService->sendReminders();
+
+        Notification::assertSentTo($lead, TaskReminderNotification::class);
+        Notification::assertSentTo($user, TaskReminderNotification::class);
+        $this->assertTrue($task->fresh()->reminder_sent);
+    }
 
     public function testHandleFailedNotification()
     {
@@ -31,10 +71,12 @@ class ReminderServiceTest extends TestCase
         Log::shouldReceive('error')->once();
 
         $user = User::factory()->create();
+        $contact = Contact::factory()->create();
         $task = Task::factory()->create([
             'reminder_date' => now()->subMinutes(5),
             'reminder_sent' => false,
-            'contact_id' => $user->id,
+            'contact_id' => $contact->id,
+            'assigned_to' => $user->id,
         ]);
 
         Notification::shouldReceive('send')->andThrow(new \Exception('Notification failed'));
@@ -51,54 +93,16 @@ class ReminderServiceTest extends TestCase
         });
 
         $user = User::factory()->create();
+        $contact = Contact::factory()->create();
         $task = Task::factory()->create([
             'reminder_date' => now()->subMinutes(5),
             'reminder_sent' => false,
-            'contact_id' => $user->id,
+            'contact_id' => $contact->id,
+            'assigned_to' => $user->id,
         ]);
 
         $this->reminderService->sendReminders();
 
-        $this->assertTrue($task->fresh()->reminder_sent);
-    }
-}
-
-namespace Tests\Unit;
-
-use App\Models\Task;
-use App\Models\User;
-use App\Notifications\TaskReminderNotification;
-use App\Services\ReminderService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
-use Tests\TestCase;
-
-class ReminderServiceTest extends TestCase
-{
-    use RefreshDatabase;
-
-    protected $reminderService;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->reminderService = new ReminderService();
-    }
-
-    public function testSendReminders()
-    {
-        Notification::fake();
-
-        $user = User::factory()->create();
-        $task = Task::factory()->create([
-            'reminder_date' => now()->subMinutes(5),
-            'reminder_sent' => false,
-            'contact_id' => $user->id,
-        ]);
-
-        $this->reminderService->sendReminders();
-
-        Notification::assertSentTo($user, TaskReminderNotification::class);
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
