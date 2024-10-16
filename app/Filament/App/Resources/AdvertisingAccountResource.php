@@ -36,7 +36,8 @@ class AdvertisingAccountResource extends Resource
                                 'LinkedIn Ads' => 'LinkedIn Ads',
                                 'Instagram Ads' => 'Instagram Ads',
                             ])
-                            ->required(),
+                            ->required()
+                            ->reactive(),
                         Forms\Components\TextInput::make('account_id')
                             ->required()
                             ->maxLength(255),
@@ -51,6 +52,17 @@ class AdvertisingAccountResource extends Resource
                             ->required(),
                         Forms\Components\DateTimePicker::make('last_sync'),
                         Forms\Components\KeyValue::make('metadata'),
+                        Forms\Components\TextInput::make('developer_token')
+                            ->maxLength(255)
+                            ->password()
+                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
+                        Forms\Components\TextInput::make('client_id')
+                            ->maxLength(255)
+                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
+                        Forms\Components\TextInput::make('client_secret')
+                            ->maxLength(255)
+                            ->password()
+                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
                     ])
             ]);
     }
