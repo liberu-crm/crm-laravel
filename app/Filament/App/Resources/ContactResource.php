@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\ContactResource\Pages;
