@@ -18,7 +18,17 @@ class TaskReminderTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ... (existing test methods)
+    protected $googleCalendarService;
+    protected $outlookCalendarService;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->googleCalendarService = Mockery::mock(GoogleCalendarService::class);
+        $this->outlookCalendarService = Mockery::mock(OutlookCalendarService::class);
+        $this->app->instance(GoogleCalendarService::class, $this->googleCalendarService);
+        $this->app->instance(OutlookCalendarService::class, $this->outlookCalendarService);
+    }
 
     public function testCreateTaskAssociatedWithContact()
     {
@@ -26,18 +36,22 @@ class TaskReminderTest extends TestCase
         $contact = Contact::factory()->create();
         $this->actingAs($user);
 
+        $this->googleCalendarService->shouldReceive('createEvent')->once()->andReturn(true);
+
         $response = $this->post('/tasks', [
             'name' => 'Contact Task',
             'description' => 'Test Description',
             'due_date' => now()->addDays(2),
             'contact_id' => $contact->id,
             'assigned_to' => $user->id,
+            'calendar_type' => 'google',
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('tasks', [
             'name' => 'Contact Task',
             'contact_id' => $contact->id,
+            'calendar_type' => 'google',
         ]);
     }
 
@@ -47,18 +61,22 @@ class TaskReminderTest extends TestCase
         $lead = Lead::factory()->create();
         $this->actingAs($user);
 
+        $this->outlookCalendarService->shouldReceive('createEvent')->once()->andReturn(true);
+
         $response = $this->post('/tasks', [
             'name' => 'Lead Task',
             'description' => 'Test Description',
             'due_date' => now()->addDays(2),
             'lead_id' => $lead->id,
             'assigned_to' => $user->id,
+            'calendar_type' => 'outlook',
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('tasks', [
             'name' => 'Lead Task',
             'lead_id' => $lead->id,
+            'calendar_type' => 'outlook',
         ]);
     }
 
@@ -104,6 +122,8 @@ class TaskReminderTest extends TestCase
                 return $notification->task->id === $task->id;
             }
         );
+
+        $this->assertTrue($task->fresh()->reminder_sent);
     }
 
     public function testReminderNotificationForLeadTask()
@@ -128,9 +148,26 @@ class TaskReminderTest extends TestCase
                 return $notification->task->id === $task->id;
             }
         );
+
+        $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    // ... (existing test methods)
+    public function testNoReminderSentForFutureTask()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_to' => $user->id,
+            'reminder_date' => now()->addDays(1),
+            'reminder_sent' => false,
+        ]);
+
+        $this->artisan('tasks:send-reminders');
+
+        Notification::assertNothingSent();
+        $this->assertFalse($task->fresh()->reminder_sent);
+    }
 
     protected function tearDown(): void
     {
