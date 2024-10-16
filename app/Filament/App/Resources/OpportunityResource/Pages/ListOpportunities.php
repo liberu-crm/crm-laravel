@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Contracts\View\View;
 
 class ListOpportunities extends ListRecords
 {
