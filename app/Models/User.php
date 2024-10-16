@@ -21,6 +21,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\DatabaseNotification;
 
 class User extends Authenticatable implements HasDefaultTenant, HasTenants, FilamentUser
 {
@@ -51,6 +52,11 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
     public function dashboardWidgets()
     {
         return $this->hasMany(DashboardWidget::class);
+    }
+
+    public function inAppNotifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')->orderBy('created_at', 'desc');
     }
 
     /**

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Event;
 use App\Services\AuditLogService;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\SendCRMEventNotification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,22 @@ class EventServiceProvider extends ServiceProvider
         ],
         'Illuminate\Auth\Events\Logout' => [
             'App\Listeners\LogSuccessfulLogout',
+        ],
+        // Add CRM event listeners
+        'App\Events\NewLead' => [
+            SendCRMEventNotification::class,
+        ],
+        'App\Events\DealClosed' => [
+            SendCRMEventNotification::class,
+        ],
+        'App\Events\TaskOverdue' => [
+            SendCRMEventNotification::class,
+        ],
+        'App\Events\NewComment' => [
+            SendCRMEventNotification::class,
+        ],
+        'App\Events\MeetingScheduled' => [
+            SendCRMEventNotification::class,
         ],
     ];
 
