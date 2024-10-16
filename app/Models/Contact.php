@@ -29,11 +29,16 @@ class Contact extends Model
         'annual_revenue',
         'lifecycle_stage',
         'company_id',
+        'custom_fields',
     ];
 
     protected $with = ['notes', 'deals', 'activities', 'company'];
 
     protected $touches = ['team'];
+
+    protected $casts = [
+        'custom_fields' => 'array',
+    ];
 
     public function notes(): HasMany
     {
@@ -120,6 +125,9 @@ class Contact extends Model
                 })
                 ->orWhereHas('company', function ($query) use ($search) {
                     $query->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhere(function ($query) use ($search) {
+                    $query->whereJsonContains('custom_fields', $search);
                 });
         });
     }
