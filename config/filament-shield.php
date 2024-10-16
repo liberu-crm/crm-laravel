@@ -53,13 +53,13 @@ return [
         'pages' => true,
         'widgets' => true,
         'resources' => true,
-        'custom_permissions' => false,
+        'custom_permissions' => true,
     ],
 
     'generator' => [
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
-        'policy_namespace' => 'Policies',
+        'policy_namespace' => 'App\\Policies',
     ],
 
     'exclude' => [
@@ -77,13 +77,13 @@ return [
     ],
 
     'discovery' => [
-        'discover_all_resources' => false,
-        'discover_all_widgets' => false,
-        'discover_all_pages' => false,
+        'discover_all_resources' => true,
+        'discover_all_widgets' => true,
+        'discover_all_pages' => true,
     ],
 
     'register_role_policy' => [
-        'enabled' => false,
+        'enabled' => true,
     ],
 
 ];

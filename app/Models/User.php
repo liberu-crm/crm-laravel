@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
@@ -136,8 +135,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessFilament(): bool
     {
-        //        return $this->hasVerifiedEmail();
-        return true;
+        return $this->hasVerifiedEmail() && $this->hasAnyRole(['admin', 'manager', 'sales_rep']);
     }
 
     public function getDefaultTenant(Panel $panel): ?Model
@@ -148,5 +146,16 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
     public function latestTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'current_team_id');
+    }
+
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole($role): bool
+    {
+        return $this->roles->contains('name', $role);
     }
 }
