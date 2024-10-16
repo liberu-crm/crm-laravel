@@ -25,6 +25,8 @@ class LeadTest extends TestCase
             'expected_close_date' => now()->addDays(30),
             'contact_id' => $contact->id,
             'user_id' => $user->id,
+            'lifecycle_stage' => 'lead',
+            'custom_fields' => ['industry' => 'Technology'],
         ]);
 
         $this->assertDatabaseHas('leads', [
@@ -34,7 +36,10 @@ class LeadTest extends TestCase
             'potential_value' => 10000,
             'contact_id' => $contact->id,
             'user_id' => $user->id,
+            'lifecycle_stage' => 'lead',
         ]);
+
+        $this->assertEquals(['industry' => 'Technology'], $lead->custom_fields);
     }
 
     public function test_lead_belongs_to_contact(): void
@@ -83,6 +88,16 @@ class LeadTest extends TestCase
         // 50 (from potential value) + 40 (from lifecycle stage) + 25 (from activities) = 115
         $this->assertEquals(115, $score);
         $this->assertEquals(115, $lead->score);
+    }
+
+    public function test_lead_custom_fields(): void
+    {
+        $lead = Lead::factory()->create([
+            'custom_fields' => ['industry' => 'Technology', 'company_size' => '50-100'],
+        ]);
+
+        $this->assertEquals('Technology', $lead->custom_fields['industry']);
+        $this->assertEquals('50-100', $lead->custom_fields['company_size']);
     }
 }
 
