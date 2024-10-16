@@ -5,9 +5,9 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\WorkflowResource\Pages;
 use App\Models\Workflow;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class WorkflowResource extends Resource
