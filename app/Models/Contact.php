@@ -82,9 +82,10 @@ class Contact extends Model
      */
     protected static function booted()
     {
-        static::addGlobalScope('index_hint', function ($builder) {
-            $builder->useIndex('contacts_email_index');
-        });
+        // Commented out the useIndex call as the index doesn't exist yet
+        // static::addGlobalScope('index_hint', function ($builder) {
+        //     $builder->useIndex('contacts_email_index');
+        // });
 
         static::creating(function ($contact) {
             $contact->associateWithCompany();
