@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('whatsapp_numbers', function (Blueprint $table) {
+        Schema::create('whats_app_numbers', function (Blueprint $table) {
             $table->id();
             $table->string('number')->unique();
             $table->string('display_name');
@@ -19,6 +19,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('whatsapp_numbers');
+        Schema::dropIfExists('whats_app_numbers');
     }
 };
