@@ -30,12 +30,12 @@ class ViewAdvertisingDashboard extends Page
         return array_slice($widgets, 2, 1);
     }
 
-    protected function getHeaderWidgetsColumns(): int|array
+    public function getHeaderWidgetsColumns(): int|array
     {
         return 2;
     }
 
-    protected function getFooterWidgetsColumns(): int|array
+    public function getFooterWidgetsColumns(): int|array
     {
         return 1;
     }
