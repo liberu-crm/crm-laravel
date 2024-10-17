@@ -11,6 +11,8 @@ class WhatsAppNumber extends Model
     use HasFactory;
     use IsTenantModel;
 
+    protected $table = 'whats_app_numbers';
+
     protected $fillable = [
         'number',
         'display_name',
