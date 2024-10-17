@@ -9,7 +9,7 @@ return new class extends Migration
 
     protected $tables = [
         'contacts', 'menus', 'activations', 'opportunities', 'notes', 'companies',
-        'activations', 'tasks',
+        'activations', 'tasks','workflows',
 
     ];
 
@@ -33,6 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+
         foreach ($this->tables as $table) {
             if (Schema::hasColumn($table, 'team_id')) {
                 Schema::table($table, function (Blueprint $table) {

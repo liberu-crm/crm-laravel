@@ -20,17 +20,24 @@ class ViewAdvertisingDashboard extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            AdvertisingDashboardResource::getWidgets()[0],
-            AdvertisingDashboardResource::getWidgets()[1],
-        ];
+        $widgets = AdvertisingDashboardResource::getWidgets();
+        return array_slice($widgets, 0, 2);
     }
 
     protected function getFooterWidgets(): array
     {
-        return [
-            AdvertisingDashboardResource::getWidgets()[2],
-        ];
+       $widgets = AdvertisingDashboardResource::getWidgets();
+        return array_slice($widgets, 2, 1);
+    }
+
+    protected function getHeaderWidgetsColumns(): int|array
+    {
+        return 2;
+    }
+
+    protected function getFooterWidgetsColumns(): int|array
+    {
+        return 1;
     }
 
     protected function getActions(): array
