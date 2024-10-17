@@ -11,6 +11,8 @@ class OAuthConfiguration extends Model
     use HasFactory;
     use IsTenantModel;
 
+    protected $table = 'oauth_configurations';
+
     protected $fillable = [
         'service_name',
         'client_id',
