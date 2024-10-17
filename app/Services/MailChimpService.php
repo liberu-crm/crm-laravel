@@ -17,6 +17,11 @@ class MailChimpService
         ]);
     }
 
+    public function setClient(ApiClient $client)
+    {
+        $this->client = $client;
+    }
+
     public function getLists()
     {
         $response = $this->client->lists->getAllLists();

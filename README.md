@@ -1,5 +1,19 @@
 # [Liberu CRM](https://www.liberu.org.uk) ![Open Source Love](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red.svg)
 
+## Dependencies
+
+This project uses the following key dependencies:
+
+- [Mailchimp Marketing PHP SDK](https://github.com/mailchimp/mailchimp-marketing-php): Used for integrating Mailchimp functionality into the CRM.
+
+To install the Mailchimp Marketing PHP SDK, run:
+
+```
+composer require mailchimp/marketing
+```
+
+Make sure to set up your Mailchimp API key and server prefix in your environment configuration.
+
 ![](https://img.shields.io/badge/PHP-8.3-informational?style=flat&logo=php&color=4f5b93)
 ![](https://img.shields.io/badge/Laravel-11-informational?style=flat&logo=laravel&color=ef3b2d)
 
