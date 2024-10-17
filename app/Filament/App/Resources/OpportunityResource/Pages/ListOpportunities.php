@@ -22,4 +22,11 @@ class ListOpportunities extends ListRecords
     {
         return OpportunityResource::getPipelineTable($table);
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            OpportunityResource::getPipelineView(),
+        ];
+    }
 }
