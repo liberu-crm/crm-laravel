@@ -16,6 +16,7 @@ use App\Filament\App\Resources\OpportunityResource\Pages;
 use App\Filament\App\Resources\OpportunityResource\RelationManagers;
 
 use Illuminate\Contracts\View\View;
+use Filament\Tables\Filters\SelectFilter;
 
 class OpportunityResource extends Resource
 {
@@ -83,5 +84,35 @@ class OpportunityResource extends Resource
     public static function getPipelineView(): View
     {
         return view('livewire.opportunity-pipeline');
+    }
+
+    public static function getPipelineTable(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('stage')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('deal_size')
+                    ->money('usd')
+                    ->sortable(),
+                TextColumn::make('closing_date')
+                    ->date()
+                    ->sortable(),
+            ])
+            ->defaultSort('stage', 'asc')
+            ->groupedBy('stage')
+            ->filters([
+                Tables\Filters\SelectFilter::make('stage')
+                    ->options(Opportunity::distinct()->pluck('stage', 'stage')->toArray()),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 }
