@@ -10,7 +10,7 @@ class AddTeamIdToStaffResourceTables extends Migration
     {
         $tables = [
 	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets'
+	'social_media_posts', 'tickets','oauth_configurations'
         ];
 
         foreach ($tables as $table) {
@@ -27,7 +27,7 @@ class AddTeamIdToStaffResourceTables extends Migration
 
         $tables = [
 	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets'
+	'social_media_posts', 'tickets','oauth_configurations'
         ];
 
 
