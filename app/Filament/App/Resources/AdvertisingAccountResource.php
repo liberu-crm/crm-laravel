@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Filters\BooleanFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -93,7 +94,7 @@ class AdvertisingAccountResource extends Resource
                         'LinkedIn Ads' => 'LinkedIn Ads',
                         'Instagram Ads' => 'Instagram Ads',
                     ]),
-                Tables\Filters\BooleanFilter::make('status'),
+                BooleanFilter::make('status'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
