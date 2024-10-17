@@ -97,10 +97,19 @@ class ContactSearchPerformanceTest extends TestCase
     {
         $searchTerm = 'example.com';
 
+        // Check if the index exists
+        $indexExists = DB::select("SHOW INDEX FROM contacts WHERE Key_name = 'contacts_email_index'");
+
+        // If the index exists, drop it for this test
+        if ($indexExists) {
+            DB::statement('DROP INDEX contacts_email_index ON contacts');
+        }
+
         $timeWithoutIndex = Benchmark::measure(function () use ($searchTerm) {
             DB::table('contacts')->where('email', 'like', "%{$searchTerm}%")->get();
         });
 
+        // Create the index
         DB::statement('CREATE INDEX contacts_email_index ON contacts (email)');
 
         $timeWithIndex = Benchmark::measure(function () use ($searchTerm) {
@@ -108,5 +117,8 @@ class ContactSearchPerformanceTest extends TestCase
         });
 
         $this->assertLessThan($timeWithoutIndex, $timeWithIndex, "Search with index should be faster than without index.");
+
+        // Clean up: drop the index after the test
+        DB::statement('DROP INDEX contacts_email_index ON contacts');
     }
 }
