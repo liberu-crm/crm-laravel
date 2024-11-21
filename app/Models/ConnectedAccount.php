@@ -89,3 +89,56 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         return $query->where('is_primary', true);
     }
 }
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ConnectedAccount extends Model
+{
+    protected $fillable = [
+        'provider',
+        'provider_id',
+        'name',
+        'nickname',
+        'email',
+        'telephone',
+        'avatar_path',
+        'token',
+        'refresh_token',
+        'token_secret',
+        'expires_at',
+        'token_scopes',
+        'metadata'
+    ];
+
+    protected $casts = [
+        'token_scopes' => 'array',
+        'metadata' => 'array',
+        'expires_at' => 'datetime',
+    ];
+
+    protected $hidden = [
+        'token',
+        'refresh_token',
+        'token_secret',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function isExpired(): bool
+    {
+        if (!$this->expires_at) {
+            return false;
+        }
+
+        return $this->expires_at->isPast();
+    }
+}
