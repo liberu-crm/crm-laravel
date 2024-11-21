@@ -45,14 +45,19 @@ return [
         'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
     ],
 
-    'twilio' => [
-        'sid' => env('TWILIO_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'phone_number' => env('TWILIO_PHONE_NUMBER'),
-        'app_sid' => env('TWILIO_APP_SID'),
-        'twiml_app_sid' => env('TWILIO_TWIML_APP_SID'),
-        'webhook_url' => env('TWILIO_WEBHOOK_URL'),
-    ],
+    'twilio' => function () {
+        $config = OAuthConfiguration::getConfig('twilio');
+        return [
+            'client_id' => $config ? $config->client_id : env('TWILIO_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('TWILIO_CLIENT_SECRET'),
+            'redirect_uri' => $config && isset($config->additional_settings['redirect_uri']) ? $config->additional_settings['redirect_uri'] : env('TWILIO_REDIRECT_URI'),
+            'sid' => $config && isset($config->additional_settings['sid']) ? $config->additional_settings['sid'] : env('TWILIO_SID'),
+            'phone_number' => $config && isset($config->additional_settings['phone_number']) ? $config->additional_settings['phone_number'] : env('TWILIO_PHONE_NUMBER'),
+            'app_sid' => $config && isset($config->additional_settings['app_sid']) ? $config->additional_settings['app_sid'] : env('TWILIO_APP_SID'),
+            'twiml_app_sid' => $config && isset($config->additional_settings['twiml_app_sid']) ? $config->additional_settings['twiml_app_sid'] : env('TWILIO_TWIML_APP_SID'),
+            'webhook_url' => $config && isset($config->additional_settings['webhook_url']) ? $config->additional_settings['webhook_url'] : env('TWILIO_WEBHOOK_URL'),
+        ];
+    },
 
     'facebook' => function () {
         $config = OAuthConfiguration::getConfig('facebook');
