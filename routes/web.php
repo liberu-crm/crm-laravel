@@ -17,3 +17,25 @@ Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show']
 Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
 
 // ... rest of the existing routes
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OAuthConfigurationController;
+
+// ... existing routes ...
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/oauth/configurations', [OAuthConfigurationController::class, 'index'])
+        ->name('oauth.configurations.index');
+    Route::get('/oauth/configurations/create', [OAuthConfigurationController::class, 'create'])
+        ->name('oauth.configurations.create');
+    Route::post('/oauth/configurations', [OAuthConfigurationController::class, 'store'])
+        ->name('oauth.configurations.store');
+    
+    // OAuth authentication routes
+    Route::get('/oauth/{provider}', [OAuthConfigurationController::class, 'redirectToProvider'])
+        ->name('oauth.redirect');
+    Route::get('/oauth/{provider}/callback', [OAuthConfigurationController::class, 'handleProviderCallback'])
+        ->name('oauth.callback');
+});
