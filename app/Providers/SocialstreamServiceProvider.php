@@ -9,6 +9,7 @@ use App\Actions\Socialstream\HandleInvalidState;
 use App\Actions\Socialstream\ResolveSocialiteUser;
 use App\Actions\Socialstream\UpdateConnectedAccount;
 use App\Models\OAuthConfiguration;
+use App\Services\OAuth\TwilioProvider;
 use Illuminate\Support\ServiceProvider;
 use JoelButcher\Socialstream\Socialstream;
 use Laravel\Socialite\Facades\Socialite;
@@ -52,6 +53,15 @@ class SocialstreamServiceProvider extends ServiceProvider
                     'client_secret' => $provider->client_secret,
                     'redirect' => config('app.url') . '/oauth/' . $provider->service_name . '/callback',
                 ];
+
+                if ($provider->service_name === 'twilio') {
+                    return new TwilioProvider(
+                        $this->app['request'], 
+                        $config['client_id'],
+                        $config['client_secret'],
+                        $config['redirect']
+                    );
+                }
 
                 return Socialite::buildProvider(
                     "Laravel\\Socialite\\Two\\" . ucfirst($provider->service_name) . 'Provider',
