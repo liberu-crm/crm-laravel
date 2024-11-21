@@ -16,6 +16,25 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialstreamServiceProvider extends ServiceProvider
 {
+    protected $socialProviders = [
+        'facebook' => [
+            'scopes' => ['email', 'pages_show_list', 'pages_read_engagement', 'instagram_basic'],
+            'optional_scopes' => ['publish_to_groups', 'groups_access_member_info'],
+        ],
+        'linkedin' => [
+            'scopes' => ['r_liteprofile', 'r_emailaddress', 'w_member_social', 'r_organization_admin'],
+        ],
+        'twitter' => [
+            'scopes' => ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+        ],
+        'instagram' => [
+            'scopes' => ['instagram_basic', 'instagram_content_publish', 'pages_read_engagement'],
+        ],
+        'youtube' => [
+            'scopes' => ['https://www.googleapis.com/auth/youtube.readonly', 'https://www.googleapis.com/auth/youtube.upload'],
+        ],
+    ];
+
     /**
      * Register any application services.
      */
@@ -63,10 +82,25 @@ class SocialstreamServiceProvider extends ServiceProvider
                     );
                 }
 
-                return Socialite::buildProvider(
+                $socialiteProvider = Socialite::buildProvider(
                     "Laravel\\Socialite\\Two\\" . ucfirst($provider->service_name) . 'Provider',
                     $config
                 );
+
+                // Add scopes if defined for this provider
+                if (isset($this->socialProviders[$provider->service_name])) {
+                    $providerConfig = $this->socialProviders[$provider->service_name];
+                    
+                    if (isset($providerConfig['scopes'])) {
+                        $socialiteProvider->scopes($providerConfig['scopes']);
+                    }
+                    
+                    if (isset($providerConfig['optional_scopes'])) {
+                        $socialiteProvider->with(['optional_scopes' => $providerConfig['optional_scopes']]);
+                    }
+                }
+
+                return $socialiteProvider;
             });
         }
     }
