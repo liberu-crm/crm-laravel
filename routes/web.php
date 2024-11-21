@@ -39,3 +39,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/oauth/{provider}/callback', [OAuthConfigurationController::class, 'handleProviderCallback'])
         ->name('oauth.callback');
 });
+
+use App\Http\Controllers\OAuthConfigurationController;
+
+// OAuth Configuration Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/oauth/configurations', [OAuthConfigurationController::class, 'index'])
+        ->name('oauth.configurations.index');
+    Route::get('/oauth/configurations/create', [OAuthConfigurationController::class, 'create'])
+        ->name('oauth.configurations.create');
+    Route::post('/oauth/configurations', [OAuthConfigurationController::class, 'store'])
+        ->name('oauth.configurations.store');
+    Route::delete('/oauth/configurations/{configuration}', [OAuthConfigurationController::class, 'destroy'])
+        ->name('oauth.configurations.destroy');
+    
+    // OAuth Authentication Routes
+    Route::get('/oauth/{service}/auth/{configId}', [OAuthConfigurationController::class, 'authenticate'])
+        ->name('oauth.authenticate');
+    Route::get('/oauth/{service}/callback', [OAuthConfigurationController::class, 'callback'])
+        ->name('oauth.callback');
+});
