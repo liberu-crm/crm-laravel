@@ -12,57 +12,103 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Support\Facades\Log;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
 
 class SocialMediaPostResource extends Resource
 {
     protected static ?string $model = SocialMediaPost::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-share';
+    protected static ?string $navigationGroup = 'Marketing';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Grid::make(3)
                     ->schema([
-                        Forms\Components\Textarea::make('content')
-                            ->required()
-                            ->maxLength(65535),
-                        Forms\Components\DateTimePicker::make('scheduled_at')
-                            ->required(),
-                        Forms\Components\MultiSelect::make('platforms')
-                            ->options([
-                                'facebook' => 'Facebook',
-                                'linkedin' => 'LinkedIn',
-                                'twitter' => 'Twitter/X',
-                                'instagram' => 'Instagram',
-                                'youtube' => 'YouTube',
+                        Section::make('Post Content')
+                            ->schema([
+                                Forms\Components\Textarea::make('content')
+                                    ->required()
+                                    ->maxLength(65535)
+                                    ->helperText('Write your post content here. Character limits vary by platform.')
+                                    ->reactive()
+                                    ->afterStateUpdated(fn ($state, callable $set) => 
+                                        $set('character_count', strlen($state))),
+                                Forms\Components\TextInput::make('character_count')
+                                    ->label('Character Count')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\DateTimePicker::make('scheduled_at')
+                                    ->required()
+                                    ->helperText('Schedule when this post should be published')
+                                    ->minDate(now())
+                                    ->withoutSeconds(),
+                                Forms\Components\MultiSelect::make('platforms')
+                                    ->options([
+                                        'facebook' => 'Facebook',
+                                        'linkedin' => 'LinkedIn',
+                                        'twitter' => 'Twitter/X',
+                                        'instagram' => 'Instagram',
+                                        'youtube' => 'YouTube',
+                                    ])
+                                    ->required()
+                                    ->helperText('Select the platforms where you want to publish')
+                                    ->columns(2),
+                                Forms\Components\Select::make('status')
+                                    ->options(SocialMediaPost::getStatuses())
+                                    ->required()
+                                    ->disabled(fn ($record) => 
+                                        $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
-                            ->required(),
-                        Forms\Components\Select::make('status')
-                            ->options(SocialMediaPost::getStatuses())
-                            ->required(),
-                        Forms\Components\TextInput::make('link')
-                            ->url()
-                            ->label('Link (optional)'),
-                        Forms\Components\FileUpload::make('image')
-                            ->image()
-                            ->label('Image (optional)')
-                            ->disk('public')
-                            ->directory('social-media-posts'),
-                    ])
-                    ->columnSpan(2),
-                Forms\Components\Card::make()
-                    ->schema([
-                        Forms\Components\Placeholder::make('Analytics')
-                            ->content(function (SocialMediaPost $record) {
-                                return view('filament.components.social-media-analytics', ['post' => $record]);
-                            }),
-                    ])
-                    ->columnSpan(1)
-                    ->hidden(fn ($record) => $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
-            ])
-            ->columns(3);
+                            ->columnSpan(2),
+                        
+                        Section::make('Media & Links')
+                            ->schema([
+                                Forms\Components\TextInput::make('link')
+                                    ->url()
+                                    ->label('Link (optional)')
+                                    ->helperText('Add a URL to your post'),
+                                Forms\Components\FileUpload::make('image')
+                                    ->image()
+                                    ->label('Image (optional)')
+                                    ->disk('public')
+                                    ->directory('social-media-posts')
+                                    ->imagePreviewHeight('250')
+                                    ->maxSize(5120)
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif'])
+                                    ->helperText('Upload images (max 5MB, JPG/PNG/GIF)'),
+                            ])
+                            ->columnSpan(2),
+
+                        Section::make('Preview')
+                            ->schema([
+                                Forms\Components\View::make('filament.components.social-media-preview')
+                                    ->visible(fn ($get) => !empty($get('content')))
+                            ])
+                            ->columnSpan(2),
+
+                        Section::make('Analytics')
+                            ->schema([
+                                Forms\Components\Placeholder::make('Analytics')
+                                    ->content(function (SocialMediaPost $record) {
+                                        return view('filament.components.social-media-analytics', [
+                                            'post' => $record,
+                                            'detailed' => true
+                                        ]);
+                                    }),
+                                Forms\Components\View::make('filament.components.engagement-chart')
+                                    ->visible(fn ($record) => 
+                                        $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
+                            ])
+                            ->columnSpan(1)
+                            ->hidden(fn ($record) => 
+                                $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table
