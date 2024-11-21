@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\BooleanFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Actions\Action;
 
 class AdvertisingAccountResource extends Resource
 {
@@ -29,41 +30,45 @@ class AdvertisingAccountResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
-                            ->maxLength(255),
-                        Forms\Components\Select::make('platform')
-                            ->options([
-                                'Google Ads' => 'Google Ads',
-                                'Facebook Ads' => 'Facebook Ads',
-                                'LinkedIn Ads' => 'LinkedIn Ads',
-                                'Instagram Ads' => 'Instagram Ads',
+                            ->maxLength(255)
+                            ->label('Account Name')
+                            ->helperText('Give this account a memorable name'),
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                Forms\Components\Actions::make([
+                                    Action::make('connect_google')
+                                        ->label('Connect Google Ads')
+                                        ->icon('heroicon-o-arrow-right-circle')
+                                        ->url(route('oauth.redirect', ['provider' => 'google']))
+                                        ->openUrlInNewTab(),
+                                    Action::make('connect_facebook')
+                                        ->label('Connect Facebook Ads')
+                                        ->icon('heroicon-o-arrow-right-circle')
+                                        ->url(route('oauth.redirect', ['provider' => 'facebook']))
+                                        ->openUrlInNewTab(),
+                                    Action::make('connect_linkedin')
+                                        ->label('Connect LinkedIn Ads')
+                                        ->icon('heroicon-o-arrow-right-circle')
+                                        ->url(route('oauth.redirect', ['provider' => 'linkedin']))
+                                        ->openUrlInNewTab(),
+                                    Action::make('connect_microsoft')
+                                        ->label('Connect Microsoft Ads')
+                                        ->icon('heroicon-o-arrow-right-circle')
+                                        ->url(route('oauth.redirect', ['provider' => 'microsoft']))
+                                        ->openUrlInNewTab(),
+                                ])
                             ])
-                            ->required()
-                            ->reactive(),
-                        Forms\Components\TextInput::make('account_id')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('access_token')
-                            ->required()
-                            ->maxLength(255)
-                            ->password(),
-                        Forms\Components\TextInput::make('refresh_token')
-                            ->maxLength(255)
-                            ->password(),
+                            ->visible(fn ($record) => ! $record),
                         Forms\Components\Toggle::make('status')
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('last_sync'),
-                        Forms\Components\KeyValue::make('metadata'),
-                        Forms\Components\TextInput::make('developer_token')
-                            ->maxLength(255)
-                            ->password()
-                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
-                        Forms\Components\TextInput::make('client_id')
-                            ->maxLength(255)
-                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
-                        Forms\Components\TextInput::make('client_secret')
-                            ->maxLength(255)
-                            ->password()
-                            ->visible(fn (Forms\Get $get) => $get('platform') === 'Google Ads'),
+                            ->label('Active')
+                            ->default(true)
+                            ->visible(fn ($record) => $record),
+                        Forms\Components\DateTimePicker::make('last_sync')
+                            ->disabled()
+                            ->visible(fn ($record) => $record),
+                        Forms\Components\KeyValue::make('metadata')
+                            ->disabled()
+                            ->visible(fn ($record) => $record),
                     ])
             ]);
     }
@@ -77,7 +82,7 @@ class AdvertisingAccountResource extends Resource
                     'primary' => 'Google Ads',
                     'success' => 'Facebook Ads',
                     'warning' => 'LinkedIn Ads',
-                    'danger' => 'Instagram Ads',
+                    'danger' => 'Microsoft Ads',
                 ]),
                 Tables\Columns\TextColumn::make('account_id')->searchable(),
                 Tables\Columns\BooleanColumn::make('status'),
@@ -92,13 +97,18 @@ class AdvertisingAccountResource extends Resource
                         'Google Ads' => 'Google Ads',
                         'Facebook Ads' => 'Facebook Ads',
                         'LinkedIn Ads' => 'LinkedIn Ads',
-                        'Instagram Ads' => 'Instagram Ads',
+                        'Microsoft Ads' => 'Microsoft Ads',
                     ]),
                 BooleanFilter::make('status'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('refresh_token')
+                    ->label('Refresh Token')
+                    ->icon('heroicon-o-arrow-path')
+                    ->action(fn ($record) => $record->refreshToken())
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
