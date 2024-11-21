@@ -29,3 +29,29 @@ class OAuthConfiguration extends Model
         return self::where('service_name', $serviceName)->first();
     }
 }
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class OAuthConfiguration extends Model
+{
+    protected $fillable = [
+        'service_name',
+        'client_id',
+        'client_secret',
+        'additional_settings'
+    ];
+
+    protected $casts = [
+        'additional_settings' => 'array'
+    ];
+
+    public static function getConfig($service)
+    {
+        return static::where('service_name', $service)->first();
+    }
+}
