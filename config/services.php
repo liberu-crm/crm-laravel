@@ -114,10 +114,29 @@ return [
         'redirect_uri' => env('OUTLOOK_REDIRECT_URI'),
     ],
 
-    'google_ads' => [
-        'client_id' => env('GOOGLE_ADS_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_ADS_CLIENT_SECRET'),
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/oauth/google/callback',
         'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
+    ],
+
+    'facebook' => [
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/oauth/facebook/callback',
+    ],
+
+    'linkedin' => [
+        'client_id' => env('LINKEDIN_CLIENT_ID'),
+        'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/oauth/linkedin/callback',
+    ],
+
+    'microsoft' => [
+        'client_id' => env('MICROSOFT_CLIENT_ID'),
+        'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
     ],
 
 ];

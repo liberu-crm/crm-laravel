@@ -59,3 +59,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/oauth/{service}/callback', [OAuthConfigurationController::class, 'callback'])
         ->name('oauth.callback');
 });
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OAuthController;
+
+// ... existing routes ...
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/oauth/{provider}/redirect', [OAuthController::class, 'redirect'])
+        ->name('oauth.redirect');
+    Route::get('/oauth/{provider}/callback', [OAuthController::class, 'callback'])
+        ->name('oauth.callback');
+});
