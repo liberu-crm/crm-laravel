@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController as AuthAuthenticatedSessionController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Http\Controllers\AuthenticatedSessionController;
 
-class ResetPasswordController extends AuthenticatedSessionController
+class ResetPasswordController extends AuthAuthenticatedSessionController
 {
     public function showResetForm(Request $request, $token = null)
     {
