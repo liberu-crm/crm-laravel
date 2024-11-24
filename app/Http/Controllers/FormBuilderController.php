@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\FormBuilder;
 use App\Models\CustomField;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class FormBuilderController extends Controller
 {
     public function index()
     {
-        $forms = FormBuilder::where('team_id', auth()->user()->currentTeam->id)->get();
+
+        $user = Auth::user();
+        $forms = FormBuilder::where('team_id', $user->currentTeam->id)->get();
         return view('form-builders.index', compact('forms'));
     }
 
@@ -22,13 +25,14 @@ class FormBuilderController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'fields' => 'required|array',
         ]);
 
-        $validated['team_id'] = auth()->user()->currentTeam->id;
+        $validated['team_id'] = $user->currentTeam->id;
 
         FormBuilder::create($validated);
 
@@ -67,13 +71,14 @@ class FormBuilderController extends Controller
 
     public function storeCustomField(Request $request)
     {
+        $user = Auth::user();
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => ['required', Rule::in(['text', 'number', 'date', 'boolean'])],
             'model_type' => ['required', Rule::in(['contact', 'lead'])],
         ]);
 
-        $validated['team_id'] = auth()->user()->currentTeam->id;
+        $validated['team_id'] = $user->currentTeam->id;
 
         CustomField::create($validated);
 
@@ -82,7 +87,8 @@ class FormBuilderController extends Controller
 
     public function indexCustomFields()
     {
-        $customFields = CustomField::where('team_id', auth()->user()->currentTeam->id)->get();
+        $user = Auth::user();
+        $customFields = CustomField::where('team_id', $user->currentTeam->id)->get();
         return view('custom-fields.index', compact('customFields'));
     }
 
