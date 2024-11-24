@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountingIntegration;
 use App\Services\AccountingService;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 
 class AccountingIntegrationController extends Controller
 {
@@ -26,8 +26,10 @@ class AccountingIntegrationController extends Controller
         try {
             $connection = $this->accountingService->connectPlatform($validated['platform'], $validated['credentials']);
             
+            $user = Auth::user();
+
             AccountingIntegration::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'platform' => $validated['platform'],
                 'connection_details' => $connection,
             ]);
