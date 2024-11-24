@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController as AuthAuthenticatedSessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Laravel\Jetstream\Http\Controllers\AuthenticatedSessionController;
 
-class ForgotPasswordController extends AuthenticatedSessionController
+class ForgotPasswordController extends AuthAuthenticatedSessionController
 {
     public function showLinkRequestForm()
     {
