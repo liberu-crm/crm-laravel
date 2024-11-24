@@ -10,9 +10,12 @@ use Filament\Tables\Table;
 
 class OpportunityPipeline extends Component
 {
+    public $pipeline;
     public $stages;
     public $deals;
     public Table $table;
+
+    protected $listeners = ['dealMoved' => 'updateDealStage'];
 
     public function mount(Table $table)
     {
@@ -22,51 +25,9 @@ class OpportunityPipeline extends Component
 
     public function loadPipeline()
     {
-        $pipeline = Pipeline::first();
-        $this->stages = $pipeline->stages;
-        $this->deals = Deal::all()->groupBy('stage_id');
-    }
-
-    public function updateDealStage($dealId, $stageId)
-    {
-        $deal = Deal::findOrFail($dealId);
-        $deal->stage_id = $stageId;
-        $deal->save();
-
-        $this->loadPipeline();
-    }
-
-    public function render()
-    {
-        return view('livewire.opportunity-pipeline');
-    }
-}
-
-namespace App\Http\Livewire;
-
-use Livewire\Component;
-use App\Models\Pipeline;
-use App\Models\Deal;
-use App\Models\Stage;
-
-class OpportunityPipeline extends Component
-{
-    public $pipeline;
-    public $stages;
-    public $deals;
-
-    protected $listeners = ['dealMoved' => 'updateDealStage'];
-
-    public function mount()
-    {
         $this->pipeline = Pipeline::where('is_active', true)->first();
         $this->stages = $this->pipeline->stages;
         $this->deals = $this->pipeline->getAllDeals();
-    }
-
-    public function render()
-    {
-        return view('livewire.opportunity-pipeline');
     }
 
     public function updateDealStage($dealId, $newStageId)
@@ -77,6 +38,11 @@ class OpportunityPipeline extends Component
         $deal->stage()->associate($newStage);
         $deal->save();
 
-        $this->deals = $this->pipeline->getAllDeals();
+        $this->loadPipeline();
+    }
+
+    public function render()
+    {
+        return view('livewire.opportunity-pipeline');
     }
 }
