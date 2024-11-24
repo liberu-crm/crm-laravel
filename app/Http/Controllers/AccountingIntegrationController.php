@@ -6,6 +6,7 @@ use App\Models\AccountingIntegration;
 use App\Services\AccountingService;
 use Illuminate\Http\Request;
 
+
 class AccountingIntegrationController extends Controller
 {
     protected $accountingService;
