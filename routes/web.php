@@ -6,6 +6,7 @@ use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
 
 // ... existing routes
@@ -16,14 +17,6 @@ Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('
 Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show'])->name('knowledge-base.show');
 Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
 
-// ... rest of the existing routes
-
-<?php
-
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OAuthConfigurationController;
-
-// ... existing routes ...
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/oauth/configurations', [OAuthConfigurationController::class, 'index'])
@@ -40,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('oauth.callback');
 });
 
-use App\Http\Controllers\OAuthConfigurationController;
+
 
 // OAuth Configuration Routes
 Route::middleware(['auth'])->group(function () {
@@ -60,12 +53,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('oauth.callback');
 });
 
-<?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OAuthController;
-
-// ... existing routes ...
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/oauth/{provider}/redirect', [OAuthController::class, 'redirect'])
