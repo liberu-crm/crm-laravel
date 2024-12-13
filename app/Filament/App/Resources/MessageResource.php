@@ -21,7 +21,7 @@ class MessageResource extends Resource
     protected static ?string $navigationGroup = 'Help Desk';
     protected static ?int $navigationSort = 2;
 
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('status', 'unread')->count();
     }
