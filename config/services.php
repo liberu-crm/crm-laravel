@@ -139,4 +139,10 @@ return [
         'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
     ],
 
+    'Google_Service_YouTube' => [
+        'client_id' => env('GOOGLE_SERVICE_YOUTUBE_ID'),
+        'client_secret' => env('GOOGLE_SERVICE_YOUTUBE_SECRET'),
+        'redirect' => env('APP_URL') . 'oauth/google_service_youtube/callback'
+    ]
+
 ];

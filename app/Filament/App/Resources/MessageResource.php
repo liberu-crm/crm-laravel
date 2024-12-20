@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace App\Filament\App\Resources;
@@ -16,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
+
 class MessageResource extends Resource
 {
     protected static ?string $model = Message::class;
@@ -23,10 +22,10 @@ class MessageResource extends Resource
     protected static ?string $navigationGroup = 'Help Desk';
     protected static ?int $navigationSort = 2;
 
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('status', 'unread')->count();
-    }
+    // protected static function getNavigationBadge(): ?string
+    // {
+    //     return static::getModel()::where('status', 'unread')->count();
+    // }
 
     public static function form(Form $form): Form
     {
@@ -172,12 +171,12 @@ class MessageResource extends Resource
         ];
     }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListMessages::route('/'),
-            'create' => Pages\CreateMessage::route('/create'),
-            'edit' => Pages\EditMessage::route('/{record}/edit'),
-        ];
-    }
+    // public static function getPages(): array
+    // {
+    //     return [
+    //         'index' => Pages\ListMessages::route('/'),
+    //         'create' => Pages\CreateMessage::route('/create'),
+    //         'edit' => Pages\EditMessage::route('/{record}/edit'),
+    //     ];
+    // }
 }
