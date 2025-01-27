@@ -23,6 +23,15 @@ class UserSeeder extends Seeder
         ]);
         $adminUser->assignRole('admin');
         $this->createTeamForUser($adminUser);
+        
+        $managerUser = User::create([
+            'name' => 'manager User',
+            'email' => 'manager@example.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
+        $managerUser->assignRole('manager');
+        $this->createTeamForUser($managerUser);
     }
 
     private function createTeamForUser($user)

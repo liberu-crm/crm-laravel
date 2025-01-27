@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 class MessageResource extends Resource
 {
+    // protected static ?string $model = Message::class;
     protected static ?string $model = Message::class;
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static ?string $navigationGroup = 'Help Desk';
