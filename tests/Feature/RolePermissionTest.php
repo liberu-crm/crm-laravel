@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RolePermissionTest extends TestCase
 {
@@ -18,7 +19,7 @@ class RolePermissionTest extends TestCase
         $this->seed();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_assign_roles_to_users()
     {
         $user = User::factory()->create();
@@ -38,7 +39,7 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($user->hasRole('sales_rep'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_assign_permissions_to_roles()
     {
         $managerRole = Role::findByName('manager');
@@ -51,7 +52,7 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($managerRole->hasPermissionTo('create_client'));
     }
 
-    /** @test */
+    #[Test]
     public function it_restricts_access_based_on_user_role()
     {
         $admin = User::factory()->create()->assignRole('admin');
@@ -68,7 +69,7 @@ class RolePermissionTest extends TestCase
         $this->get('/admin/dashboard')->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_access_based_on_user_permissions()
     {
         $manager = User::factory()->create()->assignRole('manager');
