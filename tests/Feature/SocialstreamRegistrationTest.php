@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User;
 use Mockery;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SocialstreamRegistrationTest extends TestCase
 {
@@ -18,6 +19,7 @@ class SocialstreamRegistrationTest extends TestCase
     /**
      * @dataProvider socialiteProvidersDataProvider
      */
+    #[Test]
     public function test_users_get_redirected_correctly(string $provider): void
     {
         if (! Providers::enabled($provider)) {
@@ -37,6 +39,7 @@ class SocialstreamRegistrationTest extends TestCase
     /**
      * @dataProvider socialiteProvidersDataProvider
      */
+    #[Test]
     public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
     {
         if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
