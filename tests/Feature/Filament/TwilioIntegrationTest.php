@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 use Twilio\Exceptions\RestException;
+use PHPUnit\Framework\Attributes\Test;
 
 class TwilioIntegrationTest extends TestCase
 {
@@ -22,7 +23,7 @@ class TwilioIntegrationTest extends TestCase
         $this->mock(TwilioService::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_send_single_sms()
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
@@ -41,7 +42,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_sms_sending_error()
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
@@ -60,7 +61,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertNotDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_initiate_single_call()
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
@@ -78,7 +79,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_call_initiation_error()
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
@@ -96,7 +97,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertNotDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_send_bulk_sms()
     {
         $contacts = Contact::factory()->count(3)->create();
@@ -113,7 +114,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_bulk_sms_sending_errors()
     {
         $contacts = Contact::factory()->count(3)->create();
@@ -130,7 +131,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertNotDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_initiate_bulk_calls()
     {
         $leads = Lead::factory()->count(3)->create();
@@ -146,7 +147,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_bulk_call_initiation_errors()
     {
         $leads = Lead::factory()->count(3)->create();
@@ -162,7 +163,7 @@ class TwilioIntegrationTest extends TestCase
             ->assertNotDispatched('notify');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_update_twilio_settings()
     {
         Livewire::test(TwilioIntegration::class)
@@ -178,7 +179,7 @@ class TwilioIntegrationTest extends TestCase
         $this->assertEquals('+1987654321', config('services.twilio.phone_number'));
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_twilio_settings()
     {
         Livewire::test(TwilioIntegration::class)
