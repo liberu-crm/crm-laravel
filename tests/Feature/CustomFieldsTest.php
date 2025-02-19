@@ -179,7 +179,3 @@ class CustomFieldsTest extends TestCase
     }
 }
 
-
->>>>>>> b23ee5135c82d984746fd4ad1aee72f0a8f0db52
-
-        
