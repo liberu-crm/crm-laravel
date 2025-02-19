@@ -175,9 +175,20 @@ class CustomFieldsTest extends TestCase
 
         $response->assertSee($lead1->contact->name);
         $response->assertDontSee($lead2->contact->name);
+<<<<<<< HEAD
 
         $response->assertSee('Test Value');
     }
 }
+=======
+
+        $response->assertSee('Test Value');
+
+        
+    }
+}
+
+
+>>>>>>> b23ee5135c82d984746fd4ad1aee72f0a8f0db52
 
         
