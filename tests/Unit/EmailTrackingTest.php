@@ -54,28 +54,29 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
-          public function testTrackEmailOpen()
-{
-    Log::shouldReceive('info')
-        ->once()
-        ->with("Email opened: Campaign ID campaign_123, Email ID email_456");
 
-    $this->mailChimpService->trackEmailOpen('campaign_123', 'email_456');
+    public function testTrackEmailOpen()
+    {
+        Log::shouldReceive('info')
+            ->once()
+            ->with("Email opened: Campaign ID campaign_123, Email ID email_456");
 
-    $this->assertTrue(true); // This ensures PHPUnit registers an assertion
-}
+        $this->mailChimpService->trackEmailOpen('campaign_123', 'email_456');
+
+        $this->assertTrue(true); 
+    }
 
 
-        public function testTrackEmailClick()
-{
-    Log::shouldReceive('info')
-        ->once()
-        ->with("Email link clicked: Campaign ID campaign_123, Email ID email_456, URL: https://example.com");
+    public function testTrackEmailClick()
+    {
+        Log::shouldReceive('info')
+            ->once()
+            ->with("Email link clicked: Campaign ID campaign_123, Email ID email_456, URL: https://example.com");
 
-    $this->mailChimpService->trackEmailClick('campaign_123', 'email_456', 'https://example.com');
+        $this->mailChimpService->trackEmailClick('campaign_123', 'email_456', 'https://example.com');
 
-    $this->assertTrue(true); // Ensures PHPUnit registers an assertion
-}
+        $this->assertTrue(true);
+    }
 
 
     public function testGetCampaignReport()
