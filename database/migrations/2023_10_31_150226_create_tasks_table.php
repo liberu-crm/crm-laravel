@@ -12,19 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->integer('task_id')->primary();
-            $table->string('description')->unique();
-            $table->date('due_date');
-            $table->string('status');
-            $table->integer('priority');
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->dateTime('due_date');
+            $table->string('status')->default('pending');
             $table->integer('contact_id')->nullable();
+            $table->integer('lead_id')->nullable();
             $table->integer('company_id')->nullable();
             $table->integer('opportunity_id')->nullable();
+            $table->dateTime('reminder_date')->nullable();
+            $table->boolean('reminder_sent')->default(false);
+            $table->string('google_event_id')->nullable();
+            $table->string('outlook_event_id')->nullable();
+            $table->string('calendar_type')->nullable();
+            $table->integer('assigned_to')->nullable();
+            $table->integer('team_id')->nullable();
             $table->timestamps();
-
-            $table->foreign('contact_id')->references('contact_id')->on('contacts');
-            $table->foreign('company_id')->references('company_id')->on('companies');
-            $table->foreign('opportunity_id')->references('opportunity_id')->on('opportunities');
         });
     }
 

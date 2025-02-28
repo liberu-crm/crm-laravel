@@ -11,7 +11,7 @@ class Task extends Model
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = 'task_id';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'name',

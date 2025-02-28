@@ -54,6 +54,7 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
+
     public function testTrackEmailOpen()
     {
         Log::shouldReceive('info')
@@ -61,7 +62,10 @@ class EmailTrackingTest extends TestCase
             ->with("Email opened: Campaign ID campaign_123, Email ID email_456");
 
         $this->mailChimpService->trackEmailOpen('campaign_123', 'email_456');
+
+        $this->assertTrue(true); 
     }
+
 
     public function testTrackEmailClick()
     {
@@ -70,7 +74,10 @@ class EmailTrackingTest extends TestCase
             ->with("Email link clicked: Campaign ID campaign_123, Email ID email_456, URL: https://example.com");
 
         $this->mailChimpService->trackEmailClick('campaign_123', 'email_456', 'https://example.com');
+
+        $this->assertTrue(true);
     }
+
 
     public function testGetCampaignReport()
     {

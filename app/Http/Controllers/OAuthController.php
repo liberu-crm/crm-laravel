@@ -33,9 +33,7 @@ class OAuthController extends Controller
         // and log them in. For brevity, we'll just return the user object.
         return response()->json($user);
     }
-}
-
-<?php
+}<?php
 
 namespace App\Http\Controllers;
 
@@ -122,9 +120,7 @@ class OAuthController extends Controller
             'microsoft' => 'Microsoft Ads',
         ][$provider] ?? $provider;
     }
-}
-
-<?php
+}<?php
 
 namespace App\Http\Controllers;
 

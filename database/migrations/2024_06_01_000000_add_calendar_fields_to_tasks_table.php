@@ -9,9 +9,6 @@ class AddCalendarFieldsToTasksTable extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->string('google_event_id')->nullable();
-            $table->string('outlook_event_id')->nullable();
-            $table->enum('calendar_type', ['none', 'google', 'outlook'])->default('none');
         });
     }
 

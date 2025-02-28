@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -21,7 +21,8 @@ class ExampleTest extends TestCase
      */
     public function test_the_app_route_returns_a_successful_response(): void
     {
-        $response = $this->get('/app');
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)->get('/app');
         $response->assertStatus(200);
     }
 
@@ -30,7 +31,8 @@ class ExampleTest extends TestCase
      */
     public function test_the_admin_route_returns_a_successful_response(): void
     {
-        $response = $this->get('/admin');
+        $user = User::factory()->create(['is_admin' => true]);
+        $response = $this->actingAs($user)->get('/admin');
         $response->assertStatus(200);
     }
 }

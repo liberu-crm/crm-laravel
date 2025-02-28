@@ -23,6 +23,15 @@ class ReminderServiceTest extends TestCase
     {
         parent::setUp();
         $this->reminderService = new ReminderService();
+        restore_error_handler();
+        restore_exception_handler();
+    }
+
+    protected function tearDown(): void
+    {
+        restore_error_handler();
+        restore_exception_handler();
+        parent::tearDown();
     }
 
     public function testSendRemindersForContactTask()
