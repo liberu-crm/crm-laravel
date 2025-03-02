@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace App\Http\Controllers;
@@ -57,9 +55,7 @@ class OAuthConfigurationController extends Controller
         return redirect()->route('dashboard')
             ->with('success', 'Email account connected successfully');
     }
-}
-
-<?php
+}<?php
 
 namespace App\Http\Controllers;
 
