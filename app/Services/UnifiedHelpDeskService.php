@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use InvalidArgumentException;
 use App\Models\OAuthConfiguration;
 use App\Models\Message;
 use Illuminate\Support\Facades\Log;
@@ -130,7 +131,7 @@ class UnifiedHelpDeskService
                 'facebook' => $this->facebookMessengerService->sendReply($messageId, $content, $config),
                 'gmail' => $this->gmailService->sendReply($messageId, $content, $config),
                 'outlook' => $this->outlookService->sendReply($messageId, $content, $config),
-                default => throw new \InvalidArgumentException("Unsupported channel: {$channel}")
+                default => throw new InvalidArgumentException("Unsupported channel: {$channel}")
             };
 
             // Clear cache after sending reply

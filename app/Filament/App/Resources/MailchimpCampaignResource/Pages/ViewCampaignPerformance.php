@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\MailchimpCampaignResource\Pages;
 
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\App\Resources\MailchimpCampaignResource;
 use App\Services\MailChimpService;
 use Filament\Resources\Pages\Page;
@@ -12,7 +13,7 @@ class ViewCampaignPerformance extends Page
 {
     protected static string $resource = MailchimpCampaignResource::class;
 
-    protected static string $view = 'filament.app.resources.mailchimp-campaign-resource.pages.view-campaign-performance';
+    protected string $view = 'filament.app.resources.mailchimp-campaign-resource.pages.view-campaign-performance';
 
     public function getTitle(): string
     {
@@ -26,9 +27,9 @@ class ViewCampaignPerformance extends Page
 
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('metric')
+                TextColumn::make('metric')
                     ->label('Metric'),
-                Tables\Columns\TextColumn::make('value')
+                TextColumn::make('value')
                     ->label('Value'),
             ])
             ->contents([

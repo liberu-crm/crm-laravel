@@ -1,9 +1,15 @@
 <?php
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
+use App\Filament\App\Resources\OpportunityResource\Pages\CreateOpportunity;
+use App\Filament\App\Resources\OpportunityResource\Pages\EditOpportunity;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Opportunity;
 use Filament\Resources\Resource;
@@ -22,12 +28,12 @@ class OpportunityResource extends Resource
 {
     protected static ?string $model = Opportunity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('deal_size')
                     ->numeric()
                     ->label('Deal Size'),
@@ -55,12 +61,12 @@ class OpportunityResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -75,9 +81,9 @@ class OpportunityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOpportunities::route('/'),
-            'create' => Pages\CreateOpportunity::route('/create'),
-            'edit' => Pages\EditOpportunity::route('/{record}/edit'),
+            'index' => ListOpportunities::route('/'),
+            'create' => CreateOpportunity::route('/create'),
+            'edit' => EditOpportunity::route('/{record}/edit'),
         ];
     }
 
@@ -103,15 +109,15 @@ class OpportunityResource extends Resource
             ->defaultSort('stage', 'asc')
             ->groupedBy('stage')
             ->filters([
-                Tables\Filters\SelectFilter::make('stage')
+                SelectFilter::make('stage')
                     ->options(Opportunity::distinct()->pluck('stage', 'stage')->toArray()),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\View;
 
 class ContactStats extends Widget
 {
-    protected static string $view = 'filament.admin.resources.contact-resource.widgets.contact-stats';
+    protected string $view = 'filament.admin.resources.contact-resource.widgets.contact-stats';
 
     public function render(): View
     {

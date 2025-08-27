@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,9 +70,9 @@ class ConnectedAccount extends SocialstreamConnectedAccount
     /**
      * Scope a query to only include accounts of a given type.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param Builder $query
      * @param  string  $type
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeOfType($query, $type)
     {
@@ -81,8 +82,8 @@ class ConnectedAccount extends SocialstreamConnectedAccount
     /**
      * Scope a query to only include primary accounts.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param Builder $query
+     * @return Builder
      */
     public function scopePrimary($query)
     {

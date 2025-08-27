@@ -2,10 +2,20 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\KeyValue;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\WorkflowResource\Pages\ListWorkflows;
+use App\Filament\App\Resources\WorkflowResource\Pages\CreateWorkflow;
+use App\Filament\App\Resources\WorkflowResource\Pages\EditWorkflow;
 use App\Filament\App\Resources\WorkflowResource\Pages;
 use App\Models\Workflow;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,20 +24,20 @@ class WorkflowResource extends Resource
 {
     protected static ?string $model = Workflow::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->maxLength(65535),
-                Forms\Components\KeyValue::make('triggers')
+                KeyValue::make('triggers')
                     ->required(),
-                Forms\Components\KeyValue::make('actions')
+                KeyValue::make('actions')
                     ->required(),
             ]);
     }
@@ -36,22 +46,22 @@ class WorkflowResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+                TextColumn::make('created_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -65,9 +75,9 @@ class WorkflowResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListWorkflows::route('/'),
-            'create' => Pages\CreateWorkflow::route('/create'),
-            'edit' => Pages\EditWorkflow::route('/{record}/edit'),
+            'index' => ListWorkflows::route('/'),
+            'create' => CreateWorkflow::route('/create'),
+            'edit' => EditWorkflow::route('/{record}/edit'),
         ];
     }
 }

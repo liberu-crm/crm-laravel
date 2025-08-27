@@ -2,8 +2,18 @@
 
 namespace App\Filament\App\Resources\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,14 +24,14 @@ class MessagesRelationManager extends RelationManager
     protected static ?string $title = 'Messages';
     protected static ?string $recordTitleAttribute = 'content';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('sender')
+        return $schema
+            ->components([
+                TextInput::make('sender')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('channel')
+                Select::make('channel')
                     ->options([
                         'whatsapp' => 'WhatsApp',
                         'facebook' => 'Facebook',
@@ -29,18 +39,18 @@ class MessagesRelationManager extends RelationManager
                         'outlook' => 'Outlook',
                     ])
                     ->required(),
-                Forms\Components\Textarea::make('content')
+                Textarea::make('content')
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
-                Forms\Components\Select::make('priority')
+                Select::make('priority')
                     ->options([
                         'low' => 'Low',
                         'normal' => 'Normal',
                         'high' => 'High',
                     ])
                     ->required(),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options([
                         'unread' => 'Unread',
                         'read' => 'Read',
@@ -54,9 +64,9 @@ class MessagesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('sender')
+                TextColumn::make('sender')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('channel')
+                TextColumn::make('channel')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'whatsapp' => 'success',
@@ -65,24 +75,24 @@ class MessagesRelationManager extends RelationManager
                         'outlook' => 'warning',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('content')
+                TextColumn::make('content')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('timestamp')
+                TextColumn::make('timestamp')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->badge(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('channel')
+                SelectFilter::make('channel')
                     ->options([
                         'whatsapp' => 'WhatsApp',
                         'facebook' => 'Facebook',
                         'gmail' => 'Gmail',
                         'outlook' => 'Outlook',
                     ]),
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->options([
                         'unread' => 'Unread',
                         'read' => 'Read',
@@ -90,15 +100,15 @@ class MessagesRelationManager extends RelationManager
                     ]),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

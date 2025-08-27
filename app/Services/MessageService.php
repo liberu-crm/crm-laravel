@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use InvalidArgumentException;
+use Google_Service_Gmail_Message;
 use Google_Client;
 use Google_Service_Gmail;
 use App\Models\Email;
@@ -88,7 +90,7 @@ class MessageService
             case 'facebook':
                 return $this->facebookMessengerService->getMessage($account, $messageId);
             default:
-                throw new \InvalidArgumentException("Invalid message type: {$type}");
+                throw new InvalidArgumentException("Invalid message type: {$type}");
         }
     }
 
@@ -109,7 +111,7 @@ class MessageService
             case 'facebook':
                 return $this->facebookMessengerService->sendReply($account, $messageId, $body);
             default:
-                throw new \InvalidArgumentException("Invalid message type: {$type}");
+                throw new InvalidArgumentException("Invalid message type: {$type}");
         }
     }
 
@@ -169,7 +171,7 @@ class MessageService
         $originalMessage = $this->gmailService->users_messages->get('me', $originalMessageId);
         $headers = $this->parseHeaders($originalMessage->getPayload()->getHeaders());
 
-        $replyMessage = new \Google_Service_Gmail_Message();
+        $replyMessage = new Google_Service_Gmail_Message();
         $rawMessageString = "From: me\r\n";
         $rawMessageString .= "To: {$headers['From']}\r\n";
         $rawMessageString .= 'Subject: Re: ' . ($headers['Subject'] ?? '') . "\r\n";

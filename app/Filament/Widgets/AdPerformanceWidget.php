@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\AdvertisingAccount;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
 
 class AdPerformanceWidget extends BaseWidget
 {
@@ -28,15 +28,15 @@ class AdPerformanceWidget extends BaseWidget
         });
 
         return [
-            Card::make('Total Impressions', number_format($totalImpressions))
+            Stat::make('Total Impressions', number_format($totalImpressions))
                 ->description('Across all platforms')
                 ->descriptionIcon('heroicon-s-trending-up')
                 ->color('primary'),
-            Card::make('Total Clicks', number_format($totalClicks))
+            Stat::make('Total Clicks', number_format($totalClicks))
                 ->description('Across all platforms')
                 ->descriptionIcon('heroicon-s-cursor-click')
                 ->color('success'),
-            Card::make('Total Conversions', number_format($totalConversions))
+            Stat::make('Total Conversions', number_format($totalConversions))
                 ->description('Across all platforms')
                 ->descriptionIcon('heroicon-s-shopping-cart')
                 ->color('warning'),

@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Contact;
+use App\Models\CallLog;
 use Livewire\Component;
 use App\Services\TwilioService;
 
@@ -23,7 +25,7 @@ class CallManager extends Component
     public function initiateCall()
     {
         $twilioService = app(TwilioService::class);
-        $contact = \App\Models\Contact::find($this->contactId);
+        $contact = Contact::find($this->contactId);
         
         if (!$contact) {
             $this->addError('call', 'Contact not found');
@@ -99,7 +101,7 @@ class CallManager extends Component
     public function saveNotes()
     {
         // Save notes to the database
-        \App\Models\CallLog::where('call_sid', $this->callSid)->update(['notes' => $this->notes]);
+        CallLog::where('call_sid', $this->callSid)->update(['notes' => $this->notes]);
         $this->emit('notesSaved');
     }
 

@@ -2,10 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\LandingPageResource\Pages\ListLandingPages;
+use App\Filament\App\Resources\LandingPageResource\Pages\CreateLandingPage;
+use App\Filament\App\Resources\LandingPageResource\Pages\EditLandingPage;
 use App\Filament\App\Resources\LandingPageResource\Pages;
 use App\Models\LandingPage;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,27 +25,27 @@ class LandingPageResource extends Resource
 {
     protected static ?string $model = LandingPage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
+        return $schema
+            ->components([
+                TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\RichEditor::make('content')
+                RichEditor::make('content')
                     ->required(),
-                Forms\Components\Select::make('campaign_id')
+                Select::make('campaign_id')
                     ->relationship('campaign', 'name')
                     ->required(),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options([
                         'draft' => 'Draft',
                         'published' => 'Published',
                     ])
                     ->required(),
-                Forms\Components\DateTimePicker::make('published_at'),
+                DateTimePicker::make('published_at'),
             ]);
     }
 
@@ -42,24 +53,24 @@ class LandingPageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('campaign.name'),
-                Tables\Columns\BadgeColumn::make('status')
+                TextColumn::make('title'),
+                TextColumn::make('campaign.name'),
+                BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'draft',
                         'success' => 'published',
                     ]),
-                Tables\Columns\TextColumn::make('published_at')
+                TextColumn::make('published_at')
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -73,9 +84,9 @@ class LandingPageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLandingPages::route('/'),
-            'create' => Pages\CreateLandingPage::route('/create'),
-            'edit' => Pages\EditLandingPage::route('/{record}/edit'),
+            'index' => ListLandingPages::route('/'),
+            'create' => CreateLandingPage::route('/create'),
+            'edit' => EditLandingPage::route('/{record}/edit'),
         ];
     }
 }

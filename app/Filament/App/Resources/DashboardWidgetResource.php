@@ -2,10 +2,20 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\KeyValue;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\DashboardWidgetResource\Pages\ListDashboardWidgets;
+use App\Filament\App\Resources\DashboardWidgetResource\Pages\CreateDashboardWidget;
+use App\Filament\App\Resources\DashboardWidgetResource\Pages\EditDashboardWidget;
 use App\Filament\App\Resources\DashboardWidgetResource\Pages;
 use App\Models\DashboardWidget;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,21 +24,21 @@ class DashboardWidgetResource extends Resource
 {
     protected static ?string $model = DashboardWidget::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
+        return $schema
+            ->components([
+                Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('widget_type')
+                TextInput::make('widget_type')
                     ->required(),
-                Forms\Components\TextInput::make('position')
+                TextInput::make('position')
                     ->integer()
                     ->required(),
-                Forms\Components\KeyValue::make('settings'),
+                KeyValue::make('settings'),
             ]);
     }
 
@@ -36,19 +46,19 @@ class DashboardWidgetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name'),
-                Tables\Columns\TextColumn::make('widget_type'),
-                Tables\Columns\TextColumn::make('position'),
+                TextColumn::make('user.name'),
+                TextColumn::make('widget_type'),
+                TextColumn::make('position'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -62,9 +72,9 @@ class DashboardWidgetResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDashboardWidgets::route('/'),
-            'create' => Pages\CreateDashboardWidget::route('/create'),
-            'edit' => Pages\EditDashboardWidget::route('/{record}/edit'),
+            'index' => ListDashboardWidgets::route('/'),
+            'create' => CreateDashboardWidget::route('/create'),
+            'edit' => EditDashboardWidget::route('/{record}/edit'),
         ];
     }
 }

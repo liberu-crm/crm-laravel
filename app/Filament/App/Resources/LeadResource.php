@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Models\Lead;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -37,7 +36,7 @@ class LeadResource extends Resource
                         'lost' => 'Lost',
                     ]),
                 Tables\Filters\Filter::make('score')
-                    ->form([
+                    ->schema([
                         Forms\Components\TextInput::make('score_from')->numeric(),
                         Forms\Components\TextInput::make('score_to')->numeric(),
                     ])
@@ -53,10 +52,10 @@ class LeadResource extends Resource
                             );
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 // ... (existing actions remain unchanged)
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 // ... (existing bulk actions remain unchanged)
             ]);
     }
@@ -87,7 +86,7 @@ class LeadQualityReport extends Page implements HasForms
 {
     protected static string $resource = LeadResource::class;
 
-    protected static string $view = 'filament.app.resources.lead-resource.pages.lead-quality-report';
+    protected string $view = 'filament.app.resources.lead-resource.pages.lead-quality-report';
 
     public ?array $data = [];
 
@@ -96,10 +95,10 @@ class LeadQualityReport extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 DatePicker::make('start_date'),
                 DatePicker::make('end_date'),
                 Select::make('lifecycle_stage')

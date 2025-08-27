@@ -2,10 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\MarketingCampaignResource\Pages\ListMarketingCampaigns;
+use App\Filament\App\Resources\MarketingCampaignResource\Pages\CreateMarketingCampaign;
+use App\Filament\App\Resources\MarketingCampaignResource\Pages\EditMarketingCampaign;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages;
 use App\Models\MarketingCampaign;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,23 +25,23 @@ class MarketingCampaignResource extends Resource
 {
     protected static ?string $model = MarketingCampaign::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('type')
+                Select::make('type')
                     ->required()
                     ->options([
                         'email' => 'Email',
                         'sms' => 'SMS',
                         'whatsapp' => 'WhatsApp',
                     ]),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->required()
                     ->options([
                         'draft' => 'Draft',
@@ -38,11 +49,11 @@ class MarketingCampaignResource extends Resource
                         'sent' => 'Sent',
                         'cancelled' => 'Cancelled',
                     ]),
-                Forms\Components\TextInput::make('subject')
+                TextInput::make('subject')
                     ->maxLength(255),
-                Forms\Components\Textarea::make('content')
+                Textarea::make('content')
                     ->required(),
-                Forms\Components\DateTimePicker::make('scheduled_at'),
+                DateTimePicker::make('scheduled_at'),
             ]);
     }
 
@@ -50,22 +61,22 @@ class MarketingCampaignResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\BadgeColumn::make('type'),
-                Tables\Columns\BadgeColumn::make('status'),
-                Tables\Columns\TextColumn::make('scheduled_at')
+                TextColumn::make('name'),
+                BadgeColumn::make('type'),
+                BadgeColumn::make('status'),
+                TextColumn::make('scheduled_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -79,9 +90,9 @@ class MarketingCampaignResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMarketingCampaigns::route('/'),
-            'create' => Pages\CreateMarketingCampaign::route('/create'),
-            'edit' => Pages\EditMarketingCampaign::route('/{record}/edit'),
+            'index' => ListMarketingCampaigns::route('/'),
+            'create' => CreateMarketingCampaign::route('/create'),
+            'edit' => EditMarketingCampaign::route('/{record}/edit'),
         ];
     }
 }

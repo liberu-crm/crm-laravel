@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
 use Illuminate\Console\Command;
@@ -30,7 +31,7 @@ class PublishScheduledPosts extends Command
 
                 $post->markAsPublished();
                 $this->info("Post ID: {$post->id} published successfully");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->error("Failed to publish post ID: {$post->id}. Error: {$e->getMessage()}");
                 $post->markAsFailed();
             }

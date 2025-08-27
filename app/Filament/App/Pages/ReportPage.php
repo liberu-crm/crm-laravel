@@ -2,19 +2,19 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
 use App\Services\ReportingService;
 use App\Services\MailChimpService;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 class ReportPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
-    protected static string $view = 'filament.app.pages.report-page';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected string $view = 'filament.app.pages.report-page';
 
     public ?array $data = [];
     public ?string $selectedReport = null;
@@ -32,10 +32,10 @@ class ReportPage extends Page
         $this->mailChimpService = $mailChimpService;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('selectedReport')
                     ->label('Select Report')
                     ->options([

@@ -2,40 +2,57 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\KeyValue;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\AdvertisingAccountResource\Pages\ListAdvertisingAccounts;
+use App\Filament\App\Resources\AdvertisingAccountResource\Pages\CreateAdvertisingAccount;
+use App\Filament\App\Resources\AdvertisingAccountResource\Pages\EditAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages;
 use App\Models\AdvertisingAccount;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Filters\BooleanFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Actions\Action;
 
 class AdvertisingAccountResource extends Resource
 {
     protected static ?string $model = AdvertisingAccount::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
-    protected static ?string $navigationGroup = 'Advertising';
+    protected static string | \UnitEnum | null $navigationGroup = 'Advertising';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Card::make()
+        return $schema
+            ->components([
+                Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->maxLength(255)
                             ->label('Account Name')
                             ->helperText('Give this account a memorable name'),
-                        Forms\Components\Grid::make()
+                        Grid::make()
                             ->schema([
-                                Forms\Components\Actions::make([
+                                Actions::make([
                                     Action::make('connect_google')
                                         ->label('Connect Google Ads')
                                         ->icon('heroicon-o-arrow-right-circle')
@@ -59,14 +76,14 @@ class AdvertisingAccountResource extends Resource
                                 ])
                             ])
                             ->visible(fn ($record) => ! $record),
-                        Forms\Components\Toggle::make('status')
+                        Toggle::make('status')
                             ->label('Active')
                             ->default(true)
                             ->visible(fn ($record) => $record),
-                        Forms\Components\DateTimePicker::make('last_sync')
+                        DateTimePicker::make('last_sync')
                             ->disabled()
                             ->visible(fn ($record) => $record),
-                        Forms\Components\KeyValue::make('metadata')
+                        KeyValue::make('metadata')
                             ->disabled()
                             ->visible(fn ($record) => $record),
                     ])
@@ -77,22 +94,22 @@ class AdvertisingAccountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\BadgeColumn::make('platform')->colors([
+                TextColumn::make('name')->searchable(),
+                BadgeColumn::make('platform')->colors([
                     'primary' => 'Google Ads',
                     'success' => 'Facebook Ads',
                     'warning' => 'LinkedIn Ads',
                     'danger' => 'Microsoft Ads',
                 ]),
-                Tables\Columns\TextColumn::make('account_id')->searchable(),
-                Tables\Columns\BooleanColumn::make('status'),
-                Tables\Columns\TextColumn::make('last_sync')
+                TextColumn::make('account_id')->searchable(),
+                BooleanColumn::make('status'),
+                TextColumn::make('last_sync')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('platform')
+                SelectFilter::make('platform')
                     ->options([
                         'Google Ads' => 'Google Ads',
                         'Facebook Ads' => 'Facebook Ads',
@@ -101,17 +118,17 @@ class AdvertisingAccountResource extends Resource
                     ]),
                 BooleanFilter::make('status'),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('refresh_token')
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
+                Action::make('refresh_token')
                     ->label('Refresh Token')
                     ->icon('heroicon-o-arrow-path')
                     ->action(fn ($record) => $record->refreshToken())
                     ->requiresConfirmation(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -125,9 +142,9 @@ class AdvertisingAccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAdvertisingAccounts::route('/'),
-            'create' => Pages\CreateAdvertisingAccount::route('/create'),
-            'edit' => Pages\EditAdvertisingAccount::route('/{record}/edit'),
+            'index' => ListAdvertisingAccounts::route('/'),
+            'create' => CreateAdvertisingAccount::route('/create'),
+            'edit' => EditAdvertisingAccount::route('/{record}/edit'),
         ];
     }
 }

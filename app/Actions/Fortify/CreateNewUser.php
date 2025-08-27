@@ -2,6 +2,8 @@
 
 namespace App\Actions\Fortify;
 
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\QueryException;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +22,8 @@ class CreateNewUser implements CreatesNewUsers
      * Validate and create a newly registered user.
      *
      * @param array<string, string> $input
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \Exception
+     * @throws ValidationException
+     * @throws Exception
      */
     public function create(array $input): User
     {
@@ -54,13 +56,13 @@ class CreateNewUser implements CreatesNewUsers
             });
            
             return $user;
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::error('User creation validation failed', [
                 'errors' => $e->errors(),
                 'input' => array_diff_key($input, array_flip(['password'])),
             ]);
             throw $e;
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error during user creation', [
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
@@ -78,7 +80,7 @@ class CreateNewUser implements CreatesNewUsers
         }
     }
     
-    private function getDatabaseErrorMessage(\Illuminate\Database\QueryException $e): string
+    private function getDatabaseErrorMessage(QueryException $e): string
     {
         $errorCode = $e->getCode();
         $errorMessage = $e->getMessage();
@@ -97,7 +99,7 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Assign the user to the first team or create a personal team.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function assignOrCreateTeam(User $user): Team
     {

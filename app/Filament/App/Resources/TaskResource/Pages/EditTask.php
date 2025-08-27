@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\TaskResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\TaskResource;
 use App\Services\GoogleCalendarService;
 use Filament\Actions;
@@ -16,7 +17,7 @@ class EditTask extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

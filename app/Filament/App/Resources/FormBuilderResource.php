@@ -2,10 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\FormBuilderResource\Pages\ListFormBuilders;
+use App\Filament\App\Resources\FormBuilderResource\Pages\CreateFormBuilder;
+use App\Filament\App\Resources\FormBuilderResource\Pages\EditFormBuilder;
 use App\Filament\App\Resources\FormBuilderResource\Pages;
 use App\Models\FormBuilder;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,20 +25,20 @@ class FormBuilderResource extends Resource
 {
     protected static ?string $model = FormBuilder::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->maxLength(65535),
-                Forms\Components\Repeater::make('fields')
+                Repeater::make('fields')
                     ->schema([
-                        Forms\Components\Select::make('type')
+                        Select::make('type')
                             ->options([
                                 'text' => 'Text',
                                 'textarea' => 'Textarea',
@@ -37,11 +48,11 @@ class FormBuilderResource extends Resource
                                 'checkbox' => 'Checkbox',
                             ])
                             ->required(),
-                        Forms\Components\TextInput::make('label')
+                        TextInput::make('label')
                             ->required(),
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required(),
-                        Forms\Components\Toggle::make('required'),
+                        Toggle::make('required'),
                     ])
                     ->columns(2)
                     ->required(),
@@ -52,19 +63,19 @@ class FormBuilderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -78,9 +89,9 @@ class FormBuilderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFormBuilders::route('/'),
-            'create' => Pages\CreateFormBuilder::route('/create'),
-            'edit' => Pages\EditFormBuilder::route('/{record}/edit'),
+            'index' => ListFormBuilders::route('/'),
+            'create' => CreateFormBuilder::route('/create'),
+            'edit' => EditFormBuilder::route('/{record}/edit'),
         ];
     }
 }

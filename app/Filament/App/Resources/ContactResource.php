@@ -1,10 +1,19 @@
 <?php
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkAction;
+use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
+use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
+use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages;
 use App\Models\Contact;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -17,20 +26,20 @@ class ContactResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('phone_number')
+                TextInput::make('phone_number')
                     ->tel()
                     ->required()
                     ->maxLength(255),
@@ -42,22 +51,22 @@ class ContactResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone_number')
+                TextColumn::make('phone_number')
                     ->searchable(),
                 // Add more table columns as needed
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('sendSMS')
+            ->recordActions([
+                EditAction::make(),
+                Action::make('sendSMS')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                    ->form([
+                    ->schema([
                         Textarea::make('message')
                             ->label('SMS Message')
                             ->required(),
@@ -70,7 +79,7 @@ class ContactResource extends Resource
                             Notification::make()->title('Failed to send SMS')->danger()->send();
                         }
                     }),
-                Tables\Actions\Action::make('makeCall')
+                Action::make('makeCall')
                     ->icon('heroicon-o-phone')
                     ->action(function (Contact $record, TwilioService $twilioService) {
                         $result = $twilioService->makeCall($record->phone_number, route('twilio.twiml.outbound'));
@@ -81,11 +90,11 @@ class ContactResource extends Resource
                         }
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('bulkSendSMS')
+            ->toolbarActions([
+                DeleteBulkAction::make(),
+                BulkAction::make('bulkSendSMS')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                    ->form([
+                    ->schema([
                         Textarea::make('message')
                             ->label('SMS Message')
                             ->required(),
@@ -101,7 +110,7 @@ class ContactResource extends Resource
                             ->title("Bulk SMS sent: {$successCount} successful, {$failCount} failed")
                             ->send();
                     }),
-                Tables\Actions\BulkAction::make('bulkMakeCall')
+                BulkAction::make('bulkMakeCall')
                     ->icon('heroicon-o-phone')
                     ->action(function (Collection $records, TwilioService $twilioService) {
                         $successCount = 0;
@@ -120,9 +129,9 @@ class ContactResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContacts::route('/'),
-            'create' => Pages\CreateContact::route('/create'),
-            'edit' => Pages\EditContact::route('/{record}/edit'),
+            'index' => ListContacts::route('/'),
+            'create' => CreateContact::route('/create'),
+            'edit' => EditContact::route('/{record}/edit'),
         ];
     }
 }

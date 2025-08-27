@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use App\Services\ReportingService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +13,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportCustomizer extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
 
-    protected static string $view = 'filament.pages.report-customizer';
+    protected string $view = 'filament.pages.report-customizer';
 
     public ?array $data = [];
     public string $reportType = 'contact-interactions';
@@ -27,10 +27,10 @@ class ReportCustomizer extends Page
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('reportType')
                     ->label('Report Type')
                     ->options([

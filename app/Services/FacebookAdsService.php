@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\AdvertisingAccount;
 use FacebookAds\Api;
 use FacebookAds\Object\AdAccount;
@@ -51,7 +52,7 @@ class FacebookAdsService
             return $campaignData;
         } catch (FacebookException $e) {
             Log::error('Facebook API Error: ' . $e->getMessage());
-            throw new \Exception('Failed to fetch campaigns: ' . $e->getMessage());
+            throw new Exception('Failed to fetch campaigns: ' . $e->getMessage());
         }
     }
 
@@ -82,7 +83,7 @@ class FacebookAdsService
             ];
         } catch (FacebookException $e) {
             Log::error('Facebook API Error: ' . $e->getMessage());
-            throw new \Exception('Failed to create and schedule post: ' . $e->getMessage());
+            throw new Exception('Failed to create and schedule post: ' . $e->getMessage());
         }
     }
 

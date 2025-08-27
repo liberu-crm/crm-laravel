@@ -2,17 +2,17 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Config;
 
 class TwilioSettings extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
-    protected static string $view = 'filament.app.pages.twilio-settings';
+    protected string $view = 'filament.app.pages.twilio-settings';
 
     public ?string $sid = null;
     public ?string $auth_token = null;
@@ -25,10 +25,10 @@ class TwilioSettings extends Page
         $this->phone_number = config('services.twilio.phone_number');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('sid')
                     ->label('Twilio SID')
                     ->required(),

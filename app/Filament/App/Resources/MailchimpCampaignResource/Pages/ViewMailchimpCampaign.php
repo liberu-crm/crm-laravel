@@ -12,7 +12,7 @@ class ViewMailchimpCampaign extends Page
 
     protected static string $resource = MailchimpCampaignResource::class;
 
-    protected static string $view = 'filament.app.resources.mailchimp.view';
+    protected string $view = 'filament.app.resources.mailchimp.view';
 
     public function getTitle(): string
     {

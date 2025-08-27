@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Task;
 use App\Notifications\TaskReminderNotification;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ class ReminderService
                 $this->sendReminderForTask($task);
                 $task->update(['reminder_sent' => true]);
                 Log::info("Reminder sent successfully for task ID: {$task->id}");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error("Failed to send reminder for task ID: {$task->id}. Error: {$e->getMessage()}");
             }
         }
@@ -47,7 +48,7 @@ class ReminderService
                 'reminder_sent' => false,
             ]);
             Log::info("Reminder scheduled successfully for task ID: {$task->id}");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Failed to schedule reminder for task ID: {$task->id}. Error: {$e->getMessage()}");
             throw $e;
         }

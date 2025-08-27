@@ -9,9 +9,9 @@ use Livewire\Component;
 
 class VisualPipeline extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static string $view = 'filament.app.pages.visual-pipeline';
+    protected string $view = 'filament.app.pages.visual-pipeline';
 
     public $pipeline;
     public $stages;

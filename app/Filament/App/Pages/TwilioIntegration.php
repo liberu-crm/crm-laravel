@@ -2,26 +2,26 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
 use App\Services\TwilioService;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class TwilioIntegration extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-phone';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-phone';
 
-    protected static string $view = 'filament.app.pages.twilio-integration';
+    protected string $view = 'filament.app.pages.twilio-integration';
 
     public ?string $to = null;
     public ?string $message = null;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('to')
                     ->label('To')
                     ->tel()

@@ -12,7 +12,7 @@ class ViewAnalyticsDashboard extends Page
 
     protected static string $resource = AnalyticsDashboardResource::class;
 
-    protected static string $view = 'filament.app.resources.analytics-dashboard.view';
+    protected string $view = 'filament.app.resources.analytics-dashboard.view';
 
     public function getTitle(): string
     {

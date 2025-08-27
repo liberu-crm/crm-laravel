@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use InvalidArgumentException;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -95,7 +96,7 @@ class Lead extends Model
     public function setLifecycleStageAttribute($value)
     {
         if (!in_array($value, self::LIFECYCLE_STAGES)) {
-            throw new \InvalidArgumentException("Invalid lifecycle stage: {$value}");
+            throw new InvalidArgumentException("Invalid lifecycle stage: {$value}");
         }
         $this->attributes['lifecycle_stage'] = $value;
     }

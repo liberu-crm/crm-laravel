@@ -2,10 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\TeamSubscriptionResource\Pages\ListTeamSubscriptions;
+use App\Filament\Resources\TeamSubscriptionResource\Pages\CreateTeamSubscription;
+use App\Filament\Resources\TeamSubscriptionResource\Pages\EditTeamSubscription;
 use App\Filament\Resources\TeamSubscriptionResource\Pages;
 use App\Models\TeamSubscription;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,28 +25,28 @@ class TeamSubscriptionResource extends Resource
 {
     protected static ?string $model = TeamSubscription::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('team_id')
+        return $schema
+            ->components([
+                Select::make('team_id')
                     ->relationship('team', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('stripe_id')
+                TextInput::make('stripe_id')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('stripe_status')
+                TextInput::make('stripe_status')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('stripe_price')
+                TextInput::make('stripe_price')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('quantity')
+                TextInput::make('quantity')
                     ->required()
                     ->numeric(),
-                Forms\Components\DateTimePicker::make('trial_ends_at'),
-                Forms\Components\DateTimePicker::make('ends_at'),
+                DateTimePicker::make('trial_ends_at'),
+                DateTimePicker::make('ends_at'),
             ]);
     }
 
@@ -43,18 +54,18 @@ class TeamSubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('team.name'),
-                Tables\Columns\TextColumn::make('stripe_status'),
-                Tables\Columns\TextColumn::make('quantity'),
-                Tables\Columns\TextColumn::make('trial_ends_at')
+                TextColumn::make('team.name'),
+                TextColumn::make('stripe_status'),
+                TextColumn::make('quantity'),
+                TextColumn::make('trial_ends_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('ends_at')
+                TextColumn::make('ends_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('stripe_status')
+                SelectFilter::make('stripe_status')
                     ->options([
                         'active' => 'Active',
                         'canceled' => 'Canceled',
@@ -65,12 +76,12 @@ class TeamSubscriptionResource extends Resource
                         'unpaid' => 'Unpaid',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -84,9 +95,9 @@ class TeamSubscriptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTeamSubscriptions::route('/'),
-            'create' => Pages\CreateTeamSubscription::route('/create'),
-            'edit' => Pages\EditTeamSubscription::route('/{record}/edit'),
+            'index' => ListTeamSubscriptions::route('/'),
+            'create' => CreateTeamSubscription::route('/create'),
+            'edit' => EditTeamSubscription::route('/{record}/edit'),
         ];
     }
 }

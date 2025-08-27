@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\AccountingIntegration;
 use App\Services\AccountingService;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class AccountingIntegrationController extends Controller
             ]);
 
             return response()->json(['message' => 'Successfully connected to ' . $validated['platform']]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }

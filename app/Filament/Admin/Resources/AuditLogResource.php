@@ -2,6 +2,13 @@
 
 namespace App\Filament\Admin\Resources;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Admin\Resources\AuditLogResource\Pages\ListAuditLogs;
+use App\Filament\Admin\Resources\AuditLogResource\Pages\ViewAuditLog;
 use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use Filament\Forms;
@@ -14,22 +21,22 @@ class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user.name')
+                TextInput::make('user.name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('action')
+                TextInput::make('action')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->required()
                     ->maxLength(65535),
-                Forms\Components\TextInput::make('ip_address')
+                TextInput::make('ip_address')
                     ->required()
                     ->maxLength(45),
             ]);
@@ -39,21 +46,21 @@ class AuditLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name'),
-                Tables\Columns\TextColumn::make('action'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('ip_address'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('user.name'),
+                TextColumn::make('action'),
+                TextColumn::make('description'),
+                TextColumn::make('ip_address'),
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -67,8 +74,8 @@ class AuditLogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAuditLogs::route('/'),
-            'view' => Pages\ViewAuditLog::route('/{record}'),
+            'index' => ListAuditLogs::route('/'),
+            'view' => ViewAuditLog::route('/{record}'),
         ];
     }
 }

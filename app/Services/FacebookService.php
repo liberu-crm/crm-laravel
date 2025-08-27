@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use Facebook\Exceptions\FacebookResponseException;
+use Exception;
+use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
 use Illuminate\Support\Facades\Config;
 
@@ -28,10 +31,10 @@ class FacebookService
         try {
             $response = $this->fb->post("/{$pageId}/feed", ['message' => $content], $pageAccessToken);
             return $response->getGraphNode();
-        } catch(\Facebook\Exceptions\FacebookResponseException $e) {
-            throw new \Exception('Graph returned an error: ' . $e->getMessage());
-        } catch(\Facebook\Exceptions\FacebookSDKException $e) {
-            throw new \Exception('Facebook SDK returned an error: ' . $e->getMessage());
+        } catch(FacebookResponseException $e) {
+            throw new Exception('Graph returned an error: ' . $e->getMessage());
+        } catch(FacebookSDKException $e) {
+            throw new Exception('Facebook SDK returned an error: ' . $e->getMessage());
         }
     }
 
@@ -43,10 +46,10 @@ class FacebookService
         try {
             $response = $this->fb->get("/{$postId}/insights?metric=post_impressions,post_engagements", $pageAccessToken);
             return $response->getGraphEdge();
-        } catch(\Facebook\Exceptions\FacebookResponseException $e) {
-            throw new \Exception('Graph returned an error: ' . $e->getMessage());
-        } catch(\Facebook\Exceptions\FacebookSDKException $e) {
-            throw new \Exception('Facebook SDK returned an error: ' . $e->getMessage());
+        } catch(FacebookResponseException $e) {
+            throw new Exception('Graph returned an error: ' . $e->getMessage());
+        } catch(FacebookSDKException $e) {
+            throw new Exception('Facebook SDK returned an error: ' . $e->getMessage());
         }
     }
 }

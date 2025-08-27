@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\FormBuilderResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\FormBuilderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,7 +14,7 @@ class ListFormBuilders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

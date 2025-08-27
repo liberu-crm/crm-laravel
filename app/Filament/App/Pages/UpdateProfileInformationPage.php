@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateProfileInformationPage extends Page
 {
-    protected static string $view = 'filament.app.pages.update-profile-information-page';
+    protected string $view = 'filament.app.pages.update-profile-information-page';
 
     public $name;
     public $email;

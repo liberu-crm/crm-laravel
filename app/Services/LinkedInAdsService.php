@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\AdvertisingAccount;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -42,7 +43,7 @@ class LinkedInAdsService
             return $campaigns;
         } catch (GuzzleException $e) {
             Log::error('LinkedIn API Error: ' . $e->getMessage());
-            throw new \Exception('Failed to fetch campaigns: ' . $e->getMessage());
+            throw new Exception('Failed to fetch campaigns: ' . $e->getMessage());
         }
     }
 
@@ -95,7 +96,7 @@ class LinkedInAdsService
             ];
         } catch (GuzzleException $e) {
             Log::error('LinkedIn API Error: ' . $e->getMessage());
-            throw new \Exception('Failed to create and schedule post: ' . $e->getMessage());
+            throw new Exception('Failed to create and schedule post: ' . $e->getMessage());
         }
     }
 

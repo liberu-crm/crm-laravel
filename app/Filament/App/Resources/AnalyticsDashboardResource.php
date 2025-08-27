@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Filament\App\Resources\AnalyticsDashboardResource\Pages\ViewAnalyticsDashboard;
 use App\Filament\App\Resources\AnalyticsDashboardResource\Pages;
 use App\Models\Contact;
 use App\Models\Deal;
@@ -15,7 +16,7 @@ class AnalyticsDashboardResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     protected static ?string $navigationLabel = 'Analytics Dashboard';
 
@@ -31,7 +32,7 @@ class AnalyticsDashboardResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ViewAnalyticsDashboard::route('/'),
+            'index' => ViewAnalyticsDashboard::route('/'),
         ];
     }
 }

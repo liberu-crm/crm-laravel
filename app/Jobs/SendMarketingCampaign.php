@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Exception;
 use App\Models\MarketingCampaign;
 use App\Services\MailChimpService;
 use App\Services\TwilioService;
@@ -40,7 +41,7 @@ class SendMarketingCampaign implements ShouldQueue
             }
 
             $this->campaign->update(['status' => 'sent']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to send marketing campaign: ' . $e->getMessage());
             $this->campaign->update(['status' => 'failed']);
         }

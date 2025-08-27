@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\User;
 use App\Notifications\CRMEventNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,6 +29,6 @@ class SendCRMEventNotification implements ShouldQueue
         // Implement logic to determine which users should be notified
         // This could be based on user roles, team membership, or other criteria
         // For now, we'll just notify all users (you should refine this)
-        return \App\Models\User::all();
+        return User::all();
     }
 }

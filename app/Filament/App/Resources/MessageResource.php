@@ -2,11 +2,23 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use Exception;
+use Filament\Actions\BulkAction;
+use App\Filament\App\Resources\MessageResource\Pages\ListMessages;
+use App\Filament\App\Resources\MessageResource\Pages\CreateMessage;
+use App\Filament\App\Resources\MessageResource\Pages\EditMessage;
 use App\Filament\App\Resources\MessageResource\Pages;
 use App\Models\Message;
 use App\Services\UnifiedHelpDeskService;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,8 +30,8 @@ class MessageResource extends Resource
 {
     // protected static ?string $model = Message::class;
     protected static ?string $model = Message::class;
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-    protected static ?string $navigationGroup = 'Help Desk';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | \UnitEnum | null $navigationGroup = 'Help Desk';
     protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string
@@ -27,14 +39,14 @@ class MessageResource extends Resource
         return static::getModel()::where('status', 'unread')->count();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('sender')
+        return $schema
+            ->components([
+                TextInput::make('sender')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('channel')
+                Select::make('channel')
                     ->options([
                         'whatsapp' => 'WhatsApp',
                         'facebook' => 'Facebook',
@@ -42,18 +54,18 @@ class MessageResource extends Resource
                         'outlook' => 'Outlook',
                     ])
                     ->required(),
-                Forms\Components\Textarea::make('content')
+                Textarea::make('content')
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
-                Forms\Components\Select::make('priority')
+                Select::make('priority')
                     ->options([
                         'low' => 'Low',
                         'normal' => 'Normal',
                         'high' => 'High',
                     ])
                     ->required(),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options([
                         'unread' => 'Unread',
                         'read' => 'Read',
@@ -67,10 +79,10 @@ class MessageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('Message ID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('channel')
+                TextColumn::make('channel')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'whatsapp' => 'success',
@@ -79,15 +91,15 @@ class MessageResource extends Resource
                         'outlook' => 'warning',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('sender')
+                TextColumn::make('sender')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('content')
+                TextColumn::make('content')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('timestamp')
+                TextColumn::make('timestamp')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('priority')
+                TextColumn::make('priority')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'high' => 'danger',
@@ -95,35 +107,35 @@ class MessageResource extends Resource
                         'low' => 'success',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->badge(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('channel')
+                SelectFilter::make('channel')
                     ->options([
                         'whatsapp' => 'WhatsApp',
                         'facebook' => 'Facebook',
                         'gmail' => 'Gmail',
                         'outlook' => 'Outlook',
                     ]),
-                Tables\Filters\SelectFilter::make('priority')
+                SelectFilter::make('priority')
                     ->options([
                         'low' => 'Low',
                         'normal' => 'Normal',
                         'high' => 'High',
                     ]),
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->options([
                         'unread' => 'Unread',
                         'read' => 'Read',
                         'replied' => 'Replied',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\Action::make('reply')
-                    ->form([
-                        Forms\Components\Textarea::make('reply_content')
+            ->recordActions([
+                ViewAction::make(),
+                Action::make('reply')
+                    ->schema([
+                        Textarea::make('reply_content')
                             ->required()
                             ->label('Reply'),
                     ])
@@ -143,7 +155,7 @@ class MessageResource extends Resource
                                 ->title('Reply sent successfully')
                                 ->success()
                                 ->send();
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             Notification::make()
                                 ->title('Error sending reply')
                                 ->body($e->getMessage())
@@ -151,12 +163,12 @@ class MessageResource extends Resource
                                 ->send();
                         }
                     }),
-                Tables\Actions\Action::make('mark_as_read')
+                Action::make('mark_as_read')
                     ->action(fn (Message $record) => $record->update(['status' => 'read']))
                     ->visible(fn (Message $record) => $record->status === 'unread'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkAction::make('mark_as_read')
+            ->toolbarActions([
+                BulkAction::make('mark_as_read')
                     ->action(fn (Collection $records) => $records->each->update(['status' => 'read'])),
             ])
             ->defaultSort('timestamp', 'desc')
@@ -174,9 +186,9 @@ class MessageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMessages::route('/'),
-            'create' => Pages\CreateMessage::route('/create'),
-            'edit' => Pages\EditMessage::route('/{record}/edit'),
+            'index' => ListMessages::route('/'),
+            'create' => CreateMessage::route('/create'),
+            'edit' => EditMessage::route('/{record}/edit'),
         ];
     }
 }

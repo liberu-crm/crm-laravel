@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Log;
 use MailchimpMarketing\ApiClient;
 
 class MailChimpService
@@ -173,7 +174,7 @@ class MailChimpService
         // This method would typically be called when an email is opened
         // You might need to set up a webhook or use a tracking pixel for this
         // For now, we'll just log the open event
-        \Log::info("Email opened: Campaign ID {$campaign_id}, Email ID {$email_id}");
+        Log::info("Email opened: Campaign ID {$campaign_id}, Email ID {$email_id}");
     }
 
     public function trackEmailClick($campaign_id, $email_id, $url)
@@ -182,6 +183,6 @@ class MailChimpService
         // This method would typically be called when a link in an email is clicked
         // You might need to set up a webhook or use tracked links for this
         // For now, we'll just log the click event
-        \Log::info("Email link clicked: Campaign ID {$campaign_id}, Email ID {$email_id}, URL: {$url}");
+        Log::info("Email link clicked: Campaign ID {$campaign_id}, Email ID {$email_id}, URL: {$url}");
     }
 }

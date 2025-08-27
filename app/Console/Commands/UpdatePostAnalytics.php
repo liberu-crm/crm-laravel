@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
 use Illuminate\Console\Command;
@@ -34,7 +35,7 @@ class UpdatePostAnalytics extends Command
                 // Add other platform analytics logic here
 
                 $this->info("Analytics updated for post ID: {$post->id}");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->error("Failed to update analytics for post ID: {$post->id}. Error: {$e->getMessage()}");
             }
         }

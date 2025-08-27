@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Branch;
@@ -14,7 +15,7 @@ class TeamManagementService
         try {
             $defaultBranch = Branch::firstOrFail();
         } catch (ModelNotFoundException $e) {
-            throw new \Exception('No default branch found. Please set up at least one branch.');
+            throw new Exception('No default branch found. Please set up at least one branch.');
         }
 
         return $user->ownedTeams()->create([
@@ -54,7 +55,7 @@ class TeamManagementService
     public function switchTeam(User $user, Team $team): void
     {
         if (!$user->belongsToTeam($team)) {
-            throw new \Exception('User does not belong to the specified team.');
+            throw new Exception('User does not belong to the specified team.');
         }
         $user->switchTeam($team);
     }

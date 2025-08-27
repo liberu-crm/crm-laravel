@@ -2,10 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\TaskResource\Pages\ListTasks;
+use App\Filament\App\Resources\TaskResource\Pages\CreateTask;
+use App\Filament\App\Resources\TaskResource\Pages\EditTask;
 use Filament\Forms;
 use App\Models\Task;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
@@ -14,7 +20,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\TaskResource\Pages;
 use App\Filament\App\Resources\TaskResource\RelationManagers;
@@ -23,12 +28,12 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')->label('Name'),
                 Textarea::make('description')->label('Description'),
                 DatePicker::make('due_date')->label('Due Date'),
@@ -40,13 +45,13 @@ class TaskResource extends Resource
                         'cancelled' => 'Cancelled',
                     ])
                     ->label('Status'),
-                BelongsToSelect::make('contact_id')
+                Select::make('contact_id')
                     ->relationship('contact', 'name')
                     ->label('Contact'),
-                BelongsToSelect::make('company_id')
+                Select::make('company_id')
                     ->relationship('company', 'name')
                     ->label('Company'),
-                BelongsToSelect::make('opportunity_id')
+                Select::make('opportunity_id')
                     ->relationship('opportunity', 'name')
                     ->label('Opportunity'),
             ]);
@@ -75,12 +80,12 @@ class TaskResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -95,9 +100,9 @@ class TaskResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTasks::route('/'),
-            'create' => Pages\CreateTask::route('/create'),
-            'edit' => Pages\EditTask::route('/{record}/edit'),
+            'index' => ListTasks::route('/'),
+            'create' => CreateTask::route('/create'),
+            'edit' => EditTask::route('/{record}/edit'),
         ];
     }
 }

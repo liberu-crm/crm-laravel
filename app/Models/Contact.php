@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -111,9 +112,9 @@ class Contact extends Model
     /**
      * Scope a query to search contacts based on given criteria.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      * @param string $search
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeSearch($query, $search)
     {

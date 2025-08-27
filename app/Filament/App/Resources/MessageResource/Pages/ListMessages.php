@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Resources\MessageResource\Pages;
 
+use Filament\Actions\Action;
+use Exception;
 use App\Filament\App\Resources\MessageResource;
 use App\Services\UnifiedHelpDeskService;
 use Filament\Actions;
@@ -15,7 +17,7 @@ class ListMessages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('sync')
+            Action::make('sync')
                 ->action(function (UnifiedHelpDeskService $helpDeskService) {
                     try {
                         $messages = $helpDeskService->getAllMessages(null, false);
@@ -45,7 +47,7 @@ class ListMessages extends ListRecords
                             ->title('Messages synced successfully')
                             ->success()
                             ->send();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Notification::make()
                             ->title('Error syncing messages')
                             ->body($e->getMessage())

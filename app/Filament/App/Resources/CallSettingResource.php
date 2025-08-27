@@ -2,10 +2,18 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\CallSettingResource\Pages\ListCallSettings;
+use App\Filament\App\Resources\CallSettingResource\Pages\CreateCallSetting;
+use App\Filament\App\Resources\CallSettingResource\Pages\EditCallSetting;
 use App\Filament\App\Resources\CallSettingResource\Pages;
 use App\Models\CallSetting;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,19 +22,19 @@ class CallSettingResource extends Resource
 {
     protected static ?string $model = CallSetting::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('value')
+                TextInput::make('value')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->maxLength(65535),
             ]);
     }
@@ -35,18 +43,18 @@ class CallSettingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('value'),
-                Tables\Columns\TextColumn::make('description'),
+                TextColumn::make('name'),
+                TextColumn::make('value'),
+                TextColumn::make('description'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -60,9 +68,9 @@ class CallSettingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCallSettings::route('/'),
-            'create' => Pages\CreateCallSetting::route('/create'),
-            'edit' => Pages\EditCallSetting::route('/{record}/edit'),
+            'index' => ListCallSettings::route('/'),
+            'create' => CreateCallSetting::route('/create'),
+            'edit' => EditCallSetting::route('/{record}/edit'),
         ];
     }
 }

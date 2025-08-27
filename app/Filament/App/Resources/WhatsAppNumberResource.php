@@ -2,10 +2,20 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\WhatsAppNumberResource\Pages\ListWhatsAppNumbers;
+use App\Filament\App\Resources\WhatsAppNumberResource\Pages\CreateWhatsAppNumber;
+use App\Filament\App\Resources\WhatsAppNumberResource\Pages\EditWhatsAppNumber;
 use App\Filament\App\Resources\WhatsAppNumberResource\Pages;
 use App\Models\WhatsAppNumber;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -14,18 +24,18 @@ class WhatsAppNumberResource extends Resource
 {
     protected static ?string $model = WhatsAppNumber::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-phone';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-phone';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('number')
+        return $schema
+            ->components([
+                TextInput::make('number')
                     ->required()
                     ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('display_name')
+                TextInput::make('display_name')
                     ->required(),
-                Forms\Components\Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->required(),
             ]);
     }
@@ -34,19 +44,19 @@ class WhatsAppNumberResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('number'),
-                Tables\Columns\TextColumn::make('display_name'),
-                Tables\Columns\BooleanColumn::make('is_active'),
+                TextColumn::make('number'),
+                TextColumn::make('display_name'),
+                BooleanColumn::make('is_active'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -60,9 +70,9 @@ class WhatsAppNumberResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListWhatsAppNumbers::route('/'),
-            'create' => Pages\CreateWhatsAppNumber::route('/create'),
-            'edit' => Pages\EditWhatsAppNumber::route('/{record}/edit'),
+            'index' => ListWhatsAppNumbers::route('/'),
+            'create' => CreateWhatsAppNumber::route('/create'),
+            'edit' => EditWhatsAppNumber::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\AdvertisingDashboardResource\Pages;
 
+use Filament\Actions\Action;
 use App\Filament\App\Resources\AdvertisingDashboardResource;
 use Filament\Resources\Pages\Page;
 use Filament\Pages\Actions;
@@ -11,7 +12,7 @@ class ViewAdvertisingDashboard extends Page
 {
     protected static string $resource = AdvertisingDashboardResource::class;
 
-    protected static string $view = 'filament.app.resources.advertising-dashboard-resource.pages.view-advertising-dashboard';
+    protected string $view = 'filament.app.resources.advertising-dashboard-resource.pages.view-advertising-dashboard';
 
     public function getTitle(): string
     {
@@ -43,7 +44,7 @@ class ViewAdvertisingDashboard extends Page
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('refresh')
+            Action::make('refresh')
                 ->label('Refresh Data')
                 ->action(fn () => $this->refresh())
                 ->color('secondary'),

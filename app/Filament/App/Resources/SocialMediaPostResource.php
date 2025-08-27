@@ -2,52 +2,72 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Components\View;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TagsColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages\ListSocialMediaPosts;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages\CreateSocialMediaPost;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages\EditSocialMediaPost;
+use Exception;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookAdsService;
 use App\Services\LinkedInAdsService;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Support\Facades\Log;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 
 class SocialMediaPostResource extends Resource
 {
     protected static ?string $model = SocialMediaPost::class;
-    protected static ?string $navigationIcon = 'heroicon-o-share';
-    protected static ?string $navigationGroup = 'Marketing';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-share';
+    protected static string | \UnitEnum | null $navigationGroup = 'Marketing';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make(3)
                     ->schema([
                         Section::make('Post Content')
                             ->schema([
-                                Forms\Components\Textarea::make('content')
+                                Textarea::make('content')
                                     ->required()
                                     ->maxLength(65535)
                                     ->helperText('Write your post content here. Character limits vary by platform.')
                                     ->reactive()
                                     ->afterStateUpdated(fn ($state, callable $set) => 
                                         $set('character_count', strlen($state))),
-                                Forms\Components\TextInput::make('character_count')
+                                TextInput::make('character_count')
                                     ->label('Character Count')
                                     ->disabled()
                                     ->dehydrated(false),
-                                Forms\Components\DateTimePicker::make('scheduled_at')
+                                DateTimePicker::make('scheduled_at')
                                     ->required()
                                     ->helperText('Schedule when this post should be published')
                                     ->minDate(now())
                                     ->withoutSeconds(),
-                                Forms\Components\MultiSelect::make('platforms')
+                                MultiSelect::make('platforms')
                                     ->options([
                                         'facebook' => 'Facebook',
                                         'linkedin' => 'LinkedIn',
@@ -58,7 +78,7 @@ class SocialMediaPostResource extends Resource
                                     ->required()
                                     ->helperText('Select the platforms where you want to publish')
                                     ->columns(2),
-                                Forms\Components\Select::make('status')
+                                Select::make('status')
                                     ->options(SocialMediaPost::getStatuses())
                                     ->required()
                                     ->disabled(fn ($record) => 
@@ -68,11 +88,11 @@ class SocialMediaPostResource extends Resource
                         
                         Section::make('Media & Links')
                             ->schema([
-                                Forms\Components\TextInput::make('link')
+                                TextInput::make('link')
                                     ->url()
                                     ->label('Link (optional)')
                                     ->helperText('Add a URL to your post'),
-                                Forms\Components\FileUpload::make('image')
+                                FileUpload::make('image')
                                     ->image()
                                     ->label('Image (optional)')
                                     ->disk('public')
@@ -86,21 +106,21 @@ class SocialMediaPostResource extends Resource
 
                         Section::make('Preview')
                             ->schema([
-                                Forms\Components\View::make('filament.components.social-media-preview')
+                                View::make('filament.components.social-media-preview')
                                     ->visible(fn ($get) => !empty($get('content')))
                             ])
                             ->columnSpan(2),
 
                         Section::make('Analytics')
                             ->schema([
-                                Forms\Components\Placeholder::make('Analytics')
+                                Placeholder::make('Analytics')
                                     ->content(function (SocialMediaPost $record) {
                                         return view('filament.components.social-media-analytics', [
                                             'post' => $record,
                                             'detailed' => true
                                         ]);
                                     }),
-                                Forms\Components\View::make('filament.components.engagement-chart')
+                                View::make('filament.components.engagement-chart')
                                     ->visible(fn ($record) => 
                                         $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
@@ -115,30 +135,30 @@ class SocialMediaPostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('content')->limit(50),
-                Tables\Columns\TagsColumn::make('platforms'),
-                Tables\Columns\TextColumn::make('scheduled_at')
+                TextColumn::make('content')->limit(50),
+                TagsColumn::make('platforms'),
+                TextColumn::make('scheduled_at')
                     ->dateTime(),
-                Tables\Columns\BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->colors([
                         'primary' => 'draft',
                         'warning' => 'scheduled',
                         'success' => 'published',
                         'danger' => 'failed',
                     ]),
-                Tables\Columns\TextColumn::make('likes')
+                TextColumn::make('likes')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('shares')
+                TextColumn::make('shares')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('comments')
+                TextColumn::make('comments')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->options(SocialMediaPost::getStatuses()),
-                Tables\Filters\SelectFilter::make('platforms')
+                SelectFilter::make('platforms')
                     ->options([
                         'facebook' => 'Facebook',
                         'linkedin' => 'LinkedIn',
@@ -148,18 +168,18 @@ class SocialMediaPostResource extends Resource
                     ])
                     ->multiple(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('publish')
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                Action::make('publish')
                     ->action(function (SocialMediaPost $record) {
                         self::publishPost($record);
                     })
                     ->requiresConfirmation()
                     ->visible(fn (SocialMediaPost $record) => $record->status === SocialMediaPost::STATUS_SCHEDULED),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -173,9 +193,9 @@ class SocialMediaPostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSocialMediaPosts::route('/'),
-            'create' => Pages\CreateSocialMediaPost::route('/create'),
-            'edit' => Pages\EditSocialMediaPost::route('/{record}/edit'),
+            'index' => ListSocialMediaPosts::route('/'),
+            'create' => CreateSocialMediaPost::route('/create'),
+            'edit' => EditSocialMediaPost::route('/{record}/edit'),
         ];
     }
 
@@ -205,7 +225,7 @@ class SocialMediaPostResource extends Resource
                         break;
                     // Add cases for other platforms as needed
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error("Failed to publish post to $platform: " . $e->getMessage());
                 $post->status = SocialMediaPost::STATUS_FAILED;
                 $post->save();

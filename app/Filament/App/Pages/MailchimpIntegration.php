@@ -2,19 +2,19 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
 use App\Services\MailChimpService;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 class MailchimpIntegration extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static string $view = 'filament.app.pages.mailchimp-integration';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
+    protected string $view = 'filament.app.pages.mailchimp-integration';
 
     public ?array $listData = [];
     public ?array $campaignData = [];
@@ -24,10 +24,10 @@ class MailchimpIntegration extends Page
         $this->listData = $mailchimpService->getLists();
     }
 
-    public function createListForm(Form $form): Form
+    public function createListForm(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')->required(),
                 TextInput::make('company')->required(),
                 TextInput::make('permission_reminder')->required(),
@@ -38,7 +38,7 @@ class MailchimpIntegration extends Page
 
     public function createList(MailChimpService $mailchimpService)
     {
-        $data = $this->createListForm(new Form())->getState();
+        $data = $this->createListForm(new Schema())->getState();
         $result = $mailchimpService->createList(
             $data['name'],
             $data['company'],
@@ -61,10 +61,10 @@ class MailchimpIntegration extends Page
         }
     }
 
-    public function createCampaignForm(Form $form): Form
+    public function createCampaignForm(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('list_id')
                     ->label('Recipient List')
                     ->options($this->listData)
@@ -78,7 +78,7 @@ class MailchimpIntegration extends Page
 
     public function createCampaign(MailChimpService $mailchimpService)
     {
-        $data = $this->createCampaignForm(new Form())->getState();
+        $data = $this->createCampaignForm(new Schema())->getState();
         $result = $mailchimpService->createCampaign(
             $data['list_id'],
             $data['subject'],
@@ -106,11 +106,11 @@ class MailchimpIntegration extends Page
         return [
             'createListAction' => Action::make('createList')
                 ->label('Create List')
-                ->form($this->createListForm(...))
+                ->schema($this->createListForm(...))
                 ->action(fn () => $this->createList(app(MailChimpService::class))),
             'createCampaignAction' => Action::make('createCampaign')
                 ->label('Create Campaign')
-                ->form($this->createCampaignForm(...))
+                ->schema($this->createCampaignForm(...))
                 ->action(fn () => $this->createCampaign(app(MailChimpService::class))),
         ];
     }

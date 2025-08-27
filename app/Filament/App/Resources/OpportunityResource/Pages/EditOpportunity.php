@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\OpportunityResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\OpportunityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -13,7 +14,7 @@ class EditOpportunity extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
