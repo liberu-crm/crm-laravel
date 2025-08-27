@@ -23,7 +23,7 @@
     <div class="min-h-screen bg-gray-100 flex flex-col">
         @include('components.home-navbar')
 
-        <main class="flex-grow">
+        <main class="grow">
             @yield('content')
         </main>
 

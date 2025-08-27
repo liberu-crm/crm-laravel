@@ -2,7 +2,7 @@
     <div class="opportunity-pipeline">
         <div class="flex overflow-x-auto">
             @foreach($stages as $stage)
-                <div class="flex-shrink-0 w-64 p-4 bg-gray-100 rounded-lg mr-4">
+                <div class="shrink-0 w-64 p-4 bg-gray-100 rounded-lg mr-4">
                     <h3 class="text-lg font-semibold mb-4">{{ $stage }}</h3>
                     <div class="stage-deals"
                          data-stage="{{ $stage }}"
