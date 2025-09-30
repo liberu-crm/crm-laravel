@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7a13dd8d7adf07fc562337fb0fca598",
+    "content-hash": "aad9267bb5630d86f46bfe191c6dc327",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2403,54 +2403,6 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
-        },
-        {
-            "name": "intelrx/sitesettings",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Raza9798/siteconfig.git",
-                "reference": "64c23056e410b52af75487d4a9c6f2935c1098ab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Raza9798/siteconfig/zipball/64c23056e410b52af75487d4a9c6f2935c1098ab",
-                "reference": "64c23056e410b52af75487d4a9c6f2935c1098ab",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Intelrx\\Sitesettings\\SitesettingsProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Intelrx\\Sitesettings\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "raza9798",
-                    "email": "m.raza9798@gmail.com"
-                }
-            ],
-            "description": "Application global properties",
-            "support": {
-                "issues": "https://github.com/Raza9798/siteconfig/issues",
-                "source": "https://github.com/Raza9798/siteconfig/tree/2.0.0"
-            },
-            "abandoned": "raza9798/siteconfig",
-            "time": "2024-09-30T20:53:46+00:00"
         },
         {
             "name": "joelbutcher/socialstream",
