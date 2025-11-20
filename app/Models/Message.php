@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Message extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'channel',

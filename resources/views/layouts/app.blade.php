@@ -55,7 +55,7 @@
                             @endforelse
                         </div>
                         <div class="border-t px-4 py-2">
-                            <a href="{{ route('notifications.index') }}" class="text-sm text-blue-500 hover:underline">View all notifications</a>
+                            {{-- <a href="{{ route('notifications.index') }}" class="text-sm text-blue-500 hover:underline">View all notifications</a> --}}
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,6 @@ class SiteSettingsHelper
 {
     public static function get($key, $default = null)
     {
-        return SiteSettings::get($key) ?? $default;
+        return  $default;
     }
 }
