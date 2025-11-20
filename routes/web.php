@@ -11,16 +11,16 @@ use App\Http\Controllers\QuoteRequestController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
-});
+// Route::middleware(['guest'])->group(function () {
+//     Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+//     Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+// });
 
-Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+// Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/app', [HomeController::class, 'app'])->name('app');
-    Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
+    // Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
     
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('knowledge-base.index');
