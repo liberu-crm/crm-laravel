@@ -19,7 +19,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/app', [HomeController::class, 'app'])->name('app');
+    // Route::get('/app', [HomeController::class, 'app'])->name('app');
     // Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
     
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');

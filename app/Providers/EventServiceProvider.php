@@ -30,9 +30,9 @@ class EventServiceProvider extends ServiceProvider
         Login::class => [
             LogSuccessfulLogin::class,
         ],
-        'Illuminate\Auth\Events\Logout' => [
-            'App\Listeners\LogSuccessfulLogout',
-        ],
+        // 'Illuminate\Auth\Events\Logout' => [
+        //     App\Listeners\LogSuccessfulLogout,
+        // ],
         // Add CRM event listeners
         'App\Events\NewLead' => [
             SendCRMEventNotification::class,
