@@ -274,6 +274,151 @@ LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 
 For more detailed information on using the advertising account management features, please refer to the user guide in the `docs` folder.
 
+## New Features & Enhancements
+
+### OAuth 2.0 Authentication
+
+The CRM now supports secure OAuth 2.0 authentication for all major integrations, replacing hardcoded API keys:
+
+**Supported Providers:**
+- MailChimp - Email marketing
+- Stripe Connect - Payment processing
+- Google/Gmail - Email and calendar
+- Microsoft/Outlook - Email and calendar
+- Facebook - Social media and ads
+- LinkedIn - Professional network and ads
+- Twitter - Social media
+- Zoom - Video conferencing
+
+**Benefits:**
+- Enhanced security with token-based authentication
+- Automatic token refresh
+- User-friendly browser-based authorization
+- Granular permission control
+
+See [OAuth Authentication Guide](docs/oauth-authentication.md) for setup and usage.
+
+### Email Tracking & Analytics
+
+Comprehensive email engagement tracking system:
+
+**Features:**
+- Open tracking with detailed metrics
+- Click tracking for all links
+- Bounce detection and handling
+- Unsubscribe management
+- Engagement scoring
+- Multi-device tracking
+
+**Email Templates:**
+- Visual template builder
+- Dynamic variable support
+- Template categories
+- Version control
+- A/B testing support
+
+See [Email Tracking Guide](docs/email-tracking.md) for detailed information.
+
+### Advanced Workflow Automation
+
+Enhanced workflow automation with visual builder and complex logic:
+
+**Triggers:**
+- Contact lifecycle events
+- Deal stage changes
+- Email engagement (opens, clicks)
+- Form submissions
+- Task completion
+- Date-based triggers
+- Custom schedules
+
+**Actions:**
+- Send emails and SMS
+- Update contact/deal data
+- Create tasks and deals
+- Add/remove tags
+- Assign to users
+- Webhook integrations
+- Time delays
+- Conditional logic (if/then/else)
+
+**Features:**
+- Visual workflow builder
+- Execution tracking
+- Error handling
+- Performance analytics
+
+See [Workflow Automation Guide](docs/workflow-automation.md) for examples and best practices.
+
+### Sales Forecasting
+
+AI-powered sales forecasting with multiple prediction methods:
+
+**Forecast Types:**
+- Pipeline-based forecasting
+- Historical trend analysis
+- Weighted probability forecasting
+- AI-predicted revenue
+
+**Features:**
+- Confidence levels
+- Accuracy tracking
+- Multi-period forecasts
+- Team and individual forecasts
+- Revenue trend analysis
+
+### Live Chat & Chatbots
+
+Real-time customer communication:
+
+**Live Chat:**
+- Real-time visitor chat
+- Agent assignment
+- Chat transfer
+- Visitor tracking
+- Chat ratings and feedback
+- Automatic contact creation
+
+**Chatbots:**
+- Conversational flows
+- Lead qualification
+- FAQ automation
+- Appointment scheduling
+- Integration with live chat
+- Analytics and reporting
+
+### Advanced Reporting
+
+Custom report builder with powerful analytics:
+
+**Features:**
+- Drag-and-drop report builder
+- Custom filters and grouping
+- Multiple chart types (line, bar, pie, funnel)
+- Scheduled reports
+- Export to CSV/PDF/Excel
+- Shareable dashboards
+
+### Enhanced Integrations
+
+**Calendar Sync:**
+- Google Calendar bidirectional sync
+- Outlook Calendar sync
+- Meeting scheduling
+- Availability checking
+
+**Communication:**
+- Enhanced Twilio integration
+- WhatsApp Business API
+- Facebook Messenger
+- Instagram Direct
+
+**Marketing:**
+- Google Ads campaign management
+- Facebook Ads insights
+- LinkedIn Ads tracking
+- Multi-channel attribution
+
 # CRM Laravel
 
 ## Task Management System

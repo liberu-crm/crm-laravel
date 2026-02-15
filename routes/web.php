@@ -8,8 +8,13 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
+use App\Http\Controllers\EmailTrackingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Email tracking routes (public, no auth required)
+Route::get('/email/track/pixel/{tracking_id}', [EmailTrackingController::class, 'pixel'])->name('email.tracking.pixel');
+Route::get('/email/track/link/{tracking_id}', [EmailTrackingController::class, 'link'])->name('email.tracking.link');
 
 // Route::middleware(['guest'])->group(function () {
 //     Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');

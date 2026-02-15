@@ -16,11 +16,15 @@ class Workflow extends Model
         'description',
         'triggers',
         'actions',
+        'is_active',
+        'metadata',
     ];
 
     protected $casts = [
         'triggers' => 'json',
         'actions' => 'json',
+        'is_active' => 'boolean',
+        'metadata' => 'json',
     ];
 
     public function leads()
@@ -36,5 +40,20 @@ class Workflow extends Model
     public function deals()
     {
         return $this->belongsToMany(Deal::class);
+    }
+
+    public function workflowTriggers()
+    {
+        return $this->hasMany(WorkflowTrigger::class);
+    }
+
+    public function workflowActions()
+    {
+        return $this->hasMany(WorkflowAction::class);
+    }
+
+    public function executions()
+    {
+        return $this->hasMany(WorkflowExecution::class);
     }
 }
