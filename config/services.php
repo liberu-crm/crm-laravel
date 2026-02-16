@@ -139,4 +139,24 @@ return [
         'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
     ],
 
+    'imap' => [
+        'host' => env('IMAP_HOST'),
+        'port' => env('IMAP_PORT', 993),
+        'username' => env('IMAP_USERNAME'),
+        'password' => env('IMAP_PASSWORD'),
+        'ssl' => env('IMAP_SSL', true),
+        'smtp_host' => env('SMTP_HOST'),
+        'smtp_port' => env('SMTP_PORT', 587),
+    ],
+
+    'pop3' => [
+        'host' => env('POP3_HOST'),
+        'port' => env('POP3_PORT', 110),
+        'username' => env('POP3_USERNAME'),
+        'password' => env('POP3_PASSWORD'),
+        'ssl' => env('POP3_SSL', false),
+        'smtp_host' => env('SMTP_HOST'),
+        'smtp_port' => env('SMTP_PORT', 587),
+    ],
+
 ];

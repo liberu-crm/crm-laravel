@@ -19,18 +19,24 @@ class UnifiedHelpDeskService
     protected $facebookMessengerService;
     protected $gmailService;
     protected $outlookService;
+    protected $imapService;
+    protected $pop3Service;
     protected $cacheTimeout = 300; // 5 minutes
 
     public function __construct(
         WhatsAppBusinessService $whatsAppService,
         FacebookMessengerService $facebookMessengerService,
         GmailService $gmailService,
-        OutlookService $outlookService
+        OutlookService $outlookService,
+        ImapService $imapService,
+        Pop3Service $pop3Service
     ) {
         $this->whatsAppService = $whatsAppService;
         $this->facebookMessengerService = $facebookMessengerService;
         $this->gmailService = $gmailService;
         $this->outlookService = $outlookService;
+        $this->imapService = $imapService;
+        $this->pop3Service = $pop3Service;
     }
 
     public function getAllMessages($accountId = null, $useCache = true)
@@ -73,7 +79,10 @@ class UnifiedHelpDeskService
             'whatsapp' => fn($config) => $this->whatsAppService->getMessages($config),
             'facebook' => fn($config) => $this->facebookMessengerService->getUnreadMessages($config),
             'gmail' => fn($config) => $this->gmailService->getUnreadMessages($config),
-            'outlook' => fn($config) => $this->outlookService->getUnreadMessages($config)
+            'outlook' => fn($config) => $this->outlookService->getUnreadMessages($config),
+            'microsoft365' => fn($config) => $this->outlookService->getUnreadMessages($config),
+            'imap' => fn($config) => $this->imapService->getUnreadMessages($config),
+            'pop3' => fn($config) => $this->pop3Service->getUnreadMessages($config),
         ];
 
         foreach ($platforms as $platform => $fetcher) {
@@ -127,10 +136,12 @@ class UnifiedHelpDeskService
 
         try {
             $result = match ($channel) {
-                'whatsapp' => $this->whatsAppService->sendMessage($content, $messageId, $config),
+                'whatsapp' => $this->whatsAppService->sendMessage($messageId, $content, $config),
                 'facebook' => $this->facebookMessengerService->sendReply($messageId, $content, $config),
                 'gmail' => $this->gmailService->sendReply($messageId, $content, $config),
-                'outlook' => $this->outlookService->sendReply($messageId, $content, $config),
+                'outlook', 'microsoft365' => $this->outlookService->sendReply($messageId, $content, $config),
+                'imap' => $this->imapService->sendReply($messageId, $content, $config),
+                'pop3' => $this->pop3Service->sendReply($messageId, $content, $config),
                 default => throw new InvalidArgumentException("Unsupported channel: {$channel}")
             };
 
@@ -214,6 +225,9 @@ class UnifiedHelpDeskService
                 ];
             case 'gmail':
             case 'outlook':
+            case 'microsoft365':
+            case 'imap':
+            case 'pop3':
                 return [
                     'subject' => $message['subject'] ?? null,
                     'cc' => $message['cc'] ?? [],
