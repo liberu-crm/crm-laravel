@@ -210,22 +210,17 @@ class Pop3Service
 
     protected function sendViaSmtp($to, $subject, $content)
     {
-        $smtpHost = $this->config->additional_settings['smtp_host'] ?? $this->config->additional_settings['host'];
-        $smtpPort = $this->config->additional_settings['smtp_port'] ?? 587;
-        $username = $this->config->additional_settings['username'] ?? $this->config->client_id;
-        $password = $this->config->additional_settings['password'] ?? $this->config->client_secret;
-        $from = $this->config->additional_settings['from_email'] ?? $username;
+        $from = $this->config->additional_settings['from_email'] ?? $this->config->additional_settings['username'] ?? $this->config->client_id;
         
-        $headers = [
-            'From: ' . $from,
-            'Reply-To: ' . $from,
-            'X-Mailer: PHP/' . phpversion(),
-            'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-        ];
-        
-        // Use Laravel's built-in mail functionality
-        // This is a simplified version - in production, you'd want to use a proper mail driver
-        mail($to, $subject, $content, implode("\r\n", $headers));
+        try {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+                $message->to($to)
+                    ->subject($subject)
+                    ->from($from);
+            });
+        } catch (\Exception $e) {
+            Log::error('Error sending email via SMTP: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

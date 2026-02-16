@@ -43,8 +43,15 @@ class ImapServiceTest extends TestCase
 
     public function testImapServiceRequiresConfiguration()
     {
-        // Test that the service can be instantiated
-        // Actual connection tests would require mocking PHP's imap functions
-        $this->assertTrue(true);
+        $configWithoutSettings = Mockery::mock(OAuthConfiguration::class);
+        $configWithoutSettings->id = 1;
+        $configWithoutSettings->client_id = 'test@example.com';
+        $configWithoutSettings->client_secret = 'test_password';
+        $configWithoutSettings->additional_settings = [];
+
+        // Test that calling methods without proper host configuration will fail
+        $this->expectException(\Exception::class);
+        
+        $this->imapService->getUnreadMessages($configWithoutSettings);
     }
 }

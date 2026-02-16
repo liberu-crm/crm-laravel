@@ -204,22 +204,17 @@ class ImapService
 
     protected function sendViaSmtp($to, $subject, $content, OAuthConfiguration $config)
     {
-        $smtpHost = $config->additional_settings['smtp_host'] ?? $config->additional_settings['host'];
-        $smtpPort = $config->additional_settings['smtp_port'] ?? 587;
-        $username = $config->additional_settings['username'] ?? $config->client_id;
-        $password = $config->additional_settings['password'] ?? $config->client_secret;
-        $from = $config->additional_settings['from_email'] ?? $username;
+        $from = $config->additional_settings['from_email'] ?? $config->additional_settings['username'] ?? $config->client_id;
         
-        $headers = [
-            'From: ' . $from,
-            'Reply-To: ' . $from,
-            'X-Mailer: PHP/' . phpversion(),
-            'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-        ];
-        
-        // Use Laravel's built-in mail functionality
-        // This is a simplified version - in production, you'd want to use a proper mail driver
-        mail($to, $subject, $content, implode("\r\n", $headers));
+        try {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+                $message->to($to)
+                    ->subject($subject)
+                    ->from($from);
+            });
+        } catch (\Exception $e) {
+            Log::error('Error sending email via SMTP: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

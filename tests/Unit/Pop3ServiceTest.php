@@ -43,8 +43,15 @@ class Pop3ServiceTest extends TestCase
 
     public function testPop3ServiceRequiresConfiguration()
     {
-        // Test that the service can be instantiated
-        // Actual connection tests would require mocking network connections
-        $this->assertTrue(true);
+        $configWithoutSettings = Mockery::mock(OAuthConfiguration::class);
+        $configWithoutSettings->id = 1;
+        $configWithoutSettings->client_id = 'test@example.com';
+        $configWithoutSettings->client_secret = 'test_password';
+        $configWithoutSettings->additional_settings = [];
+
+        // Test that calling methods without proper host configuration will fail
+        $this->expectException(\Exception::class);
+        
+        $this->pop3Service->getUnreadMessages($configWithoutSettings);
     }
 }

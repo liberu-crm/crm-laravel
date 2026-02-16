@@ -139,30 +139,24 @@ return [
         'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
     ],
 
-    'imap' => function () {
-        $config = OAuthConfiguration::getConfig('imap');
-        return [
-            'host' => $config && isset($config->additional_settings['host']) ? $config->additional_settings['host'] : env('IMAP_HOST'),
-            'port' => $config && isset($config->additional_settings['port']) ? $config->additional_settings['port'] : env('IMAP_PORT', 993),
-            'username' => $config ? $config->client_id : env('IMAP_USERNAME'),
-            'password' => $config ? $config->client_secret : env('IMAP_PASSWORD'),
-            'ssl' => $config && isset($config->additional_settings['ssl']) ? $config->additional_settings['ssl'] : env('IMAP_SSL', true),
-            'smtp_host' => $config && isset($config->additional_settings['smtp_host']) ? $config->additional_settings['smtp_host'] : env('SMTP_HOST'),
-            'smtp_port' => $config && isset($config->additional_settings['smtp_port']) ? $config->additional_settings['smtp_port'] : env('SMTP_PORT', 587),
-        ];
-    },
+    'imap' => [
+        'host' => env('IMAP_HOST'),
+        'port' => env('IMAP_PORT', 993),
+        'username' => env('IMAP_USERNAME'),
+        'password' => env('IMAP_PASSWORD'),
+        'ssl' => env('IMAP_SSL', true),
+        'smtp_host' => env('SMTP_HOST'),
+        'smtp_port' => env('SMTP_PORT', 587),
+    ],
 
-    'pop3' => function () {
-        $config = OAuthConfiguration::getConfig('pop3');
-        return [
-            'host' => $config && isset($config->additional_settings['host']) ? $config->additional_settings['host'] : env('POP3_HOST'),
-            'port' => $config && isset($config->additional_settings['port']) ? $config->additional_settings['port'] : env('POP3_PORT', 110),
-            'username' => $config ? $config->client_id : env('POP3_USERNAME'),
-            'password' => $config ? $config->client_secret : env('POP3_PASSWORD'),
-            'ssl' => $config && isset($config->additional_settings['ssl']) ? $config->additional_settings['ssl'] : env('POP3_SSL', false),
-            'smtp_host' => $config && isset($config->additional_settings['smtp_host']) ? $config->additional_settings['smtp_host'] : env('SMTP_HOST'),
-            'smtp_port' => $config && isset($config->additional_settings['smtp_port']) ? $config->additional_settings['smtp_port'] : env('SMTP_PORT', 587),
-        ];
-    },
+    'pop3' => [
+        'host' => env('POP3_HOST'),
+        'port' => env('POP3_PORT', 110),
+        'username' => env('POP3_USERNAME'),
+        'password' => env('POP3_PASSWORD'),
+        'ssl' => env('POP3_SSL', false),
+        'smtp_host' => env('SMTP_HOST'),
+        'smtp_port' => env('SMTP_PORT', 587),
+    ],
 
 ];
