@@ -18,10 +18,13 @@ class OAuthConfiguration extends Model
         'client_id',
         'client_secret',
         'additional_settings',
+        'is_active',
+        'account_name',
     ];
 
     protected $casts = [
         'additional_settings' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public static function getConfig($serviceName)

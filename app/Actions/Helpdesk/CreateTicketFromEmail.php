@@ -9,8 +9,20 @@ class CreateTicketFromEmail
 {
     public function execute($message)
     {
-        $headers = $this->getHeaders($message);
-        $body = $this->getBody($message);
+        // Handle both Gmail message objects and array messages from other services
+        if (is_array($message)) {
+            $headers = [
+                'From' => $message['from'] ?? '',
+                'Subject' => $message['subject'] ?? '',
+            ];
+            $body = $message['content'] ?? $message['message'] ?? '';
+            $emailId = $message['id'] ?? null;
+        } else {
+            // Gmail message object
+            $headers = $this->getHeaders($message);
+            $body = $this->getBody($message);
+            $emailId = $message->getId();
+        }
 
         $user = User::firstOrCreate(['email' => $headers['From']]);
 
@@ -20,7 +32,7 @@ class CreateTicketFromEmail
             'status' => 'open',
             'priority' => 'medium',
             'user_id' => $user->id,
-            'email_id' => $message->getId(),
+            'email_id' => $emailId,
         ]);
     }
 
