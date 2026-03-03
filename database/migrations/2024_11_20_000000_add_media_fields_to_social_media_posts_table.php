@@ -11,14 +11,15 @@ return new class extends Migration
         Schema::table('social_media_posts', function (Blueprint $table) {
             $table->string('link')->nullable()->after('status');
             $table->string('image')->nullable()->after('link');
-            $table->json('platform_post_ids')->nullable()->after('image');
+            $table->string('video')->nullable()->after('image');
+            $table->json('platform_post_ids')->nullable()->after('video');
         });
     }
 
     public function down(): void
     {
         Schema::table('social_media_posts', function (Blueprint $table) {
-            $table->dropColumn(['link', 'image', 'platform_post_ids']);
+            $table->dropColumn(['link', 'image', 'video', 'platform_post_ids']);
         });
     }
 };

@@ -18,6 +18,7 @@ class SocialMediaPost extends Model
         'status',
         'link',
         'image',
+        'video',
         'platform_post_ids',
         'likes',
         'shares',

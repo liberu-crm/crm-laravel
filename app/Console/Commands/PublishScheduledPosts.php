@@ -9,6 +9,7 @@ use App\Services\FacebookService;
 use App\Services\TwitterService;
 use App\Services\InstagramService;
 use App\Services\LinkedInService;
+use App\Services\YouTubeService;
 use Illuminate\Console\Command;
 
 class PublishScheduledPosts extends Command
@@ -53,7 +54,7 @@ class PublishScheduledPosts extends Command
     {
         switch ($platform) {
             case 'facebook':
-                $service = new FacebookService();
+                $service = app(FacebookService::class);
                 $result = $service->publishPost($post->content);
                 if ($result) {
                     $ids = $post->platform_post_ids ?? [];
@@ -66,24 +67,34 @@ class PublishScheduledPosts extends Command
             case 'twitter':
                 $account = ConnectedAccount::ofType('twitter')->primary()->first();
                 if ($account) {
-                    $service = new TwitterService();
-                    $service->postTweet($account, $post->content);
+                    app(TwitterService::class)->postTweet($account, $post->content);
                 }
                 break;
 
             case 'instagram':
                 $account = ConnectedAccount::ofType('instagram')->primary()->first();
                 if ($account) {
-                    $service = new InstagramService();
-                    $service->postMedia($account, $post->image, $post->content);
+                    app(InstagramService::class)->postMedia($account, $post->image, $post->content);
                 }
                 break;
 
             case 'linkedin':
                 $account = ConnectedAccount::ofType('linkedin')->primary()->first();
                 if ($account) {
-                    $service = new LinkedInService();
-                    $service->sharePost($account, $post->content);
+                    app(LinkedInService::class)->sharePost($account, $post->content);
+                }
+                break;
+
+            case 'youtube':
+                $account = ConnectedAccount::ofType('youtube')->primary()->first();
+                if ($account && $post->video) {
+                    $videoPath = storage_path('app/public/' . $post->video);
+                    $title = mb_substr(explode("\n", $post->content)[0], 0, 100);
+                    $result = app(YouTubeService::class)->uploadVideo($account, $videoPath, $title, $post->content);
+                    $ids = $post->platform_post_ids ?? [];
+                    $ids['youtube'] = $result['id'] ?? null;
+                    $post->platform_post_ids = $ids;
+                    $post->save();
                 }
                 break;
 

@@ -101,6 +101,13 @@ class SocialMediaPostResource extends Resource
                                     ->maxSize(5120)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif'])
                                     ->helperText('Upload images (max 5MB, JPG/PNG/GIF)'),
+                                FileUpload::make('video')
+                                    ->label('Video (optional, YouTube)')
+                                    ->disk('public')
+                                    ->directory('social-media-posts/videos')
+                                    ->maxSize(512000)
+                                    ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo'])
+                                    ->helperText('Upload a video for YouTube (max 500MB, MP4/MOV/AVI)'),
                             ])
                             ->columnSpan(2),
 

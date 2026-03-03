@@ -9,6 +9,7 @@ use App\Services\FacebookService;
 use App\Services\TwitterService;
 use App\Services\InstagramService;
 use App\Services\LinkedInService;
+use App\Services\YouTubeService;
 use Illuminate\Console\Command;
 
 class UpdatePostAnalytics extends Command
@@ -86,6 +87,14 @@ class UpdatePostAnalytics extends Command
                 $account = ConnectedAccount::ofType('linkedin')->primary()->first();
                 if ($account) {
                     // LinkedIn analytics via UGC Posts API; basic stub
+                    return [];
+                }
+                break;
+
+            case 'youtube':
+                $account = ConnectedAccount::ofType('youtube')->primary()->first();
+                if ($account && isset($postIds['youtube'])) {
+                    // YouTube analytics via YouTube Analytics API; basic stub
                     return [];
                 }
                 break;
