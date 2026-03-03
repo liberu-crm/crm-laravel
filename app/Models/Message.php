@@ -20,6 +20,7 @@ class Message extends Model
         'status',
         'account_id',
         'thread_id',
+        'ticket_id',
         'metadata'
     ];
 

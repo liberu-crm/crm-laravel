@@ -149,6 +149,12 @@ return [
         'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
     ],
 
+    'youtube' => [
+        'client_id' => env('YOUTUBE_CLIENT_ID'),
+        'client_secret' => env('YOUTUBE_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/oauth/youtube/callback',
+    ],
+
     'imap' => [
         'host' => env('IMAP_HOST'),
         'port' => env('IMAP_PORT', 993),

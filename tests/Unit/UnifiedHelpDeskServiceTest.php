@@ -9,10 +9,13 @@ use App\Services\GmailService;
 use App\Services\OutlookService;
 use App\Services\ImapService;
 use App\Services\Pop3Service;
+use App\Events\NewMessageReceived;
+use App\Events\MessageReplySent;
 use App\Models\OAuthConfiguration;
 use Tests\TestCase;
 use Mockery;
 use Illuminate\Support\Collection;
+use ReflectionMethod;
 
 class UnifiedHelpDeskServiceTest extends TestCase
 {
@@ -66,5 +69,75 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $result = $this->unifiedHelpDeskService->getAllMessages(null, false);
 
         $this->assertInstanceOf(Collection::class, $result);
+    }
+
+    public function testNewMessageReceivedEventCanBeInstantiated()
+    {
+        $message = [
+            'id' => '123',
+            'channel' => 'gmail',
+            'from' => 'test@example.com',
+            'content' => 'Test message',
+            'timestamp' => now(),
+        ];
+
+        $event = new NewMessageReceived($message);
+
+        $this->assertInstanceOf(NewMessageReceived::class, $event);
+        $this->assertEquals($message, $event->message);
+    }
+
+    public function testMessageReplySentEventCanBeInstantiated()
+    {
+        $event = new MessageReplySent('msg-123', 'Reply content', 'gmail', 1);
+
+        $this->assertInstanceOf(MessageReplySent::class, $event);
+        $this->assertEquals('msg-123', $event->messageId);
+        $this->assertEquals('Reply content', $event->content);
+        $this->assertEquals('gmail', $event->channel);
+        $this->assertEquals(1, $event->accountId);
+    }
+
+    public function testCalculatePriorityDetectsUrgentInMessageKey()
+    {
+        $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
+        $method->setAccessible(true);
+
+        $message = ['message' => 'This is urgent please help'];
+        $priority = $method->invoke($this->unifiedHelpDeskService, $message);
+
+        $this->assertEquals('high', $priority);
+    }
+
+    public function testCalculatePriorityDetectsUrgentInContentKey()
+    {
+        $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
+        $method->setAccessible(true);
+
+        $message = ['content' => 'This is an emergency situation'];
+        $priority = $method->invoke($this->unifiedHelpDeskService, $message);
+
+        $this->assertEquals('high', $priority);
+    }
+
+    public function testCalculatePriorityReturnsNormalForRegularMessages()
+    {
+        $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
+        $method->setAccessible(true);
+
+        $message = ['content' => 'Hello, I have a general question.'];
+        $priority = $method->invoke($this->unifiedHelpDeskService, $message);
+
+        $this->assertEquals('normal', $priority);
+    }
+
+    public function testCalculatePriorityHandlesEmptyMessage()
+    {
+        $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
+        $method->setAccessible(true);
+
+        $priority = $method->invoke($this->unifiedHelpDeskService, []);
+
+        $this->assertEquals('normal', $priority);
     }
 }

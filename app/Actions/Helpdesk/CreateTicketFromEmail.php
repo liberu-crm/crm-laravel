@@ -7,7 +7,7 @@ use App\Models\User;
 
 class CreateTicketFromEmail
 {
-    public function execute($message)
+    public function execute($message, string $source = 'gmail')
     {
         // Handle both Gmail message objects and array messages from other services
         if (is_array($message)) {
@@ -33,6 +33,8 @@ class CreateTicketFromEmail
             'priority' => 'medium',
             'user_id' => $user->id,
             'email_id' => $emailId,
+            'source' => $source,
+            'source_id' => $emailId,
         ]);
     }
 

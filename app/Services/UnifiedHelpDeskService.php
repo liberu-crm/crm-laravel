@@ -197,8 +197,8 @@ class UnifiedHelpDeskService
         $priority = 'normal';
         $urgentKeywords = ['urgent', 'asap', 'emergency', 'critical'];
         
-        if (isset($message['message']) && is_string($message['message'])) {
-            $content = strtolower($message['message']);
+        $content = strtolower($message['message'] ?? $message['content'] ?? '');
+        if ($content !== '') {
             foreach ($urgentKeywords as $keyword) {
                 if (str_contains($content, $keyword)) {
                     $priority = 'high';
