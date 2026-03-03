@@ -6,7 +6,10 @@ return [
     'middleware' => ['web'],
     'prompt' => 'Or Login Via',
     'providers' => [
-        // Providers::github(),
+        Providers::facebook(),
+        Providers::google(),
+        Providers::linkedinOpenId(),
+        Providers::twitterOAuth2(),
     ],
     'component' => 'socialstream::components.socialstream',
 ];
