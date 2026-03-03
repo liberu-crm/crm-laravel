@@ -22,6 +22,9 @@ use App\Filament\App\Resources\AdvertisingAccountResource\Pages\ListAdvertisingA
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages\CreateAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages\EditAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages;
+use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\CampaignsRelationManager;
+use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdSetsRelationManager;
+use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdsRelationManager;
 use App\Models\AdvertisingAccount;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -135,7 +138,9 @@ class AdvertisingAccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Add relations here when you create Campaign, AdSet, and Ad resources
+            CampaignsRelationManager::class,
+            AdSetsRelationManager::class,
+            AdsRelationManager::class,
         ];
     }
 

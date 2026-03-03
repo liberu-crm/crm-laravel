@@ -6,32 +6,34 @@ use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AdvertisingAccount extends Model
+class Campaign extends Model
 {
     use HasFactory;
     use IsTenantModel;
 
     protected $fillable = [
-        'team_id',
+        'advertising_account_id',
         'name',
-        'platform',
-        'account_id',
-        'access_token',
-        'refresh_token',
+        'external_id',
         'status',
-        'last_sync',
+        'objective',
+        'budget',
+        'budget_type',
+        'start_date',
+        'end_date',
         'metadata',
     ];
 
     protected $casts = [
-        'status' => 'boolean',
-        'last_sync' => 'datetime',
+        'budget' => 'decimal:2',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
         'metadata' => 'array',
     ];
 
-    public function campaigns()
+    public function advertisingAccount()
     {
-        return $this->hasMany(Campaign::class);
+        return $this->belongsTo(AdvertisingAccount::class);
     }
 
     public function adSets()
