@@ -16,6 +16,10 @@ class SocialMediaPost extends Model
         'scheduled_at',
         'platforms',
         'status',
+        'link',
+        'image',
+        'video',
+        'platform_post_ids',
         'likes',
         'shares',
         'comments',
@@ -27,6 +31,7 @@ class SocialMediaPost extends Model
     protected $casts = [
         'scheduled_at' => 'datetime',
         'platforms' => 'array',
+        'platform_post_ids' => 'array',
         'likes' => 'integer',
         'shares' => 'integer',
         'comments' => 'integer',
@@ -43,10 +48,10 @@ class SocialMediaPost extends Model
     public static function getStatuses()
     {
         return [
-            self::STATUS_DRAFT,
-            self::STATUS_SCHEDULED,
-            self::STATUS_PUBLISHED,
-            self::STATUS_FAILED,
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_SCHEDULED => 'Scheduled',
+            self::STATUS_PUBLISHED => 'Published',
+            self::STATUS_FAILED => 'Failed',
         ];
     }
 
