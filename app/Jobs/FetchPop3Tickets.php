@@ -37,7 +37,7 @@ class FetchPop3Tickets implements ShouldQueue
                     $messages = $pop3Service->getUnreadMessages($config);
 
                     foreach ($messages as $message) {
-                        $createTicket->execute($message);
+                        $createTicket->execute($message, 'pop3');
                     }
                 } catch (\Exception $e) {
                     Log::error("Error fetching POP3 tickets for config {$config->id}: " . $e->getMessage());

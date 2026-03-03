@@ -37,7 +37,7 @@ class FetchImapTickets implements ShouldQueue
                     $messages = $imapService->getUnreadMessages($config);
 
                     foreach ($messages as $message) {
-                        $createTicket->execute($message);
+                        $createTicket->execute($message, 'imap');
                     }
                 } catch (\Exception $e) {
                     Log::error("Error fetching IMAP tickets for config {$config->id}: " . $e->getMessage());

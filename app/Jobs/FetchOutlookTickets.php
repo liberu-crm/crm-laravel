@@ -38,7 +38,7 @@ class FetchOutlookTickets implements ShouldQueue
                     $messages = $outlookService->getUnreadMessages($config);
 
                     foreach ($messages as $message) {
-                        $createTicket->execute($message);
+                        $createTicket->execute($message, 'outlook');
                     }
                 } catch (\Exception $e) {
                     Log::error("Error fetching Outlook tickets for config {$config->id}: " . $e->getMessage());

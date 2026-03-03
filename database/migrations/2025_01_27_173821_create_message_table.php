@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('priority');
             $table->string('status');
             $table->integer('account_id');
-            $table->integer('thread_id');
+            $table->integer('thread_id')->nullable();
             $table->json('metadata');
             $table->timestamps();
         });
