@@ -3,7 +3,9 @@ namespace App\Filament\App\Resources;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
@@ -13,10 +15,12 @@ use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages;
 use App\Models\Contact;
+use App\Models\Company;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Support\Collection;
 
 use App\Services\TwilioService;
 use Filament\Forms\Components\Textarea;
@@ -35,6 +39,8 @@ class ContactResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('last_name')
+                    ->maxLength(255),
                 TextInput::make('email')
                     ->email()
                     ->required()
@@ -43,7 +49,52 @@ class ContactResource extends Resource
                     ->tel()
                     ->required()
                     ->maxLength(255),
-                // Add more form fields as needed
+                Select::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                        'lead' => 'Lead',
+                        'prospect' => 'Prospect',
+                    ]),
+                Select::make('source')
+                    ->options([
+                        'website' => 'Website',
+                        'referral' => 'Referral',
+                        'social_media' => 'Social Media',
+                        'direct' => 'Direct',
+                        'other' => 'Other',
+                    ]),
+                Select::make('industry')
+                    ->options([
+                        'Technology' => 'Technology',
+                        'Healthcare' => 'Healthcare',
+                        'Finance' => 'Finance',
+                        'Education' => 'Education',
+                        'Retail' => 'Retail',
+                        'Manufacturing' => 'Manufacturing',
+                        'Real Estate' => 'Real Estate',
+                        'Other' => 'Other',
+                    ]),
+                TextInput::make('company_size')
+                    ->numeric(),
+                TextInput::make('annual_revenue')
+                    ->numeric()
+                    ->prefix('$'),
+                Select::make('lifecycle_stage')
+                    ->options([
+                        'subscriber' => 'Subscriber',
+                        'lead' => 'Lead',
+                        'marketing_qualified_lead' => 'Marketing Qualified Lead',
+                        'sales_qualified_lead' => 'Sales Qualified Lead',
+                        'opportunity' => 'Opportunity',
+                        'customer' => 'Customer',
+                        'evangelist' => 'Evangelist',
+                    ]),
+                Select::make('company_id')
+                    ->label('Company')
+                    ->options(Company::pluck('name', 'company_id'))
+                    ->searchable()
+                    ->nullable(),
             ]);
     }
 
@@ -52,15 +103,74 @@ class ContactResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('last_name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('phone_number')
                     ->searchable(),
-                // Add more table columns as needed
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                        'lead' => 'warning',
+                        'prospect' => 'info',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+                TextColumn::make('lifecycle_stage')
+                    ->label('Lifecycle Stage')
+                    ->sortable(),
+                TextColumn::make('company.name')
+                    ->label('Company')
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                        'lead' => 'Lead',
+                        'prospect' => 'Prospect',
+                    ]),
+                SelectFilter::make('source')
+                    ->options([
+                        'website' => 'Website',
+                        'referral' => 'Referral',
+                        'social_media' => 'Social Media',
+                        'direct' => 'Direct',
+                        'other' => 'Other',
+                    ]),
+                SelectFilter::make('lifecycle_stage')
+                    ->label('Lifecycle Stage')
+                    ->options([
+                        'subscriber' => 'Subscriber',
+                        'lead' => 'Lead',
+                        'marketing_qualified_lead' => 'Marketing Qualified Lead',
+                        'sales_qualified_lead' => 'Sales Qualified Lead',
+                        'opportunity' => 'Opportunity',
+                        'customer' => 'Customer',
+                        'evangelist' => 'Evangelist',
+                    ]),
+                SelectFilter::make('industry')
+                    ->options([
+                        'Technology' => 'Technology',
+                        'Healthcare' => 'Healthcare',
+                        'Finance' => 'Finance',
+                        'Education' => 'Education',
+                        'Retail' => 'Retail',
+                        'Manufacturing' => 'Manufacturing',
+                        'Real Estate' => 'Real Estate',
+                        'Other' => 'Other',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),

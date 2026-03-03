@@ -12,18 +12,14 @@ class ContactFactory extends Factory
     public function definition()
     {
         return [
-            'first_name' => $this->faker->firstName,
+            'name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
-            'phone' => $this->faker->phoneNumber,
-            'company' => $this->faker->company,
-            'job_title' => $this->faker->jobTitle,
-            'address' => $this->faker->address,
-            'city' => $this->faker->city,
-            'state' => $this->faker->state,
-            'country' => $this->faker->country,
-            'postal_code' => $this->faker->postcode,
-            'notes' => $this->faker->paragraph,
+            'phone_number' => $this->faker->phoneNumber,
+            'status' => $this->faker->randomElement(['active', 'inactive', 'lead', 'prospect']),
+            'source' => $this->faker->randomElement(['website', 'referral', 'social_media', 'direct', 'other']),
+            'industry' => $this->faker->randomElement(['Technology', 'Healthcare', 'Finance', 'Education', 'Retail']),
+            'lifecycle_stage' => $this->faker->randomElement(['subscriber', 'lead', 'opportunity', 'customer']),
             'created_at' => now(),
             'updated_at' => now(),
         ];
