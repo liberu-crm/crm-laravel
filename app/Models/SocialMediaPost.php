@@ -13,6 +13,9 @@ class SocialMediaPost extends Model
 
     protected $fillable = [
         'content',
+        'link',
+        'image_path',
+        'video_url',
         'scheduled_at',
         'platforms',
         'status',

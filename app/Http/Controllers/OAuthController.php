@@ -2,146 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OAuthConfiguration;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Http\Request;
-
-class OAuthController extends Controller
-{
-    public function redirect($provider)
-    {
-        $config = OAuthConfiguration::getConfig($provider);
-
-        if (!$config) {
-            return redirect()->route('login')->with('error', 'OAuth provider not configured.');
-        }
-
-        return Socialite::driver($provider)->redirect();
-    }
-
-    public function callback($provider)
-    {
-        $config = OAuthConfiguration::getConfig($provider);
-
-        if (!$config) {
-            return redirect()->route('login')->with('error', 'OAuth provider not configured.');
-        }
-
-        $user = Socialite::driver($provider)->user();
-
-        // Here you would typically find or create a user based on the OAuth data
-        // and log them in. For brevity, we'll just return the user object.
-        return response()->json($user);
-    }
-}<?php
-
-namespace App\Http\Controllers;
-
-use App\Models\AdvertisingAccount;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Http\Request;
-
-class OAuthController extends Controller
-{
-    protected $providers = [
-        'google' => [
-            'scopes' => ['https://www.googleapis.com/auth/adwords'],
-            'additional_parameters' => [
-                'access_type' => 'offline',
-                'prompt' => 'consent'
-            ]
-        ],
-        'facebook' => [
-            'scopes' => ['ads_management', 'ads_read'],
-        ],
-        'linkedin' => [
-            'scopes' => ['r_ads', 'r_ads_reporting'],
-        ],
-        'microsoft' => [
-            'scopes' => ['https://ads.microsoft.com/ads.manage'],
-        ]
-    ];
-
-    public function redirect($provider)
-    {
-        if (!array_key_exists($provider, $this->providers)) {
-            return redirect()->route('advertising-accounts.index')
-                ->with('error', 'Unsupported provider');
-        }
-
-        $config = $this->providers[$provider];
-        
-        return Socialite::driver($provider)
-            ->scopes($config['scopes'])
-            ->with($config['additional_parameters'] ?? [])
-            ->redirect();
-    }
-
-    public function callback($provider, Request $request)
-    {
-        try {
-            $socialiteUser = Socialite::driver($provider)->user();
-            
-            $account = new AdvertisingAccount([
-                'name' => $request->session()->get('account_name', $socialiteUser->getName()),
-                'platform' => $this->getPlatformName($provider),
-                'account_id' => $socialiteUser->getId(),
-                'access_token' => $socialiteUser->token,
-                'refresh_token' => $socialiteUser->refreshToken,
-                'status' => true,
-                'metadata' => [
-                    'email' => $socialiteUser->getEmail(),
-                    'avatar' => $socialiteUser->getAvatar(),
-                ],
-            ]);
-
-            if ($provider === 'google') {
-                $account->developer_token = config('services.google_ads.developer_token');
-                $account->client_id = config('services.google_ads.client_id');
-                $account->client_secret = config('services.google_ads.client_secret');
-            }
-
-            $account->save();
-
-            return redirect()->route('advertising-accounts.index')
-                ->with('success', 'Advertising account connected successfully');
-        } catch (\Exception $e) {
-            return redirect()->route('advertising-accounts.index')
-                ->with('error', 'Failed to connect advertising account: ' . $e->getMessage());
-        }
-    }
-
-    protected function getPlatformName($provider)
-    {
-        return [
-            'google' => 'Google Ads',
-            'facebook' => 'Facebook Ads',
-            'linkedin' => 'LinkedIn Ads',
-            'microsoft' => 'Microsoft Ads',
-        ][$provider] ?? $provider;
-    }
-}<?php
-
-namespace App\Http\Controllers;
-
 use App\Models\ConnectedAccount;
 use App\Models\OAuthConfiguration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OAuthController extends Controller
 {
+    protected $providerScopes = [
+        'facebook' => [
+            'scopes' => ['email', 'pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'publish_to_groups', 'instagram_basic', 'instagram_content_publish'],
+        ],
+        'linkedin-openid' => [
+            'scopes' => ['openid', 'profile', 'email', 'w_member_social'],
+        ],
+        'twitter-oauth-2' => [
+            'scopes' => ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+        ],
+        'google' => [
+            'scopes' => [
+                'https://www.googleapis.com/auth/youtube.upload',
+                'https://www.googleapis.com/auth/youtube',
+            ],
+        ],
+    ];
+
     public function redirect($provider)
     {
         $config = OAuthConfiguration::getConfig($provider);
 
         if (!$config) {
-            return redirect()->route('profile.show')->with('error', 'OAuth provider not configured.');
+            return redirect()->route('oauth.configurations.index')
+                ->with('error', 'OAuth provider not configured. Please add your ' . ucfirst($provider) . ' credentials first.');
         }
 
-        return Socialite::driver($provider)->redirect();
+        $driver = Socialite::driver($provider);
+
+        if (isset($this->providerScopes[$provider])) {
+            $driver->scopes($this->providerScopes[$provider]['scopes']);
+        }
+
+        if ($provider === 'google') {
+            $driver->with(['access_type' => 'offline', 'prompt' => 'consent']);
+        }
+
+        return $driver->redirect();
     }
 
     public function callback($provider)
@@ -150,11 +58,12 @@ class OAuthController extends Controller
             $config = OAuthConfiguration::getConfig($provider);
 
             if (!$config) {
-                return redirect()->route('profile.show')->with('error', 'OAuth provider not configured.');
+                return redirect()->route('oauth.configurations.index')
+                    ->with('error', 'OAuth provider not configured.');
             }
 
             $socialiteUser = Socialite::driver($provider)->user();
-            
+
             $connectedAccount = ConnectedAccount::updateOrCreate(
                 [
                     'user_id' => Auth::id(),
@@ -169,115 +78,91 @@ class OAuthController extends Controller
                     'token' => $socialiteUser->token,
                     'refresh_token' => $socialiteUser->refreshToken,
                     'token_secret' => $socialiteUser->tokenSecret ?? null,
-                    'expires_at' => isset($socialiteUser->expiresIn) ? 
-                        Carbon::now()->addSeconds($socialiteUser->expiresIn) : null,
-                    'metadata' => $this->getProviderMetadata($provider, $socialiteUser)
+                    'expires_at' => isset($socialiteUser->expiresIn)
+                        ? Carbon::now()->addSeconds($socialiteUser->expiresIn)
+                        : null,
+                    'metadata' => $this->getProviderMetadata($provider, $socialiteUser),
                 ]
             );
 
-            // For providers that require additional API calls to get pages/channels
-            $this->fetchAdditionalData($provider, $connectedAccount, $socialiteUser);
-
-            return redirect()->route('profile.show')
+            return redirect()->route('oauth.configurations.index')
                 ->with('success', ucfirst($provider) . ' account connected successfully.');
-
         } catch (\Exception $e) {
-            return redirect()->route('profile.show')
+            Log::error("OAuth callback failed for {$provider}: " . $e->getMessage());
+            return redirect()->route('oauth.configurations.index')
                 ->with('error', 'Failed to connect ' . ucfirst($provider) . ' account: ' . $e->getMessage());
         }
     }
 
-    protected function getProviderMetadata($provider, $socialiteUser)
+    protected function getProviderMetadata($provider, $socialiteUser): array
     {
-        $metadata = [];
+        $metadata = [
+            'email' => $socialiteUser->getEmail(),
+            'avatar' => $socialiteUser->getAvatar(),
+        ];
 
         switch ($provider) {
             case 'facebook':
-                $metadata['pages'] = $this->getFacebookPages($socialiteUser);
+                $metadata['pages'] = $this->getFacebookPages($socialiteUser->token);
                 break;
-            case 'linkedin':
-                $metadata['companies'] = $this->getLinkedInCompanies($socialiteUser);
+            case 'linkedin-openid':
+                $metadata['organizations'] = $this->getLinkedInOrganizations($socialiteUser->token);
                 break;
-            case 'youtube':
-                $metadata['channels'] = $this->getYouTubeChannels($socialiteUser);
+            case 'google':
+                $metadata['channels'] = $this->getYouTubeChannels($socialiteUser->token);
                 break;
         }
 
         return $metadata;
     }
 
-    protected function getFacebookPages($socialiteUser)
+    protected function getFacebookPages(string $accessToken): array
     {
-        $fb = new \Facebook\Facebook([
-            'app_id' => config('services.facebook.client_id'),
-            'app_secret' => config('services.facebook.client_secret'),
-            'default_access_token' => $socialiteUser->token,
-        ]);
-
+        $graphVersion = config('services.facebook.graph_version', 'v18.0');
         try {
-            $response = $fb->get('/me/accounts');
-            return $response->getDecodedBody()['data'];
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    protected function getLinkedInCompanies($socialiteUser)
-    {
-        $client = new \GuzzleHttp\Client();
-        
-        try {
-            $response = $client->get('https://api.linkedin.com/v2/organizationalEntityAcls?q=roleAssignee', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $socialiteUser->token,
-                    'X-Restli-Protocol-Version' => '2.0.0',
-                ],
+            $response = \Illuminate\Support\Facades\Http::get("https://graph.facebook.com/{$graphVersion}/me/accounts", [
+                'access_token' => $accessToken,
+                'fields' => 'id,name,access_token,instagram_business_account',
             ]);
 
-            return json_decode($response->getBody(), true);
+            return $response->successful() ? ($response->json('data') ?? []) : [];
         } catch (\Exception $e) {
+            Log::warning('Failed to fetch Facebook pages: ' . $e->getMessage());
             return [];
         }
     }
 
-    protected function getYouTubeChannels($socialiteUser)
+    protected function getLinkedInOrganizations(string $accessToken): array
     {
-        $client = new \Google_Client();
-        $client->setAccessToken($socialiteUser->token);
-        
         try {
-            $youtube = new \Google_Service_YouTube($client);
-            $channels = $youtube->channels->listChannels('snippet,contentDetails', [
-                'mine' => true
-            ]);
+            $response = \Illuminate\Support\Facades\Http::withToken($accessToken)
+                ->withHeaders(['X-Restli-Protocol-Version' => '2.0.0'])
+                ->get('https://api.linkedin.com/v2/organizationalEntityAcls', [
+                    'q' => 'roleAssignee',
+                    'role' => 'ADMINISTRATOR',
+                    'state' => 'APPROVED',
+                ]);
 
-            return $channels->getItems();
+            return $response->successful() ? ($response->json('elements') ?? []) : [];
         } catch (\Exception $e) {
+            Log::warning('Failed to fetch LinkedIn organizations: ' . $e->getMessage());
             return [];
         }
     }
 
-    protected function fetchAdditionalData($provider, $connectedAccount, $socialiteUser)
+    protected function getYouTubeChannels(string $accessToken): array
     {
-        switch ($provider) {
-            case 'instagram':
-                $this->fetchInstagramBusinessAccounts($connectedAccount, $socialiteUser);
-                break;
-            case 'twitter':
-                $this->fetchTwitterFollowers($connectedAccount, $socialiteUser);
-                break;
+        try {
+            $response = \Illuminate\Support\Facades\Http::withToken($accessToken)
+                ->get('https://www.googleapis.com/youtube/v3/channels', [
+                    'part' => 'snippet,contentDetails',
+                    'mine' => 'true',
+                ]);
+
+            return $response->successful() ? ($response->json('items') ?? []) : [];
+        } catch (\Exception $e) {
+            Log::warning('Failed to fetch YouTube channels: ' . $e->getMessage());
+            return [];
         }
-    }
-
-    protected function fetchInstagramBusinessAccounts($connectedAccount, $socialiteUser)
-    {
-        // Implementation for fetching Instagram business accounts
-        // This would typically involve using the Facebook Graph API
-    }
-
-    protected function fetchTwitterFollowers($connectedAccount, $socialiteUser)
-    {
-        // Implementation for fetching Twitter follower count
-        // This would typically involve using the Twitter API
     }
 }

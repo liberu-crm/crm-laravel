@@ -6,7 +6,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-
     | Third Party Services
     |--------------------------------------------------------------------------
     |
@@ -29,7 +28,6 @@ return [
     ],
 
     'ses' => [
-
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
@@ -38,11 +36,6 @@ return [
     'gmail' => [
         'application_name' => env('GMAIL_APPLICATION_NAME'),
         'credentials_path' => env('GMAIL_CREDENTIALS_PATH'),
-    ],
-
-    'whatsapp' => [
-        'api_url' => env('WHATSAPP_API_URL'),
-        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
     ],
 
     'twilio' => function () {
@@ -59,16 +52,57 @@ return [
         ];
     },
 
+    // Facebook: unified config for both Socialite (OAuth login/connect) and Graph API (posting)
     'facebook' => function () {
         $config = OAuthConfiguration::getConfig('facebook');
         return [
-            'app_id' => $config ? $config->client_id : env('FACEBOOK_APP_ID'),
-            'app_secret' => $config ? $config->client_secret : env('FACEBOOK_APP_SECRET'),
+            // Socialite OAuth keys
+            'client_id' => $config ? $config->client_id : env('FACEBOOK_CLIENT_ID', env('FACEBOOK_APP_ID')),
+            'client_secret' => $config ? $config->client_secret : env('FACEBOOK_CLIENT_SECRET', env('FACEBOOK_APP_SECRET')),
+            'redirect' => env('APP_URL') . '/oauth/facebook/callback',
+            // Graph API page posting keys
+            'app_id' => $config ? $config->client_id : env('FACEBOOK_APP_ID', env('FACEBOOK_CLIENT_ID')),
+            'app_secret' => $config ? $config->client_secret : env('FACEBOOK_APP_SECRET', env('FACEBOOK_CLIENT_SECRET')),
             'page_id' => $config && isset($config->additional_settings['page_id']) ? $config->additional_settings['page_id'] : env('FACEBOOK_PAGE_ID'),
             'page_access_token' => $config && isset($config->additional_settings['page_access_token']) ? $config->additional_settings['page_access_token'] : env('FACEBOOK_PAGE_ACCESS_TOKEN'),
-            'graph_version' => env('FACEBOOK_GRAPH_VERSION', 'v12.0'),
+            'graph_version' => env('FACEBOOK_GRAPH_VERSION', 'v18.0'),
         ];
     },
+
+    // Google: unified config for Socialite, Gmail, Google Ads, and YouTube
+    'google' => function () {
+        $config = OAuthConfiguration::getConfig('google');
+        return [
+            // Socialite OAuth keys
+            'client_id' => $config ? $config->client_id : env('GOOGLE_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('GOOGLE_CLIENT_SECRET'),
+            'redirect' => env('APP_URL') . '/oauth/google/callback',
+            // Additional keys for Google APIs
+            'credentials_path' => env('GOOGLE_CREDENTIALS_PATH'),
+            'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
+        ];
+    },
+
+    // Twitter/X OAuth 2.0 for posting tweets, images, and videos
+    'twitter-oauth-2' => function () {
+        $config = OAuthConfiguration::getConfig('twitter');
+        return [
+            'client_id' => $config ? $config->client_id : env('TWITTER_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('TWITTER_CLIENT_SECRET'),
+            'redirect' => env('APP_URL') . '/oauth/twitter-oauth-2/callback',
+        ];
+    },
+
+    // LinkedIn for posting text, images, and videos
+    'linkedin-openid' => function () {
+        $config = OAuthConfiguration::getConfig('linkedin');
+        return [
+            'client_id' => $config ? $config->client_id : env('LINKEDIN_CLIENT_ID'),
+            'client_secret' => $config ? $config->client_secret : env('LINKEDIN_CLIENT_SECRET'),
+            'redirect' => env('APP_URL') . '/oauth/linkedin-openid/callback',
+        ];
+    },
+
     'mailchimp' => function () {
         $config = OAuthConfiguration::getConfig('mailchimp');
         return [
@@ -76,6 +110,7 @@ return [
             'server_prefix' => $config && isset($config->additional_settings['server_prefix']) ? $config->additional_settings['server_prefix'] : env('MAILCHIMP_SERVER_PREFIX'),
         ];
     },
+
     'whatsapp' => function () {
         $config = OAuthConfiguration::getConfig('whatsapp');
         return [
@@ -92,6 +127,7 @@ return [
             'redirect_uri' => $config && isset($config->additional_settings['redirect_uri']) ? $config->additional_settings['redirect_uri'] : env('QUICKBOOKS_REDIRECT_URI'),
         ];
     },
+
     'xero' => function () {
         $config = OAuthConfiguration::getConfig('xero');
         return [
@@ -101,36 +137,10 @@ return [
         ];
     },
 
-    'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
-        'credentials_path' => env('GOOGLE_CREDENTIALS_PATH'),
-    ],
-
     'outlook' => [
         'client_id' => env('OUTLOOK_CLIENT_ID'),
         'client_secret' => env('OUTLOOK_CLIENT_SECRET'),
         'redirect_uri' => env('OUTLOOK_REDIRECT_URI'),
-    ],
-
-    'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/google/callback',
-        'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
-    ],
-
-    'facebook' => [
-        'client_id' => env('FACEBOOK_CLIENT_ID'),
-        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/facebook/callback',
-    ],
-
-    'linkedin' => [
-        'client_id' => env('LINKEDIN_CLIENT_ID'),
-        'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/linkedin/callback',
     ],
 
     'microsoft' => [

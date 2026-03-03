@@ -92,7 +92,7 @@ class SocialMediaPostResource extends Resource
                                     ->url()
                                     ->label('Link (optional)')
                                     ->helperText('Add a URL to your post'),
-                                FileUpload::make('image')
+                                FileUpload::make('image_path')
                                     ->image()
                                     ->label('Image (optional)')
                                     ->disk('public')
@@ -100,14 +100,11 @@ class SocialMediaPostResource extends Resource
                                     ->imagePreviewHeight('250')
                                     ->maxSize(5120)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif'])
-                                    ->helperText('Upload images (max 5MB, JPG/PNG/GIF)'),
-                                FileUpload::make('video')
-                                    ->label('Video (optional, YouTube)')
-                                    ->disk('public')
-                                    ->directory('social-media-posts/videos')
-                                    ->maxSize(512000)
-                                    ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo'])
-                                    ->helperText('Upload a video for YouTube (max 500MB, MP4/MOV/AVI)'),
+                                    ->helperText('Upload images (max 5MB, JPG/PNG/GIF). Supported by Facebook, Twitter/X, Instagram, LinkedIn.'),
+                                TextInput::make('video_url')
+                                    ->url()
+                                    ->label('Video URL (optional)')
+                                    ->helperText('Add a video URL. Supported by Facebook, Twitter/X, Instagram, LinkedIn, YouTube.'),
                             ])
                             ->columnSpan(2),
 
