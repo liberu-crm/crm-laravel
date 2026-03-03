@@ -18,10 +18,18 @@ class Ticket extends Model
         'priority',
         'user_id',
         'email_id',
+        'source',
+        'source_id',
+        'account_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'ticket_id');
     }
 }
