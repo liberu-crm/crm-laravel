@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Models\Task;
-use Google_Client;
-use Google_Service_Calendar;
-use Google_Service_Calendar_Event;
 
 class GoogleCalendarService implements CalendarService
 {
@@ -14,80 +11,83 @@ class GoogleCalendarService implements CalendarService
 
     public function __construct()
     {
-        $this->client = new Google_Client();
-        $this->client->setAuthConfig(config('services.google.credentials_path'));
-        $this->client->addScope(Google_Service_Calendar::CALENDAR);
-
-        $this->service = new Google_Service_Calendar($this->client);
+        // Client and service are initialised lazily or injected via property assignment
     }
 
-    public function createEvent(Task $task)
+    protected function getService()
     {
-        $event = new Google_Service_Calendar_Event([
-            'summary' => $task->name,
+        if ($this->service === null) {
+            $client = new \Google_Client();
+            $client->setAuthConfig(config('services.google.credentials_path'));
+            $client->addScope(\Google_Service_Calendar::CALENDAR);
+            $this->service = new \Google_Service_Calendar($client);
+        }
+
+        return $this->service;
+    }
+
+    public function createEvent(Task $task): void
+    {
+        $event = new \Google_Service_Calendar_Event([
+            'summary'     => $task->name,
             'description' => $task->description,
-            'start' => ['dateTime' => $task->due_date->toRfc3339String()],
-            'end' => ['dateTime' => $task->due_date->addHour()->toRfc3339String()],
+            'start'       => ['dateTime' => $task->due_date->toRfc3339String()],
+            'end'         => ['dateTime' => $task->due_date->addHour()->toRfc3339String()],
         ]);
 
-        $calendarId = 'primary';
-        $createdEvent = $this->service->events->insert($calendarId, $event);
+        $createdEvent = $this->getService()->events->insert('primary', $event);
 
         $task->google_event_id = $createdEvent->id;
         $task->save();
     }
 
-    public function updateEvent(Task $task)
+    public function updateEvent(Task $task): void
     {
-        $event = $this->service->events->get('primary', $task->google_event_id);
+        $event = $this->getService()->events->get('primary', $task->google_event_id);
 
         $event->setSummary($task->name);
         $event->setDescription($task->description);
         $event->setStart(['dateTime' => $task->due_date->toRfc3339String()]);
         $event->setEnd(['dateTime' => $task->due_date->addHour()->toRfc3339String()]);
 
-        $this->service->events->update('primary', $event->getId(), $event);
+        $this->getService()->events->update('primary', $task->google_event_id, $event);
     }
 
-    public function deleteEvent(Task $task)
+    public function deleteEvent(Task $task): void
     {
-        $this->service->events->delete('primary', $task->google_event_id);
+        $this->getService()->events->delete('primary', $task->google_event_id);
         $task->google_event_id = null;
         $task->save();
     }
 
-    public function fetchEvents(array $params = [])
+    public function fetchEvents(array $params = []): array
     {
-        $optParams = [
-            'maxResults' => 100,
-            'orderBy' => 'startTime',
+        $optParams = array_merge([
+            'maxResults'   => 100,
+            'orderBy'      => 'startTime',
             'singleEvents' => true,
-            'timeMin' => date('c'),
-        ];
+            'timeMin'      => date('c'),
+        ], $params);
 
-        $optParams = array_merge($optParams, $params);
-
-        $results = $this->service->events->listEvents('primary', $optParams);
+        $results = $this->getService()->events->listEvents('primary', $optParams);
         return $results->getItems();
     }
 
-    public function syncEvents(array $events)
+    public function syncEvents(array $events): void
     {
         foreach ($events as $event) {
             $task = Task::where('google_event_id', $event->id)->first();
 
             if ($task) {
-                // Update existing task
-                $task->name = $event->getSummary();
+                $task->name        = $event->getSummary();
                 $task->description = $event->getDescription();
-                $task->due_date = $event->getStart()->getDateTime();
+                $task->due_date    = $event->getStart()->getDateTime();
                 $task->save();
             } else {
-                // Create new task
                 Task::create([
-                    'name' => $event->getSummary(),
-                    'description' => $event->getDescription(),
-                    'due_date' => $event->getStart()->getDateTime(),
+                    'name'            => $event->getSummary(),
+                    'description'     => $event->getDescription(),
+                    'due_date'        => $event->getStart()->getDateTime(),
                     'google_event_id' => $event->id,
                 ]);
             }

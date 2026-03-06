@@ -41,16 +41,18 @@ class WhatsAppBusinessService
             $messages = $response->json()['messages'] ?? [];
             
             return collect($messages)->map(function ($msg) {
+                $body = $msg['text']['body'] ?? $msg['body'] ?? $msg['message'] ?? '';
                 return [
-                    'id' => $msg['id'] ?? '',
-                    'from' => $msg['from'] ?? '',
-                    'message' => $msg['text']['body'] ?? $msg['message'] ?? '',
-                    'content' => $msg['text']['body'] ?? $msg['message'] ?? '',
-                    'timestamp' => $msg['timestamp'] ?? time(),
-                    'thread_id' => $msg['conversation_id'] ?? null,
-                    'attachments' => $msg['attachments'] ?? [],
-                    'status' => 'received',
-                    'type' => $msg['type'] ?? 'text',
+                    'id'           => $msg['id'] ?? '',
+                    'from'         => $msg['from'] ?? '',
+                    'body'         => $body,
+                    'message'      => $body,
+                    'content'      => $body,
+                    'timestamp'    => $msg['timestamp'] ?? time(),
+                    'thread_id'    => $msg['conversation_id'] ?? null,
+                    'attachments'  => $msg['attachments'] ?? [],
+                    'status'       => 'received',
+                    'type'         => $msg['type'] ?? 'text',
                     'phone_number' => $msg['from'] ?? '',
                 ];
             });

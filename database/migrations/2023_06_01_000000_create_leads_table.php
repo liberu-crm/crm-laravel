@@ -6,27 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-/**
-        Schema::create('leads', function (Blueprint $table) {
-            $table->id();
-            $table->string('status');
-            $table->string('source');
-            $table->decimal('potential_value', 10, 2);
-            $table->date('expected_close_date');
-//            $table->foreignId('contact_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->string('lifecycle_stage');
-            $table->json('custom_fields')->nullable();
-            $table->integer('score')->default(0);
-            $table->timestamps();
-        });
-**/
+        // Ensure contact_id column exists (it may have been created without it)
+        if (Schema::hasTable('leads') && !Schema::hasColumn('leads', 'contact_id')) {
+            Schema::table('leads', function (Blueprint $table) {
+                $table->foreignId('contact_id')->nullable()->constrained()->nullOnDelete();
+            });
+        }
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('leads');
+        if (Schema::hasTable('leads') && Schema::hasColumn('leads', 'contact_id')) {
+            Schema::table('leads', function (Blueprint $table) {
+                $table->dropForeign(['contact_id']);
+                $table->dropColumn('contact_id');
+            });
+        }
     }
 };
