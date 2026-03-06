@@ -96,6 +96,60 @@ class SalesForecastingService
     }
 
     /**
+     * Generate an AI-powered forecast using linear regression on historical monthly revenue.
+     *
+     * The method fits a simple ordinary-least-squares regression line to the last
+     * $trainingMonths months of won-deal revenue and extrapolates it to the requested
+     * period.  The confidence level is derived from the coefficient of determination
+     * (R²) of the regression so that periods with highly variable history get a lower
+     * confidence score.
+     */
+    public function generateAiForecast(Carbon $startDate, Carbon $endDate, int $trainingMonths = 12): SalesForecast
+    {
+        $trend = $this->getRevenueTrend($trainingMonths);
+
+        [$slope, $intercept] = $this->linearRegression(
+            array_column($trend, 'revenue')
+        );
+
+        $seasonalFactors = $this->calculateSeasonalFactors($trend);
+
+        // Predict revenue for each month in the requested window
+        $predictedRevenue = 0.0;
+        $forecastMonths   = 0;
+        $current = $startDate->copy()->startOfMonth();
+
+        while ($current->lte($endDate)) {
+            $monthIndex   = $trainingMonths + $forecastMonths;
+            $base         = $intercept + $slope * $monthIndex;
+            $seasonalKey  = $current->month;
+            $seasonal     = $seasonalFactors[$seasonalKey] ?? 1.0;
+            $predictedRevenue += max(0, $base * $seasonal);
+            $forecastMonths++;
+            $current->addMonth();
+        }
+
+        $rSquared   = $this->calculateRSquared(array_column($trend, 'revenue'), $slope, $intercept);
+        $confidence = (int) round(max(0, min(100, $rSquared * 100)));
+
+        return SalesForecast::create([
+            'name'              => 'AI Linear-Regression Forecast',
+            'period_start'      => $startDate,
+            'period_end'        => $endDate,
+            'forecast_type'     => SalesForecast::TYPE_AI_PREDICTED,
+            'predicted_revenue' => round($predictedRevenue, 2),
+            'confidence_level'  => $confidence,
+            'metadata'          => [
+                'slope'            => round($slope, 4),
+                'intercept'        => round($intercept, 4),
+                'r_squared'        => round($rSquared, 4),
+                'training_months'  => $trainingMonths,
+                'seasonal_factors' => $seasonalFactors,
+            ],
+        ]);
+    }
+
+    /**
      * Calculate confidence level based on deal data
      */
     protected function calculateConfidence($deals): float
@@ -223,11 +277,119 @@ class SalesForecastingService
                 ->sum('value');
             
             $data[] = [
-                'month' => $date->format('M Y'),
-                'revenue' => $revenue,
+                'month'   => $date->format('M Y'),
+                'revenue' => (float) $revenue,
+                'month_number' => (int) $date->month,
             ];
         }
         
         return $data;
+    }
+
+    // -------------------------------------------------------------------------
+    // Private helpers for the AI forecasting
+    // -------------------------------------------------------------------------
+
+    /**
+     * Ordinary-least-squares linear regression on an array of y values
+     * (x = 0, 1, 2, ...).
+     *
+     * @param  float[] $values
+     * @return array{float, float}  [slope, intercept]
+     */
+    private function linearRegression(array $values): array
+    {
+        $n = count($values);
+
+        if ($n < 2) {
+            return [0.0, (float) ($values[0] ?? 0)];
+        }
+
+        $sumX  = 0.0;
+        $sumY  = 0.0;
+        $sumXY = 0.0;
+        $sumX2 = 0.0;
+
+        for ($i = 0; $i < $n; $i++) {
+            $sumX  += $i;
+            $sumY  += $values[$i];
+            $sumXY += $i * $values[$i];
+            $sumX2 += $i * $i;
+        }
+
+        $denominator = ($n * $sumX2 - $sumX * $sumX);
+
+        if ($denominator === 0.0) {
+            return [0.0, $sumY / $n];
+        }
+
+        $slope     = ($n * $sumXY - $sumX * $sumY) / $denominator;
+        $intercept = ($sumY - $slope * $sumX) / $n;
+
+        return [$slope, $intercept];
+    }
+
+    /**
+     * Calculate the coefficient of determination (R²) for a linear fit.
+     *
+     * @param  float[] $values
+     */
+    private function calculateRSquared(array $values, float $slope, float $intercept): float
+    {
+        $n    = count($values);
+        $mean = array_sum($values) / max(1, $n);
+        $ssTot = 0.0;
+        $ssRes = 0.0;
+
+        for ($i = 0; $i < $n; $i++) {
+            $predicted = $intercept + $slope * $i;
+            $ssTot    += ($values[$i] - $mean) ** 2;
+            $ssRes    += ($values[$i] - $predicted) ** 2;
+        }
+
+        if ($ssTot === 0.0) {
+            return 1.0;
+        }
+
+        return max(0.0, 1.0 - ($ssRes / $ssTot));
+    }
+
+    /**
+     * Calculate monthly seasonal factors from historical data.
+     * Each factor is the ratio of that month's average to the overall monthly average.
+     *
+     * @param  array<array{revenue: float, month_number: int}> $trend
+     * @return array<int, float>  Keys are month numbers (1–12)
+     */
+    private function calculateSeasonalFactors(array $trend): array
+    {
+        $byMonth = [];
+
+        foreach ($trend as $point) {
+            $month = $point['month_number'];
+            $byMonth[$month][] = $point['revenue'];
+        }
+
+        if (empty($byMonth)) {
+            return array_fill_keys(range(1, 12), 1.0);
+        }
+
+        $monthlyAverages = [];
+        foreach ($byMonth as $month => $revenues) {
+            $monthlyAverages[$month] = array_sum($revenues) / count($revenues);
+        }
+
+        $overallAverage = array_sum($monthlyAverages) / count($monthlyAverages);
+
+        if ($overallAverage === 0.0) {
+            return array_fill_keys(array_keys($monthlyAverages), 1.0);
+        }
+
+        $factors = [];
+        foreach ($monthlyAverages as $month => $avg) {
+            $factors[$month] = $avg / $overallAverage;
+        }
+
+        return $factors;
     }
 }

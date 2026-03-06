@@ -13,17 +13,106 @@ class ReportingService
 {
     public function getContactInteractionsData(array $filters = [])
     {
-        // ... (existing code remains unchanged)
+        $query = Activity::select(
+            'type',
+            DB::raw('COUNT(*) as count'),
+            DB::raw('DATE(created_at) as activity_date')
+        );
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        if (!empty($filters['contact_id'])) {
+            $query->where('activitable_type', Contact::class)
+                  ->where('activitable_id', $filters['contact_id']);
+        }
+
+        $data = $query->groupBy('type', 'activity_date')
+            ->orderBy('activity_date')
+            ->get();
+
+        // Aggregate by type across all dates for chart display
+        $byType = $data->groupBy('type')->map(fn ($group) => $group->sum('count'));
+
+        $labels  = $byType->keys();
+        $values  = $byType->values();
+
+        return [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $labels,
+                'datasets' => [
+                    [
+                        'label' => 'Contact Interactions',
+                        'data'  => $values,
+                    ],
+                ],
+            ],
+            'raw' => $data,
+        ];
     }
 
     public function getSalesPipelineData(array $filters = [])
     {
-        // ... (existing code remains unchanged)
+        $query = Deal::select(
+            'stage_id',
+            DB::raw('COUNT(*) as deal_count'),
+            DB::raw('SUM(value) as total_value'),
+            DB::raw('AVG(probability) as avg_probability')
+        )->with('stage');
+
+        if (!empty($filters['pipeline_id'])) {
+            $query->where('pipeline_id', $filters['pipeline_id']);
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $data = $query->whereNotIn('status', ['lost'])
+            ->groupBy('stage_id')
+            ->get();
+
+        $labels = $data->map(fn ($d) => optional($d->stage)->name ?? 'Unknown');
+        $values = $data->pluck('total_value');
+        $counts = $data->pluck('deal_count');
+
+        return [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $labels,
+                'datasets' => [
+                    [
+                        'label' => 'Total Value ($)',
+                        'data'  => $values,
+                    ],
+                    [
+                        'label' => 'Deal Count',
+                        'data'  => $counts,
+                    ],
+                ],
+            ],
+            'raw' => $data,
+        ];
     }
 
     public function getCustomerEngagementData(array $filters = [])
     {
-        // ... (existing code remains unchanged)
+        $query = Activity::select(
+            'type',
+            DB::raw('COUNT(*) as count')
+        );
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $data = $query->groupBy('type')
+            ->orderByDesc('count')
+            ->get();
+
+        return $this->formatDataForChart($data, 'pie', 'type', 'count');
     }
 
     public function generateLeadQualityReport(array $filters = [])

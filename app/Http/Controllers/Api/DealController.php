@@ -47,4 +47,83 @@ class DealController extends Controller
         $deal->delete();
         return response()->json(null, 204);
     }
+
+    /**
+     * Bulk update deals.
+     *
+     * Expects: { "ids": [1,2,3], "data": { "status": "won", ... } }
+     */
+    public function bulkUpdate(Request $request)
+    {
+        $request->validate([
+            'ids'          => 'required|array|min:1',
+            'ids.*'        => 'integer|exists:deals,id',
+            'data'         => 'required|array',
+            'data.status'  => 'sometimes|string|in:open,closed,won,lost',
+            'data.stage_id' => 'sometimes|integer|exists:stages,id',
+        ]);
+
+        $allowedFields = ['status', 'stage_id', 'pipeline_id'];
+        $updateData = array_intersect_key($request->input('data'), array_flip($allowedFields));
+
+        if (empty($updateData)) {
+            return response()->json(['message' => 'No valid fields to update.'], 422);
+        }
+
+        $query = Deal::whereIn('id', $request->input('ids'));
+        $this->applyTeamScope($request, $query);
+        $count = $query->update($updateData);
+
+        return response()->json(['updated' => $count]);
+    }
+
+    /**
+     * Bulk delete deals.
+     *
+     * Expects: { "ids": [1,2,3] }
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array|min:1',
+            'ids.*' => 'integer|exists:deals,id',
+        ]);
+
+        $query = Deal::whereIn('id', $request->input('ids'));
+        $this->applyTeamScope($request, $query);
+        $count = $query->delete();
+
+        return response()->json(['deleted' => $count]);
+    }
+
+    /**
+     * Bulk assign deals to a user.
+     *
+     * Expects: { "ids": [1,2,3], "user_id": 5 }
+     */
+    public function bulkAssign(Request $request)
+    {
+        $request->validate([
+            'ids'     => 'required|array|min:1',
+            'ids.*'   => 'integer|exists:deals,id',
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $query = Deal::whereIn('id', $request->input('ids'));
+        $this->applyTeamScope($request, $query);
+        $count = $query->update(['user_id' => $request->input('user_id')]);
+
+        return response()->json(['assigned' => $count]);
+    }
+
+    /**
+     * Scope the query to the authenticated user's current team when available.
+     */
+    private function applyTeamScope(Request $request, $query): void
+    {
+        $teamId = $request->user()?->currentTeam?->id;
+        if ($teamId) {
+            $query->where('team_id', $teamId);
+        }
+    }
 }
