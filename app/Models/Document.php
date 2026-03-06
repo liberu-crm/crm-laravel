@@ -12,9 +12,20 @@ class Document extends Model
 
     protected $fillable = [
         'file_path',
+        'original_filename',
+        'mime_type',
+        'size',
+        'title',
+        'description',
+        'tags',
         'version',
         'documentable_id',
         'documentable_type',
+    ];
+
+    protected $casts = [
+        'size' => 'integer',
+        'version' => 'integer',
     ];
 
     public function documentable(): MorphTo
