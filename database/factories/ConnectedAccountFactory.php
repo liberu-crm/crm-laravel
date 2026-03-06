@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ConnectedAccount;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use JoelButcher\Socialstream\Providers;
@@ -17,10 +18,13 @@ class ConnectedAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'provider' => $this->faker->randomElement(Providers::all()),
-            'provider_id' => $this->faker->numerify('########'),
-            'token' => Str::random(432),
+            'user_id'       => User::factory(),
+            'provider'      => $this->faker->randomElement(Providers::all()),
+            'provider_id'   => $this->faker->numerify('########'),
+            'token'         => Str::random(432),
             'refresh_token' => Str::random(432),
+            'account_type'  => 'twitter',
+            'is_primary'    => false,
         ];
     }
 }

@@ -12,7 +12,6 @@ class Company extends Model
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = 'company_id';
 
     protected $fillable = [
         'name',

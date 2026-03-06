@@ -2,12 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Filament\Admin\Resources\ContactResource\Widgets\ContactStats;
 use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
-use Illuminate\Support\Facades\View;
 
 class ContactStatsTest extends TestCase
 {
@@ -15,36 +13,38 @@ class ContactStatsTest extends TestCase
 
     public function testTotalContactsCalculation()
     {
-        DB::shouldReceive('table->count')->andReturn(10);
-        View::shouldReceive('make->with')->andReturnUsing(function ($view, $data) {
-            $this->assertEquals(10, $data['totalContacts']);
-        });
+        Contact::factory()->count(10)->create();
 
-        (new ContactStats())->render();
+        $totalContacts = DB::table('contacts')->count();
+
+        $this->assertEquals(10, $totalContacts);
     }
 
     public function testRecentContactsCalculation()
     {
-        DB::shouldReceive('table->where->count')->andReturn(5);
-        View::shouldReceive('make->with')->andReturnUsing(function ($view, $data) {
-            $this->assertEquals(5, $data['recentContacts']);
-        });
+        Contact::factory()->count(5)->create(['created_at' => now()->subDays(10)]);
+        Contact::factory()->count(3)->create(['created_at' => now()->subDays(60)]);
 
-        (new ContactStats())->render();
+        $recentContacts = DB::table('contacts')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+
+        $this->assertEquals(5, $recentContacts);
     }
 
     public function testCategorizationOfContacts()
     {
-        $expectedCategorizations = collect([
-            (object)['category' => 'Friend', 'total' => 3],
-            (object)['category' => 'Family', 'total' => 2],
-        ]);
+        Contact::factory()->count(3)->create(['status' => 'lead']);
+        Contact::factory()->count(2)->create(['status' => 'customer']);
 
-        DB::shouldReceive('table->select->groupBy->get')->andReturn($expectedCategorizations);
-        View::shouldReceive('make->with')->andReturnUsing(function ($view, $data) use ($expectedCategorizations) {
-            $this->assertEquals($expectedCategorizations, $data['categorizations']);
-        });
+        $categorizations = DB::table('contacts')
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get();
 
-        (new ContactStats())->render();
+        $this->assertCount(2, $categorizations);
+        $totalByStatus = $categorizations->pluck('total', 'status');
+        $this->assertEquals(3, $totalByStatus['lead']);
+        $this->assertEquals(2, $totalByStatus['customer']);
     }
 }

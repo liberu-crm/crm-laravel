@@ -16,7 +16,6 @@ class Contact extends Model
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = 'contact_id';
 
     protected $fillable = [
         'name',
@@ -102,7 +101,7 @@ class Contact extends Model
      */
     protected function associateWithCompany()
     {
-        if ($this->email) {
+        if ($this->email && !$this->company_id) {
             $domain = Str::after($this->email, '@');
             $company = Company::firstOrCreate(['domain' => $domain], ['name' => Str::before($domain, '.')]);
             $this->company()->associate($company);
