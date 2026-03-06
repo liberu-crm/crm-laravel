@@ -6,8 +6,8 @@ use App\Models\Task;
 
 class GoogleCalendarService implements CalendarService
 {
-    protected $client;
-    protected $service;
+    public $client;
+    public $service;
 
     public function __construct()
     {

@@ -7,7 +7,7 @@ use DateTime;
 
 class OutlookCalendarService implements CalendarService
 {
-    protected $graph;
+    public $graph;
 
     public function __construct()
     {
