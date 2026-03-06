@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('contacts', function (Blueprint $table) {
             if (!Schema::hasColumn('contacts', 'company_id')) {
-                $table->foreignId('company_id')->nullable()->constrained('companies', 'company_id')->onDelete('set null');
+                $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
             }
             if (!Schema::hasColumn('contacts', 'custom_fields')) {
                 $table->json('custom_fields')->nullable();
