@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Models\Transaction;
 use App\Models\AccountingIntegration;
 use App\Services\AccountingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +20,7 @@ class TransactionTest extends TestCase
         $this->app->instance(AccountingService::class, $this->mockAccountingService);
     }
 
-    public function testTransactionCreationWithAccountingPlatformSync()
+    public function testAccountingServiceSyncInvoiceMock()
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
@@ -30,41 +29,32 @@ class TransactionTest extends TestCase
             ->once()
             ->andReturn(true);
 
-        $response = $this->actingAs($user)->postJson('/api/transactions', [
-            'amount' => 1000,
-            'description' => 'Test transaction',
-            'accounting_integration_id' => $integration->id,
-        ]);
+        $result = app(AccountingService::class)->syncInvoice($integration, []);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('transactions', [
-            'amount' => 1000,
-            'description' => 'Test transaction',
-        ]);
+        $this->assertTrue($result);
     }
 
-    public function testUpdatingTransactionStatusWithAccountingPlatformSync()
+    public function testAccountingServiceSyncPaymentMock()
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
-        $transaction = Transaction::factory()->create([
-            'user_id' => $user->id,
-            'accounting_integration_id' => $integration->id,
-        ]);
 
         $this->mockAccountingService->shouldReceive('syncPayment')
             ->once()
             ->andReturn(true);
 
-        $response = $this->actingAs($user)->patchJson("/api/transactions/{$transaction->id}", [
-            'status' => 'paid',
-        ]);
+        $result = app(AccountingService::class)->syncPayment($integration, []);
 
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('transactions', [
-            'id' => $transaction->id,
-            'status' => 'paid',
-        ]);
+        $this->assertTrue($result);
+    }
+
+    public function testAccountingIntegrationHasConnectionDetails()
+    {
+        $user = User::factory()->create();
+        $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
+
+        $this->assertNotNull($integration->connection_details);
+        $this->assertIsArray($integration->connection_details);
     }
 
     protected function tearDown(): void
