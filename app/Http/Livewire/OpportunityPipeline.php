@@ -6,36 +6,36 @@ use Livewire\Component;
 use App\Models\Pipeline;
 use App\Models\Deal;
 use App\Models\Stage;
-use Filament\Tables\Table;
 
 class OpportunityPipeline extends Component
 {
-    public $pipeline;
-    public $stages;
-    public $deals;
-    public Table $table;
+    public ?int $pipelineId = null;
+    public array $stages = [];
+    public array $deals = [];
 
     protected $listeners = ['dealMoved' => 'updateDealStage'];
 
-    public function mount(Table $table)
+    public function mount()
     {
-        $this->table = $table;
         $this->loadPipeline();
     }
 
     public function loadPipeline()
     {
-        $this->pipeline = Pipeline::where('is_active', true)->first();
-        $this->stages = $this->pipeline->stages;
-        $this->deals = $this->pipeline->getAllDeals();
+        $pipeline = Pipeline::where('is_active', true)->first();
+        if ($pipeline) {
+            $this->pipelineId = $pipeline->id;
+            $this->stages = $pipeline->stages->toArray();
+            $this->deals = $pipeline->deals->toArray();
+        }
     }
 
     public function updateDealStage($dealId, $newStageId)
     {
         $deal = Deal::findOrFail($dealId);
-        $newStage = Stage::findOrFail($newStageId);
+        Stage::findOrFail($newStageId);
 
-        $deal->stage()->associate($newStage);
+        $deal->stage_id = $newStageId;
         $deal->save();
 
         $this->loadPipeline();

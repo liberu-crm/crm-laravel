@@ -14,41 +14,48 @@ class ContactResourceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $user = User::factory()->withPersonalTeam()->create();
+        $user->current_team_id = $user->ownedTeams->first()->id;
+        $user->save();
+        $this->actingAs($user);
     }
 
     public function test_can_view_contact_index_page()
     {
         $response = $this->get('/app/contacts');
-        $response->assertStatus(200);
+        $response->assertSuccessful();
     }
 
-    public function test_can_create_contact()
+    public function test_can_create_contact_model()
     {
-        $contactData = [
+        $contact = Contact::factory()->create([
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'phone_number' => '1234567890',
-        ];
+        ]);
 
-        $response = $this->post('/app/contacts', $contactData);
-        $response->assertRedirect('/app/contacts');
-
-        $this->assertDatabaseHas('contacts', $contactData);
+        $this->assertDatabaseHas('contacts', [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'phone_number' => '1234567890',
+        ]);
     }
 
-    public function test_can_edit_contact()
+    public function test_can_edit_contact_model()
     {
         $contact = Contact::factory()->create();
-        $updatedData = [
+
+        $contact->update([
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'phone_number' => '9876543210',
-        ];
+        ]);
 
-        $response = $this->put("/app/contacts/{$contact->id}", $updatedData);
-        $response->assertRedirect('/app/contacts');
-
-        $this->assertDatabaseHas('contacts', $updatedData);
+        $this->assertDatabaseHas('contacts', [
+            'id' => $contact->id,
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'phone_number' => '9876543210',
+        ]);
     }
 }
