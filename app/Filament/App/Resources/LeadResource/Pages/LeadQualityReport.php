@@ -18,7 +18,7 @@ class LeadQualityReport extends Page implements HasForms
 
     protected static string $resource = LeadResource::class;
 
-    protected static string $view = 'filament.app.resources.lead-resource.pages.lead-quality-report';
+    protected string $view = 'filament.app.resources.lead-resource.pages.lead-quality-report';
 
     public ?array $data = [];
 
