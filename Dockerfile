@@ -107,8 +107,7 @@ RUN composer install \
     --no-interaction \
     --no-autoloader \
     --no-ansi \
-    --no-scripts \
-    --audit
+    --no-scripts
 
 COPY  --chown=${USER}:${USER} . .
 
