@@ -30,7 +30,7 @@ class ExampleTest extends TestCase
         $user->save();
 
         $response = $this->actingAs($user)->get('/app');
-        $response->assertSuccessful();
+        $response->assertStatus(302); // Filament redirects /app to /app/dashboard
     }
 
     /**
@@ -45,6 +45,6 @@ class ExampleTest extends TestCase
         $user->assignRole($role);
 
         $response = $this->actingAs($user)->get('/admin');
-        $response->assertSuccessful();
+        $response->assertStatus(302); // Filament redirects /admin to /admin/dashboard
     }
 }

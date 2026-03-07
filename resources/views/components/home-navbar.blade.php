@@ -33,9 +33,9 @@
                     {{ ucfirst($role) }} Dashboard
                 </a>
             @else
-                <a href="{{ route('login') }}"
+                <a href="{{ \Illuminate\Support\Facades\Route::has('login') ? route('login') : url('/admin/login') }}"
                     class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">Login</a>
-                <a href="{{ route('register') }}"
+                <a href="{{ \Illuminate\Support\Facades\Route::has('register') ? route('register') : url('/admin/register') }}"
                     class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium ml-2">Register</a>
             @endif
 

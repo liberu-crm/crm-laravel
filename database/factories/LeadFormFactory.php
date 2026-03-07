@@ -14,6 +14,7 @@ class LeadFormFactory extends Factory
     {
         return [
             'team_id' => Team::factory(),
+            'landing_page_id' => \App\Models\LandingPage::factory(),
             'name' => $this->faker->words(3, true),
             'description' => $this->faker->sentence(),
             'fields' => json_encode([

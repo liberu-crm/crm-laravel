@@ -10,6 +10,8 @@ use App\Http\Livewire\OpportunityPipeline;
 use App\Http\Livewire\ReportCustomizer;
 use App\Http\Livewire\TaskForm;
 use App\Http\Livewire\TaskList;
+use App\Http\Livewire\Widgets\Stats;
+use App\Http\Livewire\Widgets\Tasks;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
 use Illuminate\Support\ServiceProvider;
@@ -44,5 +46,7 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('report-customizer', ReportCustomizer::class);
         Livewire::component('task-form', TaskForm::class);
         Livewire::component('task-list', TaskList::class);
+        Livewire::component('widgets.stats', Stats::class);
+        Livewire::component('widgets.tasks', Tasks::class);
     }
 }
