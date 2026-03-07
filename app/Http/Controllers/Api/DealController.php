@@ -16,12 +16,12 @@ class DealController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'value' => 'required|numeric',
-            'status' => 'required|string|in:open,closed,won,lost',
+            'stage' => 'nullable|string|max:255',
         ]);
 
-        $deal = Deal::create($request->all());
+        $deal = Deal::create($request->only(['name', 'value', 'stage', 'close_date', 'probability', 'contact_id', 'user_id', 'pipeline_id', 'stage_id']));
         return response()->json($deal, 201);
     }
 
@@ -33,12 +33,12 @@ class DealController extends Controller
     public function update(Request $request, Deal $deal)
     {
         $request->validate([
-            'title' => 'string|max:255',
+            'name' => 'string|max:255',
             'value' => 'numeric',
-            'status' => 'string|in:open,closed,won,lost',
+            'stage' => 'string|max:255',
         ]);
 
-        $deal->update($request->all());
+        $deal->update($request->only(['name', 'value', 'stage', 'close_date', 'probability', 'contact_id', 'user_id', 'pipeline_id', 'stage_id']));
         return response()->json($deal, 200);
     }
 

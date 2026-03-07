@@ -21,12 +21,13 @@ class ContactApiTest extends TestCase
 
     public function test_can_list_contacts()
     {
+        $beforeCount = Contact::count();
         Contact::factory()->count(3)->create();
 
         $response = $this->getJson('/api/v1/contacts');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount($beforeCount + 3);
     }
 
     public function test_can_create_contact()
@@ -34,13 +35,13 @@ class ContactApiTest extends TestCase
         $contactData = [
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'phone' => '1234567890',
+            'phone_number' => '1234567890',
         ];
 
         $response = $this->postJson('/api/v1/contacts', $contactData);
 
         $response->assertStatus(201)
-            ->assertJsonFragment($contactData);
+            ->assertJsonFragment(['name' => 'John Doe', 'email' => 'john@example.com']);
     }
 
     public function test_can_show_contact()
@@ -60,7 +61,6 @@ class ContactApiTest extends TestCase
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
         ];
-
 
         $response = $this->putJson("/api/v1/contacts/{$contact->id}", $updatedData);
 

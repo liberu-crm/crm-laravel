@@ -18,10 +18,11 @@ class ContactController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:contacts,email',
-            'phone' => 'nullable|string|max:20',
+            'phone_number' => 'nullable|string|max:20',
+            'last_name' => 'nullable|string|max:255',
         ]);
 
-        $contact = Contact::create($request->all());
+        $contact = Contact::create($request->only(['name', 'last_name', 'email', 'phone_number', 'status', 'source', 'industry', 'lifecycle_stage', 'company_id']));
         return response()->json($contact, 201);
     }
 
@@ -35,10 +36,11 @@ class ContactController extends Controller
         $request->validate([
             'name' => 'string|max:255',
             'email' => 'email|unique:contacts,email,' . $contact->id,
-            'phone' => 'nullable|string|max:20',
+            'phone_number' => 'nullable|string|max:20',
+            'last_name' => 'nullable|string|max:255',
         ]);
 
-        $contact->update($request->all());
+        $contact->update($request->only(['name', 'last_name', 'email', 'phone_number', 'status', 'source', 'industry', 'lifecycle_stage', 'company_id']));
         return response()->json($contact, 200);
     }
 

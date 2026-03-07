@@ -29,8 +29,7 @@ class TeamsPermission
         // Check if the requested team matches the user's current team
         $requestedTeamId = $request->route('tenant');
         if ($requestedTeamId && $requestedTeamId != $user->currentTeam->id) {
-            return redirect()->route('staff.dashboard', ['tenant' => $user->currentTeam->id])
-                ->with('error', 'You do not have permission to access this team.');
+            return redirect()->route('home')->with('error', 'You do not have permission to access this team.');
         }
 
         // Check if the user has permission to access the current route based on their role
@@ -39,8 +38,7 @@ class TeamsPermission
         $permission = $this->getPermissionForAction($actionName);
 
         if ($permission && !$user->hasPermissionTo($permission)) {
-            return redirect()->route('staff.dashboard', ['tenant' => $user->currentTeam->id])
-                ->with('error', 'You do not have permission to access this area.');
+            return redirect()->route('home')->with('error', 'You do not have permission to access this area.');
         }
 
         return $next($request);

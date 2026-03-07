@@ -21,20 +21,21 @@ class DealApiTest extends TestCase
 
     public function test_can_list_deals()
     {
+        $beforeCount = Deal::count();
         Deal::factory()->count(3)->create();
 
         $response = $this->getJson('/api/v1/deals');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount($beforeCount + 3);
     }
 
     public function test_can_create_deal()
     {
         $dealData = [
-            'title' => 'New Deal',
+            'name' => 'New Deal',
             'value' => 1000,
-            'status' => 'open',
+            'stage' => 'prospect',
         ];
 
         $response = $this->postJson('/api/v1/deals', $dealData);
@@ -57,9 +58,9 @@ class DealApiTest extends TestCase
     {
         $deal = Deal::factory()->create();
         $updatedData = [
-            'title' => 'Updated Deal',
+            'name' => 'Updated Deal',
             'value' => 2000,
-            'status' => 'won',
+            'stage' => 'won',
         ];
 
         $response = $this->putJson("/api/v1/deals/{$deal->id}", $updatedData);

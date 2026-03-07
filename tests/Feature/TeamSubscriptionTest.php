@@ -66,13 +66,15 @@ class TeamSubscriptionTest extends TestCase
     {
         $team = Team::factory()->create();
 
+        $subscription = TeamSubscription::factory()->make(['team_id' => $team->id, 'stripe_status' => 'active']);
+
         $this->stripeService->shouldReceive('createSubscription')
             ->once()
-            ->andReturn(['status' => 'active']);
+            ->andReturn($subscription);
 
         $result = app(StripeService::class)->createSubscription($team, 'pm_test_fake');
 
-        $this->assertEquals('active', $result['status']);
+        $this->assertEquals('active', $result->stripe_status);
     }
 
     protected function tearDown(): void

@@ -44,7 +44,7 @@ class TaskReminderTest extends TestCase
             'contact_id' => $contact->id,
             'assigned_to' => $user->id,
             'calendar_type' => 'google',
-            'google_event_id' => app(GoogleCalendarService::class)->createEvent([]),
+            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task()),
         ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -66,7 +66,7 @@ class TaskReminderTest extends TestCase
             'reminder_sent' => false,
         ]);
 
-        $user->notify(new TaskReminderNotification($task));
+        $user->notify(new TaskReminderNotification($task, 'assigned'));
 
         Notification::assertSentTo($user, TaskReminderNotification::class);
     }

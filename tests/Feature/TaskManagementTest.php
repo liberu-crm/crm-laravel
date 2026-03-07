@@ -79,14 +79,17 @@ class TaskManagementTest extends TestCase
 
     public function testTaskFilterByStatus()
     {
+        $pendingBefore = Task::where('status', 'pending')->count();
+        $completedBefore = Task::where('status', 'completed')->count();
+
         Task::factory()->count(3)->create(['status' => 'pending']);
         Task::factory()->count(2)->create(['status' => 'completed']);
 
         $pendingTasks = Task::where('status', 'pending')->count();
         $completedTasks = Task::where('status', 'completed')->count();
 
-        $this->assertEquals(3, $pendingTasks);
-        $this->assertEquals(2, $completedTasks);
+        $this->assertEquals($pendingBefore + 3, $pendingTasks);
+        $this->assertEquals($completedBefore + 2, $completedTasks);
     }
 
     public function testTaskSearchByName()

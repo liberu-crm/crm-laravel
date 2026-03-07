@@ -49,13 +49,16 @@ class ContactSearchPerformanceTest extends TestCase
 
     public function testContactFilterByStatus()
     {
+        $activeBefore = Contact::where('status', 'active')->count();
+        $inactiveBefore = Contact::where('status', 'inactive')->count();
+
         Contact::factory()->count(10)->create(['status' => 'active']);
         Contact::factory()->count(5)->create(['status' => 'inactive']);
 
         $activeCount = Contact::where('status', 'active')->count();
         $inactiveCount = Contact::where('status', 'inactive')->count();
 
-        $this->assertEquals(10, $activeCount);
-        $this->assertEquals(5, $inactiveCount);
+        $this->assertEquals($activeBefore + 10, $activeCount);
+        $this->assertEquals($inactiveBefore + 5, $inactiveCount);
     }
 }

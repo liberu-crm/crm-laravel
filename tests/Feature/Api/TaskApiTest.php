@@ -21,18 +21,19 @@ class TaskApiTest extends TestCase
 
     public function test_can_list_tasks()
     {
+        $beforeCount = Task::count();
         Task::factory()->count(3)->create();
 
         $response = $this->getJson('/api/v1/tasks');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount($beforeCount + 3);
     }
 
     public function test_can_create_task()
     {
         $taskData = [
-            'title' => 'New Task',
+            'name' => 'New Task',
             'description' => 'Task description',
             'due_date' => '2023-06-30',
             'status' => 'pending',
@@ -58,7 +59,7 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create();
         $updatedData = [
-            'title' => 'Updated Task',
+            'name' => 'Updated Task',
             'description' => 'Updated description',
             'due_date' => '2023-07-15',
             'status' => 'in_progress',

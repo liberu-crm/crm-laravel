@@ -20,6 +20,7 @@ class SocialstreamRegistrationTest extends TestCase
      * @dataProvider socialiteProvidersDataProvider
      */
     #[Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
     public function test_users_get_redirected_correctly(string $provider): void
     {
         if (! Providers::enabled($provider)) {
@@ -40,6 +41,7 @@ class SocialstreamRegistrationTest extends TestCase
      * @dataProvider socialiteProvidersDataProvider
      */
     #[Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
     public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
     {
         if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {

@@ -18,7 +18,7 @@ class ReportCustomizer extends Page
     protected string $view = 'filament.pages.report-customizer';
 
     public ?array $data = [];
-    public string $reportType = 'contact-interactions';
+    public ?string $reportType = 'contact-interactions';
     public ?string $startDate = null;
     public ?string $endDate = null;
 

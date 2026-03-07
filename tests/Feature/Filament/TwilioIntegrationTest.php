@@ -51,7 +51,7 @@ class TwilioIntegrationTest extends TestCase
             ->shouldReceive('sendSMS')
             ->once()
             ->with('+1234567890', 'Test message')
-            ->andThrow(new RestException('Failed to send SMS'));
+            ->andThrow(new RestException('Failed to send SMS', 21211, 400));
 
         Livewire::test(TwilioIntegration::class)
             ->set('to', $contact->phone_number)
@@ -88,7 +88,7 @@ class TwilioIntegrationTest extends TestCase
             ->shouldReceive('makeCall')
             ->once()
             ->with('+1234567890', \Mockery::any())
-            ->andThrow(new RestException('Failed to initiate call'));
+            ->andThrow(new RestException('Failed to initiate call', 21214, 400));
 
         Livewire::test(TwilioIntegration::class)
             ->set('to', $contact->phone_number)
@@ -122,7 +122,7 @@ class TwilioIntegrationTest extends TestCase
         $this->mock(TwilioService::class)
             ->shouldReceive('sendSMS')
             ->times(3)
-            ->andThrow(new RestException('Failed to send SMS'));
+            ->andThrow(new RestException('Failed to send SMS', 21211, 400));
 
         Livewire::test(TwilioIntegration::class)
             ->set('message', 'Bulk test message')
@@ -155,7 +155,7 @@ class TwilioIntegrationTest extends TestCase
         $this->mock(TwilioService::class)
             ->shouldReceive('makeCall')
             ->times(3)
-            ->andThrow(new RestException('Failed to initiate call'));
+            ->andThrow(new RestException('Failed to initiate call', 21214, 400));
 
         Livewire::test(TwilioIntegration::class)
             ->call('bulkMakeCall', $leads->pluck('id')->toArray())

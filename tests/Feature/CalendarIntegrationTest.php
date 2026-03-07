@@ -36,7 +36,7 @@ class CalendarIntegrationTest extends TestCase
         $task = Task::factory()->create([
             'name' => 'Test Google Task',
             'calendar_type' => 'google',
-            'google_event_id' => app(GoogleCalendarService::class)->createEvent([]),
+            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task()),
         ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -57,7 +57,7 @@ class CalendarIntegrationTest extends TestCase
         $task = Task::factory()->create([
             'name' => 'Test Outlook Task',
             'calendar_type' => 'outlook',
-            'outlook_event_id' => app(OutlookCalendarService::class)->createEvent([]),
+            'outlook_event_id' => app(OutlookCalendarService::class)->createEvent(new Task()),
         ]);
 
         $this->assertDatabaseHas('tasks', [

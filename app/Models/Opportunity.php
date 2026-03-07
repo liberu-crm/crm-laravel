@@ -13,6 +13,8 @@ class Opportunity extends Model
 
     protected $primaryKey = 'opportunity_id';
 
+    public $incrementing = false;
+
     protected $fillable = [
         'deal_size',
         'stage',
