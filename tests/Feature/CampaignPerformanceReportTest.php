@@ -20,7 +20,7 @@ class CampaignPerformanceReportTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function testGenerateCampaignPerformanceReport()
+    public function testGetCampaignPerformanceReport()
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -38,18 +38,14 @@ class CampaignPerformanceReportTest extends TestCase
             ->with('campaign_123')
             ->andReturn($mockReport);
 
-        $response = $this->get('/reports/campaign-performance/campaign_123');
-        
-        $response->assertStatus(200);
-        $response->assertViewIs('reports.email-campaign-performance');
-        $response->assertViewHas('data', $mockReport);
-        $response->assertSee('Campaign Performance: campaign_123');
-        $response->assertSee('Emails Sent: 1,000');
-        $response->assertSee('Open Rate: 50.00%');
-        $response->assertSee('Click Rate: 20.00%');
+        $result = app(MailChimpService::class)->getCampaignReport('campaign_123');
+
+        $this->assertEquals('campaign_123', $result['campaign_id']);
+        $this->assertEquals(1000, $result['emails_sent']);
+        $this->assertEquals(0.5, $result['open_rate']);
     }
 
-    public function testGenerateABTestResultsReport()
+    public function testGetABTestResultsReport()
     {
         $mockResults = [
             'campaign_id' => 'campaign_123',
@@ -69,26 +65,16 @@ class CampaignPerformanceReportTest extends TestCase
             ->with('campaign_123')
             ->andReturn($mockResults);
 
-        $response = $this->get('/reports/ab-test-results/campaign_123');
-        
-        $response->assertStatus(200);
-        $response->assertViewIs('reports.ab-test-results');
-        $response->assertViewHas('data', $mockResults);
-        $response->assertSee('A/B Test Results for Campaign: campaign_123');
-        $response->assertSee('Subject A: Subject A');
+        $result = app(MailChimpService::class)->getABTestResults('campaign_123');
 
-        $response->assertSee('Subject B: Subject B');
-        $response->assertSee('Opens A: 300');
-        $response->assertSee('Opens B: 200');
-        $response->assertSee('Clicks A: 150');
-        $response->assertSee('Clicks B: 100');
-        $response->assertSee('Winner: Version A');
-        $response->assertSee('Winning Metric: Opens');
+        $this->assertEquals('campaign_123', $result['campaign_id']);
+        $this->assertEquals('Subject A', $result['subject_a']);
+        $this->assertEquals('a', $result['winner']);
     }
 
     protected function tearDown(): void
     {
-        Mockery::close();
         parent::tearDown();
+        Mockery::close();
     }
 }

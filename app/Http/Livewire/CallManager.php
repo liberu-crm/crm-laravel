@@ -38,7 +38,7 @@ class CallManager extends Component
             $this->callSid = $call->sid;
             $this->status = 'initiating';
             $twilioService->logCall($call->sid, $this->contactId, 'outbound', null, 'initiated');
-            $this->emit('callInitiated', $call->sid);
+            $this->dispatch('callInitiated', $call->sid);
         } else {
             $this->addError('call', 'Failed to initiate call');
         }
@@ -102,7 +102,7 @@ class CallManager extends Component
     {
         // Save notes to the database
         CallLog::where('call_sid', $this->callSid)->update(['notes' => $this->notes]);
-        $this->emit('notesSaved');
+        $this->dispatch('notesSaved');
     }
 
     public function updateCallStatus($status)

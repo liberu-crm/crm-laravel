@@ -12,21 +12,21 @@ use App\Filament\Admin\Resources\AuditLogResource\Pages\ViewAuditLog;
 use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-collection';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('user.name')
                     ->required()
                     ->maxLength(255),
@@ -56,10 +56,10 @@ class AuditLogResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }
