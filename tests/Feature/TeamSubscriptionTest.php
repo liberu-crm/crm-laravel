@@ -64,11 +64,13 @@ class TeamSubscriptionTest extends TestCase
 
     public function testStripeServiceMock()
     {
+        $team = Team::factory()->create();
+
         $this->stripeService->shouldReceive('createSubscription')
             ->once()
             ->andReturn(['status' => 'active']);
 
-        $result = app(StripeService::class)->createSubscription([]);
+        $result = app(StripeService::class)->createSubscription($team, 'pm_test_fake');
 
         $this->assertEquals('active', $result['status']);
     }
