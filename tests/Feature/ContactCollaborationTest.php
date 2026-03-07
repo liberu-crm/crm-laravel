@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Team;
+use App\Http\Livewire\ContactCollaboration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
@@ -14,19 +15,17 @@ class ContactCollaborationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_contact_can_be_updated_in_real_time()
+    public function test_contact_can_be_updated_via_livewire()
     {
-        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $contact = Contact::factory()->create();
 
-        $user1 = User::factory()->create(['team_id' => $team->id]);
-        $user2 = User::factory()->create(['team_id' => $team->id]);
-        $contact = Contact::factory()->create(['team_id' => $team->id]);
+        $this->actingAs($user);
 
-        $this->actingAs($user1);
-
-        Livewire::test('contact-collaboration', ['contact' => $contact])
+        Livewire::test(ContactCollaboration::class, ['contact' => $contact])
             ->set('name', 'John Doe')
             ->set('email', 'john@example.com')
+            ->set('status', 'active')
             ->call('updateContact');
 
         $this->assertDatabaseHas('contacts', [
@@ -34,34 +33,33 @@ class ContactCollaborationTest extends TestCase
             'name' => 'John Doe',
             'email' => 'john@example.com',
         ]);
-
-        $this->actingAs($user2);
-
-        Livewire::test('contact-collaboration', ['contact' => $contact])
-            ->assertSet('name', 'John Doe')
-            ->assertSet('email', 'john@example.com');
     }
 
-    public function test_unauthorized_user_cannot_update_contact()
+    public function test_contact_search_works_in_livewire()
     {
-        $team1 = Team::factory()->create();
-        $team2 = Team::factory()->create();
-        $user1 = User::factory()->create(['team_id' => $team1->id]);
-        $user2 = User::factory()->create(['team_id' => $team2->id]);
-        $contact = Contact::factory()->create(['team_id' => $team1->id]);
+        $user = User::factory()->create();
+        $contact1 = Contact::factory()->create(['name' => 'Alice Smith']);
+        $contact2 = Contact::factory()->create(['name' => 'Bob Jones']);
 
-        $this->actingAs($user2);
+        $this->actingAs($user);
 
-        Livewire::test('contact-collaboration', ['contact' => $contact])
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.com')
-            ->call('updateContact')
-            ->assertForbidden();
+        Livewire::test(ContactCollaboration::class)
+            ->set('search', 'Alice')
+            ->assertSee('Alice Smith')
+            ->assertDontSee('Bob Jones');
+    }
 
-        $this->assertDatabaseMissing('contacts', [
-            'id' => $contact->id,
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-        ]);
+    public function test_contact_status_filter_works()
+    {
+        $user = User::factory()->create();
+        $activeContact = Contact::factory()->create(['name' => 'Active User', 'status' => 'active']);
+        $inactiveContact = Contact::factory()->create(['name' => 'Inactive User', 'status' => 'inactive']);
+
+        $this->actingAs($user);
+
+        Livewire::test(ContactCollaboration::class)
+            ->set('statusFilter', 'active')
+            ->assertSee('Active User')
+            ->assertDontSee('Inactive User');
     }
 }

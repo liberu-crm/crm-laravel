@@ -56,7 +56,7 @@ class ContactCollaboration extends Component
 
         event(new ContactUpdated($this->contact));
 
-        $this->emit('contactUpdated');
+        $this->dispatch('contactUpdated');
     }
 
     public function sortBy($field)
