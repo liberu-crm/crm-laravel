@@ -37,6 +37,7 @@ class TeamInvitationTest extends TestCase
         $invitation = $user->currentTeam->teamInvitations()->create([
             'email' => 'test@example.com',
             'role' => 'admin',
+            'token' => \Illuminate\Support\Str::random(40),
         ]);
 
         $response = $this->delete('/team-invitations/'.$invitation->id);
@@ -68,6 +69,7 @@ class TeamInvitationTest extends TestCase
         $invitation = $team->teamInvitations()->create([
             'email' => $invitedUser->email,
             'role' => 'admin',
+            'token' => \Illuminate\Support\Str::random(40),
         ]);
 
         $response = $this->actingAs($invitedUser)->post('/team-invitations/'.$invitation->id.'/accept');

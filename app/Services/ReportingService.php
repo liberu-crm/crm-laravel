@@ -70,7 +70,7 @@ class ReportingService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-        $data = $query->whereNotIn('status', ['lost'])
+        $data = $query->whereNotIn('stage', ['lost'])
             ->groupBy('stage_id')
             ->get();
 

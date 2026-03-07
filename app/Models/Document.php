@@ -11,7 +11,13 @@ class Document extends Model
     use HasFactory;
 
     protected $fillable = [
+        'team_id',
+        'name',
         'file_path',
+        'file_name',
+        'file_size',
+        'type',
+        'status',
         'original_filename',
         'mime_type',
         'size',

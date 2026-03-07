@@ -29,6 +29,6 @@ class AuditLogViewTest extends TestCase
 
         $response = $this->actingAs($user)->get('/admin/audit-logs');
 
-        $response->assertRedirect();
+        $response->assertForbidden();
     }
 }

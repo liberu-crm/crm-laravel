@@ -14,6 +14,7 @@ class OAuthConfiguration extends Model
     protected $table = 'oauth_configurations';
 
     protected $fillable = [
+        'user_id',
         'service_name',
         'client_id',
         'client_secret',

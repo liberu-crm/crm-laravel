@@ -14,7 +14,6 @@ class TeamSubscriptionFactory extends Factory
     {
         return [
             'team_id' => Team::factory(),
-            'name' => $this->faker->word,
             'stripe_id' => 'sub_' . $this->faker->md5,
             'stripe_status' => 'active',
             'stripe_price' => 'price_' . $this->faker->md5,

@@ -1,4 +1,5 @@
 <div>
+    @if($contact)
     <form wire:submit.prevent="updateContact">
         <div>
             <label for="name">Name</label>
@@ -29,4 +30,35 @@
 
         <button type="submit">Update Contact</button>
     </form>
+    @endif
+
+    <div>
+        <input type="text" wire:model.live="search" placeholder="Search contacts..." />
+        <select wire:model.live="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th wire:click="sortBy('name')" class="cursor-pointer">Name</th>
+                <th wire:click="sortBy('email')" class="cursor-pointer">Email</th>
+                <th wire:click="sortBy('status')" class="cursor-pointer">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($contacts as $c)
+                <tr wire:key="contact-{{ $c->id }}">
+                    <td>{{ $c->name }}</td>
+                    <td>{{ $c->email }}</td>
+                    <td>{{ $c->status }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $contacts->links() }}
 </div>
