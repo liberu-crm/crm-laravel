@@ -1,0 +1,86 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${APP_PORT:-8000}:8000'
+    environment:
+      CONTAINER_MODE: ${CONTAINER_MODE:-http}
+      OCTANE_SERVER: ${OCTANE_SERVER:-swoole}
+      WITH_HORIZON: ${WITH_HORIZON:-false}
+      WITH_SCHEDULER: ${WITH_SCHEDULER:-true}
+      RUNNING_MIGRATIONS_AND_SEEDERS: ${RUNNING_MIGRATIONS_AND_SEEDERS:-false}
+    env_file:
+      - .env
+    volumes:
+      - 'app-storage:/var/www/html/storage'
+    networks:
+      - crm
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  mysql:
+    image: 'mysql:8.0'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - 'mysql-data:/var/lib/mysql'
+    networks:
+      - crm
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    volumes:
+      - 'redis-data:/data'
+    networks:
+      - crm
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      retries: 3
+      timeout: 5s
+
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      CONTAINER_MODE: horizon
+    env_file:
+      - .env
+    volumes:
+      - 'app-storage:/var/www/html/storage'
+    networks:
+      - crm
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+networks:
+  crm:
+    driver: bridge
+
+volumes:
+  app-storage:
+    driver: local
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
