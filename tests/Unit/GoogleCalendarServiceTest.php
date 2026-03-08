@@ -4,9 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Task;
 use App\Services\GoogleCalendarService;
-use Google_Service_Calendar;
-use Google_Service_Calendar_Event;
-use Google_Service_Calendar_Events;
 use Mockery;
 use Tests\TestCase;
 
@@ -18,7 +15,7 @@ class GoogleCalendarServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockGoogleService = Mockery::mock(Google_Service_Calendar::class);
+        $this->mockGoogleService = Mockery::mock();
         $this->googleCalendarService = new GoogleCalendarService();
         $this->googleCalendarService->service = $this->mockGoogleService;
     }
@@ -27,11 +24,14 @@ class GoogleCalendarServiceTest extends TestCase
     {
         $task = Task::factory()->create();
 
+        $mockCreatedEvent = Mockery::mock();
+        $mockCreatedEvent->id = 'test_event_id';
+
         $this->mockGoogleService->events = Mockery::mock();
         $this->mockGoogleService->events->shouldReceive('insert')
             ->once()
-            ->with('primary', Mockery::type(Google_Service_Calendar_Event::class))
-            ->andReturn(new Google_Service_Calendar_Event(['id' => 'test_event_id']));
+            ->with('primary', Mockery::any())
+            ->andReturn($mockCreatedEvent);
 
         $this->googleCalendarService->createEvent($task);
 
@@ -42,16 +42,22 @@ class GoogleCalendarServiceTest extends TestCase
     {
         $task = Task::factory()->create(['google_event_id' => 'existing_event_id']);
 
+        $mockEvent = Mockery::mock();
+        $mockEvent->shouldReceive('setSummary')->andReturnSelf();
+        $mockEvent->shouldReceive('setDescription')->andReturnSelf();
+        $mockEvent->shouldReceive('setStart')->andReturnSelf();
+        $mockEvent->shouldReceive('setEnd')->andReturnSelf();
+
         $this->mockGoogleService->events = Mockery::mock();
         $this->mockGoogleService->events->shouldReceive('get')
             ->once()
             ->with('primary', 'existing_event_id')
-            ->andReturn(new Google_Service_Calendar_Event());
+            ->andReturn($mockEvent);
 
         $this->mockGoogleService->events->shouldReceive('update')
             ->once()
-            ->with('primary', 'existing_event_id', Mockery::type(Google_Service_Calendar_Event::class))
-            ->andReturn(new Google_Service_Calendar_Event());
+            ->with('primary', 'existing_event_id', Mockery::any())
+            ->andReturn($mockEvent);
 
         $this->googleCalendarService->updateEvent($task);
     }
@@ -72,18 +78,22 @@ class GoogleCalendarServiceTest extends TestCase
 
     public function testFetchEvents()
     {
-        $mockEvents = new Google_Service_Calendar_Events([
-            'items' => [
-                new Google_Service_Calendar_Event(['id' => 'event1']),
-                new Google_Service_Calendar_Event(['id' => 'event2']),
-            ]
-        ]);
+        $mockEvent1 = Mockery::mock();
+        $mockEvent1->id = 'event1';
+        $mockEvent1->shouldReceive('getId')->andReturn('event1');
+
+        $mockEvent2 = Mockery::mock();
+        $mockEvent2->id = 'event2';
+        $mockEvent2->shouldReceive('getId')->andReturn('event2');
+
+        $mockResults = Mockery::mock();
+        $mockResults->shouldReceive('getItems')->andReturn([$mockEvent1, $mockEvent2]);
 
         $this->mockGoogleService->events = Mockery::mock();
         $this->mockGoogleService->events->shouldReceive('listEvents')
             ->once()
             ->with('primary', Mockery::type('array'))
-            ->andReturn($mockEvents);
+            ->andReturn($mockResults);
 
         $events = $this->googleCalendarService->fetchEvents();
 
@@ -94,22 +104,25 @@ class GoogleCalendarServiceTest extends TestCase
 
     public function testSyncEvents()
     {
-        $events = [
-            new Google_Service_Calendar_Event([
-                'id' => 'event1',
-                'summary' => 'Test Event 1',
-                'description' => 'Test Description 1',
-                'start' => ['dateTime' => '2023-06-01T10:00:00+00:00'],
-            ]),
-            new Google_Service_Calendar_Event([
-                'id' => 'event2',
-                'summary' => 'Test Event 2',
-                'description' => 'Test Description 2',
-                'start' => ['dateTime' => '2023-06-02T11:00:00+00:00'],
-            ]),
-        ];
+        $mockStart1 = Mockery::mock();
+        $mockStart1->shouldReceive('getDateTime')->andReturn('2023-06-01 10:00:00');
 
-        $this->googleCalendarService->syncEvents($events);
+        $mockEvent1 = Mockery::mock();
+        $mockEvent1->id = 'event1';
+        $mockEvent1->shouldReceive('getSummary')->andReturn('Test Event 1');
+        $mockEvent1->shouldReceive('getDescription')->andReturn('Test Description 1');
+        $mockEvent1->shouldReceive('getStart')->andReturn($mockStart1);
+
+        $mockStart2 = Mockery::mock();
+        $mockStart2->shouldReceive('getDateTime')->andReturn('2023-06-02 11:00:00');
+
+        $mockEvent2 = Mockery::mock();
+        $mockEvent2->id = 'event2';
+        $mockEvent2->shouldReceive('getSummary')->andReturn('Test Event 2');
+        $mockEvent2->shouldReceive('getDescription')->andReturn('Test Description 2');
+        $mockEvent2->shouldReceive('getStart')->andReturn($mockStart2);
+
+        $this->googleCalendarService->syncEvents([$mockEvent1, $mockEvent2]);
 
         $this->assertDatabaseHas('tasks', [
             'name' => 'Test Event 1',

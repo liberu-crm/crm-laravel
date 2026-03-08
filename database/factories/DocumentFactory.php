@@ -25,6 +25,7 @@ class DocumentFactory extends Factory
             'description' => $this->faker->optional()->sentence,
             'tags' => json_encode($this->faker->words(3)),
             'status' => $this->faker->randomElement(['draft', 'final', 'archived']),
+            'version' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ];

@@ -118,11 +118,14 @@ class ReminderServiceTest extends TestCase
     public function testScheduleReminder()
     {
         $task = Task::factory()->create();
-        $reminderDate = now()->addDays(2);
+        $reminderDate = now()->addDays(2)->startOfSecond();
 
         $this->reminderService->scheduleReminder($task, $reminderDate);
 
-        $this->assertEquals($reminderDate, $task->fresh()->reminder_date);
+        $this->assertEquals(
+            $reminderDate->toDateTimeString(),
+            $task->fresh()->reminder_date->toDateTimeString()
+        );
         $this->assertFalse($task->fresh()->reminder_sent);
     }
 }

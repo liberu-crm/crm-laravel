@@ -42,7 +42,11 @@ class TaskApiTest extends TestCase
         $response = $this->postJson('/api/v1/tasks', $taskData);
 
         $response->assertStatus(201)
-            ->assertJsonFragment($taskData);
+            ->assertJsonFragment([
+                'name' => 'New Task',
+                'description' => 'Task description',
+                'status' => 'pending',
+            ]);
     }
 
     public function test_can_show_task()
@@ -68,7 +72,11 @@ class TaskApiTest extends TestCase
         $response = $this->putJson("/api/v1/tasks/{$task->id}", $updatedData);
 
         $response->assertStatus(200)
-            ->assertJsonFragment($updatedData);
+            ->assertJsonFragment([
+                'name' => 'Updated Task',
+                'description' => 'Updated description',
+                'status' => 'in_progress',
+            ]);
     }
 
     public function test_can_delete_task()

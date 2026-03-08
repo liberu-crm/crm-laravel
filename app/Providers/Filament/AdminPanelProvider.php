@@ -66,7 +66,7 @@ class AdminPanelProvider extends PanelProvider
     public function boot()
     {
         Fortify::$registersRoutes = false;
-        Jetstream::$registersRoutes = false;
+        // Jetstream routes remain enabled for team management features.
     }
 }
 

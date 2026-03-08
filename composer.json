@@ -45,7 +45,9 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "tests/Stubs/TwilioStubs.php"
+            "tests/Stubs/TwilioStubs.php",
+            "tests/Stubs/GoogleApiStubs.php",
+            "tests/Stubs/MicrosoftGraphStubs.php"
         ]
     },
     "scripts": {

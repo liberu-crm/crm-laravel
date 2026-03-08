@@ -20,6 +20,8 @@ class TwilioServiceTest extends TestCase
     {
         parent::setUp();
         $this->mockTwilioClient = Mockery::mock(Client::class);
+        $this->mockTwilioClient->shouldReceive('getAccountSid')
+            ->andReturn('ACtest1234567890123456789012345678');
         $this->twilioService = new TwilioService();
         $this->twilioService->setClient($this->mockTwilioClient);
     }
@@ -159,11 +161,16 @@ class TwilioServiceTest extends TestCase
         $callSid = 'CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
         $mockRecordingInstance = Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingInstance');
 
-        $this->mockTwilioClient->calls = Mockery::mock('Twilio\Rest\Api\V2010\Account\CallContext');
-        $this->mockTwilioClient->calls->shouldReceive('recordings->create')
+        $mockCallContext = Mockery::mock('Twilio\Rest\Api\V2010\Account\CallContext');
+        $mockCallContext->shouldReceive('recordings->create')
             ->once()
             ->with(['recordingStatusCallback' => route('twilio.recording.callback')])
             ->andReturn($mockRecordingInstance);
+
+        $this->mockTwilioClient->shouldReceive('calls')
+            ->once()
+            ->with($callSid)
+            ->andReturn($mockCallContext);
 
         $result = $this->twilioService->startCallRecording($callSid);
         $this->assertInstanceOf('Twilio\Rest\Api\V2010\Account\Call\RecordingInstance', $result);
@@ -172,14 +179,18 @@ class TwilioServiceTest extends TestCase
     public function testStopCallRecording()
     {
         $callSid = 'CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-        $mockRecordingList = Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingList');
         $mockRecordingContext = Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingContext');
 
-        $this->mockTwilioClient->calls = Mockery::mock('Twilio\Rest\Api\V2010\Account\CallContext');
-        $this->mockTwilioClient->calls->shouldReceive('recordings->read')
+        $mockCallContext = Mockery::mock('Twilio\Rest\Api\V2010\Account\CallContext');
+        $mockCallContext->shouldReceive('recordings->read')
             ->once()
             ->with(['status' => 'in-progress'])
             ->andReturn([$mockRecordingContext]);
+
+        $this->mockTwilioClient->shouldReceive('calls')
+            ->once()
+            ->with($callSid)
+            ->andReturn($mockCallContext);
 
         $mockRecordingContext->shouldReceive('update')
             ->once()
