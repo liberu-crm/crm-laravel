@@ -57,6 +57,8 @@ class ReportingService
 
     public function getCustomerEngagementData(array $filters = [])
     {
+        $dateExpression = DB::raw('DATE(created_at)');
+
         $query = Activity::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('COUNT(*) as count')
@@ -66,8 +68,8 @@ class ReportingService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-        return $query->groupBy(DB::raw('DATE(created_at)'))
-            ->orderBy(DB::raw('DATE(created_at)'))
+        return $query->groupBy($dateExpression)
+            ->orderBy($dateExpression)
             ->get();
     }
 

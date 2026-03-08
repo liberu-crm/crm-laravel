@@ -69,8 +69,10 @@ class ListContacts extends ListRecords
     {
         $term = $request->input('query', '');
 
-        $contacts = Contact::where('name', 'like', $term . '%')
-            ->orWhere('email', 'like', '%' . $term . '%')
+        $contacts = Contact::where(function ($q) use ($term) {
+            $q->where('name', 'like', $term . '%')
+              ->orWhere('email', 'like', '%' . $term . '%');
+        })
             ->limit(10)
             ->get(['id', 'name', 'email']);
 
