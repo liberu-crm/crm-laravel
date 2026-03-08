@@ -2,10 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -111,10 +109,5 @@ class ListContactsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Route::middleware('web')->group(function () {
-            Route::get('/contacts', [ListContacts::class, 'index'])->name('contacts.list');
-            Route::delete('/contacts/bulk/delete', [ListContacts::class, 'bulkDelete'])->name('contacts.bulk.delete');
-            Route::get('/contacts/autocomplete', [ListContacts::class, 'autocomplete'])->name('contacts.autocomplete');
-        });
     }
 }

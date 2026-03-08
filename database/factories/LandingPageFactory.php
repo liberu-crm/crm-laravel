@@ -14,6 +14,7 @@ class LandingPageFactory extends Factory
     {
         return [
             'team_id' => Team::factory(),
+            'title' => $this->faker->sentence(3),
             'name' => $this->faker->words(3, true),
             'slug' => $this->faker->slug(),
             'template' => $this->faker->randomElement(['default', 'modern', 'minimal']),

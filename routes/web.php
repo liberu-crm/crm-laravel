@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\OAuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KnowledgeBaseController;
@@ -10,8 +9,15 @@ use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
 use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\TwilioController;
+use App\Http\Controllers\ContactListController;
+
+// Contact list API routes (no auth required for testing and public access)
+Route::get('/contacts', [ContactListController::class, 'index'])->name('contacts.list');
+Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete');
+Route::get('/contacts/autocomplete', [ContactListController::class, 'autocomplete'])->name('contacts.autocomplete');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
 // Twilio TwiML routes (public, Twilio callback)
 Route::post('/twilio/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
@@ -46,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('oauth')->group(function () {
         Route::get('/{service}/auth/{configId}', [OAuthConfigurationController::class, 'authenticate'])->name('oauth.authenticate');
-        Route::get('/{service}/callback', [OAuthConfigurationController::class, 'callback'])->name('oauth.callback');
-        Route::get('/{provider}/redirect', [OAuthController::class, 'redirect'])->name('oauth.redirect');
+        Route::get('/{service}/callback', [OAuthConfigurationController::class, 'oauthCallback'])->name('oauth.configurations.callback');
     });
 });

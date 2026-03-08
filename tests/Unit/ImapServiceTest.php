@@ -17,17 +17,19 @@ class ImapServiceTest extends TestCase
         parent::setUp();
         $this->imapService = new ImapService();
         
-        $this->mockConfig = Mockery::mock(OAuthConfiguration::class)->makePartial();
-        $this->mockConfig->id = 1;
-        $this->mockConfig->client_id = 'test@example.com';
-        $this->mockConfig->client_secret = 'test_password';
-        $this->mockConfig->additional_settings = [
-            'host' => 'imap.example.com',
-            'port' => 993,
-            'ssl' => true,
-            'username' => 'test@example.com',
-            'password' => 'test_password',
-        ];
+        $this->mockConfig = new OAuthConfiguration();
+        $this->mockConfig->forceFill([
+            'id' => 1,
+            'client_id' => 'test@example.com',
+            'client_secret' => 'test_password',
+            'additional_settings' => [
+                'host' => 'imap.example.com',
+                'port' => 993,
+                'ssl' => true,
+                'username' => 'test@example.com',
+                'password' => 'test_password',
+            ],
+        ]);
     }
 
     protected function tearDown(): void
@@ -43,11 +45,13 @@ class ImapServiceTest extends TestCase
 
     public function testImapServiceRequiresConfiguration()
     {
-        $configWithoutSettings = Mockery::mock(OAuthConfiguration::class);
-        $configWithoutSettings->id = 1;
-        $configWithoutSettings->client_id = 'test@example.com';
-        $configWithoutSettings->client_secret = 'test_password';
-        $configWithoutSettings->additional_settings = [];
+        $configWithoutSettings = new OAuthConfiguration();
+        $configWithoutSettings->forceFill([
+            'id' => 1,
+            'client_id' => 'test@example.com',
+            'client_secret' => 'test_password',
+            'additional_settings' => [],
+        ]);
 
         // Test that calling methods without proper host configuration will fail
         $this->expectException(\Exception::class);
