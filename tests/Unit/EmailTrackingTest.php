@@ -119,6 +119,10 @@ class EmailTrackingTest extends TestCase
 
         $payload->shouldReceive('getHeaders')->andReturn($headers);
         $payload->shouldReceive('getBody->getData')->andReturn(base64_encode('Test email content'));
+        $payload->shouldReceive('getParts')->andReturn([]);
+        $payload->shouldReceive('getBody')->andReturn(
+            (object)['getData' => fn() => base64_encode('Test email content')]
+        );
 
 
         return $message;

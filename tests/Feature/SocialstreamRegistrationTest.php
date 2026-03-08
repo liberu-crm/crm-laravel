@@ -20,6 +20,7 @@ class SocialstreamRegistrationTest extends TestCase
      * @dataProvider socialiteProvidersDataProvider
      */
     #[Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
     public function test_users_get_redirected_correctly(string $provider): void
     {
         if (! Providers::enabled($provider)) {
@@ -40,6 +41,7 @@ class SocialstreamRegistrationTest extends TestCase
      * @dataProvider socialiteProvidersDataProvider
      */
     #[Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
     public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
     {
         if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
@@ -63,12 +65,20 @@ class SocialstreamRegistrationTest extends TestCase
             ->setRefreshToken('refresh-token')
             ->setExpiresIn(3600);
 
-        $provider = Mockery::mock('Laravel\\Socialite\\Two\\'.$socialiteProvider.'Provider');
+        // Use a generic mock to avoid class name issues with providers like 'twitter-oauth-2'
+        $providerClass = 'Laravel\\Socialite\\Two\\' . $socialiteProvider . 'Provider';
+        if (preg_match('/[^a-zA-Z0-9_\\\\]/', $providerClass)) {
+            $provider = Mockery::mock();
+        } else {
+            $provider = Mockery::mock($providerClass);
+        }
         $provider->shouldReceive('user')->once()->andReturn($user);
 
         Socialite::shouldReceive('driver')->once()->with($socialiteProvider)->andReturn($provider);
 
-        Session::put('socialstream.previous_url', route('register'));
+        // Use a fallback URL when the 'register' route is not defined
+        $previousUrl = app('router')->has('register') ? route('register') : url('/register');
+        Session::put('socialstream.previous_url', $previousUrl);
 
         $response = $this->get("/oauth/$socialiteProvider/callback");
 

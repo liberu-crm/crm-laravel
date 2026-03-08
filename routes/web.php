@@ -9,8 +9,13 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
 use App\Http\Controllers\EmailTrackingController;
+use App\Http\Controllers\TwilioController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Twilio TwiML routes (public, Twilio callback)
+Route::post('/twilio/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
+Route::post('/twilio/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->name('twilio.recording.callback');
 
 // Email tracking routes (public, no auth required)
 Route::get('/email/track/pixel/{tracking_id}', [EmailTrackingController::class, 'pixel'])->name('email.tracking.pixel');
@@ -32,12 +37,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show'])->name('knowledge-base.show');
     Route::post('/quote-requests', [QuoteRequestController::class, 'store'])->name('quote-requests.store');
 
+    Route::prefix('social-connections')->group(function () {
+        Route::get('/', [OAuthConfigurationController::class, 'index'])->name('oauth.configurations.index');
+        Route::get('/create', [OAuthConfigurationController::class, 'create'])->name('oauth.configurations.create');
+        Route::post('/', [OAuthConfigurationController::class, 'store'])->name('oauth.configurations.store');
+        Route::delete('/{configuration}', [OAuthConfigurationController::class, 'destroy'])->name('oauth.configurations.destroy');
+    });
+
     Route::prefix('oauth')->group(function () {
-        Route::get('/configurations', [OAuthConfigurationController::class, 'index'])->name('oauth.configurations.index');
-        Route::get('/configurations/create', [OAuthConfigurationController::class, 'create'])->name('oauth.configurations.create');
-        Route::post('/configurations', [OAuthConfigurationController::class, 'store'])->name('oauth.configurations.store');
-        Route::delete('/configurations/{configuration}', [OAuthConfigurationController::class, 'destroy'])->name('oauth.configurations.destroy');
-        
         Route::get('/{service}/auth/{configId}', [OAuthConfigurationController::class, 'authenticate'])->name('oauth.authenticate');
         Route::get('/{service}/callback', [OAuthConfigurationController::class, 'callback'])->name('oauth.callback');
         Route::get('/{provider}/redirect', [OAuthController::class, 'redirect'])->name('oauth.redirect');

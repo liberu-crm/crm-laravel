@@ -18,7 +18,7 @@ class ReportCustomizer extends Page
     protected string $view = 'filament.pages.report-customizer';
 
     public ?array $data = [];
-    public string $reportType = 'contact-interactions';
+    public ?string $reportType = 'contact-interactions';
     public ?string $startDate = null;
     public ?string $endDate = null;
 
@@ -58,13 +58,56 @@ class ReportCustomizer extends Page
 
         switch ($this->reportType) {
             case 'contact-interactions':
-                $this->data = $reportingService->getContactInteractionsData($filters);
+                $raw = $reportingService->getContactInteractionsData($filters);
+                $this->data = [
+                    'type' => 'pie',
+                    'data' => [
+                        'labels'   => $raw->pluck('name'),
+                        'datasets' => [
+                            [
+                                'label' => 'Activities count',
+                                'data'  => $raw->pluck('activities_count'),
+                            ],
+                        ],
+                    ],
+                    'raw' => $raw,
+                ];
                 break;
             case 'sales-pipeline':
-                $this->data = $reportingService->getSalesPipelineData($filters);
+                $raw = $reportingService->getSalesPipelineData($filters);
+                $this->data = [
+                    'type' => 'bar',
+                    'data' => [
+                        'labels'   => $raw->pluck('stage'),
+                        'datasets' => [
+                            [
+                                'label' => 'Total value',
+                                'data'  => $raw->pluck('total_value'),
+                            ],
+                            [
+                                'label' => 'Count',
+                                'data'  => $raw->pluck('count'),
+                            ],
+                        ],
+                    ],
+                    'raw' => $raw,
+                ];
                 break;
             case 'customer-engagement':
-                $this->data = $reportingService->getCustomerEngagementData($filters);
+                $raw = $reportingService->getCustomerEngagementData($filters);
+                $this->data = [
+                    'type' => 'line',
+                    'data' => [
+                        'labels'   => $raw->pluck('date'),
+                        'datasets' => [
+                            [
+                                'label' => 'Count',
+                                'data'  => $raw->pluck('count'),
+                            ],
+                        ],
+                    ],
+                    'raw' => $raw,
+                ];
                 break;
         }
     }
@@ -91,14 +134,17 @@ class ReportCustomizer extends Page
         $filename = $this->reportType . '_' . now()->format('Y-m-d') . '.csv';
         $path = storage_path('app/public/reports/' . $filename);
 
-        $file = fopen($path, 'w');
-        fputcsv($file, array_keys($this->data[0]));
+        $raw = $this->data['raw'] ?? collect();
+        $rows = $raw->toArray();
 
-        foreach ($this->data as $row) {
-            fputcsv($file, $row);
+        if (!empty($rows)) {
+            $file = fopen($path, 'w');
+            fputcsv($file, array_keys($rows[0]));
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
         }
-
-        fclose($file);
 
         $this->dispatch('report-exported', ['filename' => $filename]);
     }

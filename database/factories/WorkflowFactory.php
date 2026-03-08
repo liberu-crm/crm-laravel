@@ -14,18 +14,18 @@ class WorkflowFactory extends Factory
         return [
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph,
-            'triggers' => json_encode([
+            'triggers' => [
                 'type' => 'event',
                 'event' => $this->faker->randomElement(['lead.created', 'contact.updated', 'deal.closed'])
-            ]),
-            'actions' => json_encode([
+            ],
+            'actions' => [
                 [
                     'type' => 'notification',
                     'channel' => 'email',
                     'template' => 'default'
                 ]
-            ]),
-            'status' => 'active',
+            ],
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ];

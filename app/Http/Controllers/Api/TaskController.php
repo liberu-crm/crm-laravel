@@ -16,13 +16,13 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
-            'status' => 'required|string|in:pending,in_progress,completed',
+            'status' => 'nullable|string|in:pending,in_progress,completed',
         ]);
 
-        $task = Task::create($request->all());
+        $task = Task::create($request->only(['name', 'description', 'due_date', 'status', 'assigned_to', 'contact_id', 'lead_id', 'company_id', 'calendar_type']));
         return response()->json($task, 201);
     }
 
@@ -34,13 +34,13 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $request->validate([
-            'title' => 'string|max:255',
+            'name' => 'string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'status' => 'string|in:pending,in_progress,completed',
         ]);
 
-        $task->update($request->all());
+        $task->update($request->only(['name', 'description', 'due_date', 'status', 'assigned_to', 'contact_id', 'lead_id', 'company_id', 'calendar_type']));
         return response()->json($task, 200);
     }
 

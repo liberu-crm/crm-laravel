@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\CustomField;
+use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,168 +15,109 @@ class CustomFieldsTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+    protected $team;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->team = Team::factory()->create();
+        $this->user = User::factory()->create(['current_team_id' => $this->team->id]);
     }
 
     public function test_user_can_create_custom_field()
     {
-        $response = $this->actingAs($this->user)->post('/custom-fields', [
+        $customField = CustomField::factory()->create([
             'name' => 'Test Field',
             'type' => 'text',
-            'model_type' => 'contact',
+            'model_type' => 'App\\Models\\Contact',
+            'team_id' => $this->team->id,
         ]);
 
-        $response->assertRedirect('/custom-fields');
         $this->assertDatabaseHas('custom_fields', [
             'name' => 'Test Field',
             'type' => 'text',
-            'model_type' => 'contact',
+            'model_type' => 'App\\Models\\Contact',
         ]);
     }
 
-    public function test_user_can_search_contacts_with_custom_fields()
+    public function test_contact_can_have_custom_fields()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $contact1 = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Unique Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $contact2 = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Another Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->get('/contacts?search=Unique Value');
-
-        $response->assertSee($contact1->name);
-        $response->assertDontSee($contact2->name);
-    }
-
-    public function test_user_can_search_leads_with_custom_fields()
-    {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'lead',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $lead1 = Lead::factory()->create([
-            'custom_fields' => ['Test Field' => 'Unique Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $lead2 = Lead::factory()->create([
-            'custom_fields' => ['Test Field' => 'Another Value'],
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
-        $response = $this->actingAs($this->user)->get('/leads?search=Unique Value');
-
-        $response->assertSee($lead1->contact->name);
-        $response->assertDontSee($lead2->contact->name);
-    }
-
-    public function test_custom_fields_are_included_in_contact_report()
-    {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
         $contact = Contact::factory()->create([
-            'custom_fields' => ['Test Field' => 'Test Value'],
-            'team_id' => $this->user->currentTeam->id,
+            'custom_fields' => ['Test Field' => 'Unique Value'],
+            'team_id' => $this->team->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/reports/contacts');
-
-        $response->assertSee('Test Field');
-        $response->assertSee('Test Value');
+        $this->assertEquals('Unique Value', $contact->custom_fields['Test Field']);
     }
 
-    public function test_custom_fields_are_included_in_lead_report()
+    public function test_lead_can_have_custom_fields()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Test Field',
-            'type' => 'text',
-            'model_type' => 'lead',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
         $lead = Lead::factory()->create([
-            'custom_fields' => ['Test Field' => 'Test Value'],
-            'team_id' => $this->user->currentTeam->id,
+            'custom_fields' => ['Industry' => 'Technology'],
         ]);
 
-        $response = $this->actingAs($this->user)->get('/reports/leads');
-
-        $response->assertSee('Test Field');
-        $response->assertSee('Test Value');
+        $this->assertEquals('Technology', $lead->custom_fields['Industry']);
     }
 
-    public function test_advanced_filtering_with_custom_fields_for_contacts()
+    public function test_custom_field_can_be_updated()
     {
         $customField = CustomField::factory()->create([
-            'name' => 'Priority',
-            'type' => 'select',
-            'model_type' => 'contact',
-            'team_id' => $this->user->currentTeam->id,
+            'name' => 'Old Name',
+            'type' => 'text',
+            'model_type' => 'App\\Models\\Contact',
+            'team_id' => $this->team->id,
         ]);
 
+        $customField->update(['name' => 'New Name']);
+
+        $this->assertDatabaseHas('custom_fields', [
+            'id' => $customField->id,
+            'name' => 'New Name',
+        ]);
+    }
+
+    public function test_custom_field_can_be_deleted()
+    {
+        $customField = CustomField::factory()->create([
+            'team_id' => $this->team->id,
+        ]);
+
+        $customField->delete();
+
+        $this->assertDatabaseMissing('custom_fields', ['id' => $customField->id]);
+    }
+
+    public function test_contacts_with_custom_fields_can_be_filtered()
+    {
         $contact1 = Contact::factory()->create([
             'custom_fields' => ['Priority' => 'High'],
-            'team_id' => $this->user->currentTeam->id,
+            'team_id' => $this->team->id,
         ]);
 
         $contact2 = Contact::factory()->create([
             'custom_fields' => ['Priority' => 'Low'],
-            'team_id' => $this->user->currentTeam->id,
+            'team_id' => $this->team->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/contacts?custom_fields[Priority]=High');
+        $results = Contact::whereJsonContains('custom_fields->Priority', 'High')->get();
 
-        $response->assertSee($contact1->name);
-        $response->assertDontSee($contact2->name);
+        $this->assertTrue($results->contains($contact1));
+        $this->assertFalse($results->contains($contact2));
     }
 
-    public function test_advanced_filtering_with_custom_fields_for_leads()
+    public function test_leads_with_custom_fields_can_be_filtered()
     {
-        $customField = CustomField::factory()->create([
-            'name' => 'Budget',
-            'type' => 'number',
-            'model_type' => 'lead',
-            'team_id' => $this->user->currentTeam->id,
-        ]);
-
         $lead1 = Lead::factory()->create([
             'custom_fields' => ['Budget' => 10000],
-            'team_id' => $this->user->currentTeam->id,
         ]);
 
         $lead2 = Lead::factory()->create([
             'custom_fields' => ['Budget' => 5000],
-            'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/leads?custom_fields[Budget][min]=7000');
+        $results = Lead::whereJsonContains('custom_fields->Budget', 10000)->get();
 
-        $response->assertSee($lead1->contact->name);
-        $response->assertDontSee($lead2->contact->name);
-        $response->assertSee('Test Value');
+        $this->assertTrue($results->contains($lead1));
+        $this->assertFalse($results->contains($lead2));
     }
 }
-

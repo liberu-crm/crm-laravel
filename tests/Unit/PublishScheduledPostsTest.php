@@ -119,7 +119,7 @@ class PublishScheduledPostsTest extends TestCase
         $ytMock = Mockery::mock(YouTubeService::class);
         $ytMock->shouldReceive('uploadVideo')
             ->once()
-            ->with($account, Mockery::any(), 'Line one', $post->content)
+            ->with(Mockery::type(ConnectedAccount::class), Mockery::any(), 'Line one', $post->content)
             ->andReturn(['id' => 'yt_abc']);
         $this->app->instance(YouTubeService::class, $ytMock);
 

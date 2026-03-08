@@ -43,7 +43,12 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/Stubs/TwilioStubs.php",
+            "tests/Stubs/GoogleApiStubs.php",
+            "tests/Stubs/MicrosoftGraphStubs.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [

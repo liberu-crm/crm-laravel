@@ -34,12 +34,12 @@
                         {{ ucfirst($role) }} Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}"
+                    <a href="{{ \Illuminate\Support\Facades\Route::has('login') ? route('login') : url('/admin/login') }}"
                         class="p-2  flex items-center text-sm text-white/80 hover:text-white focus:outline-none focus:text-white">
                         <svg class="shrink-0 size-4 me-3 md:me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         Login
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ \Illuminate\Support\Facades\Route::has('register') ? route('register') : url('/admin/register') }}"
                         class="p-2  flex items-center text-sm text-white/80 hover:text-white focus:outline-none focus:text-white">
                         <svg class="shrink-0 size-4 me-3 md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M9 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4H7Zm8-1a1 1 0 0 1 1-1h1v-1a1 1 0 1 1 2 0v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 0 1-1-1Z" clip-rule="evenodd"/>

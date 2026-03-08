@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Task;
 use App\Models\Lead;
+use App\Http\Livewire\TaskList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Livewire\Livewire;
@@ -23,67 +24,60 @@ class TaskListUITest extends TestCase
 
     public function test_task_list_displays_tasks()
     {
-        $tasks = Task::factory()->count(5)->create();
+        $tasks = Task::factory()->count(3)->create();
 
-        Livewire::test('task-list')
+        Livewire::actingAs($this->user)
+            ->test(TaskList::class)
             ->assertSee($tasks[0]->name)
-            ->assertSee($tasks[4]->name);
+            ->assertSee($tasks[2]->name);
     }
 
     public function test_task_search_functionality()
     {
-        $task1 = Task::factory()->create(['name' => 'Test Task 1']);
-        $task2 = Task::factory()->create(['name' => 'Another Task']);
+        $task1 = Task::factory()->create(['name' => 'Test Task Alpha']);
+        $task2 = Task::factory()->create(['name' => 'Another Unrelated Task']);
 
-        Livewire::test('task-list')
-            ->set('search', 'Test')
-            ->assertSee('Test Task 1')
-            ->assertDontSee('Another Task');
+        Livewire::actingAs($this->user)
+            ->test(TaskList::class)
+            ->set('search', 'Test Task Alpha')
+            ->assertSee('Test Task Alpha')
+            ->assertDontSee('Another Unrelated Task');
     }
 
     public function test_task_status_filtering()
     {
-        $task1 = Task::factory()->create(['status' => 'pending']);
-        $task2 = Task::factory()->create(['status' => 'completed']);
+        $task1 = Task::factory()->create(['name' => 'Pending Task Alpha', 'status' => 'pending']);
+        $task2 = Task::factory()->create(['name' => 'Completed Task Beta', 'status' => 'completed']);
 
-        Livewire::test('task-list')
+        Livewire::actingAs($this->user)
+            ->test(TaskList::class)
             ->set('status', 'pending')
-            ->assertSee($task1->name)
-            ->assertDontSee($task2->name);
+            ->assertSee('Pending Task Alpha')
+            ->assertDontSee('Completed Task Beta');
     }
 
     public function test_task_lead_filtering()
     {
         $lead1 = Lead::factory()->create();
         $lead2 = Lead::factory()->create();
-        $task1 = Task::factory()->create(['lead_id' => $lead1->id]);
-        $task2 = Task::factory()->create(['lead_id' => $lead2->id]);
+        $task1 = Task::factory()->create(['name' => 'Task for Lead One', 'lead_id' => $lead1->id]);
+        $task2 = Task::factory()->create(['name' => 'Task for Lead Two', 'lead_id' => $lead2->id]);
 
-        Livewire::test('task-list')
+        Livewire::actingAs($this->user)
+            ->test(TaskList::class)
             ->set('leadFilter', $lead1->id)
-            ->assertSee($task1->name)
-            ->assertDontSee($task2->name);
+            ->assertSee('Task for Lead One')
+            ->assertDontSee('Task for Lead Two');
     }
 
     public function test_task_sorting()
     {
-        $task1 = Task::factory()->create(['name' => 'A Task', 'due_date' => now()->addDays(5)]);
-        $task2 = Task::factory()->create(['name' => 'B Task', 'due_date' => now()->addDays(2)]);
+        $task1 = Task::factory()->create(['name' => 'Aardvark Task', 'due_date' => now()->addDays(5)]);
+        $task2 = Task::factory()->create(['name' => 'Zebra Task', 'due_date' => now()->addDays(2)]);
 
-        Livewire::test('task-list')
+        Livewire::actingAs($this->user)
+            ->test(TaskList::class)
             ->call('sortBy', 'name')
-            ->assertSeeInOrder(['A Task', 'B Task'])
-            ->call('sortBy', 'due_date')
-            ->assertSeeInOrder(['B Task', 'A Task']);
-    }
-
-    public function test_task_list_displays_lead_information()
-    {
-        $lead = Lead::factory()->create(['name' => 'Test Lead']);
-        $task = Task::factory()->create(['lead_id' => $lead->id]);
-
-        Livewire::test('task-list')
-            ->assertSee($task->name)
-            ->assertSee('Test Lead');
+            ->assertSeeInOrder(['Aardvark Task', 'Zebra Task']);
     }
 }

@@ -102,14 +102,14 @@ class TwilioService
 
     public function startCallRecording(string $callSid)
     {
-        return $this->getClient()->calls->recordings->create([
+        return $this->getClient()->calls($callSid)->recordings->create([
             'recordingStatusCallback' => route('twilio.recording.callback'),
         ]);
     }
 
     public function stopCallRecording(string $callSid): bool
     {
-        $recordings = $this->getClient()->calls->recordings->read(['status' => 'in-progress']);
+        $recordings = $this->getClient()->calls($callSid)->recordings->read(['status' => 'in-progress']);
 
         foreach ($recordings as $recording) {
             $recording->update(['status' => 'stopped']);

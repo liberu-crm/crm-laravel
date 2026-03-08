@@ -39,12 +39,7 @@ class TaskList extends Component
     {
         $tasks = Task::query()
             ->when($this->search, function ($query) {
-                $query->where(function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('lead', function ($leadQuery) {
-                            $leadQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
-                });
+                $query->where('name', 'like', '%' . $this->search . '%');
             })
             ->when($this->status, function ($query) {
                 $query->where('status', $this->status);

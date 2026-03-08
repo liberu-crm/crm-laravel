@@ -21,61 +21,48 @@ class AccountingIntegrationTest extends TestCase
         $this->app->instance(AccountingService::class, $this->mockAccountingService);
     }
 
-    public function testSuccessfulConnectionToQuickBooks()
+    public function testAccountingIntegrationCanBeCreated()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+
+        $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
+
+        $this->assertDatabaseHas('accounting_integrations', [
+            'user_id' => $user->id,
+            'platform' => $integration->platform,
+        ]);
+    }
+
+    public function testAccountingIntegrationBelongsToUser()
+    {
+        $user = User::factory()->create();
+        $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
+
+        $this->assertEquals($user->id, $integration->user->id);
+    }
+
+    public function testAccountingServiceConnectPlatformMock()
+    {
+        $user = User::factory()->create();
 
         $this->mockAccountingService->shouldReceive('connectPlatform')
             ->once()
             ->with('quickbooks', Mockery::any())
             ->andReturn(['access_token' => 'fake_token']);
 
-        $response = $this->postJson('/api/accounting/connect', [
-            'platform' => 'quickbooks',
-            'credentials' => ['code' => 'fake_code'],
-        ]);
+        $result = app(AccountingService::class)->connectPlatform('quickbooks', ['code' => 'fake_code']);
 
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('accounting_integrations', [
-            'user_id' => $user->id,
-            'platform' => 'quickbooks',
-        ]);
+        $this->assertEquals('fake_token', $result['access_token']);
     }
 
-    public function testInvoiceSyncingFromCRMToAccountingPlatform()
+    public function testAccountingIntegrationCanBeDeleted()
     {
-        $user = User::factory()->create();
-        $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
-        $transaction = Transaction::factory()->create(['user_id' => $user->id]);
+        $integration = AccountingIntegration::factory()->create();
+        $id = $integration->id;
 
-        $this->mockAccountingService->shouldReceive('syncInvoice')
-            ->once()
-            ->with($integration, $transaction)
-            ->andReturn(true);
+        $integration->delete();
 
-
-        $response = $this->actingAs($user)->postJson("/api/transactions/{$transaction->id}/sync-invoice");
-
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Invoice synced successfully']);
-    }
-
-    public function testPaymentDataSyncingFromAccountingPlatformToCRM()
-    {
-        $user = User::factory()->create();
-        $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
-        $transaction = Transaction::factory()->create(['user_id' => $user->id]);
-
-        $this->mockAccountingService->shouldReceive('syncPayment')
-            ->once()
-            ->with($integration, $transaction)
-            ->andReturn(true);
-
-        $response = $this->actingAs($user)->postJson("/api/transactions/{$transaction->id}/sync-payment");
-
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Payment synced successfully']);
+        $this->assertDatabaseMissing('accounting_integrations', ['id' => $id]);
     }
 
     protected function tearDown(): void

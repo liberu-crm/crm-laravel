@@ -2,9 +2,20 @@
 
 namespace App\Providers;
 
+use App\Http\Livewire\CallManager;
+use App\Http\Livewire\ContactCollaboration;
+use App\Http\Livewire\Dashboard;
+use App\Http\Livewire\DealCard;
+use App\Http\Livewire\OpportunityPipeline;
+use App\Http\Livewire\ReportCustomizer;
+use App\Http\Livewire\TaskForm;
+use App\Http\Livewire\TaskList;
+use App\Http\Livewire\Widgets\Stats;
+use App\Http\Livewire\Widgets\Tasks;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +38,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Livewire::component('call-manager', CallManager::class);
+        Livewire::component('contact-collaboration', ContactCollaboration::class);
+        Livewire::component('dashboard', Dashboard::class);
+        Livewire::component('deal-card', DealCard::class);
+        Livewire::component('opportunity-pipeline', OpportunityPipeline::class);
+        Livewire::component('report-customizer', ReportCustomizer::class);
+        Livewire::component('task-form', TaskForm::class);
+        Livewire::component('task-list', TaskList::class);
+        Livewire::component('widgets.stats', Stats::class);
+        Livewire::component('widgets.tasks', Tasks::class);
     }
 }

@@ -112,10 +112,10 @@ class OpportunityResource extends Resource
                 SelectFilter::make('stage')
                     ->options(Opportunity::distinct()->pluck('stage', 'stage')->toArray()),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
