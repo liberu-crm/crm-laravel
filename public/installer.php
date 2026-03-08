@@ -313,9 +313,8 @@ if ($action) {
             foreach ($replacements as $k => $v) {
                 if ($v === null || $v === '') continue;
                 $escaped = (strpos($v, ' ') !== false) ? '"' . addcslashes($v, "\"") . '"' : $v;
-                $kQuoted = preg_quote($k, '/');
-                if (preg_match("/^{$kQuoted}=.*/m", $env)) {
-                    $env = preg_replace("/^{$kQuoted}=.*/m", "{$k}={$escaped}", $env);
+                if (preg_match("/^{$k}=.*/m", $env)) {
+                    $env = preg_replace("/^{$k}=.*/m", "{$k}={$escaped}", $env);
                 } else {
                     $env .= PHP_EOL . "{$k}={$escaped}";
                 }
@@ -324,7 +323,7 @@ if ($action) {
             // try clearing config caches (works only if vendor installed)
             if (file_exists($projectRoot . '/vendor/autoload.php')) {
                 $php = getenv('PHP_BINARY') ?: 'php';
-                run_cmd_array([$php, 'artisan', 'config:clear'], $o1);
+                run_cmd(escapeshellcmd($php) . ' artisan config:clear', $o1);
             }
             echo json_encode(['ok' => true, 'message' => '.env updated']);
             exit;
@@ -462,8 +461,9 @@ PHP;
             $payload = ['users' => $users];
             $b64 = base64_encode(json_encode($payload));
             $php = getenv('PHP_BINARY') ?: 'php';
+            $cmd = escapeshellcmd($php) . ' ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($b64);
             $out = null;
-            $code = run_cmd_array([$php, $scriptPath, $b64], $out);
+            $code = run_cmd($cmd, $out);
             echo json_encode(['ok' => $code === 0, 'exit' => $code, 'output' => $out]);
             exit;
         }
@@ -473,7 +473,7 @@ PHP;
                 echo json_encode(['ok' => false, 'message' => 'vendor not installed. Run composer first.']);
                 exit;
             }
-            $php = getenv('PHP_BINARY') ?: 'php';
+            $php = getenv('PHP_BINARY') ?: '/usr/bin/php';
             // Validate PHP binary path for security
             if (!is_executable($php) || !preg_match('/php[0-9.]*$/', basename($php))) {
                 $php = 'php'; // Fallback to system PHP
