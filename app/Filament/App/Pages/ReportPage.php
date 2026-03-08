@@ -64,14 +64,53 @@ class ReportPage extends Page
         return Action::make('generateReport')
             ->label('Generate Report')
             ->action(function (array $data) {
-                $this->data = match ($this->selectedReport) {
-                    'contact-interactions' => $this->reportingService->getContactInteractionsData($data),
-                    'sales-pipeline' => $this->reportingService->getSalesPipelineData($data),
-                    'customer-engagement' => $this->reportingService->getCustomerEngagementData($data),
-                    'ab-test-results' => $this->mailChimpService->getABTestResults($this->campaignId),
-                    'email-campaign-performance' => $this->mailChimpService->getCampaignReport($this->campaignId),
-                    default => [],
-                };
+                $filters = [
+                    'start_date' => $this->startDate,
+                    'end_date' => $this->endDate,
+                ];
+                switch ($this->selectedReport) {
+                    case 'contact-interactions':
+                        $raw = $this->reportingService->getContactInteractionsData($filters);
+                        $this->data = [
+                            'type' => 'pie',
+                            'data' => [
+                                'labels'   => $raw->pluck('name'),
+                                'datasets' => [['label' => 'Activities count', 'data' => $raw->pluck('activities_count')]],
+                            ],
+                            'raw' => $raw,
+                        ];
+                        break;
+                    case 'sales-pipeline':
+                        $raw = $this->reportingService->getSalesPipelineData($filters);
+                        $this->data = [
+                            'type' => 'bar',
+                            'data' => [
+                                'labels'   => $raw->pluck('stage'),
+                                'datasets' => [['label' => 'Total value', 'data' => $raw->pluck('total_value')]],
+                            ],
+                            'raw' => $raw,
+                        ];
+                        break;
+                    case 'customer-engagement':
+                        $raw = $this->reportingService->getCustomerEngagementData($filters);
+                        $this->data = [
+                            'type' => 'line',
+                            'data' => [
+                                'labels'   => $raw->pluck('date'),
+                                'datasets' => [['label' => 'Count', 'data' => $raw->pluck('count')]],
+                            ],
+                            'raw' => $raw,
+                        ];
+                        break;
+                    case 'ab-test-results':
+                        $this->data = $this->mailChimpService->getABTestResults($this->campaignId);
+                        break;
+                    case 'email-campaign-performance':
+                        $this->data = $this->mailChimpService->getCampaignReport($this->campaignId);
+                        break;
+                    default:
+                        $this->data = [];
+                }
             });
     }
 

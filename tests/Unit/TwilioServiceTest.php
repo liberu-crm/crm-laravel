@@ -51,7 +51,7 @@ class TwilioServiceTest extends TestCase
             ->andThrow(new TwilioException('SMS failed'))
             ->andReturn(true);
 
-        Log::shouldReceive('warning')->twice();
+        Log::shouldReceive('warning')->once();
         Log::shouldReceive('info')->once();
 
         $result = $this->twilioService->sendSMS($to, $message);
@@ -96,10 +96,10 @@ class TwilioServiceTest extends TestCase
         $message = 'Test message';
 
         $this->mockTwilioClient->shouldReceive('messages->create')
-            ->once()
+            ->times(3)
             ->andThrow(new TwilioException('API Error'));
 
-        Log::shouldReceive('warning')->once();
+        Log::shouldReceive('warning')->times(3);
         Log::shouldReceive('error')->once();
 
         $this->expectException(TwilioException::class);

@@ -51,7 +51,8 @@ class AnalyticsDashboardTest extends TestCase
         $service = app(ReportingService::class);
         $data = $service->getSalesPipelineData([]);
 
-        $this->assertIsArray($data);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
+        $this->assertGreaterThan(0, $data->count());
     }
 
     public function testCustomerEngagementDataRetrieval()
@@ -59,7 +60,7 @@ class AnalyticsDashboardTest extends TestCase
         $service = app(ReportingService::class);
         $data = $service->getContactInteractionsData([]);
 
-        $this->assertIsArray($data);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
     }
 
     public function testDataRetrievalForCharts()
@@ -71,7 +72,7 @@ class AnalyticsDashboardTest extends TestCase
         $salesPipelineData = $service->getSalesPipelineData([]);
         $customerEngagementData = $service->getContactInteractionsData([]);
 
-        $this->assertIsArray($salesPipelineData);
-        $this->assertIsArray($customerEngagementData);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $salesPipelineData);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $customerEngagementData);
     }
 }
