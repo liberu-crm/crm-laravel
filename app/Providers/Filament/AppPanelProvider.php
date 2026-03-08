@@ -123,9 +123,14 @@ class AppPanelProvider extends PanelProvider
         Fortify::$registersRoutes = false;
 
         /**
-         * Disable Jetstream routes.
+         * Disable Fortify routes (using Filament for auth instead).
          */
-        Jetstream::$registersRoutes = false;
+        Fortify::$registersRoutes = false;
+
+        /**
+         * Keep Jetstream routes enabled for team management features.
+         */
+        // Jetstream::$registersRoutes = false;
 
         /**
          * Listen and create personal team for new accounts.

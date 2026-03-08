@@ -17,7 +17,7 @@ class ImapServiceTest extends TestCase
         parent::setUp();
         $this->imapService = new ImapService();
         
-        $this->mockConfig = Mockery::mock(OAuthConfiguration::class);
+        $this->mockConfig = Mockery::mock(OAuthConfiguration::class)->makePartial();
         $this->mockConfig->id = 1;
         $this->mockConfig->client_id = 'test@example.com';
         $this->mockConfig->client_secret = 'test_password';

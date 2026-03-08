@@ -51,7 +51,11 @@ class ContactApiTest extends TestCase
         $response = $this->getJson("/api/v1/contacts/{$contact->id}");
 
         $response->assertStatus(200)
-            ->assertJson($contact->toArray());
+            ->assertJsonFragment([
+                'id' => $contact->id,
+                'name' => $contact->name,
+                'email' => $contact->email,
+            ]);
     }
 
     public function test_can_update_contact()

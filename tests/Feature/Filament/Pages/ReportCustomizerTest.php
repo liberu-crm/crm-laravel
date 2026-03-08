@@ -17,8 +17,8 @@ class ReportCustomizerTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get(ReportCustomizer::getUrl())
-            ->assertSuccessful();
+            ->get('/admin/report-customizer')
+            ->assertStatus(200);
     }
 
     public function test_can_generate_contact_interactions_report()

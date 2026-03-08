@@ -14,11 +14,13 @@ use App\Events\MessageReplySent;
 use App\Models\OAuthConfiguration;
 use Tests\TestCase;
 use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use ReflectionMethod;
 
 class UnifiedHelpDeskServiceTest extends TestCase
 {
+    use RefreshDatabase;
     protected $unifiedHelpDeskService;
     protected $whatsAppService;
     protected $facebookService;
@@ -61,11 +63,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
 
     public function testGetAllMessagesReturnsCollection()
     {
-        // Mock OAuthConfiguration query
-        $mockConfig = Mockery::mock('alias:' . OAuthConfiguration::class);
-        $mockConfig->shouldReceive('where')->andReturnSelf();
-        $mockConfig->shouldReceive('get')->andReturn(collect());
-
+        // With RefreshDatabase, OAuthConfiguration table is empty, so no configs will be fetched
         $result = $this->unifiedHelpDeskService->getAllMessages(null, false);
 
         $this->assertInstanceOf(Collection::class, $result);

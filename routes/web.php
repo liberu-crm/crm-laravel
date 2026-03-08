@@ -15,6 +15,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Twilio TwiML routes (public, Twilio callback)
 Route::post('/twilio/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
+Route::post('/twilio/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->name('twilio.recording.callback');
 
 // Email tracking routes (public, no auth required)
 Route::get('/email/track/pixel/{tracking_id}', [EmailTrackingController::class, 'pixel'])->name('email.tracking.pixel');

@@ -4,8 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Task;
 use App\Services\OutlookCalendarService;
-use Microsoft\Graph\Graph;
-use Microsoft\Graph\Model\Event;
 use Mockery;
 use Tests\TestCase;
 
@@ -17,7 +15,7 @@ class OutlookCalendarServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockGraph = Mockery::mock(Graph::class);
+        $this->mockGraph = Mockery::mock();
         $this->outlookCalendarService = new OutlookCalendarService();
         $this->outlookCalendarService->graph = $this->mockGraph;
     }
@@ -26,10 +24,13 @@ class OutlookCalendarServiceTest extends TestCase
     {
         $task = Task::factory()->create();
 
+        $mockCreatedEvent = Mockery::mock();
+        $mockCreatedEvent->shouldReceive('getId')->andReturn('test_event_id');
+
         $mockRequest = Mockery::mock();
         $mockRequest->shouldReceive('attachBody')->andReturnSelf();
         $mockRequest->shouldReceive('setReturnType')->andReturnSelf();
-        $mockRequest->shouldReceive('execute')->andReturn(new Event(['id' => 'test_event_id']));
+        $mockRequest->shouldReceive('execute')->andReturn($mockCreatedEvent);
 
         $this->mockGraph->shouldReceive('createRequest')
             ->with('POST', '/me/events')
@@ -73,15 +74,15 @@ class OutlookCalendarServiceTest extends TestCase
 
     public function testFetchEvents()
     {
-        $mockEvents = [
-            new Event(['id' => 'event1']),
-            new Event(['id' => 'event2']),
-        ];
+        $mockEvent1 = Mockery::mock();
+        $mockEvent1->shouldReceive('getId')->andReturn('event1');
+
+        $mockEvent2 = Mockery::mock();
+        $mockEvent2->shouldReceive('getId')->andReturn('event2');
 
         $mockRequest = Mockery::mock();
         $mockRequest->shouldReceive('setReturnType')->andReturnSelf();
-
-        $mockRequest->shouldReceive('execute')->andReturn($mockEvents);
+        $mockRequest->shouldReceive('execute')->andReturn([$mockEvent1, $mockEvent2]);
 
         $this->mockGraph->shouldReceive('createRequest')
             ->with('GET', Mockery::type('string'))
@@ -96,22 +97,31 @@ class OutlookCalendarServiceTest extends TestCase
 
     public function testSyncEvents()
     {
-        $events = [
-            new Event([
-                'id' => 'event1',
-                'subject' => 'Test Event 1',
-                'body' => ['content' => 'Test Description 1'],
-                'start' => ['dateTime' => '2023-06-01T10:00:00'],
-            ]),
-            new Event([
-                'id' => 'event2',
-                'subject' => 'Test Event 2',
-                'body' => ['content' => 'Test Description 2'],
-                'start' => ['dateTime' => '2023-06-02T11:00:00'],
-            ]),
-        ];
+        $mockBody1 = Mockery::mock();
+        $mockBody1->shouldReceive('getContent')->andReturn('Test Description 1');
 
-        $this->outlookCalendarService->syncEvents($events);
+        $mockStart1 = Mockery::mock();
+        $mockStart1->shouldReceive('getDateTime')->andReturn('2023-06-01T10:00:00');
+
+        $mockEvent1 = Mockery::mock();
+        $mockEvent1->shouldReceive('getId')->andReturn('event1');
+        $mockEvent1->shouldReceive('getSubject')->andReturn('Test Event 1');
+        $mockEvent1->shouldReceive('getBody')->andReturn($mockBody1);
+        $mockEvent1->shouldReceive('getStart')->andReturn($mockStart1);
+
+        $mockBody2 = Mockery::mock();
+        $mockBody2->shouldReceive('getContent')->andReturn('Test Description 2');
+
+        $mockStart2 = Mockery::mock();
+        $mockStart2->shouldReceive('getDateTime')->andReturn('2023-06-02T11:00:00');
+
+        $mockEvent2 = Mockery::mock();
+        $mockEvent2->shouldReceive('getId')->andReturn('event2');
+        $mockEvent2->shouldReceive('getSubject')->andReturn('Test Event 2');
+        $mockEvent2->shouldReceive('getBody')->andReturn($mockBody2);
+        $mockEvent2->shouldReceive('getStart')->andReturn($mockStart2);
+
+        $this->outlookCalendarService->syncEvents([$mockEvent1, $mockEvent2]);
 
         $this->assertDatabaseHas('tasks', [
             'name' => 'Test Event 1',

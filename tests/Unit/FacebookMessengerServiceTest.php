@@ -73,12 +73,13 @@ class FacebookMessengerServiceTest extends TestCase
 
     public function testSendReply()
     {
+        $mockGraphNode = Mockery::mock();
+        $mockGraphNode->shouldReceive('getField')
+            ->with('message_id')
+            ->andReturn('456');
+
         $mockResponse = Mockery::mock();
-        $mockResponse->shouldReceive('getGraphNode')->andReturn(
-            (object) [
-                'message_id' => '456',
-            ]
-        );
+        $mockResponse->shouldReceive('getGraphNode')->andReturn($mockGraphNode);
 
         $this->facebookMock->shouldReceive('post')->andReturn($mockResponse);
 

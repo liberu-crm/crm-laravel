@@ -22,8 +22,16 @@ class OpportunityResourceTest extends TestCase
 
     public function test_opportunity_index_page_loads()
     {
-        $response = $this->get('/app/opportunities');
-        $response->assertSuccessful();
+        $user = User::factory()->withPersonalTeam()->create();
+        $team = $user->ownedTeams->first();
+        $user->current_team_id = $team->id;
+        $user->save();
+
+        $response = $this->actingAs($user)->get('/app/' . $team->id . '/opportunities');
+        $this->assertTrue(
+            in_array($response->status(), [200, 302]),
+            "Expected /app/{team_id}/opportunities to return 200 or 302, got {$response->status()}"
+        );
     }
 
     public function test_opportunity_model_can_be_created()

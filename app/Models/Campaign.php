@@ -12,6 +12,7 @@ class Campaign extends Model
     use IsTenantModel;
 
     protected $fillable = [
+        'team_id',
         'advertising_account_id',
         'name',
         'external_id',

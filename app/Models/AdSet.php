@@ -12,6 +12,7 @@ class AdSet extends Model
     use IsTenantModel;
 
     protected $fillable = [
+        'team_id',
         'advertising_account_id',
         'campaign_id',
         'name',

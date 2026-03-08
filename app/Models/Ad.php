@@ -12,6 +12,7 @@ class Ad extends Model
     use IsTenantModel;
 
     protected $fillable = [
+        'team_id',
         'advertising_account_id',
         'campaign_id',
         'ad_set_id',

@@ -17,7 +17,7 @@ class OutlookServiceTest extends TestCase
         parent::setUp();
         $this->outlookService = new OutlookService();
         
-        $this->mockConfig = Mockery::mock(OAuthConfiguration::class);
+        $this->mockConfig = Mockery::mock(OAuthConfiguration::class)->makePartial();
         $this->mockConfig->id = 1;
         $this->mockConfig->additional_settings = [
             'access_token' => 'test_access_token'

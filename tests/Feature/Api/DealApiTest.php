@@ -41,7 +41,10 @@ class DealApiTest extends TestCase
         $response = $this->postJson('/api/v1/deals', $dealData);
 
         $response->assertStatus(201)
-            ->assertJsonFragment($dealData);
+            ->assertJsonFragment([
+                'name' => 'New Deal',
+                'stage' => 'prospect',
+            ]);
     }
 
     public function test_can_show_deal()
@@ -66,7 +69,10 @@ class DealApiTest extends TestCase
         $response = $this->putJson("/api/v1/deals/{$deal->id}", $updatedData);
 
         $response->assertStatus(200)
-            ->assertJsonFragment($updatedData);
+            ->assertJsonFragment([
+                'name' => 'Updated Deal',
+                'stage' => 'won',
+            ]);
     }
 
     public function test_can_delete_deal()

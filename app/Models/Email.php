@@ -12,11 +12,25 @@ class Email extends Model
     use IsTenantModel;
 
     protected $fillable = [
+        'team_id',
+        'user_id',
         'message_id',
         'sender',
         'recipient',
         'subject',
-
+        'body',
+        'from',
+        'to',
+        'cc',
+        'bcc',
+        'status',
+        'scheduled_at',
+        'sent_at',
+        'opened_at',
+        'clicked_at',
+        'email_template_id',
+        'campaign_id',
+        'metadata',
         'content',
         'timestamp',
         'is_sent',
@@ -25,5 +39,13 @@ class Email extends Model
     protected $casts = [
         'timestamp' => 'datetime',
         'is_sent' => 'boolean',
+        'scheduled_at' => 'datetime',
+        'sent_at' => 'datetime',
+        'opened_at' => 'datetime',
+        'clicked_at' => 'datetime',
+        'to' => 'array',
+        'cc' => 'array',
+        'bcc' => 'array',
+        'metadata' => 'array',
     ];
 }
