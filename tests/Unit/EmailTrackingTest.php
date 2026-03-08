@@ -10,10 +10,12 @@ use Mockery;
 use Google_Service_Gmail_Message;
 use Google_Service_Gmail_MessagePart;
 use Google_Service_Gmail_MessagePartHeader;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 
 class EmailTrackingTest extends TestCase
 {
+    use RefreshDatabase;
     protected $gmailService;
     protected $mailChimpService;
 

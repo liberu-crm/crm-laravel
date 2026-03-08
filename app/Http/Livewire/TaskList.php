@@ -17,7 +17,7 @@ class TaskList extends Component
     public $sortField = 'due_date';
     public $sortDirection = 'asc';
 
-    protected $queryString = ['search', 'status', 'leadFilter', 'sortField', 'sortDirection'];
+    protected $queryString = ['search', 'status', 'leadFilter'];
 
     public function updatingSearch()
     {

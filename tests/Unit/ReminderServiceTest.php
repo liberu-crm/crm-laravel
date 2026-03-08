@@ -97,6 +97,7 @@ class ReminderServiceTest extends TestCase
 
     public function testLogReminderActivity()
     {
+        Notification::fake();
         Log::shouldReceive('info')->once()->withArgs(function ($message) {
             return strpos($message, 'Reminder sent successfully') !== false;
         });

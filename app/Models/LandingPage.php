@@ -14,9 +14,14 @@ class LandingPage extends Model
 
     protected $fillable = [
         'title',
+        'name',
+        'slug',
+        'template',
         'content',
+        'settings',
         'metadata',
         'campaign_id',
+        'team_id',
         'status',
         'published_at',
     ];

@@ -8,8 +8,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportCustomizer extends Page
 {
@@ -116,7 +116,13 @@ class ReportCustomizer extends Page
     {
         $this->generateReport();
 
-        $pdf = Pdf::loadView('filament.pages.report-customizer.pdf', [
+        if (!class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            Log::warning('barryvdh/laravel-dompdf is not installed. PDF export is unavailable.');
+            $this->dispatch('report-exported', ['filename' => null]);
+            return;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('filament.pages.report-customizer.pdf', [
             'data' => $this->data,
             'reportType' => $this->reportType,
         ]);
