@@ -11,7 +11,7 @@ class ContactListController extends Controller
     /**
      * Handle the index request for the contacts list.
      */
-    public function index(Request $request)
+    public function index(Request $request, $created_at = null)
     {
         $query = Contact::query();
 
@@ -27,8 +27,12 @@ class ContactListController extends Controller
             });
         }
 
-        if ($request->filled('created_at')) {
-            $query->where('created_at', '>=', Carbon::parse($request->created_at));
+        if ($created_at) {
+            try {
+                $query->where('created_at', '>=', Carbon::parse($created_at));
+            } catch (\Exception $e) {
+                // Invalid date string; skip filter
+            }
         }
 
         $contacts = $query->get();
