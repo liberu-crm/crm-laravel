@@ -17,11 +17,12 @@ class ReportGenerationTest extends TestCase
 
     public function testContactInteractionsReportService()
     {
+        Contact::factory()->count(3)->create();
+
         $service = app(ReportingService::class);
         $data = $service->getContactInteractionsData([]);
 
-        $this->assertIsArray($data);
-        $this->assertArrayHasKey('type', $data);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
     }
 
     public function testSalesPipelineReportService()
@@ -31,15 +32,15 @@ class ReportGenerationTest extends TestCase
         $service = app(ReportingService::class);
         $data = $service->getSalesPipelineData([]);
 
-        $this->assertIsArray($data);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
     }
 
     public function testCustomerEngagementReportService()
     {
         $service = app(ReportingService::class);
-        $data = $service->getContactInteractionsData([]);
+        $data = $service->getCustomerEngagementData([]);
 
-        $this->assertIsArray($data);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
     }
 
     public function testABTestResultsWithMockedMailchimp()

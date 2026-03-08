@@ -13,54 +13,33 @@ class ReportingService
 {
     public function getContactInteractionsData(array $filters = [])
     {
-        $query = Activity::select(
-            'type',
-            DB::raw('COUNT(*) as count'),
-            DB::raw('DATE(created_at) as activity_date')
-        );
+        $query = Contact::select('contacts.*', DB::raw('COUNT(activities.id) as activities_count'))
+            ->leftJoin('activities', function ($join) {
+                $join->on('activities.activitable_id', '=', 'contacts.id')
+                     ->where('activities.activitable_type', '=', Contact::class);
+            });
 
         if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
-            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+            $query->whereBetween('activities.created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
         if (!empty($filters['contact_id'])) {
-            $query->where('activitable_type', Contact::class)
-                  ->where('activitable_id', $filters['contact_id']);
+            $query->where('contacts.id', $filters['contact_id']);
         }
 
-        $data = $query->groupBy('type', 'activity_date')
-            ->orderBy('activity_date')
+        return $query->groupBy('contacts.id')
+            ->orderByDesc('activities_count')
             ->get();
-
-        // Aggregate by type across all dates for chart display
-        $byType = $data->groupBy('type')->map(fn ($group) => $group->sum('count'));
-
-        $labels  = $byType->keys();
-        $values  = $byType->values();
-
-        return [
-            'type' => 'bar',
-            'data' => [
-                'labels'   => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Contact Interactions',
-                        'data'  => $values,
-                    ],
-                ],
-            ],
-            'raw' => $data,
-        ];
     }
 
     public function getSalesPipelineData(array $filters = [])
     {
         $query = Deal::select(
-            'stage_id',
-            DB::raw('COUNT(*) as deal_count'),
+            'stage',
+            DB::raw('COUNT(*) as count'),
             DB::raw('SUM(value) as total_value'),
             DB::raw('AVG(probability) as avg_probability')
-        )->with('stage');
+        );
 
         if (!empty($filters['pipeline_id'])) {
             $query->where('pipeline_id', $filters['pipeline_id']);
@@ -70,37 +49,18 @@ class ReportingService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-        $data = $query->whereNotIn('stage', ['lost'])
-            ->groupBy('stage_id')
+        return $query->where('stage', '!=', 'lost')
+            ->groupBy('stage')
+            ->orderBy('stage')
             ->get();
-
-        $labels = $data->map(fn ($d) => optional($d->stage)->name ?? 'Unknown');
-        $values = $data->pluck('total_value');
-        $counts = $data->pluck('deal_count');
-
-        return [
-            'type' => 'bar',
-            'data' => [
-                'labels'   => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Total Value ($)',
-                        'data'  => $values,
-                    ],
-                    [
-                        'label' => 'Deal Count',
-                        'data'  => $counts,
-                    ],
-                ],
-            ],
-            'raw' => $data,
-        ];
     }
 
     public function getCustomerEngagementData(array $filters = [])
     {
+        $dateExpression = DB::raw('DATE(created_at)');
+
         $query = Activity::select(
-            'type',
+            DB::raw('DATE(created_at) as date'),
             DB::raw('COUNT(*) as count')
         );
 
@@ -108,11 +68,9 @@ class ReportingService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-        $data = $query->groupBy('type')
-            ->orderByDesc('count')
+        return $query->groupBy($dateExpression)
+            ->orderBy($dateExpression)
             ->get();
-
-        return $this->formatDataForChart($data, 'pie', 'type', 'count');
     }
 
     public function generateLeadQualityReport(array $filters = [])

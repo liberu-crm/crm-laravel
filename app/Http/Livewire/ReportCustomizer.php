@@ -28,11 +28,35 @@ class ReportCustomizer extends Component
     {
         switch ($this->reportType) {
             case 'contact-interactions':
-                return $this->reportingService->getContactInteractionsData($this->filters);
+                $raw = $this->reportingService->getContactInteractionsData($this->filters);
+                return [
+                    'type' => 'pie',
+                    'data' => [
+                        'labels'   => $raw->pluck('name'),
+                        'datasets' => [['label' => 'Activities count', 'data' => $raw->pluck('activities_count')]],
+                    ],
+                    'raw' => $raw,
+                ];
             case 'sales-pipeline':
-                return $this->reportingService->getSalesPipelineData($this->filters);
+                $raw = $this->reportingService->getSalesPipelineData($this->filters);
+                return [
+                    'type' => 'bar',
+                    'data' => [
+                        'labels'   => $raw->pluck('stage'),
+                        'datasets' => [['label' => 'Total value', 'data' => $raw->pluck('total_value')]],
+                    ],
+                    'raw' => $raw,
+                ];
             case 'customer-engagement':
-                return $this->reportingService->getCustomerEngagementData($this->filters);
+                $raw = $this->reportingService->getCustomerEngagementData($this->filters);
+                return [
+                    'type' => 'line',
+                    'data' => [
+                        'labels'   => $raw->pluck('date'),
+                        'datasets' => [['label' => 'Count', 'data' => $raw->pluck('count')]],
+                    ],
+                    'raw' => $raw,
+                ];
             default:
                 return [];
         }

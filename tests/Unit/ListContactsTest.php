@@ -2,10 +2,11 @@
 
 namespace Tests\Unit;
 
-use App\Filament\Admin\Resources\ContactResource\Pages\ListContacts;
+use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ListContactsTest extends TestCase

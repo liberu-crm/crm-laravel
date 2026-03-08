@@ -134,7 +134,10 @@ class TwilioIntegrationTest extends TestCase
     #[Test]
     public function it_can_initiate_bulk_calls()
     {
-        $leads = Lead::factory()->count(3)->create();
+        $contacts = Contact::factory()->count(3)->create(['phone_number' => '+1234567890']);
+        $leads = Lead::factory()->count(3)->create()->each(function ($lead, $index) use ($contacts) {
+            $lead->update(['contact_id' => $contacts[$index]->id]);
+        });
 
         $this->mock(TwilioService::class)
             ->shouldReceive('makeCall')
@@ -150,7 +153,10 @@ class TwilioIntegrationTest extends TestCase
     #[Test]
     public function it_handles_bulk_call_initiation_errors()
     {
-        $leads = Lead::factory()->count(3)->create();
+        $contacts = Contact::factory()->count(3)->create(['phone_number' => '+1234567890']);
+        $leads = Lead::factory()->count(3)->create()->each(function ($lead, $index) use ($contacts) {
+            $lead->update(['contact_id' => $contacts[$index]->id]);
+        });
 
         $this->mock(TwilioService::class)
             ->shouldReceive('makeCall')
