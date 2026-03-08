@@ -28,6 +28,7 @@ class TaskListUITest extends TestCase
 
         Livewire::actingAs($this->user)
             ->test(TaskList::class)
+            ->set('search', '')
             ->assertSee($tasks[0]->name)
             ->assertSee($tasks[2]->name);
     }

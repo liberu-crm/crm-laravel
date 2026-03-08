@@ -112,7 +112,7 @@ class TwilioService
         $recordings = $this->getClient()->calls($callSid)->recordings->read(['status' => 'in-progress']);
 
         foreach ($recordings as $recording) {
-            $recording->update(['status' => 'stopped']);
+            $recording->update('stopped');
         }
 
         return true;

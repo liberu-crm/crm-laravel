@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ContactListController extends Controller
@@ -27,7 +28,7 @@ class ContactListController extends Controller
         }
 
         if ($request->filled('created_at')) {
-            $query->where('created_at', '>=', $request->created_at);
+            $query->where('created_at', '>=', Carbon::parse($request->created_at));
         }
 
         $contacts = $query->get();
