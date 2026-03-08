@@ -15,6 +15,7 @@ return [
     'features' => [
         Features::createAccountOnFirstLogin(),
         Features::loginOnRegistration(),
+        Features::globalLogin(),
     ],
     'component' => 'socialstream::components.socialstream',
 ];

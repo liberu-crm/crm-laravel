@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Actions\Socialstream\CreateConnectedAccount;
-use App\Actions\Socialstream\CreateUserFromProvider;
+use App\Actions\Socialstream\CreateUserWithTeamsFromProvider;
 use App\Actions\Socialstream\GenerateRedirectForProvider;
 use App\Actions\Socialstream\HandleInvalidState;
 use App\Actions\Socialstream\ResolveSocialiteUser;
@@ -83,7 +83,7 @@ class SocialstreamServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Socialstream::resolvesSocialiteUsersUsing(ResolveSocialiteUser::class);
-        Socialstream::createUsersFromProviderUsing(CreateUserFromProvider::class);
+        Socialstream::createUsersFromProviderUsing(CreateUserWithTeamsFromProvider::class);
         Socialstream::createConnectedAccountsUsing(CreateConnectedAccount::class);
         Socialstream::updateConnectedAccountsUsing(UpdateConnectedAccount::class);
         Socialstream::handlesInvalidStateUsing(HandleInvalidState::class);
