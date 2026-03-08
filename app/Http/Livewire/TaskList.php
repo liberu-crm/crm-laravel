@@ -35,6 +35,11 @@ class TaskList extends Component
         $this->sortField = $field;
     }
 
+    public function deleteTask(int $id): void
+    {
+        Task::findOrFail($id)->delete();
+    }
+
     public function render()
     {
         $tasks = Task::query()

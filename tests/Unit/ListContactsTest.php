@@ -92,6 +92,7 @@ class ListContactsTest extends TestCase
     public function testAutocompleteFeature()
     {
         Contact::factory()->count(10)->create();
+        Contact::factory()->create(['name' => 'John', 'email' => 'john.autocomplete@example.com']);
 
         $response = $this->get(route('contacts.autocomplete', ['query' => 'jo']));
         $response->assertSuccessful();

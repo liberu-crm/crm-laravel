@@ -21,18 +21,12 @@ class ViewAnalyticsDashboard extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return [
-	 AnalyticsDashboardResource::getWidgets()[0] ?? null,
-        ];
+        return array_values(array_filter(AnalyticsDashboardResource::getWidgets()));
     }
 
     protected function getFooterWidgets(): array
     {
-        $widgets = AnalyticsDashboardResource::getWidgets();
-        return array_filter([
-            $widgets[1] ?? null,
-            $widgets[2] ?? null,
-        ]);
+        return [];
     }
 
     public function getHeaderWidgetsColumns(): int|array
