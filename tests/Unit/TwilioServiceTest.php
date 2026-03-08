@@ -210,7 +210,7 @@ class TwilioServiceTest extends TestCase
         $mockRecordingContext->shouldReceive('update')
             ->once()
             ->with('stopped')
-            ->andReturn(true);
+            ->andReturn(Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingInstance'));
 
         $result = $this->twilioService->stopCallRecording($callSid);
         $this->assertTrue($result);
