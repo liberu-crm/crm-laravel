@@ -4,11 +4,13 @@ namespace Tests\Unit;
 
 use App\Models\Task;
 use App\Services\GoogleCalendarService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;
 
 class GoogleCalendarServiceTest extends TestCase
 {
+    use RefreshDatabase;
     protected $googleCalendarService;
     protected $mockGoogleService;
 
