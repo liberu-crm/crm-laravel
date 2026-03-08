@@ -39,6 +39,12 @@ class TeamInvitationController extends Controller
 
         $user = Jetstream::findUserByEmailOrFail($invitation->email);
 
+        abort_if(
+            $request->user() && $request->user()->id !== $user->id,
+            403,
+            __('You are not authorized to accept this invitation.')
+        );
+
         $user->switchTeam($invitation->team);
 
         $invitation->team->users()->attach(

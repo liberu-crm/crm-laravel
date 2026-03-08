@@ -18,7 +18,8 @@ Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelet
 Route::get('/contacts/autocomplete', [ContactListController::class, 'autocomplete'])->name('contacts.autocomplete');
 // Optional {created_at?} path parameter ensures Carbon objects are serialized via __toString()
 // when passed to route() helper, unlike query string params which are skipped by http_build_query()
-Route::get('/contacts/{created_at?}', [ContactListController::class, 'index'])->name('contacts.list');
+Route::get('/contacts/{created_at?}', [ContactListController::class, 'index'])->name('contacts.list')
+    ->where('created_at', '.+');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');

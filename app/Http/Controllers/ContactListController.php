@@ -28,7 +28,11 @@ class ContactListController extends Controller
         }
 
         if ($created_at) {
-            $query->where('created_at', '>=', Carbon::parse($created_at));
+            try {
+                $query->where('created_at', '>=', Carbon::parse($created_at));
+            } catch (\Exception $e) {
+                // Invalid date string; skip filter
+            }
         }
 
         $contacts = $query->get();
