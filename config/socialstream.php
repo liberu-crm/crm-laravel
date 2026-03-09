@@ -1,5 +1,6 @@
 <?php
 
+use JoelButcher\Socialstream\Features;
 use JoelButcher\Socialstream\Providers;
 
 return [
@@ -10,6 +11,11 @@ return [
         Providers::google(),
         Providers::linkedinOpenId(),
         Providers::twitterOAuth2(),
+    ],
+    'features' => [
+        Features::createAccountOnFirstLogin(),
+        Features::loginOnRegistration(),
+        Features::globalLogin(),
     ],
     'component' => 'socialstream::components.socialstream',
 ];

@@ -6,6 +6,7 @@ use App\Filament\Pages\ReportCustomizer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ReportCustomizerTest extends TestCase
@@ -14,7 +15,9 @@ class ReportCustomizerTest extends TestCase
 
     public function test_can_view_report_customizer_page()
     {
+        $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->actingAs($user)
             ->get('/admin/report-customizer')

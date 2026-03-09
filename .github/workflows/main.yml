@@ -17,9 +17,29 @@ jobs:
   docker:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: liberu
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
+<<<<<<< HEAD
       - name: Checkout code
         uses: actions/checkout@v4
+=======
+      - name: Checkout repository
+        uses: actions/checkout@v5
+>>>>>>> d8d7749a0f6701d69354e2aa67ed88ee49a6e544
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -29,13 +49,18 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
+<<<<<<< HEAD
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e4288.5
+=======
+        uses: docker/metadata-action@v3
+>>>>>>> d8d7749a0f6701d69354e2aa67ed88ee49a6e544
         with:
           images: liberu/crm
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+<<<<<<< HEAD
       - name: Cache Docker layers
         uses: actions/cache@v4
         with:
@@ -48,6 +73,11 @@ jobs:
         uses: docker/build-push-action@263435318d21b8e681c14492fe198.562a7d2c83
         with:
           context: .
+=======
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+>>>>>>> d8d7749a0f6701d69354e2aa67ed88ee49a6e544
           file: Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}

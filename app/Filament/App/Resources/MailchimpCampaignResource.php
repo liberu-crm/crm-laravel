@@ -16,16 +16,16 @@ use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewMailchimpCamp
 use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewABTestResults;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\App\Resources\MailchimpCampaignResource\Pages;
+use App\Models\MailchimpCampaign;
 use App\Services\MailChimpService;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class MailchimpCampaignResource extends Resource
 {
-    protected static ?string $model = Model::class;
+    protected static ?string $model = MailchimpCampaign::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -98,11 +98,11 @@ class MailchimpCampaignResource extends Resource
             ->recordActions([
                 ViewAction::make(),
                 Action::make('send')
-                    ->action(fn (MailChimpService $service, Model $record) => $service->sendCampaign($record->id))
+                    ->action(fn (MailChimpService $service, MailchimpCampaign $record) => $service->sendCampaign($record->id))
                     ->requiresConfirmation(),
                 Action::make('view_ab_results')
-                    ->action(fn (MailChimpService $service, Model $record) => redirect()->route('filament.app.resources.mailchimp-campaigns.ab-test-results', ['record' => $record->id]))
-                    ->visible(fn (Model $record) => $record->type === 'abtest' && $record->status === 'sent'),
+                    ->action(fn (MailChimpService $service, MailchimpCampaign $record) => redirect()->route('filament.app.resources.mailchimp-campaigns.ab-test-results', ['record' => $record->id]))
+                    ->visible(fn (MailchimpCampaign $record) => $record->type === 'abtest' && $record->status === 'sent'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -126,10 +126,5 @@ class MailchimpCampaignResource extends Resource
             'view' => ViewMailchimpCampaign::route('/{record}'),
             'ab-test-results' => ViewABTestResults::route('/{record}/ab-test-results'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->whereIn('id', app(MailChimpService::class)->getCampaigns()->pluck('id'));
     }
 }

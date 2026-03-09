@@ -61,6 +61,10 @@ class UserFactory extends Factory
                     'user_id' => $user->id,
                     'personal_team' => true,
                 ])
+                ->afterCreating(function (Team $team, User $user) {
+                    $user->current_team_id = $team->id;
+                    $user->save();
+                })
                 ->when(is_callable($callback), $callback),
             'ownedTeams'
         );

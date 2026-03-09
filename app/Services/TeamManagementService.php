@@ -38,7 +38,15 @@ class TeamManagementService
         $defaultTeam = Team::where('personal_team', false)->first();
 
         if (!$defaultTeam) {
-            $defaultTeam = $this->createDefaultTeamForUser($user);
+            try {
+                $defaultTeam = $this->createDefaultTeamForUser($user);
+            } catch (Exception $e) {
+                // Fallback: create a personal team when no branch/default team exists
+                $defaultTeam = $this->createPersonalTeamForUser($user);
+                $user->current_team_id = $defaultTeam->id;
+                $user->save();
+                return;
+            }
         }
 
         $this->assignUserToTeam($user, $defaultTeam);

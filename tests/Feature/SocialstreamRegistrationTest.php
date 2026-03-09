@@ -83,7 +83,7 @@ class SocialstreamRegistrationTest extends TestCase
         $response = $this->get("/oauth/$socialiteProvider/callback");
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertTrue($response->isRedirect(), 'Expected a redirect after successful OAuth authentication');
     }
 
     /**

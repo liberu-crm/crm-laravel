@@ -4,11 +4,13 @@ namespace Tests\Unit;
 
 use App\Models\Task;
 use App\Services\OutlookCalendarService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;
 
 class OutlookCalendarServiceTest extends TestCase
 {
+    use RefreshDatabase;
     protected $outlookCalendarService;
     protected $mockGraph;
 

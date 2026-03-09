@@ -17,11 +17,13 @@ class OutlookServiceTest extends TestCase
         parent::setUp();
         $this->outlookService = new OutlookService();
         
-        $this->mockConfig = Mockery::mock(OAuthConfiguration::class)->makePartial();
-        $this->mockConfig->id = 1;
-        $this->mockConfig->additional_settings = [
-            'access_token' => 'test_access_token'
-        ];
+        $this->mockConfig = new OAuthConfiguration();
+        $this->mockConfig->forceFill([
+            'id' => 1,
+            'additional_settings' => [
+                'access_token' => 'test_access_token',
+            ],
+        ]);
     }
 
     protected function tearDown(): void
@@ -37,8 +39,8 @@ class OutlookServiceTest extends TestCase
 
     public function testGetUnreadMessagesRequiresAccessToken()
     {
-        $configWithoutToken = Mockery::mock(OAuthConfiguration::class);
-        $configWithoutToken->additional_settings = [];
+        $configWithoutToken = new OAuthConfiguration();
+        $configWithoutToken->forceFill(['additional_settings' => []]);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Access token not found');

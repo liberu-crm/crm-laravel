@@ -35,11 +35,15 @@ class TeamInvitationController extends Controller
 
     public function acceptInvitation(Request $request, $invitationId)
     {
-        $invitation = TeamInvitation::whereHas('team', function ($query) use ($invitationId) {
-            $query->where('id', $invitationId);
-        })->firstOrFail();
+        $invitation = TeamInvitation::findOrFail($invitationId);
 
         $user = Jetstream::findUserByEmailOrFail($invitation->email);
+
+        abort_if(
+            $request->user() && $request->user()->id !== $user->id,
+            403,
+            __('You are not authorized to accept this invitation.')
+        );
 
         $user->switchTeam($invitation->team);
 
