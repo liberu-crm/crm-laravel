@@ -25,14 +25,14 @@ use Illuminate\Notifications\DatabaseNotification;
 class User extends Authenticatable implements HasDefaultTenant, HasTenants, FilamentUser
 {
     use HasApiTokens;
-    use HasConnectedAccounts;
+    // use HasConnectedAccounts;
     use HasRoles;
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
     use Notifiable;
-    use SetsProfilePhotoFromUrl;
+    // use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
     use HasTeams;
 

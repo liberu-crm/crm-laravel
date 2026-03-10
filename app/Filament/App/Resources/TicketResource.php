@@ -154,7 +154,6 @@ class TicketResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->refreshable()
             ->poll('30s');
     }
 

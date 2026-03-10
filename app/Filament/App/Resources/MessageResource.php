@@ -173,7 +173,6 @@ class MessageResource extends Resource
                     ->action(fn (Collection $records) => $records->each->update(['status' => 'read'])),
             ])
             ->defaultSort('timestamp', 'desc')
-            ->refreshable()
             ->poll('30s');
     }
 
