@@ -92,7 +92,7 @@ class ContactResource extends Resource
                     ]),
                 Select::make('company_id')
                     ->label('Company')
-                    ->options(Company::pluck('name', 'company_id'))
+                    ->options(Company::pluck('name', 'id'))
                     ->searchable()
                     ->nullable(),
             ]);

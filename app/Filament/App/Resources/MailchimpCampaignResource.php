@@ -74,8 +74,8 @@ class MailchimpCampaignResource extends Resource
                     ->visible(fn (callable $get) => $get('type') === 'abtest'),
                 TextInput::make('test_size')
                     ->numeric()
-                    ->min(1)
-                    ->max(100)
+                    ->minValue(1)
+                    ->maxValue(100)
                     ->default(50)
                     ->suffix('%')
                     ->required()

@@ -40,7 +40,7 @@ class NoteResource extends Resource
                     ->relationship('company', 'name')
                     ->label('Company'),
                 Select::make('opportunity_id')
-                    ->relationship('opportunity', 'name')
+                    ->relationship('opportunity', 'opportunity_id')
                     ->label('Opportunity'),
             ]);
     }

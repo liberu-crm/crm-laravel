@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,7 +29,7 @@ class EmailTemplateResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('Template Information')
+                Section::make('Template Information')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -54,7 +55,7 @@ class EmailTemplateResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Email Content')
+                Section::make('Email Content')
                     ->schema([
                         Forms\Components\Textarea::make('body')
                             ->label('Plain Text Body')
@@ -78,7 +79,7 @@ class EmailTemplateResource extends Resource
                             ->helperText('Use {{variable_name}} for dynamic content'),
                     ]),
 
-                Forms\Components\Section::make('Settings')
+                Section::make('Settings')
                     ->schema([
                         Forms\Components\Toggle::make('is_active')
                             ->label('Active')

@@ -30,7 +30,6 @@ use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Filament\Tables\Filters\BooleanFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -119,7 +118,7 @@ class AdvertisingAccountResource extends Resource
                         'LinkedIn Ads' => 'LinkedIn Ads',
                         'Microsoft Ads' => 'Microsoft Ads',
                     ]),
-                BooleanFilter::make('status'),
+                // BooleanFilter::make('status'),
             ])
             ->recordActions([
                 EditAction::make(),

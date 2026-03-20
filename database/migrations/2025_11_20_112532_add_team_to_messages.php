@@ -8,7 +8,8 @@ return new class extends Migration
 {
 
     protected $tables = [
-        'messages'
+        'messages',
+        'whats_app_numbers',
     ];
 
     /**
