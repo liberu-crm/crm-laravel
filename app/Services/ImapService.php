@@ -16,7 +16,7 @@ class ImapService
             $this->connect($config);
             
             $mailbox = '{' . $config->additional_settings['host'] . ':' . ($config->additional_settings['port'] ?? 993) . '/imap/ssl}INBOX';
-            $emails = imap_search($this->connection, 'UNSEEN');
+            $emails = \imap_search($this->connection, 'UNSEEN');
             
             $messages = collect();
             if ($emails) {
@@ -59,7 +59,7 @@ class ImapService
             $this->connect($config);
             
             // Get original message to get recipient
-            $header = imap_headerinfo($this->connection, $messageId);
+            $header = \imap_headerinfo($this->connection, $messageId);
             $to = $header->from[0]->mailbox . '@' . $header->from[0]->host;
             $subject = 'Re: ' . ($header->subject ?? '');
             
@@ -96,25 +96,25 @@ class ImapService
         
         $mailbox = '{' . $host . ':' . $port . '/imap' . ($ssl ? '/ssl' : '') . '}INBOX';
         
-        $this->connection = imap_open($mailbox, $username, $password);
-        
+        $this->connection = \imap_open($mailbox, $username, $password);
+
         if (!$this->connection) {
-            throw new \Exception('Failed to connect to IMAP server: ' . imap_last_error());
+            throw new \Exception('Failed to connect to IMAP server: ' . \imap_last_error());
         }
     }
 
     protected function disconnect()
     {
         if ($this->connection) {
-            imap_close($this->connection);
+            \imap_close($this->connection);
             $this->connection = null;
         }
     }
 
     protected function parseMessage($emailNumber)
     {
-        $header = imap_headerinfo($this->connection, $emailNumber);
-        $structure = imap_fetchstructure($this->connection, $emailNumber);
+        $header = \imap_headerinfo($this->connection, $emailNumber);
+        $structure = \imap_fetchstructure($this->connection, $emailNumber);
         
         $body = $this->getMessageBody($emailNumber, $structure);
         
@@ -157,7 +157,7 @@ class ImapService
         
         if (!isset($structure->parts)) {
             // Simple message
-            $body = imap_body($this->connection, $emailNumber);
+            $body = \imap_body($this->connection, $emailNumber);
             
             if ($structure->encoding == 3) { // BASE64
                 $body = base64_decode($body);
@@ -168,7 +168,7 @@ class ImapService
             // Multipart message
             foreach ($structure->parts as $partNumber => $part) {
                 if ($part->type == 0) { // Text
-                    $body = imap_fetchbody($this->connection, $emailNumber, $partNumber + 1);
+                    $body = \imap_fetchbody($this->connection, $emailNumber, $partNumber + 1);
                     
                     if ($part->encoding == 3) { // BASE64
                         $body = base64_decode($body);

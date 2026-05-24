@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Session;
 use JoelButcher\Socialstream\Providers;
 use Laravel\Fortify\Features as FortifyFeatures;
 use Laravel\Socialite\Facades\Socialite;
@@ -16,8 +15,14 @@ class SocialstreamRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+
     /**
-     * @dataProvider socialiteProvidersDataProvider
+     * Test that the social media platforms are available in the OAuth configuration create view.
      */
     #[Test]
     #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
@@ -37,9 +42,6 @@ class SocialstreamRegistrationTest extends TestCase
         $response->assertRedirectContains($provider);
     }
 
-    /**
-     * @dataProvider socialiteProvidersDataProvider
-     */
     #[Test]
     #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
     public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
@@ -78,12 +80,12 @@ class SocialstreamRegistrationTest extends TestCase
 
         // Use a fallback URL when the 'register' route is not defined
         $previousUrl = app('router')->has('register') ? route('register') : url('/register');
-        Session::put('socialstream.previous_url', $previousUrl);
 
-        $response = $this->get("/oauth/$socialiteProvider/callback");
+        $response = $this->withSession(['socialstream.previous_url' => $previousUrl])
+            ->get("/oauth/$socialiteProvider/callback");
 
-        $this->assertAuthenticated();
         $this->assertTrue($response->isRedirect(), 'Expected a redirect after successful OAuth authentication');
+        $this->assertAuthenticated();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Modules\ModuleManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ModuleSystemTest extends TestCase
@@ -18,34 +19,34 @@ class ModuleSystemTest extends TestCase
         $this->moduleManager = app(ModuleManager::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_instantiate_module_manager()
     {
         $this->assertInstanceOf(ModuleManager::class, $this->moduleManager);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_list_modules_as_collection()
     {
         $modules = $this->moduleManager->all();
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $modules);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_get_nonexistent_module_as_null()
     {
         $module = $this->moduleManager->get('NonExistentModule');
         $this->assertNull($module);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_false_for_nonexistent_module()
     {
         $result = $this->moduleManager->has('NonExistentModule');
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_empty_array_for_nonexistent_module_info()
     {
         $info = $this->moduleManager->getModuleInfo('NonExistentModule');
