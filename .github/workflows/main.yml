@@ -69,3 +69,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=liberu/control-panel:buildcache
           cache-to: type=registry,ref=liberu/control-panel:buildcache,mode=max
+          
