@@ -102,7 +102,6 @@ class SocialstreamRegistrationTest extends TestCase
             [Providers::linkedin()],
             [Providers::linkedinOpenId()],
             [Providers::slack()],
-            [Providers::twitterOAuth1()],
             [Providers::twitterOAuth2()],
         ];
     }

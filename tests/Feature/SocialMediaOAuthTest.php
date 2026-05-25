@@ -126,6 +126,22 @@ class SocialMediaOAuthTest extends TestCase
     }
 
     /**
+     * Test that the socialstream config has social media providers enabled.
+     */
+    public function test_socialstream_config_has_social_media_providers(): void
+    {
+        $providers = config('socialstream.providers');
+
+        $this->assertNotEmpty($providers, 'Socialstream should have providers configured');
+
+        // Facebook provider should be enabled
+        $this->assertTrue(
+            in_array('facebook', $providers),
+            'Facebook provider should be enabled in socialstream config'
+        );
+    }
+
+    /**
      * Test that services config has correct Socialite keys for social platforms.
      */
     #[DataProvider('socialiteServicesProvider')]
