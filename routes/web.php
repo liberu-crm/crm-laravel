@@ -14,7 +14,7 @@ use App\Http\Controllers\TeamInvitationController;
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
-Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete');
+Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete')->middleware('auth');
 Route::get('/contacts/autocomplete', [ContactListController::class, 'autocomplete'])->name('contacts.autocomplete');
 // Optional {created_at?} path parameter ensures Carbon objects are serialized via __toString()
 // when passed to route() helper, unlike query string params which are skipped by http_build_query()

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -24,10 +25,11 @@ class ListContactsTest extends TestCase
 
     public function testBulkDeleteAction()
     {
+        $user = User::factory()->create();
         $contacts = Contact::factory()->count(5)->create();
         $deleteIds = $contacts->pluck('id')->toArray();
 
-        $response = $this->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
+        $this->actingAs($user)->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
         $this->assertDatabaseMissing('contacts', ['id' => $deleteIds]);
     }
 
