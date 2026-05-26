@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Services\ImapService;
 use App\Models\OAuthConfiguration;
 use Tests\TestCase;
-use Mockery;
 
 class ImapServiceTest extends TestCase
 {
@@ -16,7 +15,7 @@ class ImapServiceTest extends TestCase
     {
         parent::setUp();
         $this->imapService = new ImapService();
-        
+
         $this->mockConfig = new OAuthConfiguration();
         $this->mockConfig->forceFill([
             'id' => 1,
@@ -30,12 +29,6 @@ class ImapServiceTest extends TestCase
                 'password' => 'test_password',
             ],
         ]);
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 
     public function testImapServiceCanBeInstantiated()
@@ -53,9 +46,9 @@ class ImapServiceTest extends TestCase
             'additional_settings' => [],
         ]);
 
-        // Test that calling methods without proper host configuration will fail
         $this->expectException(\Exception::class);
-        
+        $this->expectExceptionMessage('IMAP host is not configured');
+
         $this->imapService->getUnreadMessages($configWithoutSettings);
     }
 }

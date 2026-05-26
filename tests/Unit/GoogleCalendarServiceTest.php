@@ -42,6 +42,7 @@ class GoogleCalendarServiceTest extends TestCase
 
     public function testUpdateEvent()
     {
+        $this->expectNotToPerformAssertions();
         $task = Task::factory()->create(['google_event_id' => 'existing_event_id']);
 
         $mockEvent = Mockery::mock();

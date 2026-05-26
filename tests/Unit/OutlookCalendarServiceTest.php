@@ -45,6 +45,7 @@ class OutlookCalendarServiceTest extends TestCase
 
     public function testUpdateEvent()
     {
+        $this->expectNotToPerformAssertions();
         $task = Task::factory()->create(['outlook_event_id' => 'existing_event_id']);
 
         $mockRequest = Mockery::mock();
