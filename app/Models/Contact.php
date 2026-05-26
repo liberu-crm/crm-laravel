@@ -20,6 +20,7 @@ class Contact extends Model
 
 
     protected $fillable = [
+        'team_id',
         'name',
         'last_name',
         'email',
