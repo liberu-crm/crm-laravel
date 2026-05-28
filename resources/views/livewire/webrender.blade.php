@@ -2,7 +2,7 @@
     <div>
         @if ($contents)
             @foreach ($contents as $element)
-                {!! $element['content'] !!}
+                {!! app('purify')->clean($element['content']) !!}
             @endforeach
         @else
             <p>No content found</p>

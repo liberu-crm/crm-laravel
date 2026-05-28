@@ -22,6 +22,7 @@
         "mailchimp/marketing": "^3.0",
         "spatie/laravel-menu": "^4.2",
         "spatie/laravel-permission": "^6.0",
+        "stevebauman/purify": "^6.3",
         "twilio/sdk": "*",
         "webklex/laravel-imap": "^6.2"
     },
