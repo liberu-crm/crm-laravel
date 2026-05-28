@@ -8,14 +8,14 @@
 
 ## Summary Table
 
-| # | Vulnerability | OWASP | Severity | File(s) |
-|---|---|---|---|---|
-| 1 | IDOR — Missing team scope in API CRUD | A1 Broken Access Control | 🔴 Critical | `Api/ContactController`, `Api/DealController`, `Api/TaskController` |
-| 2 | Unauthenticated bulk delete (web route) | A1 Broken Access Control | 🔴 Critical | `ContactListController.php:46` |
-| 3 | Unrestricted file upload → potential RCE | A5 Security Misconfiguration | 🔴 Critical | `DocumentController.php:12`, `DocumentService.php:158` |
-| 4 | SSRF via webhook URLs | A10 SSRF | 🔴 High | `WebhookService.php:43-50` |
-| 5 | SSRF via workflow webhook actions | A10 SSRF | 🔴 High | `WorkflowAutomationService.php:294-305` |
-| 6 | Stored XSS (raw `{!! !!}` Blade output) | A3 Cross-Site Scripting | 🔴 High | `views/livewire/webrender.blade.php:5` |
+| # | Vulnerability | OWASP | Severity | File(s) | Status |
+|---|---|---|---|---|---|---|
+| 1 | IDOR — Missing team scope in API CRUD | A1 Broken Access Control | 🔴 Critical | `Api/ContactController`, `Api/DealController`, `Api/TaskController` | ✅ Fixed `ae3452d` |
+| 2 | Unauthenticated bulk delete (web route) | A1 Broken Access Control | 🔴 Critical | `ContactListController.php:46` | ✅ Fixed `d01fda3` |
+| 3 | Unrestricted file upload → potential RCE | A5 Security Misconfiguration | 🔴 Critical | `DocumentController.php:12`, `DocumentService.php:158` | ✅ Fixed `d2cdb60` |
+| 4 | SSRF via webhook URLs | A10 SSRF | 🔴 High | `WebhookService.php:43-50` | ✅ Fixed `2699e6f` |
+| 5 | SSRF via workflow webhook actions | A10 SSRF | 🔴 High | `WorkflowAutomationService.php:294-305` | ✅ Fixed `2699e6f` |
+| 6 | Stored XSS (raw `{!! !!}` Blade output) | A3 Cross-Site Scripting | 🔴 High | `views/livewire/webrender.blade.php:5` | ✅ Fixed `a080b4d` |
 | 7 | Open redirect via email tracking | A1 Broken Access Control | 🟡 Medium | `EmailTrackingController.php:46-63` |
 | 8 | Toll fraud via Twilio TwiML endpoint | A1 Broken Access Control | 🟡 Medium | `TwilioController.php:33-39` |
 | 9 | Authorization bypass (incomplete permission map) | A1 Broken Access Control | 🟡 Medium | `TeamsPermission.php:47-63` |
@@ -291,12 +291,14 @@ private function storeFile(UploadedFile $file): string
 | **OWASP** | A10 — Server-Side Request Forgery |
 | **Severity** | 🔴 High |
 | **CVSS 3.1** | 8.8 (AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:L) |
+| **Commit** | `2699e6f` |
 
 ### Affected Files & Lines
 
 | File | Line(s) |
 |---|---|
 | `app/Services/WebhookService.php` | 43–50 |
+| `app/Http/Controllers/Api/WebhookController.php` | 33–40, 62–69 |
 
 ### Data Flow (Source → Sink)
 
@@ -411,6 +413,7 @@ if (app()->environment('production')) {
 | **OWASP** | A10 — Server-Side Request Forgery |
 | **Severity** | 🔴 High |
 | **CVSS 3.1** | 8.8 (AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:L) |
+| **Commit** | `2699e6f` (same commit as V#4) |
 
 ### Affected Files & Lines
 
