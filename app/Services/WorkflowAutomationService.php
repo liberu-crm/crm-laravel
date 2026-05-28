@@ -298,10 +298,32 @@ class WorkflowAutomationService
             return;
         }
 
+        if (app()->environment('production')) {
+            $this->ensurePublicUrl($url);
+        }
+
         $method = strtoupper($config['method'] ?? 'POST');
         $data = array_merge($entity->toArray(), $context);
 
-        Http::send($method, $url, ['json' => $data]);
+        Http::timeout(10)->send($method, $url, ['json' => $data]);
+    }
+
+    private function ensurePublicUrl(string $url): void
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (!$host) {
+            return;
+        }
+
+        $ip = gethostbyname($host);
+
+        if ($ip !== $host && !filter_var($ip, FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            throw new \RuntimeException(
+                'Workflow webhook URL resolves to an internal IP address.'
+            );
+        }
     }
 
     protected function assignToUser($entity, array $config): void

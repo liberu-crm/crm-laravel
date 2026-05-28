@@ -39,6 +39,10 @@ class WebhookService
 
         $signature = $this->sign($body, $webhook->secret);
 
+        if (app()->environment('production')) {
+            $this->ensurePublicUrl($webhook->url);
+        }
+
         try {
             $response = Http::timeout(10)
                 ->withHeaders([
@@ -124,6 +128,28 @@ class WebhookService
     }
 
     // -------------------------------------------------------------------------
+
+    /**
+     * Validate the webhook URL does not resolve to an internal IP.
+     * Only enforced in production to allow local development.
+     */
+    private function ensurePublicUrl(string $url): void
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (!$host) {
+            return;
+        }
+
+        $ip = gethostbyname($host);
+
+        if ($ip !== $host && !filter_var($ip, FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            throw new \RuntimeException(
+                'Webhook URL resolves to an internal IP address.'
+            );
+        }
+    }
 
     /**
      * Generate an HMAC-SHA256 signature for a payload.
