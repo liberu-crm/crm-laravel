@@ -4,6 +4,7 @@ namespace Tests\Feature\Api;
 
 use App\Models\Webhook;
 use App\Models\User;
+use App\Models\Team;
 use App\Services\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -149,4 +150,81 @@ class WebhookTest extends TestCase
         $this->withTestingEnv();
     }
 
+    private function createUserWithTeam(): array
+    {
+        $team = Team::factory()->create();
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+        $user->current_team_id = $team->id;
+        $user->save();
+        return [$user, $team];
+    }
+
+    public function test_other_team_cannot_view_webhook()
+    {
+        [$owner] = $this->createUserWithTeam();
+        Sanctum::actingAs($owner);
+
+        $response = $this->postJson('/api/v1/webhooks', [
+            'name' => 'Test', 'url' => 'https://hooks.example.com/hook', 'events' => ['contact.created'],
+        ]);
+        $webhookId = $response->json('id');
+
+        [$other] = $this->createUserWithTeam();
+        Sanctum::actingAs($other);
+
+        $response = $this->getJson("/api/v1/webhooks/{$webhookId}");
+        $response->assertStatus(404);
+    }
+
+    public function test_other_team_cannot_update_webhook()
+    {
+        [$owner] = $this->createUserWithTeam();
+        Sanctum::actingAs($owner);
+
+        $response = $this->postJson('/api/v1/webhooks', [
+            'name' => 'Test', 'url' => 'https://hooks.example.com/hook', 'events' => ['contact.created'],
+        ]);
+        $webhookId = $response->json('id');
+
+        [$other] = $this->createUserWithTeam();
+        Sanctum::actingAs($other);
+
+        $response = $this->putJson("/api/v1/webhooks/{$webhookId}", ['name' => 'Hacked']);
+        $response->assertStatus(404);
+    }
+
+    public function test_other_team_cannot_delete_webhook()
+    {
+        [$owner] = $this->createUserWithTeam();
+        Sanctum::actingAs($owner);
+
+        $response = $this->postJson('/api/v1/webhooks', [
+            'name' => 'Test', 'url' => 'https://hooks.example.com/hook', 'events' => ['contact.created'],
+        ]);
+        $webhookId = $response->json('id');
+
+        [$other] = $this->createUserWithTeam();
+        Sanctum::actingAs($other);
+
+        $response = $this->deleteJson("/api/v1/webhooks/{$webhookId}");
+        $response->assertStatus(404);
+    }
+
+    public function test_other_team_cannot_regenerate_secret()
+    {
+        [$owner] = $this->createUserWithTeam();
+        Sanctum::actingAs($owner);
+
+        $response = $this->postJson('/api/v1/webhooks', [
+            'name' => 'Test', 'url' => 'https://hooks.example.com/hook', 'events' => ['contact.created'],
+        ]);
+        $webhookId = $response->json('id');
+
+        [$other] = $this->createUserWithTeam();
+        Sanctum::actingAs($other);
+
+        $response = $this->postJson("/api/v1/webhooks/{$webhookId}/secret");
+        $response->assertStatus(404);
+    }
 }
