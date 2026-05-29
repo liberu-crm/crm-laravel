@@ -24,6 +24,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use App\Http\Middleware\ValidateSignature;
+use App\Http\Middleware\VerifyTwilioRequest;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -86,6 +87,7 @@ class Kernel extends HttpKernel
         'precognitive' => HandlePrecognitiveRequests::class,
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
+        'twilio.verify' => VerifyTwilioRequest::class,
         'verified' => EnsureEmailIsVerified::class,
     ];
 }
