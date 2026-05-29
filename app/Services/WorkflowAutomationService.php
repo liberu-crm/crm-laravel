@@ -213,7 +213,9 @@ class WorkflowAutomationService
             return;
         }
 
-        $entity->update($config['fields'] ?? []);
+        $allowed = ['name', 'last_name', 'email', 'phone_number', 'status', 'industry', 'company_size', 'annual_revenue', 'lifecycle_stage', 'custom_fields'];
+        $data = array_intersect_key($config['fields'] ?? [], array_flip($allowed));
+        $entity->update($data);
     }
 
     protected function createTask($entity, array $config): void

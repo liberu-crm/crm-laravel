@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\WorkflowController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,5 +48,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('webhooks/events', [WebhookController::class, 'events']);
     Route::post('webhooks/{webhook}/secret', [WebhookController::class, 'regenerateSecret']);
     Route::apiResource('webhooks', WebhookController::class);
+
+    // Workflow management
+    Route::apiResource('workflows', WorkflowController::class);
 });
 

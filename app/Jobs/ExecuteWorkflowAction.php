@@ -43,7 +43,8 @@ class ExecuteWorkflowAction implements ShouldQueue
 
     protected function updateContact()
     {
-        // Implement contact update logic
-        $this->lead->contact->update($this->action['data']);
+        $allowed = ['name', 'last_name', 'email', 'phone_number', 'status', 'industry', 'company_size', 'annual_revenue', 'lifecycle_stage', 'custom_fields'];
+        $data = array_intersect_key($this->action['data'] ?? [], array_flip($allowed));
+        $this->lead->contact->update($data);
     }
 }
