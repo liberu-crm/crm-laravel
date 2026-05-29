@@ -46,7 +46,13 @@ class EmailTrackingController extends Controller
     public function link(Request $request, string $trackingId)
     {
         $encodedUrl = $request->get('url');
-        $url = base64_decode($encodedUrl);
+        $url = base64_decode($encodedUrl, true);
+
+        if ($url === false || $url === '') {
+            $url = config('app.url');
+        }
+
+        $safeUrl = $this->validateRedirectUrl($url);
 
         try {
             $this->trackingService->recordClick(
@@ -59,6 +65,25 @@ class EmailTrackingController extends Controller
             Log::error("Error recording link click: " . $e->getMessage());
         }
 
-        return redirect($url);
+        return redirect($safeUrl);
+    }
+
+    private function validateRedirectUrl(string $url): string
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if ($host === null) {
+            return $url;
+        }
+
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        if ($host === $appHost || str_ends_with($host, '.' . $appHost)) {
+            return $url;
+        }
+
+        Log::warning("Blocked open redirect to untrusted domain: {$host}");
+
+        return config('app.url');
     }
 }
