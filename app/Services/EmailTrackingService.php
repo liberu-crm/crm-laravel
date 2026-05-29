@@ -44,10 +44,19 @@ class EmailTrackingService
      */
     public function getTrackedLinkUrl(EmailTracking $tracking, string $originalUrl): string
     {
+        $encodedUrl = base64_encode($originalUrl);
+        $signature = $this->generateLinkSignature($tracking->tracking_id, $encodedUrl);
+
         return route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
-            'url' => base64_encode($originalUrl),
+            'url' => $encodedUrl,
+            's' => $signature,
         ]);
+    }
+
+    public function generateLinkSignature(string $trackingId, string $encodedUrl): string
+    {
+        return hash_hmac('sha256', $trackingId . ':' . $encodedUrl, (string) config('app.key'));
     }
 
     /**
@@ -123,7 +132,9 @@ class EmailTrackingService
         $tracking->recordOpen($userAgent, $ipAddress);
         
         // Update contact engagement score
-        $this->updateContactEngagement($tracking->contact);
+        if ($tracking->contact) {
+            $this->updateContactEngagement($tracking->contact);
+        }
         
         return true;
     }
@@ -142,7 +153,9 @@ class EmailTrackingService
         $tracking->recordClick($url, $userAgent, $ipAddress);
         
         // Update contact engagement score (clicks are worth more than opens)
-        $this->updateContactEngagement($tracking->contact, 2);
+        if ($tracking->contact) {
+            $this->updateContactEngagement($tracking->contact, 2);
+        }
         
         return true;
     }

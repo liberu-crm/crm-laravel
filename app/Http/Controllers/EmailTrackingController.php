@@ -46,6 +46,15 @@ class EmailTrackingController extends Controller
     public function link(Request $request, string $trackingId)
     {
         $encodedUrl = $request->get('url');
+        $signature = $request->get('s');
+
+        $expectedSig = $this->trackingService->generateLinkSignature($trackingId, (string) $encodedUrl);
+
+        if (!hash_equals($expectedSig, (string) $signature)) {
+            Log::warning("Invalid link signature for tracking: {$trackingId}");
+            return redirect(config('app.url'));
+        }
+
         $url = base64_decode($encodedUrl, true);
 
         if ($url === false || $url === '') {
