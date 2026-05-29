@@ -63,3 +63,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{service}/callback', [OAuthConfigurationController::class, 'oauthCallback'])->name('oauth.configurations.callback');
     });
 });
+
+Route::post('/forms/{leadForm}/submit', [\App\Http\Controllers\LeadFormController::class, 'submit'])->name('forms.submit');
