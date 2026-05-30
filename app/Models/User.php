@@ -127,7 +127,11 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === "admin") {
+        
+        if ($panel->getId() === "super_admin") {
+            return $this->hasRole('super_admin');
+        }
+        else if ($panel->getId() === "admin") {
             return $this->hasRole('admin');
         }
         return true;
@@ -135,7 +139,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessFilament(): bool
     {
-        return $this->hasVerifiedEmail() && $this->hasAnyRole(['admin', 'manager', 'sales_rep']);
+        return $this->hasVerifiedEmail() && $this->hasAnyRole(['super_admin', 'admin', 'manager', 'sales_rep']);
     }
 
     public function getDefaultTenant(Panel $panel): ?Model

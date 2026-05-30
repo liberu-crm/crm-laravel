@@ -14,6 +14,7 @@ class Task extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'team_id',
         'name',
         'description',
         'due_date',

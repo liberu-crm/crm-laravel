@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\EmailTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Uri;
 
 class EmailTrackingController extends Controller
 {
@@ -46,7 +47,22 @@ class EmailTrackingController extends Controller
     public function link(Request $request, string $trackingId)
     {
         $encodedUrl = $request->get('url');
-        $url = base64_decode($encodedUrl);
+        $signature = $request->get('s');
+
+        $expectedSig = $this->trackingService->generateLinkSignature($trackingId, (string) $encodedUrl);
+
+        if (!hash_equals($expectedSig, (string) $signature)) {
+            Log::warning("Invalid link signature for tracking: {$trackingId}");
+            return redirect(config('app.url'));
+        }
+
+        $url = $this->trackingService->decodeTrackedUrl((string) $encodedUrl);
+
+        if ($url === '') {
+            $url = config('app.url');
+        }
+
+        $safeUrl = $this->validateRedirectUrl($url);
 
         try {
             $this->trackingService->recordClick(
@@ -59,6 +75,25 @@ class EmailTrackingController extends Controller
             Log::error("Error recording link click: " . $e->getMessage());
         }
 
-        return redirect($url);
+        return redirect($safeUrl);
+    }
+
+    private function validateRedirectUrl(string $url): string
+    {
+        $host = Uri::of($url)->host();
+
+        if ($host === null) {
+            return $url;
+        }
+
+        $appHost = Uri::of(config('app.url'))->host();
+
+        if ($host === $appHost || str_ends_with($host, '.' . $appHost)) {
+            return $url;
+        }
+
+        Log::warning("Blocked open redirect to untrusted domain: {$host}");
+
+        return config('app.url');
     }
 }

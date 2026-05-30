@@ -45,13 +45,16 @@ class ContactListController extends Controller
      */
     public function bulkDelete(Request $request)
     {
-        $ids = $request->input('ids', []);
+        $validated = $request->validate([
+            'ids'   => 'required|array|min:1',
+            'ids.*' => 'integer|exists:contacts,id',
+        ]);
 
-        if (!empty($ids)) {
-            Contact::whereIn('id', $ids)->delete();
-        }
+        $query = Contact::whereIn('id', $validated['ids']);
+        $query->byTeam($request->user()?->currentTeam?->id);
+        $count = $query->delete();
 
-        return response()->json(['deleted' => count($ids)]);
+        return response()->json(['deleted' => $count]);
     }
 
     /**

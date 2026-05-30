@@ -154,11 +154,25 @@ class DocumentService
 
     /**
      * Store the file and return its storage path.
+     * Validates the file content (magic bytes) and derives a safe extension
+     * from the detected MIME type rather than trusting user input.
      */
     private function storeFile(UploadedFile $file): string
     {
+        $finfo = new \Finfo(FILEINFO_MIME_TYPE);
+        $detectedMime = $finfo->file($file->getRealPath());
+
+        $allowedMimes = config('documents.allowed_mimes', []);
+        $extensionMap = config('documents.extension_map', []);
+
+        if (!in_array($detectedMime, $allowedMimes, true)) {
+            abort(422, 'File content type not allowed.');
+        }
+
         $directory = 'documents/' . date('Y/m');
-        $filename  = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $extension = $extensionMap[$detectedMime] ?? 'bin';
+        $filename  = Str::uuid() . '.' . $extension;
+
         return $file->storeAs($directory, $filename);
     }
 }

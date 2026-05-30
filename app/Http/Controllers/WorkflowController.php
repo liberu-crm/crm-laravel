@@ -18,8 +18,18 @@ class WorkflowController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'triggers' => 'required|json',
-            'actions' => 'required|json',
+            'triggers' => ['required', 'json', function ($_attr, $value, $fail) {
+                $data = json_decode($value, true);
+                if (!is_array($data) || empty($data)) {
+                    $fail('Triggers must be a valid non-empty JSON object.');
+                }
+            }],
+            'actions' => ['required', 'json', function ($_attr, $value, $fail) {
+                $data = json_decode($value, true);
+                if (!is_array($data) || empty($data)) {
+                    $fail('Actions must be a valid non-empty JSON array.');
+                }
+            }],
         ]);
 
         $workflow = Workflow::create($validatedData);
@@ -36,8 +46,18 @@ class WorkflowController extends Controller
         $validatedData = $request->validate([
             'name' => 'string|max:255',
             'description' => 'nullable|string',
-            'triggers' => 'json',
-            'actions' => 'json',
+            'triggers' => ['json', function ($_attr, $value, $fail) {
+                $data = json_decode($value, true);
+                if (!is_array($data) || empty($data)) {
+                    $fail('Triggers must be a valid non-empty JSON object.');
+                }
+            }],
+            'actions' => ['json', function ($_attr, $value, $fail) {
+                $data = json_decode($value, true);
+                if (!is_array($data) || empty($data)) {
+                    $fail('Actions must be a valid non-empty JSON array.');
+                }
+            }],
         ]);
 
         $workflow->update($validatedData);

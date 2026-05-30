@@ -15,7 +15,7 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep'];
+        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep', 'free'];
 
         foreach ($roleNames as $roleName) {
             $roleData = [
