@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Ensure contact_id column exists (it may have been created without it)
-        if (Schema::hasTable('leads') && !Schema::hasColumn('leads', 'contact_id')) {
+        if (Schema::hasTable('leads') && ! Schema::hasColumn('leads', 'contact_id')) {
             Schema::table('leads', function (Blueprint $table) {
                 $table->foreignId('contact_id')->nullable()->constrained()->nullOnDelete();
             });

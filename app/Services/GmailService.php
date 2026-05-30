@@ -2,22 +2,23 @@
 
 namespace App\Services;
 
-use Google_Service_Gmail_Message;
-use Google_Client;
-use Google_Service_Gmail;
 use App\Models\Email;
 use App\Models\OAuthConfiguration;
+use Google_Client;
+use Google_Service_Gmail;
+use Google_Service_Gmail_Message;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class GmailService
 {
     protected $client;
+
     protected $service;
 
     public function __construct()
     {
-        $this->client = new Google_Client();
+        $this->client = new Google_Client;
     }
 
     protected function initializeService(?OAuthConfiguration $config = null)
@@ -41,7 +42,7 @@ class GmailService
     {
         try {
             $this->initializeService($config);
-            
+
             $user = 'me';
             $optParams = [
                 'q' => 'is:unread',
@@ -63,7 +64,7 @@ class GmailService
 
             return $messages;
         } catch (\Exception $e) {
-            Log::error('Error fetching Gmail messages: ' . $e->getMessage());
+            Log::error('Error fetching Gmail messages: '.$e->getMessage());
             throw $e;
         }
     }
@@ -92,21 +93,23 @@ class GmailService
     public function getMessage($messageId, ?OAuthConfiguration $config = null)
     {
         $this->initializeService($config);
-        
+
         $user = 'me';
         $message = $this->service->users_messages->get($user, $messageId);
         $this->trackEmail($message);
+
         return $message;
     }
 
     public function sendReply($messageId, $body, ?OAuthConfiguration $config = null)
     {
         $this->initializeService($config);
-        
+
         $user = 'me';
         $reply = $this->createReplyMessage($messageId, $body);
         $sentMessage = $this->service->users_messages->send($user, $reply);
         $this->trackEmail($sentMessage, true);
+
         return $sentMessage;
     }
 
@@ -131,13 +134,14 @@ class GmailService
         foreach ($headers as $header) {
             $parsedHeaders[$header->getName()] = $header->getValue();
         }
+
         return $parsedHeaders;
     }
 
     protected function getEmailContent($message)
     {
         $payload = $message->getPayload();
-        if (!$payload) {
+        if (! $payload) {
             return '';
         }
 
@@ -152,6 +156,7 @@ class GmailService
             foreach ($parts as $part) {
                 if ($part['mimeType'] === 'text/plain') {
                     $data = $part['body']['data'];
+
                     return base64_decode(strtr($data, '-_', '+/'));
                 }
             }
@@ -165,10 +170,10 @@ class GmailService
         $originalMessage = $this->service->users_messages->get('me', $originalMessageId);
         $headers = $this->parseHeaders($originalMessage->getPayload()->getHeaders());
 
-        $replyMessage = new Google_Service_Gmail_Message();
+        $replyMessage = new Google_Service_Gmail_Message;
         $rawMessageString = "From: me\r\n";
         $rawMessageString .= "To: {$headers['From']}\r\n";
-        $rawMessageString .= 'Subject: Re: ' . ($headers['Subject'] ?? '') . "\r\n";
+        $rawMessageString .= 'Subject: Re: '.($headers['Subject'] ?? '')."\r\n";
         $rawMessageString .= "Content-Type: text/plain; charset=utf-8\r\n";
         $rawMessageString .= "Content-Transfer-Encoding: base64\r\n\r\n";
         $rawMessageString .= base64_encode($replyBody);

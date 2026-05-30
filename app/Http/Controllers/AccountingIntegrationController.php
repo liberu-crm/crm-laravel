@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use App\Models\AccountingIntegration;
 use App\Services\AccountingService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +26,7 @@ class AccountingIntegrationController extends Controller
 
         try {
             $connection = $this->accountingService->connectPlatform($validated['platform'], $validated['credentials']);
-            
+
             $user = Auth::user();
 
             AccountingIntegration::create([
@@ -35,7 +35,7 @@ class AccountingIntegrationController extends Controller
                 'connection_details' => $connection,
             ]);
 
-            return response()->json(['message' => 'Successfully connected to ' . $validated['platform']]);
+            return response()->json(['message' => 'Successfully connected to '.$validated['platform']]);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -44,7 +44,8 @@ class AccountingIntegrationController extends Controller
     public function disconnect(AccountingIntegration $integration)
     {
         $integration->delete();
-        return response()->json(['message' => 'Successfully disconnected from ' . $integration->platform]);
+
+        return response()->json(['message' => 'Successfully disconnected from '.$integration->platform]);
     }
 
     public function status(AccountingIntegration $integration)

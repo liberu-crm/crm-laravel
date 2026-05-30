@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormBuilder;
 use App\Models\CustomField;
+use App\Models\FormBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -15,6 +15,7 @@ class FormBuilderController extends Controller
 
         $user = Auth::user();
         $forms = FormBuilder::where('team_id', $user->currentTeam->id)->get();
+
         return view('form-builders.index', compact('forms'));
     }
 
@@ -89,6 +90,7 @@ class FormBuilderController extends Controller
     {
         $user = Auth::user();
         $customFields = CustomField::where('team_id', $user->currentTeam->id)->get();
+
         return view('custom-fields.index', compact('customFields'));
     }
 

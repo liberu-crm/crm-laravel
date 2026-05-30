@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\Jobs\ExecuteWorkflowAction;
-
+use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\LeadForm;
-use App\Models\Contact;
 use App\Models\Workflow;
 use App\Services\LeadScoringService;
 use Illuminate\Http\Request;
@@ -56,13 +53,14 @@ class LeadFormController extends Controller
             $filtered = [];
             foreach ($parts as $rule) {
                 $name = is_string($rule) ? explode(':', $rule)[0] : '';
-                if (!in_array($name, ['regex', 'not_regex'], true)
-                    && !str_contains((string) $rule, '\\')) {
+                if (! in_array($name, ['regex', 'not_regex'], true)
+                    && ! str_contains((string) $rule, '\\')) {
                     $filtered[] = $rule;
                 }
             }
             $rules[$field['name']] = array_values($filtered) ?: ['required'];
         }
+
         return $rules;
     }
 
@@ -78,6 +76,7 @@ class LeadFormController extends Controller
                 'industry' => $data['industry'] ?? null,
             ]
         );
+
         return $contact;
     }
 

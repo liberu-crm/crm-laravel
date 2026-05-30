@@ -2,25 +2,30 @@
 
 namespace App\Services;
 
-use InvalidArgumentException;
+use App\Events\MessageReplySent;
+use App\Events\NewMessageReceived;
 use App\Models\OAuthConfiguration;
-use App\Models\Message;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use App\Events\NewMessageReceived;
-use App\Events\MessageReplySent;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use Throwable;
 
 class UnifiedHelpDeskService
 {
     protected $whatsAppService;
+
     protected $facebookMessengerService;
+
     protected $gmailService;
+
     protected $outlookService;
+
     protected $imapService;
+
     protected $pop3Service;
+
     protected $cacheTimeout = 300; // 5 minutes
 
     public function __construct(
@@ -41,7 +46,7 @@ class UnifiedHelpDeskService
 
     public function getAllMessages($accountId = null, $useCache = true)
     {
-        $cacheKey = "messages_" . ($accountId ?? 'all');
+        $cacheKey = 'messages_'.($accountId ?? 'all');
 
         if ($useCache && Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
@@ -53,7 +58,7 @@ class UnifiedHelpDeskService
         try {
             $messages = $this->fetchMessagesFromAllPlatforms($accountId, $errors);
         } catch (Throwable $e) {
-            Log::error('Critical error fetching unified messages: ' . $e->getMessage());
+            Log::error('Critical error fetching unified messages: '.$e->getMessage());
             throw $e;
         }
 
@@ -62,7 +67,7 @@ class UnifiedHelpDeskService
         }
 
         $sortedMessages = $messages->sortByDesc('timestamp');
-        
+
         if ($useCache) {
             Cache::put($cacheKey, $sortedMessages, $this->cacheTimeout);
         }
@@ -73,28 +78,28 @@ class UnifiedHelpDeskService
     protected function fetchMessagesFromAllPlatforms($accountId, &$errors)
     {
         $messages = collect();
-        
+
         // Fetch messages from each platform in parallel using async operations
         $platforms = [
-            'whatsapp' => fn($config) => $this->whatsAppService->getMessages($config),
-            'facebook' => fn($config) => $this->facebookMessengerService->getUnreadMessages($config),
-            'gmail' => fn($config) => $this->gmailService->getUnreadMessages($config),
-            'outlook' => fn($config) => $this->outlookService->getUnreadMessages($config),
-            'microsoft365' => fn($config) => $this->outlookService->getUnreadMessages($config),
-            'imap' => fn($config) => $this->imapService->getUnreadMessages($config),
-            'pop3' => fn($config) => $this->pop3Service->getUnreadMessages($config),
+            'whatsapp' => fn ($config) => $this->whatsAppService->getMessages($config),
+            'facebook' => fn ($config) => $this->facebookMessengerService->getUnreadMessages($config),
+            'gmail' => fn ($config) => $this->gmailService->getUnreadMessages($config),
+            'outlook' => fn ($config) => $this->outlookService->getUnreadMessages($config),
+            'microsoft365' => fn ($config) => $this->outlookService->getUnreadMessages($config),
+            'imap' => fn ($config) => $this->imapService->getUnreadMessages($config),
+            'pop3' => fn ($config) => $this->pop3Service->getUnreadMessages($config),
         ];
 
         foreach ($platforms as $platform => $fetcher) {
             try {
                 $configs = $this->getActiveConfigs($platform, $accountId);
-                
+
                 foreach ($configs as $config) {
                     try {
                         $platformMessages = $fetcher($config)
-                            ->map(fn($msg) => $this->formatMessage($msg, $platform, $config));
+                            ->map(fn ($msg) => $this->formatMessage($msg, $platform, $config));
                         $messages = $messages->merge($platformMessages);
-                        
+
                         // Dispatch event for new messages
                         foreach ($platformMessages as $message) {
                             Event::dispatch(new NewMessageReceived($message));
@@ -103,18 +108,20 @@ class UnifiedHelpDeskService
                         $errors->push([
                             'platform' => $platform,
                             'config_id' => $config->id,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ]);
-                        Log::error("Error fetching {$platform} messages for config {$config->id}: " . $e->getMessage());
+                        Log::error("Error fetching {$platform} messages for config {$config->id}: ".$e->getMessage());
+
                         continue;
                     }
                 }
             } catch (Throwable $e) {
                 $errors->push([
                     'platform' => $platform,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
-                Log::error("Error processing platform {$platform}: " . $e->getMessage());
+                Log::error("Error processing platform {$platform}: ".$e->getMessage());
+
                 continue;
             }
         }
@@ -126,7 +133,7 @@ class UnifiedHelpDeskService
     {
         return OAuthConfiguration::where('service_name', $platform)
             ->where('is_active', true)
-            ->when($accountId, fn($query) => $query->where('id', $accountId))
+            ->when($accountId, fn ($query) => $query->where('id', $accountId))
             ->get();
     }
 
@@ -146,15 +153,15 @@ class UnifiedHelpDeskService
             };
 
             // Clear cache after sending reply
-            Cache::forget("messages_" . $accountId);
-            Cache::forget("messages_all");
+            Cache::forget('messages_'.$accountId);
+            Cache::forget('messages_all');
 
             // Dispatch event for sent reply
             Event::dispatch(new MessageReplySent($messageId, $content, $channel, $accountId));
 
             return $result;
         } catch (Throwable $e) {
-            Log::error("Failed to send reply on {$channel}: " . $e->getMessage());
+            Log::error("Failed to send reply on {$channel}: ".$e->getMessage());
             throw $e;
         }
     }
@@ -176,8 +183,8 @@ class UnifiedHelpDeskService
             'metadata' => [
                 'service_specific_data' => $message,
                 'config_id' => $config->id,
-                'platform_specific' => $this->getPlatformSpecificData($message, $channel)
-            ]
+                'platform_specific' => $this->getPlatformSpecificData($message, $channel),
+            ],
         ];
 
         return $formatted;
@@ -188,6 +195,7 @@ class UnifiedHelpDeskService
         if (is_numeric($timestamp)) {
             return Carbon::createFromTimestamp($timestamp);
         }
+
         return Carbon::parse($timestamp);
     }
 
@@ -196,7 +204,7 @@ class UnifiedHelpDeskService
         // Implement priority calculation logic based on keywords, sender, etc.
         $priority = 'normal';
         $urgentKeywords = ['urgent', 'asap', 'emergency', 'critical'];
-        
+
         $content = strtolower($message['message'] ?? $message['content'] ?? '');
         if ($content !== '') {
             foreach ($urgentKeywords as $keyword) {
@@ -206,7 +214,7 @@ class UnifiedHelpDeskService
                 }
             }
         }
-        
+
         return $priority;
     }
 

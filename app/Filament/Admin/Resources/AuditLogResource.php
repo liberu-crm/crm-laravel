@@ -2,26 +2,23 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteBulkAction;
 use App\Filament\Admin\Resources\AuditLogResource\Pages\ListAuditLogs;
 use App\Filament\Admin\Resources\AuditLogResource\Pages\ViewAuditLog;
-use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
-use Filament\Forms;
-use Filament\Schemas\Schema;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Schema $schema): Schema
     {

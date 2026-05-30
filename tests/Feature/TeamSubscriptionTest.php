@@ -3,13 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Team;
-use App\Models\User;
 use App\Models\TeamSubscription;
 use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class TeamSubscriptionTest extends TestCase
 {
@@ -23,7 +22,7 @@ class TeamSubscriptionTest extends TestCase
         $this->app->instance(StripeService::class, $this->stripeService);
     }
 
-    public function testCreateTeamSubscription()
+    public function test_create_team_subscription()
     {
         $team = Team::factory()->create();
 
@@ -38,7 +37,7 @@ class TeamSubscriptionTest extends TestCase
         ]);
     }
 
-    public function testCancelTeamSubscription()
+    public function test_cancel_team_subscription()
     {
         $team = Team::factory()->create();
         $subscription = TeamSubscription::factory()->create([
@@ -54,7 +53,7 @@ class TeamSubscriptionTest extends TestCase
         ]);
     }
 
-    public function testTeamSubscriptionBelongsToTeam()
+    public function test_team_subscription_belongs_to_team()
     {
         $team = Team::factory()->create();
         $subscription = TeamSubscription::factory()->create(['team_id' => $team->id]);
@@ -62,7 +61,7 @@ class TeamSubscriptionTest extends TestCase
         $this->assertEquals($team->id, $subscription->team->id);
     }
 
-    public function testStripeServiceMock()
+    public function test_stripe_service_mock()
     {
         $team = Team::factory()->create();
 

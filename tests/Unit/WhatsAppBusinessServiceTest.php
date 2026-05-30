@@ -13,17 +13,17 @@ class WhatsAppBusinessServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->whatsAppService = new WhatsAppBusinessService();
+        $this->whatsAppService = new WhatsAppBusinessService;
     }
 
-    public function testGetUnreadMessages()
+    public function test_get_unread_messages()
     {
         Http::fake([
             '*' => Http::response([
                 'messages' => [
                     ['id' => '1', 'body' => 'Test message 1'],
                     ['id' => '2', 'body' => 'Test message 2'],
-                ]
+                ],
             ], 200),
         ]);
 
@@ -34,7 +34,7 @@ class WhatsAppBusinessServiceTest extends TestCase
         $this->assertEquals('Test message 2', $messages[1]['body']);
     }
 
-    public function testGetMessage()
+    public function test_get_message()
     {
         Http::fake([
             '*' => Http::response([
@@ -51,7 +51,7 @@ class WhatsAppBusinessServiceTest extends TestCase
         $this->assertEquals('1234567890', $message['from']);
     }
 
-    public function testSendReply()
+    public function test_send_reply()
     {
         Http::fake([
             '*' => Http::response([

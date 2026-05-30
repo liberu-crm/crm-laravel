@@ -2,20 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Workflow;
-use App\Models\WorkflowAction;
-use App\Models\WorkflowExecution;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Task;
-use App\Models\Email;
-use Illuminate\Support\Facades\Log;
+use App\Models\Workflow;
+use App\Models\WorkflowAction;
+use App\Models\WorkflowExecution;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Uri;
 
 class WorkflowAutomationService
 {
     protected $emailService;
+
     protected $twilioService;
 
     public function __construct()
@@ -31,7 +31,7 @@ class WorkflowAutomationService
     {
         $workflows = Workflow::whereHas('triggers', function ($query) use ($triggerType) {
             $query->where('type', $triggerType)
-                  ->where('is_active', true);
+                ->where('is_active', true);
         })->where('is_active', true)->get();
 
         foreach ($workflows as $workflow) {
@@ -59,15 +59,15 @@ class WorkflowAutomationService
             ]);
 
             $actions = $workflow->actions()->orderBy('order')->get();
-            
+
             foreach ($actions as $action) {
-                if (!$action->is_active) {
+                if (! $action->is_active) {
                     continue;
                 }
 
                 // Check conditions if any
                 if ($action->conditions()->count() > 0) {
-                    if (!$this->evaluateConditions($action, $entity)) {
+                    if (! $this->evaluateConditions($action, $entity)) {
                         continue;
                     }
                 }
@@ -95,7 +95,7 @@ class WorkflowAutomationService
                 'error_message' => $e->getMessage(),
             ]);
 
-            Log::error("Workflow execution failed: " . $e->getMessage(), [
+            Log::error('Workflow execution failed: '.$e->getMessage(), [
                 'workflow_id' => $workflow->id,
                 'entity_type' => get_class($entity),
                 'entity_id' => $entity->id,
@@ -111,7 +111,7 @@ class WorkflowAutomationService
     protected function evaluateConditions(WorkflowAction $action, $entity): bool
     {
         $conditions = $action->conditions;
-        
+
         if ($conditions->isEmpty()) {
             return true;
         }
@@ -200,7 +200,7 @@ class WorkflowAutomationService
 
     protected function sendEmail($entity, array $config): void
     {
-        if (!$entity instanceof Contact) {
+        if (! $entity instanceof Contact) {
             return;
         }
 
@@ -210,7 +210,7 @@ class WorkflowAutomationService
 
     protected function updateContact($entity, array $config): void
     {
-        if (!$entity instanceof Contact) {
+        if (! $entity instanceof Contact) {
             return;
         }
 
@@ -232,7 +232,7 @@ class WorkflowAutomationService
 
     protected function addTag($entity, array $config): void
     {
-        if (!method_exists($entity, 'tags')) {
+        if (! method_exists($entity, 'tags')) {
             return;
         }
 
@@ -244,7 +244,7 @@ class WorkflowAutomationService
 
     protected function removeTag($entity, array $config): void
     {
-        if (!method_exists($entity, 'tags')) {
+        if (! method_exists($entity, 'tags')) {
             return;
         }
 
@@ -256,7 +256,7 @@ class WorkflowAutomationService
 
     protected function changeStage($entity, array $config): void
     {
-        if (!$entity instanceof Deal && !$entity instanceof Contact) {
+        if (! $entity instanceof Deal && ! $entity instanceof Contact) {
             return;
         }
 
@@ -267,7 +267,7 @@ class WorkflowAutomationService
 
     protected function sendSms($entity, array $config): void
     {
-        if (!$entity instanceof Contact) {
+        if (! $entity instanceof Contact) {
             return;
         }
 
@@ -281,7 +281,7 @@ class WorkflowAutomationService
 
     protected function createDeal($entity, array $config): void
     {
-        if (!$entity instanceof Contact) {
+        if (! $entity instanceof Contact) {
             return;
         }
 
@@ -297,7 +297,7 @@ class WorkflowAutomationService
     protected function callWebhook($entity, array $config, array $context): void
     {
         $url = $config['url'] ?? null;
-        if (!$url) {
+        if (! $url) {
             return;
         }
 
@@ -315,13 +315,13 @@ class WorkflowAutomationService
     {
         $host = Uri::of($url)->host();
 
-        if (!$host) {
+        if (! $host) {
             return;
         }
 
         $ip = gethostbyname($host);
 
-        if ($ip !== $host && !filter_var($ip, FILTER_VALIDATE_IP,
+        if ($ip !== $host && ! filter_var($ip, FILTER_VALIDATE_IP,
             FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
             throw new \RuntimeException(
                 'Workflow webhook URL resolves to an internal IP address.'
@@ -331,7 +331,7 @@ class WorkflowAutomationService
 
     protected function assignToUser($entity, array $config): void
     {
-        if (!isset($config['user_id'])) {
+        if (! isset($config['user_id'])) {
             return;
         }
 
@@ -341,12 +341,12 @@ class WorkflowAutomationService
     protected function addToList($entity, array $config): void
     {
         // Implementation for adding to marketing list
-        Log::info("Adding entity to list: " . ($config['list_id'] ?? 'unknown'));
+        Log::info('Adding entity to list: '.($config['list_id'] ?? 'unknown'));
     }
 
     protected function removeFromList($entity, array $config): void
     {
         // Implementation for removing from marketing list
-        Log::info("Removing entity from list: " . ($config['list_id'] ?? 'unknown'));
+        Log::info('Removing entity from list: '.($config['list_id'] ?? 'unknown'));
     }
 }

@@ -25,26 +25,26 @@ class MarketingCampaignFactory extends Factory
                 'demographics' => [
                     'age_range' => [$this->faker->numberBetween(18, 30), $this->faker->numberBetween(31, 65)],
                     'locations' => $this->faker->words(3),
-                    'interests' => $this->faker->words(5)
-                ]
+                    'interests' => $this->faker->words(5),
+                ],
             ]),
             'settings' => json_encode([
                 'frequency' => $this->faker->randomElement(['once', 'daily', 'weekly', 'monthly']),
                 'tracking' => [
                     'utm_source' => $this->faker->word,
                     'utm_medium' => $this->faker->word,
-                    'utm_campaign' => $this->faker->slug
-                ]
+                    'utm_campaign' => $this->faker->slug,
+                ],
             ]),
             'metrics' => json_encode([
                 'sent' => 0,
                 'opened' => 0,
                 'clicked' => 0,
                 'converted' => 0,
-                'unsubscribed' => 0
+                'unsubscribed' => 0,
             ]),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

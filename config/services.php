@@ -53,7 +53,7 @@ return [
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID', env('FACEBOOK_APP_ID')),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET', env('FACEBOOK_APP_SECRET')),
-        'redirect' => env('APP_URL') . '/oauth/facebook/callback',
+        'redirect' => env('APP_URL').'/oauth/facebook/callback',
         'app_id' => env('FACEBOOK_APP_ID', env('FACEBOOK_CLIENT_ID')),
         'app_secret' => env('FACEBOOK_APP_SECRET', env('FACEBOOK_CLIENT_SECRET')),
         'page_id' => env('FACEBOOK_PAGE_ID'),
@@ -65,7 +65,7 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/google/callback',
+        'redirect' => env('APP_URL').'/oauth/google/callback',
         'credentials_path' => env('GOOGLE_CREDENTIALS_PATH'),
         'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
     ],
@@ -74,14 +74,14 @@ return [
     'twitter-oauth-2' => [
         'client_id' => env('TWITTER_CLIENT_ID'),
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/twitter-oauth-2/callback',
+        'redirect' => env('APP_URL').'/oauth/twitter-oauth-2/callback',
     ],
 
     // LinkedIn for posting text, images, and videos
     'linkedin-openid' => [
         'client_id' => env('LINKEDIN_CLIENT_ID'),
         'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/linkedin-openid/callback',
+        'redirect' => env('APP_URL').'/oauth/linkedin-openid/callback',
     ],
 
     'mailchimp' => [
@@ -115,13 +115,13 @@ return [
     'microsoft' => [
         'client_id' => env('MICROSOFT_CLIENT_ID'),
         'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/microsoft/callback',
+        'redirect' => env('APP_URL').'/oauth/microsoft/callback',
     ],
 
     'youtube' => [
         'client_id' => env('YOUTUBE_CLIENT_ID'),
         'client_secret' => env('YOUTUBE_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/oauth/youtube/callback',
+        'redirect' => env('APP_URL').'/oauth/youtube/callback',
     ],
 
     'imap' => [

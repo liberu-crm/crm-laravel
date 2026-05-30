@@ -2,15 +2,17 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
-use App\Models\Pipeline;
 use App\Models\Deal;
+use App\Models\Pipeline;
 use App\Models\Stage;
+use Livewire\Component;
 
 class OpportunityPipeline extends Component
 {
     public ?int $pipelineId = null;
+
     public array $stages = [];
+
     public array $deals = [];
 
     protected $listeners = ['dealMoved' => 'updateDealStage'];

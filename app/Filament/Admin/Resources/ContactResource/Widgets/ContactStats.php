@@ -2,10 +2,9 @@
 
 namespace App\Filament\Admin\Resources\ContactResource\Widgets;
 
-use App\Models\Contact;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 
 class ContactStats extends Widget
 {

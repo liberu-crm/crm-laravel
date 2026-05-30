@@ -16,15 +16,15 @@ class DealController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'value'       => 'required|numeric',
-            'stage'       => 'nullable|string|max:255',
-            'close_date'  => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'value' => 'required|numeric',
+            'stage' => 'nullable|string|max:255',
+            'close_date' => 'nullable|date',
             'probability' => 'nullable|integer|min:0|max:100',
-            'contact_id'  => 'nullable|integer|exists:contacts,id',
-            'user_id'     => 'nullable|integer|exists:users,id',
+            'contact_id' => 'nullable|integer|exists:contacts,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'stage_id'    => 'nullable|integer|exists:stages,id',
+            'stage_id' => 'nullable|integer|exists:stages,id',
         ]);
 
         $validated['team_id'] = $request->user()?->currentTeam?->id;
@@ -45,15 +45,15 @@ class DealController extends Controller
         abort_unless($deal->belongsToTeam($request->user()?->currentTeam?->id), 403);
 
         $validated = $request->validate([
-            'name'        => 'string|max:255',
-            'value'       => 'numeric',
-            'stage'       => 'string|max:255',
-            'close_date'  => 'nullable|date',
+            'name' => 'string|max:255',
+            'value' => 'numeric',
+            'stage' => 'string|max:255',
+            'close_date' => 'nullable|date',
             'probability' => 'nullable|integer|min:0|max:100',
-            'contact_id'  => 'nullable|integer|exists:contacts,id',
-            'user_id'     => 'nullable|integer|exists:users,id',
+            'contact_id' => 'nullable|integer|exists:contacts,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'pipeline_id' => 'nullable|integer|exists:pipelines,id',
-            'stage_id'    => 'nullable|integer|exists:stages,id',
+            'stage_id' => 'nullable|integer|exists:stages,id',
         ]);
 
         $deal->update($validated);
@@ -78,10 +78,10 @@ class DealController extends Controller
     public function bulkUpdate(Request $request)
     {
         $request->validate([
-            'ids'          => 'required|array|min:1',
-            'ids.*'        => 'integer|exists:deals,id',
-            'data'         => 'required|array',
-            'data.status'  => 'sometimes|string|in:open,closed,won,lost',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:deals,id',
+            'data' => 'required|array',
+            'data.status' => 'sometimes|string|in:open,closed,won,lost',
             'data.stage_id' => 'sometimes|integer|exists:stages,id',
         ]);
 
@@ -107,7 +107,7 @@ class DealController extends Controller
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'ids'   => 'required|array|min:1',
+            'ids' => 'required|array|min:1',
             'ids.*' => 'integer|exists:deals,id',
         ]);
 
@@ -126,8 +126,8 @@ class DealController extends Controller
     public function bulkAssign(Request $request)
     {
         $request->validate([
-            'ids'     => 'required|array|min:1',
-            'ids.*'   => 'integer|exists:deals,id',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:deals,id',
             'user_id' => 'required|integer|exists:users,id',
         ]);
 

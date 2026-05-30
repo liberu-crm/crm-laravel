@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\OAuthConfigurationController;
 use App\Models\OAuthConfiguration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -66,12 +67,12 @@ class SocialMediaOAuthTest extends TestCase
 
         $response = $this->post(route('oauth.configurations.store'), [
             'service_name' => $platform,
-            'account_name' => 'Test ' . ucfirst($platform) . ' Account',
+            'account_name' => 'Test '.ucfirst($platform).' Account',
         ]);
 
         $this->assertDatabaseHas('oauth_configurations', [
             'service_name' => $platform,
-            'account_name' => 'Test ' . ucfirst($platform) . ' Account',
+            'account_name' => 'Test '.ucfirst($platform).' Account',
         ]);
     }
 
@@ -84,15 +85,15 @@ class SocialMediaOAuthTest extends TestCase
     {
         // Verify the mapping is correct by checking what driver would be used.
         // We test this via the controller method behavior rather than inspecting internals.
-        $controller = app(\App\Http\Controllers\OAuthConfigurationController::class);
+        $controller = app(OAuthConfigurationController::class);
 
         // Create a config so authenticate() doesn't fail on missing config
         OAuthConfiguration::create([
-            'service_name'  => $service,
-            'account_name'  => 'Test',
-            'client_id'     => 'test_id',
+            'service_name' => $service,
+            'account_name' => 'Test',
+            'client_id' => 'test_id',
             'client_secret' => 'test_secret',
-            'is_active'     => false,
+            'is_active' => false,
         ]);
 
         // The authenticate method uses $this->serviceToDriver internally.

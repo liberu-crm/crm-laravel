@@ -14,6 +14,7 @@ class ExecuteWorkflowAction implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $action;
+
     protected $lead;
 
     public function __construct(array $action, Lead $lead)
@@ -31,7 +32,7 @@ class ExecuteWorkflowAction implements ShouldQueue
             case 'update_contact':
                 $this->updateContact();
                 break;
-            // Add more action types as needed
+                // Add more action types as needed
         }
     }
 

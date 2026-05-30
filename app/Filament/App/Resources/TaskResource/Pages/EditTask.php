@@ -2,10 +2,9 @@
 
 namespace App\Filament\App\Resources\TaskResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\TaskResource;
 use App\Services\GoogleCalendarService;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;

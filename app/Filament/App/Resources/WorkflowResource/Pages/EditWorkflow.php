@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\WorkflowResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\WorkflowResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditWorkflow extends EditRecord

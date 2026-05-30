@@ -20,7 +20,7 @@ return new class extends Migration
 
         // Add user_id and make client credentials nullable for oauth_configurations
         Schema::table('oauth_configurations', function (Blueprint $table) {
-            if (!Schema::hasColumn('oauth_configurations', 'user_id')) {
+            if (! Schema::hasColumn('oauth_configurations', 'user_id')) {
                 $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade')->after('id');
             }
             if (Schema::hasColumn('oauth_configurations', 'client_id')) {

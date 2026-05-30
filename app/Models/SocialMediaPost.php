@@ -44,8 +44,11 @@ class SocialMediaPost extends Model
     ];
 
     const STATUS_DRAFT = 'draft';
+
     const STATUS_SCHEDULED = 'scheduled';
+
     const STATUS_PUBLISHED = 'published';
+
     const STATUS_FAILED = 'failed';
 
     public static function getStatuses()

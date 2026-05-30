@@ -8,8 +8,9 @@ use Laravel\Fortify\Features as FortifyFeatures;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User;
 use Mockery;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class SocialstreamRegistrationTest extends TestCase
 {
@@ -25,7 +26,7 @@ class SocialstreamRegistrationTest extends TestCase
      * Test that the social media platforms are available in the OAuth configuration create view.
      */
     #[Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
+    #[DataProvider('socialiteProvidersDataProvider')]
     public function test_users_get_redirected_correctly(string $provider): void
     {
         if (! Providers::enabled($provider)) {
@@ -43,7 +44,7 @@ class SocialstreamRegistrationTest extends TestCase
     }
 
     #[Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('socialiteProvidersDataProvider')]
+    #[DataProvider('socialiteProvidersDataProvider')]
     public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
     {
         if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
@@ -54,7 +55,7 @@ class SocialstreamRegistrationTest extends TestCase
             $this->markTestSkipped("Registration support with the $socialiteProvider provider is not enabled.");
         }
 
-        $user = (new User())
+        $user = (new User)
             ->map([
                 'id' => 'abcdefgh',
                 'nickname' => 'Jane',
@@ -68,7 +69,7 @@ class SocialstreamRegistrationTest extends TestCase
             ->setExpiresIn(3600);
 
         // Use a generic mock to avoid class name issues with providers like 'twitter-oauth-2'
-        $providerClass = 'Laravel\\Socialite\\Two\\' . $socialiteProvider . 'Provider';
+        $providerClass = 'Laravel\\Socialite\\Two\\'.$socialiteProvider.'Provider';
         if (preg_match('/[^a-zA-Z0-9_\\\\]/', $providerClass)) {
             $provider = Mockery::mock();
         } else {

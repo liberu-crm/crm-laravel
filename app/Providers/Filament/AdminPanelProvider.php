@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Pages;
 use App\Filament\Pages\ReportCustomizer;
-use App\Http\Middleware\TeamsPermission;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -64,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
-                    ->navigationGroup('Administration')
+                    ->navigationGroup('Administration'),
             ]);
     }
 
@@ -74,4 +73,3 @@ class AdminPanelProvider extends PanelProvider
         // Jetstream routes remain enabled for team management features.
     }
 }
-

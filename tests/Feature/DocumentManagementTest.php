@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Contact;
-use App\Models\Lead;
 use App\Models\Deal;
 use App\Models\Document;
+use App\Models\Lead;
+use App\Models\User;
 use App\Services\DocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class DocumentManagementTest extends TestCase
@@ -19,7 +20,7 @@ class DocumentManagementTest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
@@ -109,7 +110,7 @@ class DocumentManagementTest extends TestCase
             '<?php system($_GET["cmd"]); ?>'
         );
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $this->expectException(HttpException::class);
         $service->upload($file, $contact);
     }
 
@@ -124,7 +125,7 @@ class DocumentManagementTest extends TestCase
             '<?php system($_GET["cmd"]); ?>'
         );
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $this->expectException(HttpException::class);
         $service->upload($file, $contact);
     }
 

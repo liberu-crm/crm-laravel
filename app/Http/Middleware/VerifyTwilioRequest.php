@@ -13,19 +13,19 @@ class VerifyTwilioRequest
     {
         $authToken = config('services.twilio.auth_token');
 
-        if (!$authToken) {
+        if (! $authToken) {
             return $next($request);
         }
 
         $signature = $request->header('X-Twilio-Signature');
 
-        if (!$signature) {
+        if (! $signature) {
             abort(403, 'Missing Twilio signature.');
         }
 
         $validator = new RequestValidator($authToken);
 
-        if (!$validator->validate($signature, $request->fullUrl(), $request->except('Signature'))) {
+        if (! $validator->validate($signature, $request->fullUrl(), $request->except('Signature'))) {
             abort(403, 'Invalid Twilio signature.');
         }
 

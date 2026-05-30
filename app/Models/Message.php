@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
@@ -21,12 +21,12 @@ class Message extends Model
         'account_id',
         'thread_id',
         'ticket_id',
-        'metadata'
+        'metadata',
     ];
 
     protected $casts = [
         'timestamp' => 'datetime',
-        'metadata' => 'array'
+        'metadata' => 'array',
     ];
 
     public function ticket()

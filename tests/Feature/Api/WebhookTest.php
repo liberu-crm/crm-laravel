@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Api;
 
-use App\Models\Webhook;
-use App\Models\User;
 use App\Models\Team;
+use App\Models\User;
+use App\Models\Webhook;
 use App\Services\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -37,8 +38,8 @@ class WebhookTest extends TestCase
         Http::fake();
 
         $response = $this->postJson('/api/v1/webhooks', [
-            'name'   => 'Test',
-            'url'    => 'https://hooks.example.com/endpoint',
+            'name' => 'Test',
+            'url' => 'https://hooks.example.com/endpoint',
             'events' => ['contact.created'],
         ]);
 
@@ -50,8 +51,8 @@ class WebhookTest extends TestCase
         $this->withProductionEnv();
 
         $response = $this->postJson('/api/v1/webhooks', [
-            'name'   => 'Test',
-            'url'    => 'http://localhost:9000/hook',
+            'name' => 'Test',
+            'url' => 'http://localhost:9000/hook',
             'events' => ['contact.created'],
         ]);
 
@@ -66,8 +67,8 @@ class WebhookTest extends TestCase
         $this->withProductionEnv();
 
         $response = $this->postJson('/api/v1/webhooks', [
-            'name'   => 'Test',
-            'url'    => 'http://192.168.1.1/webhook',
+            'name' => 'Test',
+            'url' => 'http://192.168.1.1/webhook',
             'events' => ['contact.created'],
         ]);
 
@@ -82,8 +83,8 @@ class WebhookTest extends TestCase
         $this->withProductionEnv();
 
         $response = $this->postJson('/api/v1/webhooks', [
-            'name'   => 'Test',
-            'url'    => 'http://example.com/hook',
+            'name' => 'Test',
+            'url' => 'http://example.com/hook',
             'events' => ['contact.created'],
         ]);
 
@@ -98,17 +99,17 @@ class WebhookTest extends TestCase
         Http::fake();
 
         $webhook = Webhook::create([
-            'name'      => 'Test',
-            'url'       => 'https://example.com/hook',
-            'events'    => ['contact.created'],
-            'secret'    => 'test-secret-12345678',
+            'name' => 'Test',
+            'url' => 'https://example.com/hook',
+            'events' => ['contact.created'],
+            'secret' => 'test-secret-12345678',
             'is_active' => true,
         ]);
 
         $service = app(WebhookService::class);
         $service->send($webhook, 'contact.created', []);
 
-        Http::assertSent(function (\Illuminate\Http\Client\Request $r) {
+        Http::assertSent(function (Request $r) {
             return $r->url() === 'https://example.com/hook';
         });
     }
@@ -118,10 +119,10 @@ class WebhookTest extends TestCase
         $this->withProductionEnv();
 
         $webhook = Webhook::create([
-            'name'      => 'Test',
-            'url'       => 'https://example.com/hook',
-            'events'    => ['contact.created'],
-            'secret'    => 'test-secret-12345678',
+            'name' => 'Test',
+            'url' => 'https://example.com/hook',
+            'events' => ['contact.created'],
+            'secret' => 'test-secret-12345678',
             'is_active' => true,
         ]);
 
@@ -140,8 +141,8 @@ class WebhookTest extends TestCase
         $this->withProductionEnv();
 
         $response = $this->postJson('/api/v1/webhooks', [
-            'name'   => 'Test',
-            'url'    => 'https://hooks.example.com/safe',
+            'name' => 'Test',
+            'url' => 'https://hooks.example.com/safe',
             'events' => ['contact.created'],
         ]);
 
@@ -157,6 +158,7 @@ class WebhookTest extends TestCase
         $user->teams()->attach($team);
         $user->current_team_id = $team->id;
         $user->save();
+
         return [$user, $team];
     }
 

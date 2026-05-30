@@ -18,13 +18,13 @@ class DataEnrichmentService
     {
         $response = Http::withHeaders([
             'Authorization' => "Bearer {$this->apiKey}",
-        ])->get("https://api.example.com/v1/companies", [
+        ])->get('https://api.example.com/v1/companies', [
             'domain' => $company->domain,
         ]);
 
         if ($response->successful()) {
             $data = $response->json();
-            
+
             $company->update([
                 'industry' => $data['industry'] ?? $company->industry,
                 'size' => $data['size'] ?? $company->size,

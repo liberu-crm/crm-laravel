@@ -11,7 +11,7 @@ class GoogleCalendarController extends Controller
 {
     public function redirectToGoogle()
     {
-        $client = new Google_Client();
+        $client = new Google_Client;
         $client->setAuthConfig(config('services.google.credentials_path'));
         $client->addScope(Google_Service_Calendar::CALENDAR);
         $client->setRedirectUri(route('google.callback'));
@@ -21,7 +21,7 @@ class GoogleCalendarController extends Controller
 
     public function handleGoogleCallback(Request $request)
     {
-        $client = new Google_Client();
+        $client = new Google_Client;
         $client->setAuthConfig(config('services.google.credentials_path'));
         $client->setRedirectUri(route('google.callback'));
 

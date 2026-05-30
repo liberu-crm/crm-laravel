@@ -2,11 +2,10 @@
 
 namespace App\Filament\App\Resources\MailchimpCampaignResource\Pages;
 
-use Filament\Tables\Columns\TextColumn;
 use App\Filament\App\Resources\MailchimpCampaignResource;
 use App\Services\MailChimpService;
 use Filament\Resources\Pages\Page;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ViewABTestResults extends Page
@@ -47,8 +46,8 @@ class ViewABTestResults extends Page
                 ],
                 [
                     'metric' => 'Open Rate',
-                    'version_a' => number_format($results['opens_a'] / $results['emails_sent'] * 100, 2) . '%',
-                    'version_b' => number_format($results['opens_b'] / $results['emails_sent'] * 100, 2) . '%',
+                    'version_a' => number_format($results['opens_a'] / $results['emails_sent'] * 100, 2).'%',
+                    'version_b' => number_format($results['opens_b'] / $results['emails_sent'] * 100, 2).'%',
                 ],
                 [
                     'metric' => 'Clicks',
@@ -57,8 +56,8 @@ class ViewABTestResults extends Page
                 ],
                 [
                     'metric' => 'Click Rate',
-                    'version_a' => number_format($results['clicks_a'] / $results['opens_a'] * 100, 2) . '%',
-                    'version_b' => number_format($results['clicks_b'] / $results['opens_b'] * 100, 2) . '%',
+                    'version_a' => number_format($results['clicks_a'] / $results['opens_a'] * 100, 2).'%',
+                    'version_b' => number_format($results['clicks_b'] / $results['opens_b'] * 100, 2).'%',
                 ],
             ]);
     }

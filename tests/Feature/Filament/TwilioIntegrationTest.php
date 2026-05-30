@@ -8,9 +8,9 @@ use App\Models\Lead;
 use App\Services\TwilioService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Twilio\Exceptions\RestException;
-use PHPUnit\Framework\Attributes\Test;
 
 class TwilioIntegrationTest extends TestCase
 {

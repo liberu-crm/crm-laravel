@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\WorkflowController;
 use App\Models\Webhook;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +48,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Webhook management
     Route::bind('webhook', function ($value) {
         $teamId = request()->user()?->currentTeam?->id;
+
         return $teamId
             ? Webhook::where('team_id', $teamId)->findOrFail($value)
             : Webhook::findOrFail($value);
@@ -59,4 +60,3 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Workflow management
     Route::apiResource('workflows', WorkflowController::class);
 });
-

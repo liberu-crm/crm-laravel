@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Task;
 use App\Models\Lead;
+use App\Models\Task;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -12,9 +12,13 @@ class TaskList extends Component
     use WithPagination;
 
     public $search = '';
+
     public $status = '';
+
     public $leadFilter = '';
+
     public $sortField = 'due_date';
+
     public $sortDirection = 'asc';
 
     protected $queryString = ['search', 'status', 'leadFilter'];
@@ -44,7 +48,7 @@ class TaskList extends Component
     {
         $tasks = Task::query()
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%');
+                $query->where('name', 'like', '%'.$this->search.'%');
             })
             ->when($this->status, function ($query) {
                 $query->where('status', $this->status);

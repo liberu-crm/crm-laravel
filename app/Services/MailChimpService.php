@@ -11,10 +11,10 @@ class MailChimpService
 
     public function __construct()
     {
-        $this->client = new ApiClient();
+        $this->client = new ApiClient;
         $this->client->setConfig([
             'apiKey' => config('services.mailchimp.api_key'),
-            'server' => config('services.mailchimp.server_prefix')
+            'server' => config('services.mailchimp.server_prefix'),
         ]);
     }
 
@@ -26,6 +26,7 @@ class MailChimpService
     public function getLists()
     {
         $response = $this->client->lists->getAllLists();
+
         return collect($response->lists)->pluck('name', 'id')->toArray();
     }
 
@@ -121,6 +122,7 @@ class MailChimpService
     public function getCampaigns()
     {
         $response = $this->client->campaigns->list();
+
         return collect($response->campaigns)->map(function ($campaign) {
             return [
                 'id' => $campaign->id,

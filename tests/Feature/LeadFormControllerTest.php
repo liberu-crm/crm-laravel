@@ -4,9 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Contact;
 use App\Models\LandingPage;
-use App\Models\Lead;
 use App\Models\LeadForm;
-use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,6 +15,7 @@ class LeadFormControllerTest extends TestCase
     private function createForm(array $fields): LeadForm
     {
         $landingPage = LandingPage::factory()->create();
+
         return LeadForm::factory()->create([
             'landing_page_id' => $landingPage->id,
             'fields' => $fields,

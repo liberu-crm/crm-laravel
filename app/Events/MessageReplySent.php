@@ -10,8 +10,11 @@ class MessageReplySent
     use Dispatchable, SerializesModels;
 
     public string $messageId;
+
     public string $content;
+
     public string $channel;
+
     public int|string $accountId;
 
     public function __construct(string $messageId, string $content, string $channel, int|string $accountId)

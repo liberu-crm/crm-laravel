@@ -2,19 +2,18 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\AdvertisingAccount;
+use Exception;
 use FacebookAds\Api;
-use FacebookAds\Object\AdAccount;
-use FacebookAds\Object\Campaign;
-use FacebookAds\Object\Page;
-use FacebookAds\Object\Fields\PageFields;
 use FacebookAds\Exception\FacebookException;
+use FacebookAds\Object\AdAccount;
+use FacebookAds\Object\Page;
 use Illuminate\Support\Facades\Log;
 
 class FacebookAdsService
 {
     protected $api;
+
     protected $account;
 
     public function __construct(AdvertisingAccount $account)
@@ -37,7 +36,7 @@ class FacebookAdsService
     public function getCampaigns()
     {
         try {
-            $adAccount = new AdAccount('act_' . $this->account->account_id);
+            $adAccount = new AdAccount('act_'.$this->account->account_id);
             $campaigns = $adAccount->getCampaigns(['id', 'name', 'status']);
 
             $campaignData = [];
@@ -51,8 +50,8 @@ class FacebookAdsService
 
             return $campaignData;
         } catch (FacebookException $e) {
-            Log::error('Facebook API Error: ' . $e->getMessage());
-            throw new Exception('Failed to fetch campaigns: ' . $e->getMessage());
+            Log::error('Facebook API Error: '.$e->getMessage());
+            throw new Exception('Failed to fetch campaigns: '.$e->getMessage());
         }
     }
 
@@ -82,8 +81,8 @@ class FacebookAdsService
                 'post_id' => $result->post_id,
             ];
         } catch (FacebookException $e) {
-            Log::error('Facebook API Error: ' . $e->getMessage());
-            throw new Exception('Failed to create and schedule post: ' . $e->getMessage());
+            Log::error('Facebook API Error: '.$e->getMessage());
+            throw new Exception('Failed to create and schedule post: '.$e->getMessage());
         }
     }
 

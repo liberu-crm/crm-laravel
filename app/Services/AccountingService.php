@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\AccountingIntegration;
 use App\Exceptions\AccountingIntegrationException;
+use App\Models\AccountingIntegration;
 
 class AccountingService
 {
     protected $quickbooksService;
+
     protected $xeroService;
 
     public function __construct(QuickBooksService $quickbooksService, XeroService $xeroService)
@@ -24,7 +25,7 @@ class AccountingService
             case 'xero':
                 return $this->xeroService->syncInvoice($integration, $invoice);
             default:
-                throw new AccountingIntegrationException("Unsupported accounting platform");
+                throw new AccountingIntegrationException('Unsupported accounting platform');
         }
     }
 
@@ -36,7 +37,7 @@ class AccountingService
             case 'xero':
                 return $this->xeroService->syncPayment($integration, $payment);
             default:
-                throw new AccountingIntegrationException("Unsupported accounting platform");
+                throw new AccountingIntegrationException('Unsupported accounting platform');
         }
     }
 
@@ -48,7 +49,7 @@ class AccountingService
             case 'xero':
                 return $this->xeroService->connect($credentials);
             default:
-                throw new AccountingIntegrationException("Unsupported accounting platform");
+                throw new AccountingIntegrationException('Unsupported accounting platform');
         }
     }
 }

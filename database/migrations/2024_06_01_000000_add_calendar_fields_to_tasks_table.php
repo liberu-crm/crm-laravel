@@ -8,8 +8,7 @@ class AddCalendarFieldsToTasksTable extends Migration
 {
     public function up()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-        });
+        Schema::table('tasks', function (Blueprint $table) {});
     }
 
     public function down()

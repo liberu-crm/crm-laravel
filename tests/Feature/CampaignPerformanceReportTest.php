@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Services\MailChimpService;
-use Mockery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Tests\TestCase;
 
 class CampaignPerformanceReportTest extends TestCase
 {
@@ -20,7 +20,7 @@ class CampaignPerformanceReportTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function testGetCampaignPerformanceReport()
+    public function test_get_campaign_performance_report()
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -45,7 +45,7 @@ class CampaignPerformanceReportTest extends TestCase
         $this->assertEquals(0.5, $result['open_rate']);
     }
 
-    public function testGetABTestResultsReport()
+    public function test_get_ab_test_results_report()
     {
         $mockResults = [
             'campaign_id' => 'campaign_123',

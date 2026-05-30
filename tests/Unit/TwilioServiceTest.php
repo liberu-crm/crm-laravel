@@ -2,18 +2,19 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Services\TwilioService;
-use Twilio\Rest\Client;
-use Mockery;
-use Twilio\Exceptions\TwilioException;
 use Illuminate\Support\Facades\Log;
-use Twilio\Rest\Api\V2010\Account\CallList;
+use Mockery;
+use Tests\TestCase;
+use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Api\V2010\Account\CallInstance;
+use Twilio\Rest\Api\V2010\Account\CallList;
+use Twilio\Rest\Client;
 
 class TwilioServiceTest extends TestCase
 {
     protected $twilioService;
+
     protected $mockTwilioClient;
 
     protected function setUp(): void
@@ -23,11 +24,11 @@ class TwilioServiceTest extends TestCase
         $this->mockTwilioClient = Mockery::mock(Client::class);
         $this->mockTwilioClient->shouldReceive('getAccountSid')
             ->andReturn('ACtest1234567890123456789012345678');
-        $this->twilioService = new TwilioService();
+        $this->twilioService = new TwilioService;
         $this->twilioService->setClient($this->mockTwilioClient);
     }
 
-    public function testSendSMS()
+    public function test_send_sms()
     {
         $to = '+1234567890';
         $from = config('services.twilio.phone_number');
@@ -44,7 +45,7 @@ class TwilioServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testSendSMSWithRetry()
+    public function test_send_sms_with_retry()
     {
         $to = '+1234567890';
         $message = 'Test message';
@@ -65,7 +66,7 @@ class TwilioServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testMakeCall()
+    public function test_make_call()
     {
         $to = '+1234567890';
         $from = config('services.twilio.phone_number');
@@ -82,7 +83,7 @@ class TwilioServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testMakeCallWithRetry()
+    public function test_make_call_with_retry()
     {
         $to = '+1234567890';
         $url = 'http://example.com/twiml';
@@ -100,7 +101,7 @@ class TwilioServiceTest extends TestCase
         $this->twilioService->makeCall($to, $url);
     }
 
-    public function testHandleTwilioApiException()
+    public function test_handle_twilio_api_exception()
     {
         $to = '+1234567890';
         $message = 'Test message';
@@ -118,7 +119,7 @@ class TwilioServiceTest extends TestCase
         $this->twilioService->sendSMS($to, $message);
     }
 
-    public function testGetCallLogs()
+    public function test_get_call_logs()
     {
         $mockCallList = Mockery::mock(CallList::class);
         $mockCallList->shouldReceive('read')
@@ -132,7 +133,7 @@ class TwilioServiceTest extends TestCase
         $this->assertIsArray($result);
     }
 
-    public function testGetCallDetails()
+    public function test_get_call_details()
     {
         $callSid = 'CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
         $mockCallInstance = Mockery::mock(CallInstance::class);
@@ -150,7 +151,7 @@ class TwilioServiceTest extends TestCase
         $this->assertInstanceOf(CallInstance::class, $result);
     }
 
-    public function testInitiateCall()
+    public function test_initiate_call()
     {
         $to = '+1234567890';
         $from = config('services.twilio.phone_number');
@@ -167,7 +168,7 @@ class TwilioServiceTest extends TestCase
         $this->assertInstanceOf(CallInstance::class, $result);
     }
 
-    public function testStartCallRecording()
+    public function test_start_call_recording()
     {
         $callSid = 'CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
         $mockRecordingInstance = Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingInstance');
@@ -189,7 +190,7 @@ class TwilioServiceTest extends TestCase
         $this->assertInstanceOf('Twilio\Rest\Api\V2010\Account\Call\RecordingInstance', $result);
     }
 
-    public function testStopCallRecording()
+    public function test_stop_call_recording()
     {
         $callSid = 'CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
         $mockRecordingContext = Mockery::mock('Twilio\Rest\Api\V2010\Account\Call\RecordingContext');

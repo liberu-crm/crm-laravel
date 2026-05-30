@@ -2,31 +2,25 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\NoteResource\Pages\ListNotes;
 use App\Filament\App\Resources\NoteResource\Pages\CreateNote;
 use App\Filament\App\Resources\NoteResource\Pages\EditNote;
-use Filament\Forms;
+use App\Filament\App\Resources\NoteResource\Pages\ListNotes;
 use App\Models\Note;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\NoteResource\Pages;
-use App\Filament\App\Resources\NoteResource\RelationManagers;
+use Filament\Tables\Table;
 
 class NoteResource extends Resource
 {
     protected static ?string $model = Note::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {

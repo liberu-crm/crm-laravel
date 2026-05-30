@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Menu;
-use Spatie\Menu\Laravel\Menu as SpatieMenu;
 use Spatie\Menu\Laravel\Link;
+use Spatie\Menu\Laravel\Menu as SpatieMenu;
 
 class MenuService
 {
@@ -30,16 +30,16 @@ class MenuService
                 $submenu = SpatieMenu::new()
                     ->addClass('absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1')
                     ->addItemClass('block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100');
-    
+
                 $this->createMenuItems($item->children)->each(function ($subItem) use ($submenu) {
                     $submenu->add($subItem);
                 });
-    
+
                 return SpatieMenu::new()
                     ->add(Link::to($item->url, $item->name)->addClass('relative group'))
                     ->add($submenu->addClass('hidden group-hover:block'));
             }
-    
+
             return Link::to($item->url, $item->name);
         });
     }

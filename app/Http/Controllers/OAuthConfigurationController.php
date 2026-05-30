@@ -6,6 +6,7 @@ use App\Models\OAuthConfiguration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Socialite\Facades\Socialite;
 
 class OAuthConfigurationController extends Controller
@@ -15,15 +16,15 @@ class OAuthConfigurationController extends Controller
      * and the scopes needed for posting content.
      */
     protected $serviceToDriver = [
-        'facebook'  => 'facebook',
-        'twitter'   => 'twitter-oauth-2',
+        'facebook' => 'facebook',
+        'twitter' => 'twitter-oauth-2',
         'instagram' => 'facebook',        // Instagram posting uses Facebook Graph API
-        'linkedin'  => 'linkedin-openid',
-        'youtube'   => 'google',          // YouTube uses Google OAuth
-        'google'    => 'google',
-        'gmail'     => 'google',
-        'whatsapp'  => 'whatsapp',
-        'outlook'   => 'microsoft',
+        'linkedin' => 'linkedin-openid',
+        'youtube' => 'google',          // YouTube uses Google OAuth
+        'google' => 'google',
+        'gmail' => 'google',
+        'whatsapp' => 'whatsapp',
+        'outlook' => 'microsoft',
     ];
 
     protected $serviceScopes = [
@@ -68,6 +69,7 @@ class OAuthConfigurationController extends Controller
     public function index()
     {
         $configurations = OAuthConfiguration::where('user_id', Auth::id())->get();
+
         return view('oauth.configurations.index', compact('configurations'));
     }
 
@@ -113,9 +115,10 @@ class OAuthConfigurationController extends Controller
 
             return $socialite->redirect();
         } catch (\Exception $e) {
-            Log::error("OAuth redirect failed for {$service}: " . $e->getMessage());
+            Log::error("OAuth redirect failed for {$service}: ".$e->getMessage());
+
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'Failed to start OAuth for ' . ucfirst($service) . '. Please ensure the credentials are configured in settings.');
+                ->with('error', 'Failed to start OAuth for '.ucfirst($service).'. Please ensure the credentials are configured in settings.');
         }
     }
 
@@ -130,24 +133,24 @@ class OAuthConfigurationController extends Controller
 
             $additionalSettings = array_merge($config->additional_settings ?? [], [
                 'provider_id' => $socialiteUser->getId(),
-                'email'       => $socialiteUser->getEmail(),
-                'name'        => $socialiteUser->getName(),
-                'avatar'      => $socialiteUser->getAvatar(),
+                'email' => $socialiteUser->getEmail(),
+                'name' => $socialiteUser->getName(),
+                'avatar' => $socialiteUser->getAvatar(),
             ]);
 
             $updateData = [
-                'is_active'          => true,
+                'is_active' => true,
                 'additional_settings' => $additionalSettings,
             ];
 
             // Store tokens if the columns exist (added by migration)
-            if (\Illuminate\Support\Facades\Schema::hasColumn('oauth_configurations', 'access_token')) {
+            if (Schema::hasColumn('oauth_configurations', 'access_token')) {
                 $updateData['access_token'] = $socialiteUser->token;
             }
-            if (\Illuminate\Support\Facades\Schema::hasColumn('oauth_configurations', 'refresh_token')) {
+            if (Schema::hasColumn('oauth_configurations', 'refresh_token')) {
                 $updateData['refresh_token'] = $socialiteUser->refreshToken;
             }
-            if (\Illuminate\Support\Facades\Schema::hasColumn('oauth_configurations', 'token_expires_at')) {
+            if (Schema::hasColumn('oauth_configurations', 'token_expires_at')) {
                 $updateData['token_expires_at'] = isset($socialiteUser->expiresIn)
                     ? now()->addSeconds((int) $socialiteUser->expiresIn)
                     : null;
@@ -156,17 +159,19 @@ class OAuthConfigurationController extends Controller
             $config->update($updateData);
 
             return redirect()->route('oauth.configurations.index')
-                ->with('success', ucfirst($service) . ' account connected successfully!');
+                ->with('success', ucfirst($service).' account connected successfully!');
         } catch (\Exception $e) {
-            Log::error("OAuth callback failed for {$service}: " . $e->getMessage());
+            Log::error("OAuth callback failed for {$service}: ".$e->getMessage());
+
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'Failed to connect account: ' . $e->getMessage());
+                ->with('error', 'Failed to connect account: '.$e->getMessage());
         }
     }
 
     public function destroy(OAuthConfiguration $configuration)
     {
         $configuration->delete();
+
         return redirect()->route('oauth.configurations.index')
             ->with('success', 'Configuration removed successfully');
     }

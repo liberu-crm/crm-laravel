@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Activity;
 use App\Models\Contact;
 use App\Models\Deal;
-use App\Models\Activity;
-use App\Models\Workflow;
 use App\Models\Lead;
 use Illuminate\Support\Facades\DB;
 
@@ -16,14 +15,14 @@ class ReportingService
         $query = Contact::select('contacts.*', DB::raw('COUNT(activities.id) as activities_count'))
             ->leftJoin('activities', function ($join) {
                 $join->on('activities.activitable_id', '=', 'contacts.id')
-                     ->where('activities.activitable_type', '=', Contact::class);
+                    ->where('activities.activitable_type', '=', Contact::class);
             });
 
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+        if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
             $query->whereBetween('activities.created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-        if (!empty($filters['contact_id'])) {
+        if (! empty($filters['contact_id'])) {
             $query->where('contacts.id', $filters['contact_id']);
         }
 
@@ -41,11 +40,11 @@ class ReportingService
             DB::raw('AVG(probability) as avg_probability')
         );
 
-        if (!empty($filters['pipeline_id'])) {
+        if (! empty($filters['pipeline_id'])) {
             $query->where('pipeline_id', $filters['pipeline_id']);
         }
 
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+        if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
@@ -64,7 +63,7 @@ class ReportingService
             DB::raw('COUNT(*) as count')
         );
 
-        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+        if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
@@ -108,7 +107,8 @@ class ReportingService
             ->orderBy('score_range')
             ->get()
             ->map(function ($item) {
-                $item->score_range = $item->score_range . ' - ' . ($item->score_range + 9);
+                $item->score_range = $item->score_range.' - '.($item->score_range + 9);
+
                 return $item;
             });
 
@@ -128,9 +128,9 @@ class ReportingService
                     [
                         'label' => ucfirst(str_replace('_', ' ', $valueKey)),
                         'data' => $values,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 }

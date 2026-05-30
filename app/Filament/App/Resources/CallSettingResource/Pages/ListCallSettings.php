@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\CallSettingResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\CallSettingResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCallSettings extends ListRecords

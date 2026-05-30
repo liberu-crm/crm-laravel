@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['entity_type', 'type']);
             $table->index('created_by');
         });
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->foreignId('team_id')->nullable()->constrained()->onDelete('set null');
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['period_start', 'period_end']);
             $table->index('forecast_type');
         });

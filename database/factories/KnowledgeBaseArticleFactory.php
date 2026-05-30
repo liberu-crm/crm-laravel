@@ -29,7 +29,7 @@ class KnowledgeBaseArticleFactory extends Factory
             'meta_title' => $this->faker->optional()->sentence(),
             'meta_description' => $this->faker->optional()->paragraph(),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

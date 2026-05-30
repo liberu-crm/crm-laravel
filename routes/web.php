@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ContactListController;
+use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
-use App\Http\Controllers\EmailTrackingController;
-use App\Http\Controllers\TwilioController;
-use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\TeamInvitationController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TwilioController;
+use Illuminate\Support\Facades\Route;
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
@@ -42,7 +42,7 @@ Route::get('/email/track/link/{tracking_id}', [EmailTrackingController::class, '
 Route::middleware(['auth'])->group(function () {
     // Route::get('/app', [HomeController::class, 'app'])->name('app');
     // Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
-    
+
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('knowledge-base.index');
     Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show'])->name('knowledge-base.show');
@@ -64,4 +64,4 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::post('/forms/{leadForm}/submit', [\App\Http\Controllers\LeadFormController::class, 'submit'])->name('forms.submit');
+Route::post('/forms/{leadForm}/submit', [LeadFormController::class, 'submit'])->name('forms.submit');

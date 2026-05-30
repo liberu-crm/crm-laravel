@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use InvalidArgumentException;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Notifications\Notifiable;
+use InvalidArgumentException;
 
 class Lead extends Model
 {
@@ -97,7 +97,7 @@ class Lead extends Model
 
     public function setLifecycleStageAttribute($value)
     {
-        if (!in_array($value, self::LIFECYCLE_STAGES)) {
+        if (! in_array($value, self::LIFECYCLE_STAGES)) {
             throw new InvalidArgumentException("Invalid lifecycle stage: {$value}");
         }
         $this->attributes['lifecycle_stage'] = $value;
@@ -116,8 +116,8 @@ class Lead extends Model
     {
         return $query->where(function ($query) use ($search) {
             $query->whereFullText(['status', 'source', 'lifecycle_stage'], $search)
-                ->orWhere('potential_value', 'like', '%' . $search . '%')
-                ->orWhere('expected_close_date', 'like', '%' . $search . '%')
+                ->orWhere('potential_value', 'like', '%'.$search.'%')
+                ->orWhere('expected_close_date', 'like', '%'.$search.'%')
                 ->orWhereHas('contact', function ($query) use ($search) {
                     $query->whereFullText(['name', 'email'], $search);
                 })

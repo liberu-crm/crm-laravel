@@ -39,8 +39,8 @@ class EditTeam extends EditTenantProfile
         $this->validate();
 
         $team = Team::forceCreate([
-            'user_id'       => Filament::auth()->id(),
-            'name'          => $this->name,
+            'user_id' => Filament::auth()->id(),
+            'name' => $this->name,
             'personal_team' => false,
         ]);
 

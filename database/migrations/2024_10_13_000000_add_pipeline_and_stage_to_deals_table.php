@@ -8,7 +8,7 @@ class AddPipelineAndStageToDealsTable extends Migration
 {
     public function up()
     {
-        if (!Schema::hasTable('deals')) {
+        if (! Schema::hasTable('deals')) {
             Schema::create('deals', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -16,7 +16,7 @@ class AddPipelineAndStageToDealsTable extends Migration
                 $table->string('stage')->nullable();
                 $table->date('close_date')->nullable();
                 $table->integer('probability')->nullable();
-//                $table->foreignId('contact_id')->nullable()->constrained()->onDelete('set null');
+                //                $table->foreignId('contact_id')->nullable()->constrained()->onDelete('set null');
                 $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
                 $table->timestamps();
             });

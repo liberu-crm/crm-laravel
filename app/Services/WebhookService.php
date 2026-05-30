@@ -13,7 +13,7 @@ class WebhookService
     /**
      * Dispatch an event to all active webhooks that are subscribed to it.
      *
-     * @param  string $event  One of the event names defined in Webhook::EVENTS.
+     * @param  string  $event  One of the event names defined in Webhook::EVENTS.
      * @param  array  $payload  The data to send with the event.
      */
     public function dispatch(string $event, array $payload): void
@@ -33,9 +33,9 @@ class WebhookService
     public function send(Webhook $webhook, string $event, array $payload): bool
     {
         $body = json_encode([
-            'event'      => $event,
-            'timestamp'  => now()->toIso8601String(),
-            'payload'    => $payload,
+            'event' => $event,
+            'timestamp' => now()->toIso8601String(),
+            'payload' => $payload,
         ]);
 
         $signature = $this->sign($body, $webhook->secret);
@@ -47,17 +47,17 @@ class WebhookService
         try {
             $response = Http::timeout(10)
                 ->withHeaders([
-                    'Content-Type'        => 'application/json',
-                    'X-Webhook-Event'     => $event,
+                    'Content-Type' => 'application/json',
+                    'X-Webhook-Event' => $event,
                     'X-Webhook-Signature' => $signature,
-                    'X-Webhook-Id'        => (string) $webhook->id,
+                    'X-Webhook-Id' => (string) $webhook->id,
                 ])
                 ->send('POST', $webhook->url, ['body' => $body]);
 
             if ($response->successful()) {
                 $webhook->update([
                     'last_triggered_at' => now(),
-                    'failure_count'     => 0,
+                    'failure_count' => 0,
                 ]);
 
                 return true;
@@ -76,17 +76,17 @@ class WebhookService
     /**
      * Register a new webhook endpoint.
      *
-     * @param  array $data  Keys: name, url, events (array), secret (optional).
+     * @param  array  $data  Keys: name, url, events (array), secret (optional).
      */
     public function register(array $data): Webhook
     {
         return Webhook::create([
-            'name'      => $data['name'],
-            'url'       => $data['url'],
-            'events'    => $data['events'],
-            'secret'    => $data['secret'] ?? Str::random(32),
+            'name' => $data['name'],
+            'url' => $data['url'],
+            'events' => $data['events'],
+            'secret' => $data['secret'] ?? Str::random(32),
             'is_active' => $data['is_active'] ?? true,
-            'team_id'   => $data['team_id'] ?? null,
+            'team_id' => $data['team_id'] ?? null,
         ]);
     }
 
@@ -96,11 +96,11 @@ class WebhookService
     public function update(Webhook $webhook, array $data): Webhook
     {
         $webhook->update(array_filter([
-            'name'      => $data['name'] ?? null,
-            'url'       => $data['url'] ?? null,
-            'events'    => $data['events'] ?? null,
+            'name' => $data['name'] ?? null,
+            'url' => $data['url'] ?? null,
+            'events' => $data['events'] ?? null,
             'is_active' => $data['is_active'] ?? null,
-        ], fn ($v) => !is_null($v)));
+        ], fn ($v) => ! is_null($v)));
 
         return $webhook->refresh();
     }
@@ -119,9 +119,9 @@ class WebhookService
     /**
      * Verify an incoming webhook signature.
      *
-     * @param  string $body       Raw request body.
-     * @param  string $signature  Value from X-Webhook-Signature header.
-     * @param  string $secret     The webhook's secret.
+     * @param  string  $body  Raw request body.
+     * @param  string  $signature  Value from X-Webhook-Signature header.
+     * @param  string  $secret  The webhook's secret.
      */
     public function verifySignature(string $body, string $signature, string $secret): bool
     {
@@ -138,13 +138,13 @@ class WebhookService
     {
         $host = Uri::of($url)->host();
 
-        if (!$host) {
+        if (! $host) {
             return;
         }
 
         $ip = gethostbyname($host);
 
-        if ($ip !== $host && !filter_var($ip, FILTER_VALIDATE_IP,
+        if ($ip !== $host && ! filter_var($ip, FILTER_VALIDATE_IP,
             FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
             throw new \RuntimeException(
                 'Webhook URL resolves to an internal IP address.'
@@ -157,11 +157,11 @@ class WebhookService
      */
     private function sign(string $body, ?string $secret): string
     {
-        if (!$secret) {
+        if (! $secret) {
             return '';
         }
 
-        return 'sha256=' . hash_hmac('sha256', $body, $secret);
+        return 'sha256='.hash_hmac('sha256', $body, $secret);
     }
 
     /**
@@ -178,12 +178,12 @@ class WebhookService
             $updates['is_active'] = false;
             Log::warning("Webhook #{$webhook->id} auto-disabled after {$failures} consecutive failures.", [
                 'webhook_url' => $webhook->url,
-                'reason'      => $reason,
+                'reason' => $reason,
             ]);
         } else {
             Log::warning("Webhook #{$webhook->id} delivery failed ({$failures}/10).", [
                 'webhook_url' => $webhook->url,
-                'reason'      => $reason,
+                'reason' => $reason,
             ]);
         }
 

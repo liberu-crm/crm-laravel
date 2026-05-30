@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\LiveChat;
 use App\Models\Contact;
+use App\Models\LiveChat;
 use App\Models\Message;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class LiveChatService
@@ -16,7 +17,7 @@ class LiveChatService
     {
         // Try to find existing contact
         $contact = null;
-        if (!empty($visitorData['email'])) {
+        if (! empty($visitorData['email'])) {
             $contact = Contact::where('email', $visitorData['email'])->first();
         }
 
@@ -62,7 +63,7 @@ class LiveChatService
         ]);
 
         // Create or update contact if we have email
-        if ($chat->visitor_email && !$chat->contact_id) {
+        if ($chat->visitor_email && ! $chat->contact_id) {
             $contact = Contact::firstOrCreate(
                 ['email' => $chat->visitor_email],
                 ['name' => $chat->visitor_name]
@@ -89,7 +90,7 @@ class LiveChatService
     /**
      * Get active chats for an agent
      */
-    public function getActiveChats(?int $userId = null): \Illuminate\Database\Eloquent\Collection
+    public function getActiveChats(?int $userId = null): Collection
     {
         $query = LiveChat::where('status', LiveChat::STATUS_ACTIVE)
             ->with(['contact', 'user', 'messages'])
@@ -105,7 +106,7 @@ class LiveChatService
     /**
      * Get waiting chats
      */
-    public function getWaitingChats(): \Illuminate\Database\Eloquent\Collection
+    public function getWaitingChats(): Collection
     {
         return LiveChat::where('status', LiveChat::STATUS_WAITING)
             ->orderBy('started_at', 'asc')
@@ -143,10 +144,10 @@ class LiveChatService
     /**
      * Transfer chat to another agent
      */
-    public function transferChat(LiveChat $chat, int $newUserId, string $reason = null): void
+    public function transferChat(LiveChat $chat, int $newUserId, ?string $reason = null): void
     {
         $oldUserId = $chat->user_id;
-        
+
         $chat->update(['user_id' => $newUserId]);
 
         // Log the transfer
@@ -157,7 +158,7 @@ class LiveChatService
             'reason' => $reason,
             'timestamp' => now()->toIso8601String(),
         ];
-        
+
         $chat->update(['metadata' => $metadata]);
     }
 }

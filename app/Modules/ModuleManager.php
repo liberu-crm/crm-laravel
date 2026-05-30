@@ -2,15 +2,15 @@
 
 namespace App\Modules;
 
-use Exception;
 use App\Modules\Contracts\ModuleInterface;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class ModuleManager
 {
     protected Collection $modules;
+
     protected array $enabledModules = [];
 
     public function __construct()
@@ -32,7 +32,7 @@ class ModuleManager
      */
     public function enabled(): Collection
     {
-        return $this->modules->filter(fn($module) => $module->isEnabled());
+        return $this->modules->filter(fn ($module) => $module->isEnabled());
     }
 
     /**
@@ -40,7 +40,7 @@ class ModuleManager
      */
     public function disabled(): Collection
     {
-        return $this->modules->filter(fn($module) => !$module->isEnabled());
+        return $this->modules->filter(fn ($module) => ! $module->isEnabled());
     }
 
     /**
@@ -48,7 +48,7 @@ class ModuleManager
      */
     public function get(string $name): ?ModuleInterface
     {
-        return $this->modules->first(fn($module) => $module->getName() === $name);
+        return $this->modules->first(fn ($module) => $module->getName() === $name);
     }
 
     /**
@@ -56,7 +56,7 @@ class ModuleManager
      */
     public function has(string $name): bool
     {
-        return $this->modules->contains(fn($module) => $module->getName() === $name);
+        return $this->modules->contains(fn ($module) => $module->getName() === $name);
     }
 
     /**
@@ -65,17 +65,18 @@ class ModuleManager
     public function enable(string $name): bool
     {
         $module = $this->get($name);
-        
-        if (!$module) {
+
+        if (! $module) {
             return false;
         }
 
         // Check dependencies
-        if (!$this->checkDependencies($module)) {
+        if (! $this->checkDependencies($module)) {
             throw new Exception("Module {$name} has unmet dependencies.");
         }
 
         $module->enable();
+
         return true;
     }
 
@@ -85,8 +86,8 @@ class ModuleManager
     public function disable(string $name): bool
     {
         $module = $this->get($name);
-        
-        if (!$module) {
+
+        if (! $module) {
             return false;
         }
 
@@ -96,6 +97,7 @@ class ModuleManager
         }
 
         $module->disable();
+
         return true;
     }
 
@@ -105,17 +107,18 @@ class ModuleManager
     public function install(string $name): bool
     {
         $module = $this->get($name);
-        
-        if (!$module) {
+
+        if (! $module) {
             return false;
         }
 
         // Check dependencies
-        if (!$this->checkDependencies($module)) {
+        if (! $this->checkDependencies($module)) {
             throw new Exception("Module {$name} has unmet dependencies.");
         }
 
         $module->install();
+
         return true;
     }
 
@@ -125,8 +128,8 @@ class ModuleManager
     public function uninstall(string $name): bool
     {
         $module = $this->get($name);
-        
-        if (!$module) {
+
+        if (! $module) {
             return false;
         }
 
@@ -136,6 +139,7 @@ class ModuleManager
         }
 
         $module->uninstall();
+
         return true;
     }
 
@@ -153,8 +157,8 @@ class ModuleManager
     protected function loadModules(): void
     {
         $modulesPath = app_path('Modules');
-        
-        if (!File::exists($modulesPath)) {
+
+        if (! File::exists($modulesPath)) {
             return;
         }
 
@@ -172,9 +176,9 @@ class ModuleManager
     protected function loadModule(string $moduleName, string $modulePath): void
     {
         $moduleClass = "App\\Modules\\{$moduleName}\\{$moduleName}Module";
-        
+
         if (class_exists($moduleClass)) {
-            $module = new $moduleClass();
+            $module = new $moduleClass;
             if ($module instanceof ModuleInterface) {
                 $this->register($module);
             }
@@ -188,7 +192,7 @@ class ModuleManager
     {
         foreach ($module->getDependencies() as $dependency) {
             $dependencyModule = $this->get($dependency);
-            if (!$dependencyModule || !$dependencyModule->isEnabled()) {
+            if (! $dependencyModule || ! $dependencyModule->isEnabled()) {
                 return false;
             }
         }
@@ -212,8 +216,8 @@ class ModuleManager
     public function getModuleInfo(string $name): array
     {
         $module = $this->get($name);
-        
-        if (!$module) {
+
+        if (! $module) {
             return [];
         }
 

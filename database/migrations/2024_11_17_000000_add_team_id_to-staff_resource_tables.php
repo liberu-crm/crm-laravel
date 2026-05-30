@@ -9,12 +9,12 @@ class AddTeamIdToStaffResourceTables extends Migration
     public function up()
     {
         $tables = [
-	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets','oauth_configurations'
+            'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
+            'social_media_posts', 'tickets', 'oauth_configurations',
         ];
 
         foreach ($tables as $table) {
-            if (!Schema::hasColumn($table, 'team_id')) {
+            if (! Schema::hasColumn($table, 'team_id')) {
                 Schema::table($table, function (Blueprint $table) {
                     $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->default(1);
                 });
@@ -26,12 +26,9 @@ class AddTeamIdToStaffResourceTables extends Migration
     {
 
         $tables = [
-	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets','oauth_configurations'
+            'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
+            'social_media_posts', 'tickets', 'oauth_configurations',
         ];
-
-
-
 
         foreach ($tables as $table) {
             if (Schema::hasColumn($table, 'team_id')) {

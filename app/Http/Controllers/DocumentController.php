@@ -14,8 +14,8 @@ class DocumentController extends Controller
             'file' => [
                 'required',
                 'file',
-                'max:' . config('documents.max_size'),
-                'mimes:' . implode(',', array_unique(array_values(config('documents.extension_map')))),
+                'max:'.config('documents.max_size'),
+                'mimes:'.implode(',', array_unique(array_values(config('documents.extension_map')))),
             ],
             'documentable_id' => 'required|integer',
             'documentable_type' => 'required|string',
@@ -47,8 +47,8 @@ class DocumentController extends Controller
             'file' => [
                 'required',
                 'file',
-                'max:' . config('documents.max_size'),
-                'mimes:' . implode(',', array_unique(array_values(config('documents.extension_map')))),
+                'max:'.config('documents.max_size'),
+                'mimes:'.implode(',', array_unique(array_values(config('documents.extension_map')))),
             ],
         ]);
 

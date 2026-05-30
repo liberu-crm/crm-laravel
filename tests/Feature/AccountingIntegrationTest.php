@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\AccountingIntegration;
+use App\Models\User;
 use App\Services\AccountingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class AccountingIntegrationTest extends TestCase
 {
@@ -21,7 +21,7 @@ class AccountingIntegrationTest extends TestCase
         $this->app->instance(AccountingService::class, $this->mockAccountingService);
     }
 
-    public function testAccountingIntegrationCanBeCreated()
+    public function test_accounting_integration_can_be_created()
     {
         $user = User::factory()->create();
 
@@ -33,7 +33,7 @@ class AccountingIntegrationTest extends TestCase
         ]);
     }
 
-    public function testAccountingIntegrationBelongsToUser()
+    public function test_accounting_integration_belongs_to_user()
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
@@ -41,7 +41,7 @@ class AccountingIntegrationTest extends TestCase
         $this->assertEquals($user->id, $integration->user->id);
     }
 
-    public function testAccountingServiceConnectPlatformMock()
+    public function test_accounting_service_connect_platform_mock()
     {
         $user = User::factory()->create();
 
@@ -55,7 +55,7 @@ class AccountingIntegrationTest extends TestCase
         $this->assertEquals('fake_token', $result['access_token']);
     }
 
-    public function testAccountingIntegrationCanBeDeleted()
+    public function test_accounting_integration_can_be_deleted()
     {
         $integration = AccountingIntegration::factory()->create();
         $id = $integration->id;

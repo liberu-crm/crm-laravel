@@ -16,7 +16,7 @@ class LeadScoringServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->leadScoringService = new LeadScoringService();
+        $this->leadScoringService = new LeadScoringService;
     }
 
     public function test_score_calculation_scenarios(): void

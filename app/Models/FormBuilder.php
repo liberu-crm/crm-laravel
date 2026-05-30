@@ -23,11 +23,11 @@ class FormBuilder extends Model
     ];
 
     protected $casts = [
-        'fields'           => 'array',
+        'fields' => 'array',
         'validation_rules' => 'array',
         'conditional_logic' => 'array',
-        'steps'            => 'array',
-        'is_multi_step'    => 'boolean',
+        'steps' => 'array',
+        'is_multi_step' => 'boolean',
     ];
 
     public function team()
@@ -39,18 +39,17 @@ class FormBuilder extends Model
      * Return the fields for a specific step (1-based index).
      * Falls back to all fields when the form is not multi-step.
      *
-     * @param  int $step  Step number (1-based).
-     * @return array
+     * @param  int  $step  Step number (1-based).
      */
     public function getFieldsForStep(int $step): array
     {
-        if (!$this->is_multi_step || empty($this->steps)) {
+        if (! $this->is_multi_step || empty($this->steps)) {
             return $this->fields ?? [];
         }
 
         $stepConfig = collect($this->steps)->firstWhere('step', $step);
 
-        if (!$stepConfig || empty($stepConfig['field_keys'])) {
+        if (! $stepConfig || empty($stepConfig['field_keys'])) {
             return [];
         }
 
@@ -78,8 +77,8 @@ class FormBuilder extends Model
      *   "logic": "AND" | "OR"   (default "AND")
      * }
      *
-     * @param  array $values  Current field values keyed by field key.
-     * @return array<string, bool>  Map of field_key => visible.
+     * @param  array  $values  Current field values keyed by field key.
+     * @return array<string, bool> Map of field_key => visible.
      */
     public function evaluateConditionalLogic(array $values): array
     {
@@ -93,12 +92,12 @@ class FormBuilder extends Model
         }
 
         foreach ($this->conditional_logic ?? [] as $rule) {
-            $fieldKey   = $rule['field_key'] ?? null;
-            $action     = $rule['action'] ?? 'show';
+            $fieldKey = $rule['field_key'] ?? null;
+            $action = $rule['action'] ?? 'show';
             $conditions = $rule['conditions'] ?? [];
-            $logic      = strtoupper($rule['logic'] ?? 'AND');
+            $logic = strtoupper($rule['logic'] ?? 'AND');
 
-            if (!$fieldKey || empty($conditions)) {
+            if (! $fieldKey || empty($conditions)) {
                 continue;
             }
 
@@ -109,12 +108,12 @@ class FormBuilder extends Model
 
             $passes = $logic === 'OR'
                 ? in_array(true, $results, true)
-                : !in_array(false, $results, true);
+                : ! in_array(false, $results, true);
 
             if ($action === 'show') {
                 $visibility[$fieldKey] = $passes;
             } elseif ($action === 'hide') {
-                $visibility[$fieldKey] = !$passes;
+                $visibility[$fieldKey] = ! $passes;
             }
         }
 
@@ -126,20 +125,20 @@ class FormBuilder extends Model
      */
     private function evaluateCondition(array $condition, array $values): bool
     {
-        $field    = $condition['field']    ?? null;
+        $field = $condition['field'] ?? null;
         $operator = $condition['operator'] ?? '==';
-        $expected = $condition['value']    ?? null;
-        $actual   = $values[$field]        ?? null;
+        $expected = $condition['value'] ?? null;
+        $actual = $values[$field] ?? null;
 
         return match ($operator) {
-            '=='  => $actual == $expected,
-            '!='  => $actual != $expected,
-            '>'   => is_numeric($actual) && is_numeric($expected) && $actual > $expected,
-            '<'   => is_numeric($actual) && is_numeric($expected) && $actual < $expected,
-            '>='  => is_numeric($actual) && is_numeric($expected) && $actual >= $expected,
-            '<='  => is_numeric($actual) && is_numeric($expected) && $actual <= $expected,
+            '==' => $actual == $expected,
+            '!=' => $actual != $expected,
+            '>' => is_numeric($actual) && is_numeric($expected) && $actual > $expected,
+            '<' => is_numeric($actual) && is_numeric($expected) && $actual < $expected,
+            '>=' => is_numeric($actual) && is_numeric($expected) && $actual >= $expected,
+            '<=' => is_numeric($actual) && is_numeric($expected) && $actual <= $expected,
             'contains' => str_contains((string) $actual, (string) $expected),
-            default    => false,
+            default => false,
         };
     }
 }

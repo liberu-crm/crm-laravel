@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Contact;
 use App\Models\Company;
-use Tests\TestCase;
+use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ContactTest extends TestCase
 {
