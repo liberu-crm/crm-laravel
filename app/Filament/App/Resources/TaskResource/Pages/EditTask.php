@@ -8,6 +8,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditTask extends EditRecord
 {
@@ -20,18 +21,17 @@ class EditTask extends EditRecord
         ];
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return array_merge(
-            parent::getFormSchema(),
-            [
+        return parent::form($schema)
+            ->components([
+                ...parent::form($schema)->getComponents(),
                 DateTimePicker::make('reminder_date')
                     ->label('Reminder Date'),
                 Toggle::make('sync_to_google_calendar')
                     ->label('Sync to Google Calendar')
                     ->default(false),
-            ]
-        );
+            ]);
     }
 
     protected function afterSave(): void

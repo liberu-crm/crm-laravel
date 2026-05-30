@@ -38,9 +38,12 @@ class Contact extends Model
 
     protected $touches = ['team'];
 
-    protected $casts = [
-        'custom_fields' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'custom_fields' => 'array',
+        ];
+    }
 
     public function notes(): HasMany
     {
@@ -77,87 +80,61 @@ class Contact extends Model
         return $this->morphMany(Document::class, 'documentable');
     }
 
-    /**
-     * The "booted" method of the model.
-     *
-     * @return void
-     */
-    protected static function booted()
+    protected static function booted(): void
     {
-        // Commented out the useIndex call as the index doesn't exist yet
-        // static::addGlobalScope('index_hint', function ($builder) {
-        //     $builder->useIndex('contacts_email_index');
-        // });
-
-        static::creating(function ($contact) {
-            $contact->associateWithCompany();
-        });
-
-        static::updating(function ($contact) {
-            $contact->associateWithCompany();
-        });
+        static::creating(fn ($contact) => $contact->associateWithCompany());
+        static::updating(fn ($contact) => $contact->associateWithCompany());
     }
 
-    /**
-     * Associate the contact with a company based on email domain.
-     */
-    protected function associateWithCompany()
+    protected function associateWithCompany(): void
     {
         if ($this->email && ! $this->company_id) {
             $domain = Str::after($this->email, '@');
-            $company = Company::firstOrCreate(['domain' => $domain], ['name' => Str::before($domain, '.')]);
+            $company = Company::firstOrCreate(
+                ['domain' => $domain],
+                ['name' => Str::before($domain, '.')]
+            );
             $this->company()->associate($company);
         }
     }
 
-    /**
-     * Scope a query to search contacts based on given criteria.
-     *
-     * @param  Builder  $query
-     * @param  string  $search
-     * @return Builder
-     */
-    public function scopeSearch($query, $search)
+    public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->where(function ($query) use ($search) {
-            $query->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
+        return $query->where(function (Builder $q) use ($search) {
+            $q->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
                 ->orWhere('company_size', 'like', '%'.$search.'%')
                 ->orWhere('annual_revenue', 'like', '%'.$search.'%')
-                ->orWhereHas('company', function ($query) use ($search) {
-                    $query->whereFullText('name', $search);
-                })
-                ->orWhere(function ($query) use ($search) {
-                    $query->whereJsonContains('custom_fields', $search);
-                });
+                ->orWhereHas('company', fn (Builder $cq) => $cq->whereFullText('name', $search))
+                ->orWhere(fn (Builder $cq) => $cq->whereJsonContains('custom_fields', $search));
         });
     }
 
-    public function scopeFilterByStatus($query, $status)
+    public function scopeFilterByStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);
     }
 
-    public function scopeFilterBySource($query, $source)
+    public function scopeFilterBySource(Builder $query, string $source): Builder
     {
         return $query->where('source', $source);
     }
 
-    public function scopeFilterByLifecycleStage($query, $stage)
+    public function scopeFilterByLifecycleStage(Builder $query, string $stage): Builder
     {
         return $query->where('lifecycle_stage', $stage);
     }
 
-    public function scopeFilterByIndustry($query, $industry)
+    public function scopeFilterByIndustry(Builder $query, string $industry): Builder
     {
         return $query->where('industry', $industry);
     }
 
-    public function scopeFilterByCompanySize($query, $size)
+    public function scopeFilterByCompanySize(Builder $query, mixed $size): Builder
     {
         return $query->where('company_size', $size);
     }
 
-    public function scopeFilterByAnnualRevenue($query, $min, $max)
+    public function scopeFilterByAnnualRevenue(Builder $query, float $min, float $max): Builder
     {
         return $query->whereBetween('annual_revenue', [$min, $max]);
     }

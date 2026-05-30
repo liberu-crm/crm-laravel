@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\TaskList;
+use App\Livewire\TaskList;
 use App\Models\Lead;
 use App\Models\Task;
 use App\Models\User;

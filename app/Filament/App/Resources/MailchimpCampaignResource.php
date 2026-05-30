@@ -38,7 +38,7 @@ class MailchimpCampaignResource extends Resource
                         'abtest' => 'A/B Test',
                     ])
                     ->required()
-                    ->reactive(),
+                    ->live(),
                 TextInput::make('subject_line')
                     ->required()
                     ->maxLength(255)

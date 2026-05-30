@@ -54,7 +54,7 @@ class SocialMediaPostResource extends Resource
                                     ->required()
                                     ->maxLength(65535)
                                     ->helperText('Write your post content here. Character limits vary by platform.')
-                                    ->reactive()
+                                    ->live()
                                     ->afterStateUpdated(fn ($state, callable $set) => $set('character_count', strlen($state))),
                                 TextInput::make('character_count')
                                     ->label('Character Count')
