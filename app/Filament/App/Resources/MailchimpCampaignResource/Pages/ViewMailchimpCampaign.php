@@ -3,8 +3,8 @@
 namespace App\Filament\App\Resources\MailchimpCampaignResource\Pages;
 
 use App\Filament\App\Resources\MailchimpCampaignResource;
-use Filament\Resources\Pages\Page;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Resources\Pages\Page;
 
 class ViewMailchimpCampaign extends Page
 {

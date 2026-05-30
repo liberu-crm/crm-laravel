@@ -1,0 +1,1261 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to method assignUserToDefaultTeam\(\) on an unknown class App\\Actions\\Fortify\\TeamManagementService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/Fortify/CreateNewUserWithTeams.php
+
+		-
+			message: '#^Call to method createPersonalTeamForUser\(\) on an unknown class App\\Actions\\Fortify\\TeamManagementService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/Fortify/CreateNewUserWithTeams.php
+
+		-
+			message: '#^Class App\\Actions\\Fortify\\TeamManagementService not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/Fortify/CreateNewUserWithTeams.php
+
+		-
+			message: '#^Class Laravel\\Jetstream\\Mail\\TeamInvitation constructor invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Actions/Jetstream/InviteTeamMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Jetstream/RemoveTeamMember.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/CreateConnectedAccount.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:setProfilePhotoFromUrl\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Actions/Socialstream/CreateUserFromProvider.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:setProfilePhotoFromUrl\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Actions/Socialstream/CreateUserWithTeamsFromProvider.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/ResolveSocialiteUser.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/ResolveSocialiteUser.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/UpdateConnectedAccount.php
+
+		-
+			message: '#^Static access to instance property App\\Filament\\Admin\\Resources\\ContactResource\\Widgets\\ContactStats\:\:\$view\.$#'
+			identifier: property.staticAccess
+			count: 1
+			path: app/Filament/Admin/Resources/ContactResource/Widgets/ContactStats.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\MenuResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/MenuResource/Pages/CreateMenu.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\MenuResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/MenuResource/Pages/EditMenu.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\MenuResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/MenuResource/Pages/ListMenus.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\SiteSettingsResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/SiteSettingsResource/Pages/CreateSiteSettings.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\SiteSettingsResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/SiteSettingsResource/Pages/EditSiteSettings.php
+
+		-
+			message: '#^Class App\\Filament\\Admin\\Resources\\SiteSettingsResource not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Admin/Resources/SiteSettingsResource/Pages/ListSiteSettings.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\EditProfile\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/EditProfile.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Facades\\Filament\:\:notify\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Pages/EditProfile.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:canCreateTeams\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/EditTeam.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Pages\\Page\<Filament\\Pages\\PageConfiguration\>\:\:__construct\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Pages/ReportPage.php
+
+		-
+			message: '#^Call to an undefined method App\\Filament\\App\\Pages\\UpdateProfileInformationPage\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/UpdateProfileInformationPage.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Pages\\Page\<Filament\\Pages\\PageConfiguration\>\:\:__construct\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Pages/UpdateProfileInformationPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activities\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/Components/TimelineView.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$deals\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/Components/TimelineView.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$notes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/Components/TimelineView.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\LeadResource\\Pages\\LeadQualityReport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Resources/LeadResource/Pages/LeadQualityReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\MailchimpCampaignResource\\Pages\\ViewABTestResults\:\:\$record\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/App/Resources/MailchimpCampaignResource/Pages/ViewABTestResults.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:contents\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/MailchimpCampaignResource/Pages/ViewABTestResults.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\MailchimpCampaignResource\\Pages\\ViewCampaignPerformance\:\:\$record\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Resources/MailchimpCampaignResource/Pages/ViewCampaignPerformance.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:contents\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/MailchimpCampaignResource/Pages/ViewCampaignPerformance.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:groupedBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/OpportunityResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SocialMediaPost\:\:\$advertising_account\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Filament/App/Resources/SocialMediaPostResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$calendar_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/TaskResource/Pages/CreateTask.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:syncWithCalendar\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/TaskResource/Pages/CreateTask.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Resources\\Pages\\CreateRecord\<Illuminate\\Database\\Eloquent\\Model\>\:\:getFormSchema\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Resources/TaskResource/Pages/CreateTask.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Resources\\Pages\\EditRecord\<Illuminate\\Database\\Eloquent\\Model\>\:\:getFormSchema\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Resources/TaskResource/Pages/EditTask.php
+
+		-
+			message: '#^Cannot access property \$sync_to_google_calendar on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/App/Resources/TaskResource/Pages/EditTask.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\ReportCustomizer\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/ReportCustomizer.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: app/Http/Controllers/Api/ContactController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: app/Http/Controllers/Api/DealController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: app/Http/Controllers/Api/TaskController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/WebhookController.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Requests\\Auth\\LoginRequest\:\:authenticate\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Auth/AuthenticatedSessionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ContactListController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/FormBuilderController.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:createAuthUrl\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/GoogleCalendarController.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:fetchAccessTokenWithAuthCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/GoogleCalendarController.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setAccessToken\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/GoogleCalendarController.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setRedirectUri\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/GoogleCalendarController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$campaign\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/LeadFormController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$refreshToken\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthConfigurationController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthConfigurationController.php
+
+		-
+			message: '#^Call to an undefined method Laravel\\Socialite\\Contracts\\Provider\:\:scopes\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthConfigurationController.php
+
+		-
+			message: '#^Call to an undefined method Laravel\\Socialite\\Contracts\\Provider\:\:with\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthConfigurationController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$refreshToken\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthController.php
+
+		-
+			message: '#^Call to an undefined method Laravel\\Socialite\\Contracts\\Provider\:\:scopes\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthController.php
+
+		-
+			message: '#^Call to an undefined method Laravel\\Socialite\\Contracts\\Provider\:\:with\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/OAuthController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:users\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/TeamInvitationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Contact\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Contact\>\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Livewire/CallManager.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\TwilioService\:\:endCall\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Livewire/CallManager.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\TwilioService\:\:logCall\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Livewire/CallManager.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\CallLog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Livewire/CallManager.php
+
+		-
+			message: '#^Relation ''lead'' is not found in App\\Models\\Task model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Livewire/TaskList.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/AssignDefaultTeam.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/TeamsPermission.php
+
+		-
+			message: '#^Call to static method find\(\) on an unknown class App\\Models\\EmailCampaign\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Listeners/EmailTracker.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Activation\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Activation.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Activity\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Activity.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AuditLog\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/AuditLog.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CallSetting\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/CallSetting.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CampaignRecipient\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/CampaignRecipient.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Chatbot\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Chatbot.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ChatbotInteraction\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ChatbotInteraction.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Company\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Company.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ConnectedAccount\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Contact\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Contact.php
+
+		-
+			message: '#^Class App\\Models\\CallLog not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Contact.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\DashboardWidget\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/DashboardWidget.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\EmailLinkClick\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EmailLinkClick.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\EmailTemplate\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EmailTemplate.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\EmailTracking\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EmailTracking.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\KnowledgeBaseArticle\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/KnowledgeBaseArticle.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LandingPage\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LandingPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Lead\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Lead.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LiveChat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LiveChat.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\MarketingCampaign\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/MarketingCampaign.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Menu\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Menu.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Message\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Message.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Note\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Note.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\OAuthConfiguration\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/OAuthConfiguration.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Opportunity\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Opportunity.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Pipeline\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Pipeline.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\QuoteRequest\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/QuoteRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ReportBuilder\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ReportBuilder.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SiteSettings\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/SiteSettings.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SocialMediaPost\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/SocialMediaPost.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Stage\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Stage.php
+
+		-
+			message: '#^Class App\\Models\\GoogleCalendarService not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Task.php
+
+		-
+			message: '#^Class App\\Models\\OutlookCalendarService not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Task.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isActive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:onTrial\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ticket\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Ticket.php
+
+		-
+			message: '#^Property ''profile_photo_url'' does not exist in model\.$#'
+			identifier: rules.modelAppends
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\WhatsAppNumber\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/WhatsAppNumber.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Workflow\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Workflow.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\WorkflowAction\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/WorkflowAction.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\WorkflowCondition\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/WorkflowCondition.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\WorkflowExecution\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/WorkflowExecution.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\WorkflowTrigger\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/WorkflowTrigger.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Task\:\:\$sync_to_google_calendar\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Observers/TaskObserver.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:ownsConnectedAccount\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Policies/ConnectedAccountPolicy.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Contact\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Policies/ContactPolicy.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Policies/ContactPolicy.php
+
+		-
+			message: '#^Class Filament\\Events\\Auth\\Registered not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/Filament/AppPanelProvider.php
+
+		-
+			message: '#^Class App\\Models\\Addr not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\BatchData not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\Chan not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\Family not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\FamilyEvent not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\FamilySlgs not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\Person not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\PersonAlia not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\PersonAsso not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\PersonEvent not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class App\\Models\\Subm not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\Addr not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\Chan not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\Family not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\FamilyEvent not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\FamilySlgs not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\Person not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\PersonAlia not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\PersonAsso not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\PersonEvent not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Models\\Subm not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Class FamilyTree365\\LaravelGedcom\\Utils\\BatchData not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/TeamServiceProvider.php
+
+		-
+			message: '#^Instantiated class App\\Exceptions\\AccountingIntegrationException not found\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Parameter \$quickbooksService of method App\\Services\\AccountingService\:\:__construct\(\) has invalid type App\\Services\\QuickBooksService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Parameter \$xeroService of method App\\Services\\AccountingService\:\:__construct\(\) has invalid type App\\Services\\XeroService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Company\:\:\$annual_revenue\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DataEnrichmentService.php
+
+		-
+			message: '#^Offset ''email_engagement'' on string\|null on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/EmailTrackingService.php
+
+		-
+			message: '#^Call to method createFeed\(\) on an unknown class FacebookAds\\Object\\Page\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Call to method getCampaigns\(\) on an unknown class FacebookAds\\Object\\AdAccount\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Call to method getMessage\(\) on an unknown class FacebookAds\\Exception\\FacebookException\.$#'
+			identifier: class.notFound
+			count: 4
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Call to static method init\(\) on an unknown class FacebookAds\\Api\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Call to static method instance\(\) on an unknown class FacebookAds\\Api\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Caught class FacebookAds\\Exception\\FacebookException not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Instantiated class FacebookAds\\Object\\AdAccount not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Instantiated class FacebookAds\\Object\\Page not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Class Facebook\\Facebook not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookMessengerService.php
+
+		-
+			message: '#^Instantiated class Facebook\\Facebook not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookMessengerService.php
+
+		-
+			message: '#^Call to method getMessage\(\) on an unknown class Facebook\\Exceptions\\FacebookResponseException\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Call to method getMessage\(\) on an unknown class Facebook\\Exceptions\\FacebookSDKException\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Caught class Facebook\\Exceptions\\FacebookResponseException not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Caught class Facebook\\Exceptions\\FacebookSDKException not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Instantiated class Facebook\\Facebook not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Access to constant GMAIL_MODIFY on an unknown class Google_Service_Gmail\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to method setRaw\(\) on an unknown class Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to method setThreadId\(\) on an unknown class Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Instantiated class Google_Service_Gmail not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Instantiated class Google_Service_Gmail_Message not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Access to constant PAUSED on an unknown class Google\\Ads\\GoogleAds\\V14\\Enums\\CampaignStatusEnum\\CampaignStatus\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method getMessage\(\) on an unknown class Google\\ApiCore\\ApiException\.$#'
+			identifier: class.notFound
+			count: 8
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method setCreate\(\) on an unknown class Google\\Ads\\GoogleAds\\V14\\Services\\CampaignOperation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method setRemove\(\) on an unknown class Google\\Ads\\GoogleAds\\V14\\Services\\CampaignOperation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method setUpdate\(\) on an unknown class Google\\Ads\\GoogleAds\\V14\\Services\\CampaignOperation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method setUpdateMask\(\) on an unknown class Google\\Ads\\GoogleAds\\V14\\Services\\CampaignOperation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method withClientId\(\) on an unknown class Google\\Ads\\GoogleAds\\Lib\\OAuth2TokenBuilder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method withOAuth2Credential\(\) on an unknown class Google\\Ads\\GoogleAds\\Lib\\V14\\GoogleAdsClientBuilder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Caught class Google\\ApiCore\\ApiException not found\.$#'
+			identifier: class.notFound
+			count: 4
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Instantiated class Google\\Ads\\GoogleAds\\Lib\\OAuth2TokenBuilder not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Instantiated class Google\\Ads\\GoogleAds\\Lib\\V14\\GoogleAdsClientBuilder not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Instantiated class Google\\Ads\\GoogleAds\\V14\\Resources\\Campaign not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Instantiated class Google\\Ads\\GoogleAds\\V14\\Services\\CampaignOperation not found\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Parameter \$endDate of method App\\Services\\LiveChatService\:\:getChatAnalytics\(\) has invalid type App\\Services\\Carbon\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/LiveChatService.php
+
+		-
+			message: '#^Parameter \$startDate of method App\\Services\\LiveChatService\:\:getChatAnalytics\(\) has invalid type App\\Services\\Carbon\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/LiveChatService.php
+
+		-
+			message: '#^Relation ''messages'' is not found in App\\Models\\LiveChat model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/LiveChatService.php
+
+		-
+			message: '#^Access to constant GMAIL_MODIFY on an unknown class Google_Service_Gmail\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setAccessType\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setApplicationName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setPrompt\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setScopes\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to method setRaw\(\) on an unknown class Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to method setThreadId\(\) on an unknown class Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Instantiated class Google_Service_Gmail not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Instantiated class Google_Service_Gmail_Message not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method DateTimeInterface\:\:subMinutes\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/OAuth/OAuthManager.php
+
+		-
+			message: '#^Class Microsoft\\Graph\\Model\\Message not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/OutlookService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonalizationService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Task\:\:\$assignedTo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReminderService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Task\:\:\$contact\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReminderService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Task\:\:\$lead\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReminderService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Lead\:\:\$score_range\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/ReportingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Team\:\:\$stripe_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Access to property \$customers on an unknown class Stripe\\StripeClient\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Access to property \$paymentMethods on an unknown class Stripe\\StripeClient\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Access to property \$subscriptions on an unknown class Stripe\\StripeClient\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Call to method getMessage\(\) on an unknown class Stripe\\Exception\\ApiErrorException\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Caught class Stripe\\Exception\\ApiErrorException not found\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Instantiated class Stripe\\StripeClient not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Property App\\Services\\StripeService\:\:\$stripeClient has unknown class Stripe\\StripeClient as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/StripeService.php
+
+		-
+			message: '#^Call to static method firstOrFail\(\) on an unknown class App\\Models\\Branch\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/TeamManagementService.php
+
+		-
+			message: '#^Instantiated class Abraham\\TwitterOAuth\\TwitterOAuth not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/TwitterService.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Workflow\:\:actions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/WorkflowAutomationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:evaluate\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/WorkflowAutomationService.php
+
+		-
+			message: '#^Relation ''triggers'' is not found in App\\Models\\Workflow model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/WorkflowAutomationService.php

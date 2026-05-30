@@ -27,7 +27,7 @@ return new class extends Migration
             $table->text('feedback')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['status', 'started_at']);
             $table->index('visitor_id');
             $table->index('contact_id');
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->json('integrations')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('is_active');
         });
 
@@ -60,7 +60,7 @@ return new class extends Migration
             $table->boolean('converted_to_lead')->default(false);
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['chatbot_id', 'visitor_id']);
             $table->index('contact_id');
         });

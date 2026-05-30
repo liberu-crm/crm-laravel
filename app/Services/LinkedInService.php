@@ -12,7 +12,7 @@ class LinkedInService
     public function getProfile(ConnectedAccount $account)
     {
         $response = Http::withToken($account->token)
-            ->get($this->apiUrl . 'me');
+            ->get($this->apiUrl.'me');
 
         return $response->json();
     }
@@ -20,21 +20,21 @@ class LinkedInService
     public function sharePost(ConnectedAccount $account, $content)
     {
         $response = Http::withToken($account->token)
-            ->post($this->apiUrl . 'ugcPosts', [
-                'author' => 'urn:li:person:' . $account->provider_id,
+            ->post($this->apiUrl.'ugcPosts', [
+                'author' => 'urn:li:person:'.$account->provider_id,
                 'lifecycleState' => 'PUBLISHED',
                 'specificContent' => [
                     'com.linkedin.ugc.ShareContent' => [
                         'shareCommentary' => [
-                            'text' => $content
+                            'text' => $content,
                         ],
-                        'shareMediaCategory' => 'NONE'
-                    ]
+                        'shareMediaCategory' => 'NONE',
+                    ],
                 ],
                 'visibility' => [
 
-                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC'
-                ]
+                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
+                ],
             ]);
 
         return $response->json();

@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\LeadResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\LeadResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListLeads extends ListRecords

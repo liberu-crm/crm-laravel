@@ -15,7 +15,7 @@ class YouTubeService
 
     public function uploadVideo(ConnectedAccount $account, string $videoPath, string $title, string $description): array
     {
-        if (!file_exists($videoPath)) {
+        if (! file_exists($videoPath)) {
             throw new Exception("Video file not found: {$videoPath}");
         }
 
@@ -25,7 +25,7 @@ class YouTubeService
                 'X-Upload-Content-Type' => 'video/*',
                 'X-Upload-Content-Length' => filesize($videoPath),
             ])
-            ->post($this->uploadUrl . 'videos?uploadType=resumable&part=snippet,status', [
+            ->post($this->uploadUrl.'videos?uploadType=resumable&part=snippet,status', [
                 'snippet' => [
                     'title' => mb_substr($title, 0, 100),
                     'description' => $description,
@@ -36,9 +36,9 @@ class YouTubeService
                 ],
             ]);
 
-        if (!$initResponse->successful()) {
-            Log::error('YouTube API Error initializing upload: ' . $initResponse->body());
-            throw new Exception('Failed to initialize YouTube upload: ' . $initResponse->body());
+        if (! $initResponse->successful()) {
+            Log::error('YouTube API Error initializing upload: '.$initResponse->body());
+            throw new Exception('Failed to initialize YouTube upload: '.$initResponse->body());
         }
 
         $uploadUri = $initResponse->header('Location');
@@ -65,9 +65,9 @@ class YouTubeService
             fclose($stream);
         }
 
-        if (!$uploadResponse->successful()) {
-            Log::error('YouTube API Error uploading video: ' . $uploadResponse->body());
-            throw new Exception('Failed to upload video to YouTube: ' . $uploadResponse->body());
+        if (! $uploadResponse->successful()) {
+            Log::error('YouTube API Error uploading video: '.$uploadResponse->body());
+            throw new Exception('Failed to upload video to YouTube: '.$uploadResponse->body());
         }
 
         return $uploadResponse->json();

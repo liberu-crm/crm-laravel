@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 namespace App\Http\Responses;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
 class RegisterResponse implements RegisterResponseContract
 {
@@ -18,7 +18,7 @@ class RegisterResponse implements RegisterResponseContract
     protected function shouldRedirect(Request $request, $redirect)
     {
         // Check if the current request path matches the redirect path
-        return !$request->is($redirect) && !$request->is($redirect . '/*');
+        return ! $request->is($redirect) && ! $request->is($redirect.'/*');
     }
 
     /**
@@ -43,6 +43,7 @@ class RegisterResponse implements RegisterResponseContract
 
         // Default redirection
         $redirect = '/app';
+
         return $request->wantsJson()
             ? new JsonResponse(['two_factor' => false], 200)
             : ($this->shouldRedirect($request, $redirect)

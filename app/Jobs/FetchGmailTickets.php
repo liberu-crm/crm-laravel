@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Services\GmailService;
 use App\Actions\Helpdesk\CreateTicketFromEmail;
+use App\Services\GmailService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

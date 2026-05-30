@@ -25,7 +25,7 @@ class CalendarIntegrationTest extends TestCase
         $this->app->instance(OutlookCalendarService::class, $this->mockOutlookCalendarService);
     }
 
-    public function testTaskCanBeCreatedWithGoogleCalendarType()
+    public function test_task_can_be_created_with_google_calendar_type()
     {
         $user = User::factory()->create();
 
@@ -36,7 +36,7 @@ class CalendarIntegrationTest extends TestCase
         $task = Task::factory()->create([
             'name' => 'Test Google Task',
             'calendar_type' => 'google',
-            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task()),
+            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task),
         ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -46,7 +46,7 @@ class CalendarIntegrationTest extends TestCase
         ]);
     }
 
-    public function testTaskCanBeCreatedWithOutlookCalendarType()
+    public function test_task_can_be_created_with_outlook_calendar_type()
     {
         $user = User::factory()->create();
 
@@ -57,7 +57,7 @@ class CalendarIntegrationTest extends TestCase
         $task = Task::factory()->create([
             'name' => 'Test Outlook Task',
             'calendar_type' => 'outlook',
-            'outlook_event_id' => app(OutlookCalendarService::class)->createEvent(new Task()),
+            'outlook_event_id' => app(OutlookCalendarService::class)->createEvent(new Task),
         ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -67,7 +67,7 @@ class CalendarIntegrationTest extends TestCase
         ]);
     }
 
-    public function testTaskHasCalendarFields()
+    public function test_task_has_calendar_fields()
     {
         $task = Task::factory()->create([
             'calendar_type' => 'google',

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use JoelButcher\Socialstream\HasConnectedAccounts;
 use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
@@ -20,21 +21,22 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\DatabaseNotification;
 
-class User extends Authenticatable implements HasDefaultTenant, HasTenants, FilamentUser
+class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasApiTokens;
-    // use HasConnectedAccounts;
-    use HasRoles;
+
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
+    // use HasConnectedAccounts;
+    use HasRoles;
+    use HasTeams;
+
     use Notifiable;
     // use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
-    use HasTeams;
 
     /**
      * The attributes that are mass assignable.
@@ -127,15 +129,19 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === "admin") {
+
+        if ($panel->getId() === 'super_admin') {
+            return $this->hasRole('super_admin');
+        } elseif ($panel->getId() === 'admin') {
             return $this->hasRole('admin');
         }
+
         return true;
     }
 
     public function canAccessFilament(): bool
     {
-        return $this->hasVerifiedEmail() && $this->hasAnyRole(['admin', 'manager', 'sales_rep']);
+        return $this->hasVerifiedEmail() && $this->hasAnyRole(['super_admin', 'admin', 'manager', 'sales_rep']);
     }
 
     public function getDefaultTenant(Panel $panel): ?Model
@@ -151,8 +157,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
     /**
      * Check if the user has a specific role.
      *
-     * @param string $role
-     * @return bool
+     * @param  string  $role
      */
     public function hasRole($role): bool
     {

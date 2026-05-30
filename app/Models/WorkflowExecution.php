@@ -31,9 +31,13 @@ class WorkflowExecution extends Model
     ];
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_RUNNING = 'running';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_FAILED = 'failed';
+
     const STATUS_CANCELLED = 'cancelled';
 
     public function workflow(): BelongsTo

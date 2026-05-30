@@ -2,37 +2,44 @@
 
 namespace Tests\Unit;
 
-use App\Services\UnifiedHelpDeskService;
-use App\Services\WhatsAppBusinessService;
+use App\Events\MessageReplySent;
+use App\Events\NewMessageReceived;
+use App\Models\OAuthConfiguration;
 use App\Services\FacebookMessengerService;
 use App\Services\GmailService;
-use App\Services\OutlookService;
 use App\Services\ImapService;
+use App\Services\OutlookService;
 use App\Services\Pop3Service;
-use App\Events\NewMessageReceived;
-use App\Events\MessageReplySent;
-use App\Models\OAuthConfiguration;
-use Tests\TestCase;
-use Mockery;
+use App\Services\UnifiedHelpDeskService;
+use App\Services\WhatsAppBusinessService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Mockery;
 use ReflectionMethod;
+use Tests\TestCase;
 
 class UnifiedHelpDeskServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     protected $unifiedHelpDeskService;
+
     protected $whatsAppService;
+
     protected $facebookService;
+
     protected $gmailService;
+
     protected $outlookService;
+
     protected $imapService;
+
     protected $pop3Service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->whatsAppService = Mockery::mock(WhatsAppBusinessService::class);
         $this->facebookService = Mockery::mock(FacebookMessengerService::class);
         $this->gmailService = Mockery::mock(GmailService::class);
@@ -56,12 +63,12 @@ class UnifiedHelpDeskServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testUnifiedHelpDeskServiceCanBeInstantiated()
+    public function test_unified_help_desk_service_can_be_instantiated()
     {
         $this->assertInstanceOf(UnifiedHelpDeskService::class, $this->unifiedHelpDeskService);
     }
 
-    public function testGetAllMessagesReturnsCollection()
+    public function test_get_all_messages_returns_collection()
     {
         // With RefreshDatabase, OAuthConfiguration table is empty, so no configs will be fetched
         $result = $this->unifiedHelpDeskService->getAllMessages(null, false);
@@ -69,7 +76,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertInstanceOf(Collection::class, $result);
     }
 
-    public function testNewMessageReceivedEventCanBeInstantiated()
+    public function test_new_message_received_event_can_be_instantiated()
     {
         $message = [
             'id' => '123',
@@ -85,7 +92,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals($message, $event->message);
     }
 
-    public function testMessageReplySentEventCanBeInstantiated()
+    public function test_message_reply_sent_event_can_be_instantiated()
     {
         $event = new MessageReplySent('msg-123', 'Reply content', 'gmail', 1);
 
@@ -96,7 +103,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals(1, $event->accountId);
     }
 
-    public function testCalculatePriorityDetectsUrgentInMessageKey()
+    public function test_calculate_priority_detects_urgent_in_message_key()
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
         $method->setAccessible(true);
@@ -107,7 +114,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('high', $priority);
     }
 
-    public function testCalculatePriorityDetectsUrgentInContentKey()
+    public function test_calculate_priority_detects_urgent_in_content_key()
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
         $method->setAccessible(true);
@@ -118,7 +125,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('high', $priority);
     }
 
-    public function testCalculatePriorityReturnsNormalForRegularMessages()
+    public function test_calculate_priority_returns_normal_for_regular_messages()
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
         $method->setAccessible(true);
@@ -129,7 +136,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('normal', $priority);
     }
 
-    public function testCalculatePriorityHandlesEmptyMessage()
+    public function test_calculate_priority_handles_empty_message()
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
         $method->setAccessible(true);

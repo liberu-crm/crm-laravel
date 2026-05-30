@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Team;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use BezhanSalleh\FilamentShield\Support\Utils;
 
 class RolesSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep'];
+        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep', 'free'];
 
         foreach ($roleNames as $roleName) {
             $roleData = [
@@ -25,7 +25,7 @@ class RolesSeeder extends Seeder
 
             if (Utils::isTenancyEnabled()) {
                 $team = Team::firstOrFail();
-                $roleData["team_id"] = $team->id;
+                $roleData['team_id'] = $team->id;
             }
 
             $role = Role::firstOrCreate($roleData);

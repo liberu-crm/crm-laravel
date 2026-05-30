@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\AdvertisingAccount;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class LinkedInAdsService
 {
     protected $client;
+
     protected $account;
 
     public function __construct(AdvertisingAccount $account)
@@ -19,7 +20,7 @@ class LinkedInAdsService
         $this->client = new Client([
             'base_uri' => 'https://api.linkedin.com/v2/',
             'headers' => [
-                'Authorization' => 'Bearer ' . $account->access_token,
+                'Authorization' => 'Bearer '.$account->access_token,
                 'X-Restli-Protocol-Version' => '2.0.0',
             ],
         ]);
@@ -42,8 +43,8 @@ class LinkedInAdsService
 
             return $campaigns;
         } catch (GuzzleException $e) {
-            Log::error('LinkedIn API Error: ' . $e->getMessage());
-            throw new Exception('Failed to fetch campaigns: ' . $e->getMessage());
+            Log::error('LinkedIn API Error: '.$e->getMessage());
+            throw new Exception('Failed to fetch campaigns: '.$e->getMessage());
         }
     }
 
@@ -56,19 +57,19 @@ class LinkedInAdsService
                 'specificContent' => [
                     'com.linkedin.ugc.ShareContent' => [
                         'shareCommentary' => [
-                            'text' => $postData['message']
+                            'text' => $postData['message'],
                         ],
-                        'shareMediaCategory' => 'NONE'
-                    ]
+                        'shareMediaCategory' => 'NONE',
+                    ],
                 ],
                 'visibility' => [
-                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC'
+                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
                 ],
                 'distribution' => [
                     'linkedInDistributionTarget' => [
-                        'visibleToGuest' => true
-                    ]
-                ]
+                        'visibleToGuest' => true,
+                    ],
+                ],
             ];
 
             if (isset($postData['scheduled_time'])) {
@@ -80,13 +81,13 @@ class LinkedInAdsService
                 $payload['specificContent']['com.linkedin.ugc.ShareContent']['media'] = [
                     [
                         'status' => 'READY',
-                        'originalUrl' => $postData['link']
-                    ]
+                        'originalUrl' => $postData['link'],
+                    ],
                 ];
             }
 
             $response = $this->client->post('ugcPosts', [
-                'json' => $payload
+                'json' => $payload,
             ]);
 
             $result = json_decode($response->getBody(), true);
@@ -95,8 +96,8 @@ class LinkedInAdsService
                 'id' => $result['id'],
             ];
         } catch (GuzzleException $e) {
-            Log::error('LinkedIn API Error: ' . $e->getMessage());
-            throw new Exception('Failed to create and schedule post: ' . $e->getMessage());
+            Log::error('LinkedIn API Error: '.$e->getMessage());
+            throw new Exception('Failed to create and schedule post: '.$e->getMessage());
         }
     }
 

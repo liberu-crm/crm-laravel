@@ -20,15 +20,16 @@ class LanguageService
     /**
      * Switch the active application locale.
      *
-     * @param  string $locale  ISO 639-1 locale code (e.g. 'en', 'es', 'fr').
-     * @throws \InvalidArgumentException  When the locale is not supported.
+     * @param  string  $locale  ISO 639-1 locale code (e.g. 'en', 'es', 'fr').
+     *
+     * @throws \InvalidArgumentException When the locale is not supported.
      */
     public function setLocale(string $locale): void
     {
-        if (!$this->isSupported($locale)) {
+        if (! $this->isSupported($locale)) {
             throw new \InvalidArgumentException(
                 "Locale '{$locale}' is not supported. Supported locales: "
-                . implode(', ', array_keys(self::SUPPORTED_LOCALES))
+                .implode(', ', array_keys(self::SUPPORTED_LOCALES))
             );
         }
 

@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Contact;
-use App\Models\Lead;
 use App\Models\CustomField;
+use App\Models\Lead;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,9 +15,10 @@ class CustomFieldsTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $team;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->team = Team::factory()->create();

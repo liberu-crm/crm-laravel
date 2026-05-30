@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Deal;
-use App\Models\Stage;
 use App\Models\Pipeline;
+use App\Models\Stage;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -66,7 +66,7 @@ class OpportunityPipelineTest extends TestCase
         $user->current_team_id = $team->id;
         $user->save();
 
-        $response = $this->actingAs($user)->get('/app/' . $team->id . '/opportunities');
+        $response = $this->actingAs($user)->get('/app/'.$team->id.'/opportunities');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected opportunities page to return 200 or 302, got {$response->status()}"

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -11,7 +12,7 @@ class ListContactsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreatedAtFilter()
+    public function test_created_at_filter()
     {
         Contact::factory()->count(5)->create(['created_at' => now()->subDays(10)]);
         Contact::factory()->count(3)->create(['created_at' => now()->subDays(5)]);
@@ -22,16 +23,17 @@ class ListContactsTest extends TestCase
         });
     }
 
-    public function testBulkDeleteAction()
+    public function test_bulk_delete_action()
     {
+        $user = User::factory()->create();
         $contacts = Contact::factory()->count(5)->create();
         $deleteIds = $contacts->pluck('id')->toArray();
 
-        $response = $this->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
+        $this->actingAs($user)->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
         $this->assertDatabaseMissing('contacts', ['id' => $deleteIds]);
     }
 
-    public function testGlobalSearchFunctionality()
+    public function test_global_search_functionality()
     {
         Contact::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
         Contact::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
@@ -52,7 +54,7 @@ class ListContactsTest extends TestCase
         });
     }
 
-    public function testEnhancedSearchFunctionality()
+    public function test_enhanced_search_functionality()
     {
         Contact::factory()->create([
             'name' => 'John',
@@ -60,7 +62,7 @@ class ListContactsTest extends TestCase
             'email' => 'john@example.com',
             'phone_number' => '1234567890',
             'company_size' => 'Small',
-            'industry' => 'Technology'
+            'industry' => 'Technology',
         ]);
         Contact::factory()->create([
             'name' => 'Jane',
@@ -68,7 +70,7 @@ class ListContactsTest extends TestCase
             'email' => 'jane@example.com',
             'phone_number' => '9876543210',
             'company_size' => 'Large',
-            'industry' => 'Finance'
+            'industry' => 'Finance',
         ]);
 
         $searchTerms = ['John', 'Smith', 'example.com', '1234', 'Small', 'Finance'];
@@ -89,7 +91,7 @@ class ListContactsTest extends TestCase
         }
     }
 
-    public function testAutocompleteFeature()
+    public function test_autocomplete_feature()
     {
         Contact::factory()->count(10)->create();
         Contact::factory()->create(['name' => 'John', 'email' => 'john.autocomplete@example.com']);
@@ -97,7 +99,7 @@ class ListContactsTest extends TestCase
         $response = $this->get(route('contacts.autocomplete', ['query' => 'jo']));
         $response->assertSuccessful();
         $response->assertJsonStructure([
-            '*' => ['id', 'name', 'email']
+            '*' => ['id', 'name', 'email'],
         ]);
 
         $data = $response->json();

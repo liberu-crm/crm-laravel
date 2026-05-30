@@ -25,11 +25,11 @@ class MessageFactory extends Factory
             'metadata' => json_encode([
                 'attachments' => [],
                 'mentions' => [],
-                'thread_id' => $this->faker->optional()->uuid
+                'thread_id' => $this->faker->optional()->uuid,
             ]),
             'read_at' => $this->faker->optional()->dateTimeThisMonth(),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

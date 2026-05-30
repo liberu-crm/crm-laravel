@@ -12,11 +12,11 @@ class ActivityFactory extends Factory
     public function definition(): array
     {
         return [
-            'type'             => $this->faker->randomElement(['created', 'updated', 'deleted', 'commented']),
-            'date'             => $this->faker->dateTimeThisYear(),
-            'description'      => $this->faker->sentence(),
-            'outcome'          => $this->faker->optional()->sentence(),
-            'activitable_id'   => 1,
+            'type' => $this->faker->randomElement(['created', 'updated', 'deleted', 'commented']),
+            'date' => $this->faker->dateTimeThisYear(),
+            'description' => $this->faker->sentence(),
+            'outcome' => $this->faker->optional()->sentence(),
+            'activitable_id' => 1,
             'activitable_type' => 'App\Models\Contact',
         ];
     }

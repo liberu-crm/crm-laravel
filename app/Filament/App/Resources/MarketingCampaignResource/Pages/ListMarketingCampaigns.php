@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\MarketingCampaignResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\MarketingCampaignResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListMarketingCampaigns extends ListRecords

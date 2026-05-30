@@ -34,7 +34,7 @@ class Activity extends Model
     {
         return $query->where(function ($query) use ($search) {
             $query->whereFullText(['type', 'description', 'outcome'], $search)
-                ->orWhere('date', 'like', '%' . $search . '%');
+                ->orWhere('date', 'like', '%'.$search.'%');
         });
     }
 

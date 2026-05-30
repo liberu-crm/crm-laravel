@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\ReminderService;
 use Illuminate\Http\Request;
@@ -22,6 +22,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::where('assigned_to', Auth::id())->orderBy('due_date')->get();
+
         return view('tasks.index', compact('tasks'));
     }
 
@@ -30,6 +31,7 @@ class TaskController extends Controller
         $contacts = Contact::all();
         $leads = Lead::all();
         $users = User::all();
+
         return view('tasks.create', compact('contacts', 'leads', 'users'));
     }
 
@@ -59,6 +61,7 @@ class TaskController extends Controller
         $contacts = Contact::all();
         $leads = Lead::all();
         $users = User::all();
+
         return view('tasks.edit', compact('task', 'contacts', 'leads', 'users'));
     }
 
@@ -86,18 +89,21 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
+
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 
     public function complete(Task $task)
     {
         $task->markAsComplete();
+
         return redirect()->back()->with('success', 'Task marked as complete.');
     }
 
     public function incomplete(Task $task)
     {
         $task->markAsIncomplete();
+
         return redirect()->back()->with('success', 'Task marked as incomplete.');
     }
 

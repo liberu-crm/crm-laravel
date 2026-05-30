@@ -2,20 +2,22 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Config;
 
 class TwilioSettings extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog';
 
     protected string $view = 'filament.app.pages.twilio-settings';
 
     public ?string $sid = null;
+
     public ?string $auth_token = null;
+
     public ?string $phone_number = null;
 
     public function mount(): void

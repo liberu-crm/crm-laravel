@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Laravel\Jetstream\Mail\TeamInvitation;
 use Tests\TestCase;
 
@@ -37,7 +38,7 @@ class TeamInvitationTest extends TestCase
         $invitation = $user->currentTeam->teamInvitations()->create([
             'email' => 'test@example.com',
             'role' => 'admin',
-            'token' => \Illuminate\Support\Str::random(40),
+            'token' => Str::random(40),
         ]);
 
         $response = $this->delete('/team-invitations/'.$invitation->id);
@@ -69,7 +70,7 @@ class TeamInvitationTest extends TestCase
         $invitation = $team->teamInvitations()->create([
             'email' => $invitedUser->email,
             'role' => 'admin',
-            'token' => \Illuminate\Support\Str::random(40),
+            'token' => Str::random(40),
         ]);
 
         $response = $this->actingAs($invitedUser)->post('/team-invitations/'.$invitation->id.'/accept');

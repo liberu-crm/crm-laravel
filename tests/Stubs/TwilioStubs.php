@@ -12,16 +12,16 @@
  */
 
 namespace Twilio\Exceptions {
-    if (!class_exists(\Twilio\Exceptions\TwilioException::class)) {
+    if (! class_exists(TwilioException::class)) {
         class TwilioException extends \RuntimeException {}
     }
-    if (!class_exists(\Twilio\Exceptions\RestException::class)) {
+    if (! class_exists(RestException::class)) {
         class RestException extends TwilioException {}
     }
 }
 
 namespace Twilio\Rest {
-    if (!class_exists(\Twilio\Rest\Client::class)) {
+    if (! class_exists(Client::class)) {
         class Client
         {
             public function __construct(string $username = '', string $password = '', ?string $accountSid = null) {}
@@ -39,35 +39,46 @@ namespace Twilio\Rest {
 }
 
 namespace Twilio\Rest\Api\V2010\Account {
-    if (!class_exists(\Twilio\Rest\Api\V2010\Account\CallList::class)) {
+    if (! class_exists(CallList::class)) {
         class CallList
         {
-            public function read(array $options = []): array { return []; }
+            public function read(array $options = []): array
+            {
+                return [];
+            }
+
             public function create(string $to, string $from, array $options = []) {}
         }
     }
 
-    if (!class_exists(\Twilio\Rest\Api\V2010\Account\CallInstance::class)) {
+    if (! class_exists(CallInstance::class)) {
         class CallInstance
         {
-            public function fetch() { return $this; }
+            public function fetch()
+            {
+                return $this;
+            }
         }
     }
 }
 
 namespace Twilio\Rest\Api\V2010\Account\Call {
-    if (!class_exists(\Twilio\Rest\Api\V2010\Account\Call\RecordingInstance::class)) {
+    if (! class_exists(RecordingInstance::class)) {
         class RecordingInstance
         {
             public function update(array $options = []) {}
         }
     }
 
-    if (!class_exists(\Twilio\Rest\Api\V2010\Account\Call\RecordingList::class)) {
+    if (! class_exists(RecordingList::class)) {
         class RecordingList
         {
             public function create(array $options = []) {}
-            public function read(array $options = []): array { return []; }
+
+            public function read(array $options = []): array
+            {
+                return [];
+            }
         }
     }
 }

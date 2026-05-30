@@ -43,17 +43,25 @@ class ReportBuilder extends Model
     ];
 
     const TYPE_TABLE = 'table';
+
     const TYPE_CHART = 'chart';
+
     const TYPE_DASHBOARD = 'dashboard';
 
     const CHART_LINE = 'line';
+
     const CHART_BAR = 'bar';
+
     const CHART_PIE = 'pie';
+
     const CHART_FUNNEL = 'funnel';
+
     const CHART_AREA = 'area';
 
     const FREQUENCY_DAILY = 'daily';
+
     const FREQUENCY_WEEKLY = 'weekly';
+
     const FREQUENCY_MONTHLY = 'monthly';
 
     public function creator(): BelongsTo

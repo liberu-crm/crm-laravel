@@ -23,9 +23,9 @@ class AdResource extends Resource
 {
     protected static ?string $model = Ad::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Advertising';
+    protected static string|\UnitEnum|null $navigationGroup = 'Advertising';
 
     protected static ?string $navigationLabel = 'Ads';
 

@@ -11,7 +11,7 @@ class InstagramService
 
     public function getRecentMedia(ConnectedAccount $account)
     {
-        $response = Http::get($this->apiUrl . 'me/media', [
+        $response = Http::get($this->apiUrl.'me/media', [
             'fields' => 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username',
             'access_token' => $account->token,
         ]);
@@ -23,7 +23,7 @@ class InstagramService
     {
         // Note: Posting to Instagram requires a Facebook Page connected to an Instagram Professional account
         // This is a simplified example and may need to be adjusted based on the actual Instagram Graph API requirements
-        $response = Http::post($this->apiUrl . $account->provider_id . '/media', [
+        $response = Http::post($this->apiUrl.$account->provider_id.'/media', [
             'image_url' => $imageUrl,
             'caption' => $caption,
             'access_token' => $account->token,
@@ -31,7 +31,7 @@ class InstagramService
 
         $mediaObjectId = $response->json()['id'];
 
-        $publishResponse = Http::post($this->apiUrl . $account->provider_id . '/media_publish', [
+        $publishResponse = Http::post($this->apiUrl.$account->provider_id.'/media_publish', [
             'creation_id' => $mediaObjectId,
             'access_token' => $account->token,
         ]);

@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\WhatsAppNumberResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\WhatsAppNumberResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListWhatsAppNumbers extends ListRecords

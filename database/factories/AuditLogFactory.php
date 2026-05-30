@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\AuditLog;
-use App\Models\User;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuditLogFactory extends Factory
@@ -22,13 +22,13 @@ class AuditLogFactory extends Factory
             'old_values' => json_encode([]),
             'new_values' => json_encode([
                 'name' => $this->faker->name,
-                'status' => $this->faker->word
+                'status' => $this->faker->word,
             ]),
             'url' => $this->faker->url,
             'ip_address' => $this->faker->ipv4,
             'user_agent' => $this->faker->userAgent,
             'created_at' => $this->faker->dateTimeThisYear(),
-            'updated_at' => $this->faker->dateTimeThisYear()
+            'updated_at' => $this->faker->dateTimeThisYear(),
         ];
     }
 }

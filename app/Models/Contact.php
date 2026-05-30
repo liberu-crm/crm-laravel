@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
@@ -18,8 +18,8 @@ class Contact extends Model
     use IsTenantModel;
     use Notifiable;
 
-
     protected $fillable = [
+        'team_id',
         'name',
         'last_name',
         'email',
@@ -103,7 +103,7 @@ class Contact extends Model
      */
     protected function associateWithCompany()
     {
-        if ($this->email && !$this->company_id) {
+        if ($this->email && ! $this->company_id) {
             $domain = Str::after($this->email, '@');
             $company = Company::firstOrCreate(['domain' => $domain], ['name' => Str::before($domain, '.')]);
             $this->company()->associate($company);
@@ -113,16 +113,16 @@ class Contact extends Model
     /**
      * Scope a query to search contacts based on given criteria.
      *
-     * @param Builder $query
-     * @param string $search
+     * @param  Builder  $query
+     * @param  string  $search
      * @return Builder
      */
     public function scopeSearch($query, $search)
     {
         return $query->where(function ($query) use ($search) {
             $query->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
-                ->orWhere('company_size', 'like', '%' . $search . '%')
-                ->orWhere('annual_revenue', 'like', '%' . $search . '%')
+                ->orWhere('company_size', 'like', '%'.$search.'%')
+                ->orWhere('annual_revenue', 'like', '%'.$search.'%')
                 ->orWhereHas('company', function ($query) use ($search) {
                     $query->whereFullText('name', $search);
                 })

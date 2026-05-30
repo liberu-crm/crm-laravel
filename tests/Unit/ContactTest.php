@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Models\Activity;
 use App\Models\Contact;
 use App\Models\Deal;
-use App\Models\Activity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

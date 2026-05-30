@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-
 use App\Models\Contact;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -25,7 +22,7 @@ class ContactUpdated implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('contact.' . $this->contact->id);
+        return new PrivateChannel('contact.'.$this->contact->id);
     }
 
     public function broadcastWith()

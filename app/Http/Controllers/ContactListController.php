@@ -18,12 +18,12 @@ class ContactListController extends Controller
         if ($request->filled('search')) {
             $term = $request->search;
             $query->where(function ($q) use ($term) {
-                $q->where('name', 'like', '%' . $term . '%')
-                  ->orWhere('last_name', 'like', '%' . $term . '%')
-                  ->orWhere('email', 'like', '%' . $term . '%')
-                  ->orWhere('phone_number', 'like', '%' . $term . '%')
-                  ->orWhere('company_size', 'like', '%' . $term . '%')
-                  ->orWhere('industry', 'like', '%' . $term . '%');
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('last_name', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone_number', 'like', '%'.$term.'%')
+                    ->orWhere('company_size', 'like', '%'.$term.'%')
+                    ->orWhere('industry', 'like', '%'.$term.'%');
             });
         }
 
@@ -45,13 +45,16 @@ class ContactListController extends Controller
      */
     public function bulkDelete(Request $request)
     {
-        $ids = $request->input('ids', []);
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:contacts,id',
+        ]);
 
-        if (!empty($ids)) {
-            Contact::whereIn('id', $ids)->delete();
-        }
+        $query = Contact::whereIn('id', $validated['ids']);
+        $query->byTeam($request->user()?->currentTeam?->id);
+        $count = $query->delete();
 
-        return response()->json(['deleted' => count($ids)]);
+        return response()->json(['deleted' => $count]);
     }
 
     /**
@@ -62,8 +65,8 @@ class ContactListController extends Controller
         $term = $request->input('query', '');
 
         $contacts = Contact::where(function ($q) use ($term) {
-            $q->where('name', 'like', $term . '%')
-              ->orWhere('email', 'like', '%' . $term . '%');
+            $q->where('name', 'like', $term.'%')
+                ->orWhere('email', 'like', '%'.$term.'%');
         })
             ->limit(10)
             ->get(['id', 'name', 'email']);

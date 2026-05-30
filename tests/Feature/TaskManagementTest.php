@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\Task;
-use App\Models\User;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,7 +13,7 @@ class TaskManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateTaskForContact()
+    public function test_create_task_for_contact()
     {
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
@@ -32,7 +32,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function testCreateTaskForLead()
+    public function test_create_task_for_lead()
     {
         $user = User::factory()->create();
         $lead = Lead::factory()->create();
@@ -50,7 +50,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function testAssignTask()
+    public function test_assign_task()
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -65,7 +65,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function testUpdateTaskStatus()
+    public function test_update_task_status()
     {
         $task = Task::factory()->create(['status' => 'pending']);
 
@@ -77,7 +77,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function testTaskFilterByStatus()
+    public function test_task_filter_by_status()
     {
         $pendingBefore = Task::where('status', 'pending')->count();
         $completedBefore = Task::where('status', 'completed')->count();
@@ -92,7 +92,7 @@ class TaskManagementTest extends TestCase
         $this->assertEquals($completedBefore + 2, $completedTasks);
     }
 
-    public function testTaskSearchByName()
+    public function test_task_search_by_name()
     {
         Task::factory()->create(['name' => 'Unique Task Alpha Search']);
         Task::factory()->create(['name' => 'Another Unrelated Task']);

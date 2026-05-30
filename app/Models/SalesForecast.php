@@ -37,8 +37,11 @@ class SalesForecast extends Model
     ];
 
     const TYPE_PIPELINE = 'pipeline';
+
     const TYPE_HISTORICAL = 'historical';
+
     const TYPE_WEIGHTED = 'weighted';
+
     const TYPE_AI_PREDICTED = 'ai_predicted';
 
     public function pipeline(): BelongsTo
@@ -58,13 +61,13 @@ class SalesForecast extends Model
 
     public function getAccuracyAttribute(): float
     {
-        if (!$this->actual_revenue || !$this->predicted_revenue) {
+        if (! $this->actual_revenue || ! $this->predicted_revenue) {
             return 0;
         }
 
         $difference = abs($this->actual_revenue - $this->predicted_revenue);
         $accuracy = 100 - (($difference / $this->predicted_revenue) * 100);
-        
+
         return round(max(0, $accuracy), 2);
     }
 }

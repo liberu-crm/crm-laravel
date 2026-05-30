@@ -2,22 +2,30 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Task;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
 use App\Models\User;
 use Livewire\Component;
 
 class TaskForm extends Component
 {
     public $task;
+
     public $taskId;
+
     public $name;
+
     public $description;
+
     public $due_date;
+
     public $contact_id;
+
     public $lead_id;
+
     public $assigned_to;
+
     public $reminder_date;
 
     protected $rules = [

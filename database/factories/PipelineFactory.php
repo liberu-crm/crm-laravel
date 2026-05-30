@@ -12,7 +12,7 @@ class PipelineFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(3, true) . ' Pipeline',
+            'name' => $this->faker->words(3, true).' Pipeline',
             'description' => $this->faker->sentence(),
             'is_active' => $this->faker->boolean(80),
         ];

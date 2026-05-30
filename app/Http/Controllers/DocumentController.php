@@ -11,7 +11,12 @@ class DocumentController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:10240', // 10MB max
+            'file' => [
+                'required',
+                'file',
+                'max:'.config('documents.max_size'),
+                'mimes:'.implode(',', array_unique(array_values(config('documents.extension_map')))),
+            ],
             'documentable_id' => 'required|integer',
             'documentable_type' => 'required|string',
         ]);
@@ -39,7 +44,12 @@ class DocumentController extends Controller
     public function newVersion(Request $request, Document $document)
     {
         $request->validate([
-            'file' => 'required|file|max:10240', // 10MB max
+            'file' => [
+                'required',
+                'file',
+                'max:'.config('documents.max_size'),
+                'mimes:'.implode(',', array_unique(array_values(config('documents.extension_map')))),
+            ],
         ]);
 
         $file = $request->file('file');

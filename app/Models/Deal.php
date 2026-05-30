@@ -14,6 +14,7 @@ class Deal extends Model
     use IsTenantModel;
 
     protected $fillable = [
+        'team_id',
         'name',
         'value',
         'stage',

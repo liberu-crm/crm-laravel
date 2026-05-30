@@ -16,6 +16,7 @@ class AdvertisingManagementTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Team $team;
 
     protected function setUp(): void

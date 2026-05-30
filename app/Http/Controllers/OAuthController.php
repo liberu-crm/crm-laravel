@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\ConnectedAccount;
 use App\Models\OAuthConfiguration;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends Controller
 {
@@ -34,9 +34,9 @@ class OAuthController extends Controller
     {
         $config = OAuthConfiguration::getConfig($provider);
 
-        if (!$config) {
+        if (! $config) {
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'OAuth provider not configured. Please add your ' . ucfirst($provider) . ' credentials first.');
+                ->with('error', 'OAuth provider not configured. Please add your '.ucfirst($provider).' credentials first.');
         }
 
         $driver = Socialite::driver($provider);
@@ -57,7 +57,7 @@ class OAuthController extends Controller
         try {
             $config = OAuthConfiguration::getConfig($provider);
 
-            if (!$config) {
+            if (! $config) {
                 return redirect()->route('oauth.configurations.index')
                     ->with('error', 'OAuth provider not configured.');
             }
@@ -86,11 +86,12 @@ class OAuthController extends Controller
             );
 
             return redirect()->route('oauth.configurations.index')
-                ->with('success', ucfirst($provider) . ' account connected successfully.');
+                ->with('success', ucfirst($provider).' account connected successfully.');
         } catch (\Exception $e) {
-            Log::error("OAuth callback failed for {$provider}: " . $e->getMessage());
+            Log::error("OAuth callback failed for {$provider}: ".$e->getMessage());
+
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'Failed to connect ' . ucfirst($provider) . ' account: ' . $e->getMessage());
+                ->with('error', 'Failed to connect '.ucfirst($provider).' account: '.$e->getMessage());
         }
     }
 
@@ -120,14 +121,15 @@ class OAuthController extends Controller
     {
         $graphVersion = config('services.facebook.graph_version', 'v18.0');
         try {
-            $response = \Illuminate\Support\Facades\Http::get("https://graph.facebook.com/{$graphVersion}/me/accounts", [
+            $response = Http::get("https://graph.facebook.com/{$graphVersion}/me/accounts", [
                 'access_token' => $accessToken,
                 'fields' => 'id,name,access_token,instagram_business_account',
             ]);
 
             return $response->successful() ? ($response->json('data') ?? []) : [];
         } catch (\Exception $e) {
-            Log::warning('Failed to fetch Facebook pages: ' . $e->getMessage());
+            Log::warning('Failed to fetch Facebook pages: '.$e->getMessage());
+
             return [];
         }
     }
@@ -135,7 +137,7 @@ class OAuthController extends Controller
     protected function getLinkedInOrganizations(string $accessToken): array
     {
         try {
-            $response = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            $response = Http::withToken($accessToken)
                 ->withHeaders(['X-Restli-Protocol-Version' => '2.0.0'])
                 ->get('https://api.linkedin.com/v2/organizationalEntityAcls', [
                     'q' => 'roleAssignee',
@@ -145,7 +147,8 @@ class OAuthController extends Controller
 
             return $response->successful() ? ($response->json('elements') ?? []) : [];
         } catch (\Exception $e) {
-            Log::warning('Failed to fetch LinkedIn organizations: ' . $e->getMessage());
+            Log::warning('Failed to fetch LinkedIn organizations: '.$e->getMessage());
+
             return [];
         }
     }
@@ -153,7 +156,7 @@ class OAuthController extends Controller
     protected function getYouTubeChannels(string $accessToken): array
     {
         try {
-            $response = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            $response = Http::withToken($accessToken)
                 ->get('https://www.googleapis.com/youtube/v3/channels', [
                     'part' => 'snippet,contentDetails',
                     'mine' => 'true',
@@ -161,7 +164,8 @@ class OAuthController extends Controller
 
             return $response->successful() ? ($response->json('items') ?? []) : [];
         } catch (\Exception $e) {
-            Log::warning('Failed to fetch YouTube channels: ' . $e->getMessage());
+            Log::warning('Failed to fetch YouTube channels: '.$e->getMessage());
+
             return [];
         }
     }

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\Jobs\ExecuteWorkflowAction;
-
+use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\LeadForm;
-use App\Models\Contact;
 use App\Models\Workflow;
 use App\Services\LeadScoringService;
 use Illuminate\Http\Request;
@@ -32,7 +29,7 @@ class LeadFormController extends Controller
             'status' => 'new',
             'source' => 'landing_page',
             'contact_id' => $contact->id,
-            'user_id' => $leadForm->landingPage->campaign->user_id,
+            'user_id' => $leadForm->landingPage?->campaign?->user_id,
             'potential_value' => $validatedData['potential_value'] ?? null,
             'expected_close_date' => $validatedData['expected_close_date'] ?? null,
             'lifecycle_stage' => 'lead',
@@ -51,8 +48,19 @@ class LeadFormController extends Controller
     {
         $rules = [];
         foreach ($leadForm->fields as $field) {
-            $rules[$field['name']] = $field['validation'] ?? 'required';
+            $raw = $field['validation'] ?? 'required';
+            $parts = is_array($raw) ? $raw : explode('|', $raw);
+            $filtered = [];
+            foreach ($parts as $rule) {
+                $name = is_string($rule) ? explode(':', $rule)[0] : '';
+                if (! in_array($name, ['regex', 'not_regex'], true)
+                    && ! str_contains((string) $rule, '\\')) {
+                    $filtered[] = $rule;
+                }
+            }
+            $rules[$field['name']] = array_values($filtered) ?: ['required'];
         }
+
         return $rules;
     }
 
@@ -68,6 +76,7 @@ class LeadFormController extends Controller
                 'industry' => $data['industry'] ?? null,
             ]
         );
+
         return $contact;
     }
 

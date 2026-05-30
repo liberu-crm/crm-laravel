@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('oauth_configurations', function (Blueprint $table) {
-            if (!Schema::hasColumn('oauth_configurations', 'is_active')) {
+            if (! Schema::hasColumn('oauth_configurations', 'is_active')) {
                 $table->boolean('is_active')->default(true)->after('additional_settings');
             }
-            if (!Schema::hasColumn('oauth_configurations', 'account_name')) {
+            if (! Schema::hasColumn('oauth_configurations', 'account_name')) {
                 $table->string('account_name')->nullable()->after('service_name');
             }
         });

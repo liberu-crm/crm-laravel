@@ -11,18 +11,20 @@ use Tests\TestCase;
 class GoogleCalendarServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     protected $googleCalendarService;
+
     protected $mockGoogleService;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->mockGoogleService = Mockery::mock();
-        $this->googleCalendarService = new GoogleCalendarService();
+        $this->googleCalendarService = new GoogleCalendarService;
         $this->googleCalendarService->service = $this->mockGoogleService;
     }
 
-    public function testCreateEvent()
+    public function test_create_event()
     {
         $task = Task::factory()->create();
 
@@ -40,7 +42,7 @@ class GoogleCalendarServiceTest extends TestCase
         $this->assertEquals('test_event_id', $task->google_event_id);
     }
 
-    public function testUpdateEvent()
+    public function test_update_event()
     {
         $this->expectNotToPerformAssertions();
         $task = Task::factory()->create(['google_event_id' => 'existing_event_id']);
@@ -65,7 +67,7 @@ class GoogleCalendarServiceTest extends TestCase
         $this->googleCalendarService->updateEvent($task);
     }
 
-    public function testDeleteEvent()
+    public function test_delete_event()
     {
         $task = Task::factory()->create(['google_event_id' => 'existing_event_id']);
 
@@ -79,7 +81,7 @@ class GoogleCalendarServiceTest extends TestCase
         $this->assertNull($task->google_event_id);
     }
 
-    public function testFetchEvents()
+    public function test_fetch_events()
     {
         $mockEvent1 = Mockery::mock();
         $mockEvent1->id = 'event1';
@@ -105,7 +107,7 @@ class GoogleCalendarServiceTest extends TestCase
         $this->assertEquals('event2', $events[1]->getId());
     }
 
-    public function testSyncEvents()
+    public function test_sync_events()
     {
         $mockStart1 = Mockery::mock();
         $mockStart1->shouldReceive('getDateTime')->andReturn('2023-06-01 10:00:00');

@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Contact;
-use App\Models\Team;
 use App\Http\Livewire\ContactCollaboration;
+use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
 use Tests\TestCase;
 

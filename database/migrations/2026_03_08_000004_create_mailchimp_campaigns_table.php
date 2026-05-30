@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('mailchimp_campaigns')) {
+        if (! Schema::hasTable('mailchimp_campaigns')) {
             Schema::create('mailchimp_campaigns', function (Blueprint $table) {
                 $table->id();
                 $table->string('mailchimp_id')->nullable();

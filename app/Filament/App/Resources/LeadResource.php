@@ -5,12 +5,9 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
 use App\Models\Lead;
-use App\Services\TwilioService;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -21,7 +18,7 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-funnel';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-funnel';
 
     public static function form(Schema $schema): Schema
     {
@@ -127,4 +124,3 @@ class LeadResource extends Resource
         ];
     }
 }
-

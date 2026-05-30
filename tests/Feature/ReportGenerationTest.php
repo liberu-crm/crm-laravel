@@ -2,48 +2,48 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Contact;
 use App\Models\Deal;
-use App\Services\ReportingService;
 use App\Services\MailChimpService;
+use App\Services\ReportingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Support\Collection;
 use Mockery;
+use Tests\TestCase;
 
 class ReportGenerationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testContactInteractionsReportService()
+    public function test_contact_interactions_report_service()
     {
         Contact::factory()->count(3)->create();
 
         $service = app(ReportingService::class);
         $data = $service->getContactInteractionsData([]);
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
+        $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function testSalesPipelineReportService()
+    public function test_sales_pipeline_report_service()
     {
         Deal::factory()->count(5)->create();
 
         $service = app(ReportingService::class);
         $data = $service->getSalesPipelineData([]);
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
+        $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function testCustomerEngagementReportService()
+    public function test_customer_engagement_report_service()
     {
         $service = app(ReportingService::class);
         $data = $service->getCustomerEngagementData([]);
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $data);
+        $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function testABTestResultsWithMockedMailchimp()
+    public function test_ab_test_results_with_mocked_mailchimp()
     {
         $mockMailChimpService = Mockery::mock(MailChimpService::class);
         $mockMailChimpService->shouldReceive('getABTestResults')

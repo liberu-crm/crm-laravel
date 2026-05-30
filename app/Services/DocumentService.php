@@ -3,46 +3,44 @@
 namespace App\Services;
 
 use App\Models\Document;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentService
 {
     /**
      * Upload a new document and attach it to the given model.
      *
-     * @param  UploadedFile $file
-     * @param  Model        $documentable  Any Eloquent model with a morphMany('documents') relation.
-     * @param  array        $metadata      Optional metadata (title, description, tags, …).
-     * @return Document
+     * @param  Model  $documentable  Any Eloquent model with a morphMany('documents') relation.
+     * @param  array  $metadata  Optional metadata (title, description, tags, …).
      */
     public function upload(UploadedFile $file, Model $documentable, array $metadata = []): Document
     {
         $path = $this->storeFile($file);
 
         return Document::create([
-            'file_path'          => $path,
-            'original_filename'  => $file->getClientOriginalName(),
-            'mime_type'          => $file->getMimeType(),
-            'size'               => $file->getSize(),
-            'title'              => $metadata['title'] ?? $file->getClientOriginalName(),
-            'description'        => $metadata['description'] ?? null,
-            'tags'               => $metadata['tags'] ?? null,
-            'version'            => 1,
-            'documentable_id'    => $documentable->getKey(),
-            'documentable_type'  => get_class($documentable),
+            'file_path' => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'title' => $metadata['title'] ?? $file->getClientOriginalName(),
+            'description' => $metadata['description'] ?? null,
+            'tags' => $metadata['tags'] ?? null,
+            'version' => 1,
+            'documentable_id' => $documentable->getKey(),
+            'documentable_type' => get_class($documentable),
         ]);
     }
 
     /**
      * Upload a new version of an existing document.
      *
-     * @param  UploadedFile $file
-     * @param  Document     $document  The document to create a new version for.
-     * @param  array        $metadata  Optional metadata overrides for the new version.
-     * @return Document
+     * @param  Document  $document  The document to create a new version for.
+     * @param  array  $metadata  Optional metadata overrides for the new version.
      */
     public function uploadNewVersion(UploadedFile $file, Document $document, array $metadata = []): Document
     {
@@ -53,28 +51,28 @@ class DocumentService
         $path = $this->storeFile($file);
 
         return Document::create([
-            'file_path'          => $path,
-            'original_filename'  => $file->getClientOriginalName(),
-            'mime_type'          => $file->getMimeType(),
-            'size'               => $file->getSize(),
-            'title'              => $metadata['title'] ?? $document->title ?? $file->getClientOriginalName(),
-            'description'        => $metadata['description'] ?? $document->description,
-            'tags'               => $metadata['tags'] ?? $document->tags,
-            'version'            => $latestVersion + 1,
-            'documentable_id'    => $document->documentable_id,
-            'documentable_type'  => $document->documentable_type,
+            'file_path' => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'title' => $metadata['title'] ?? $document->title ?? $file->getClientOriginalName(),
+            'description' => $metadata['description'] ?? $document->description,
+            'tags' => $metadata['tags'] ?? $document->tags,
+            'version' => $latestVersion + 1,
+            'documentable_id' => $document->documentable_id,
+            'documentable_type' => $document->documentable_type,
         ]);
     }
 
     /**
      * Get a temporary download URL (or a streamed response) for a document.
      *
-     * @param  Document $document
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
     public function download(Document $document)
     {
         $filename = $document->original_filename ?? basename($document->file_path);
+
         return Storage::download($document->file_path, $filename);
     }
 
@@ -94,7 +92,7 @@ class DocumentService
      * Retrieve all versions of a document (all documents sharing the same
      * documentable, ordered newest-first).
      *
-     * @return \Illuminate\Database\Eloquent\Collection<Document>
+     * @return Collection<Document>
      */
     public function getVersions(Document $document)
     {
@@ -107,21 +105,19 @@ class DocumentService
     /**
      * Search documents belonging to a specific model by title, description, or filename.
      *
-     * @param  Model  $documentable
-     * @param  string $query
-     * @return \Illuminate\Database\Eloquent\Collection<Document>
+     * @return Collection<Document>
      */
     public function search(Model $documentable, string $query)
     {
-        $likeQuery = '%' . $query . '%';
+        $likeQuery = '%'.$query.'%';
 
         return Document::where('documentable_id', $documentable->getKey())
             ->where('documentable_type', get_class($documentable))
             ->where(function ($q) use ($likeQuery) {
                 $q->where('title', 'like', $likeQuery)
-                  ->orWhere('description', 'like', $likeQuery)
-                  ->orWhere('original_filename', 'like', $likeQuery)
-                  ->orWhere('tags', 'like', $likeQuery);
+                    ->orWhere('description', 'like', $likeQuery)
+                    ->orWhere('original_filename', 'like', $likeQuery)
+                    ->orWhere('tags', 'like', $likeQuery);
             })
             ->orderByDesc('version')
             ->get();
@@ -130,21 +126,20 @@ class DocumentService
     /**
      * List all documents for a given model, optionally filtered by MIME type or tags.
      *
-     * @param  Model  $documentable
      * @param  array  $filters  Supported keys: mime_type, tag
-     * @return \Illuminate\Database\Eloquent\Collection<Document>
+     * @return Collection<Document>
      */
     public function list(Model $documentable, array $filters = [])
     {
         $query = Document::where('documentable_id', $documentable->getKey())
             ->where('documentable_type', get_class($documentable));
 
-        if (!empty($filters['mime_type'])) {
+        if (! empty($filters['mime_type'])) {
             $query->where('mime_type', $filters['mime_type']);
         }
 
-        if (!empty($filters['tag'])) {
-            $query->where('tags', 'like', '%' . $filters['tag'] . '%');
+        if (! empty($filters['tag'])) {
+            $query->where('tags', 'like', '%'.$filters['tag'].'%');
         }
 
         return $query->orderByDesc('created_at')->get();
@@ -154,11 +149,25 @@ class DocumentService
 
     /**
      * Store the file and return its storage path.
+     * Validates the file content (magic bytes) and derives a safe extension
+     * from the detected MIME type rather than trusting user input.
      */
     private function storeFile(UploadedFile $file): string
     {
-        $directory = 'documents/' . date('Y/m');
-        $filename  = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $finfo = new \Finfo(FILEINFO_MIME_TYPE);
+        $detectedMime = $finfo->file($file->getRealPath());
+
+        $allowedMimes = config('documents.allowed_mimes', []);
+        $extensionMap = config('documents.extension_map', []);
+
+        if (! in_array($detectedMime, $allowedMimes, true)) {
+            abort(422, 'File content type not allowed.');
+        }
+
+        $directory = 'documents/'.date('Y/m');
+        $extension = $extensionMap[$detectedMime] ?? 'bin';
+        $filename = Str::uuid().'.'.$extension;
+
         return $file->storeAs($directory, $filename);
     }
 }

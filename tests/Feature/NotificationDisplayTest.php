@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class NotificationDisplayTest extends TestCase
 {
@@ -32,8 +32,8 @@ class NotificationDisplayTest extends TestCase
         $user = User::factory()->create();
 
         $user->notifications()->createMany([
-            ['id' => \Illuminate\Support\Str::uuid(), 'type' => 'App\Notifications\TestNotification', 'data' => ['message' => 'Test 1']],
-            ['id' => \Illuminate\Support\Str::uuid(), 'type' => 'App\Notifications\TestNotification', 'data' => ['message' => 'Test 2']],
+            ['id' => Str::uuid(), 'type' => 'App\Notifications\TestNotification', 'data' => ['message' => 'Test 1']],
+            ['id' => Str::uuid(), 'type' => 'App\Notifications\TestNotification', 'data' => ['message' => 'Test 2']],
         ]);
 
         $this->assertEquals(2, $user->notifications()->count());

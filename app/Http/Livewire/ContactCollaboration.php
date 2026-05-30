@@ -2,25 +2,31 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\ContactUpdated;
+use App\Models\Contact;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Contact;
-use App\Events\ContactUpdated;
-use Illuminate\Support\Facades\Auth;
 
 class ContactCollaboration extends Component
 {
     use WithPagination;
 
     public $contact;
+
     public $name;
+
     public $email;
+
     public $phone_number;
+
     public $status;
 
     public $search = '';
+
     public $statusFilter = '';
+
     public $sortField = 'name';
+
     public $sortDirection = 'asc';
 
     protected $queryString = ['search', 'statusFilter', 'sortField', 'sortDirection'];
@@ -32,7 +38,7 @@ class ContactCollaboration extends Component
         'status' => 'required|string|in:active,inactive',
     ];
 
-    public function mount(Contact $contact = null)
+    public function mount(?Contact $contact = null)
     {
         if ($contact) {
             $this->contact = $contact;
@@ -74,9 +80,9 @@ class ContactCollaboration extends Component
         $contacts = Contact::query()
             ->when($this->search, function ($query) {
                 $query->where(function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone_number', 'like', '%' . $this->search . '%');
+                    $subQuery->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%')
+                        ->orWhere('phone_number', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->statusFilter, function ($query) {

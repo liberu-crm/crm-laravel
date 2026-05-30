@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
 
 class TwilioService
 {
     protected $client;
+
     protected int $maxRetries = 3;
 
     public function __construct()
@@ -23,8 +26,8 @@ class TwilioService
     {
         if ($this->client === null) {
             $accountSid = config('services.twilio.account_sid');
-            $authToken  = config('services.twilio.auth_token');
-            $this->client = new \Twilio\Rest\Client($accountSid, $authToken);
+            $authToken = config('services.twilio.auth_token');
+            $this->client = new Client($accountSid, $authToken);
         }
 
         return $this->client;
@@ -45,12 +48,12 @@ class TwilioService
                 }
 
                 return true;
-            } catch (\Twilio\Exceptions\TwilioException $e) {
+            } catch (TwilioException $e) {
                 $attempts++;
-                Log::warning("SMS attempt {$attempts} failed: " . $e->getMessage());
+                Log::warning("SMS attempt {$attempts} failed: ".$e->getMessage());
 
                 if ($attempts >= $this->maxRetries) {
-                    Log::error("Failed to send SMS after {$this->maxRetries} attempts: " . $e->getMessage());
+                    Log::error("Failed to send SMS after {$this->maxRetries} attempts: ".$e->getMessage());
                     throw $e;
                 }
             }
@@ -69,12 +72,12 @@ class TwilioService
                 ]);
 
                 return true;
-            } catch (\Twilio\Exceptions\TwilioException $e) {
+            } catch (TwilioException $e) {
                 $attempts++;
-                Log::warning("Call attempt {$attempts} failed: " . $e->getMessage());
+                Log::warning("Call attempt {$attempts} failed: ".$e->getMessage());
 
                 if ($attempts >= $this->maxRetries) {
-                    Log::error("Failed to make call after {$this->maxRetries} attempts: " . $e->getMessage());
+                    Log::error("Failed to make call after {$this->maxRetries} attempts: ".$e->getMessage());
                     throw $e;
                 }
             }
@@ -124,6 +127,7 @@ class TwilioService
         foreach ($recipients as $recipient) {
             $results[] = $this->sendSMS($recipient, $message);
         }
+
         return $results;
     }
 
@@ -133,6 +137,7 @@ class TwilioService
         foreach ($recipients as $recipient) {
             $results[] = $this->makeCall($recipient, $url);
         }
+
         return $results;
     }
 }

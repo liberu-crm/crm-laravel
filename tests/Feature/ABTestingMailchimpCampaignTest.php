@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\MailChimpService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class ABTestingMailchimpCampaignTest extends TestCase
 {
@@ -19,7 +19,7 @@ class ABTestingMailchimpCampaignTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mockMailChimpService);
     }
 
-    public function testCreateABTestCampaignWithMailchimpService()
+    public function test_create_ab_test_campaign_with_mailchimp_service()
     {
         $expectedResult = [
             'id' => 'test_campaign_id',
@@ -47,7 +47,7 @@ class ABTestingMailchimpCampaignTest extends TestCase
         $this->assertEquals('abtest', $result['type']);
     }
 
-    public function testRetrieveABTestResults()
+    public function test_retrieve_ab_test_results()
     {
         $this->mockMailChimpService->shouldReceive('getABTestResults')
             ->once()
@@ -68,14 +68,14 @@ class ABTestingMailchimpCampaignTest extends TestCase
         $this->assertEquals('b', $result['winner']);
     }
 
-    public function testMailchimpCampaignIndexLoadsForAuthenticatedUser()
+    public function test_mailchimp_campaign_index_loads_for_authenticated_user()
     {
         $user = User::factory()->withPersonalTeam()->create();
         $team = $user->ownedTeams->first();
         $user->current_team_id = $team->id;
         $user->save();
 
-        $response = $this->actingAs($user)->get('/app/' . $team->id . '/mailchimp-campaigns');
+        $response = $this->actingAs($user)->get('/app/'.$team->id.'/mailchimp-campaigns');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected mailchimp-campaigns to return 200 or 302, got {$response->status()}"

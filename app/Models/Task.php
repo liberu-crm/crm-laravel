@@ -14,6 +14,7 @@ class Task extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'team_id',
         'name',
         'description',
         'due_date',
@@ -88,6 +89,7 @@ class Task extends Model
         } elseif ($this->calendar_type === 'outlook') {
             return app(OutlookCalendarService::class);
         }
+
         return null;
     }
 

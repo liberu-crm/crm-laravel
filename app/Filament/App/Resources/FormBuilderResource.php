@@ -2,30 +2,27 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\FormBuilderResource\Pages\ListFormBuilders;
 use App\Filament\App\Resources\FormBuilderResource\Pages\CreateFormBuilder;
 use App\Filament\App\Resources\FormBuilderResource\Pages\EditFormBuilder;
-use App\Filament\App\Resources\FormBuilderResource\Pages;
+use App\Filament\App\Resources\FormBuilderResource\Pages\ListFormBuilders;
 use App\Models\FormBuilder;
-use Filament\Forms;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class FormBuilderResource extends Resource
 {
     protected static ?string $model = FormBuilder::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
     public static function form(Schema $schema): Schema
     {

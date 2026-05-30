@@ -2,32 +2,28 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\ViewAction;
+use App\Filament\App\Resources\MailchimpCampaignResource\Pages\CreateMailchimpCampaign;
+use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ListMailchimpCampaigns;
+use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewABTestResults;
+use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewMailchimpCampaign;
+use App\Models\MailchimpCampaign;
+use App\Services\MailChimpService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ListMailchimpCampaigns;
-use App\Filament\App\Resources\MailchimpCampaignResource\Pages\CreateMailchimpCampaign;
-use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewMailchimpCampaign;
-use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewABTestResults;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\App\Resources\MailchimpCampaignResource\Pages;
-use App\Models\MailchimpCampaign;
-use App\Services\MailChimpService;
-use Filament\Forms;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class MailchimpCampaignResource extends Resource
 {
     protected static ?string $model = MailchimpCampaign::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {

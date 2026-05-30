@@ -15,7 +15,7 @@ return new class extends Migration
             $table->json('config')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['workflow_id', 'type']);
             $table->index('is_active');
         });
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('delay_unit')->nullable(); // minutes, hours, days
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['workflow_id', 'order']);
         });
 
@@ -58,7 +58,7 @@ return new class extends Migration
             $table->text('error_message')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['entity_type', 'entity_id']);
             $table->index(['workflow_id', 'status']);
         });

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register the module manager as a singleton
         $this->app->singleton(ModuleManager::class, function ($app) {
-            return new ModuleManager();
+            return new ModuleManager;
         });
 
         // Register the module service provider

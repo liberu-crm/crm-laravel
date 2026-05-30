@@ -11,7 +11,7 @@ class ContactStatsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testTotalContactsCalculation()
+    public function test_total_contacts_calculation()
     {
         Contact::factory()->count(10)->create();
 
@@ -20,7 +20,7 @@ class ContactStatsTest extends TestCase
         $this->assertEquals(10, $totalContacts);
     }
 
-    public function testRecentContactsCalculation()
+    public function test_recent_contacts_calculation()
     {
         Contact::factory()->count(5)->create(['created_at' => now()->subDays(10)]);
         Contact::factory()->count(3)->create(['created_at' => now()->subDays(60)]);
@@ -32,7 +32,7 @@ class ContactStatsTest extends TestCase
         $this->assertEquals(5, $recentContacts);
     }
 
-    public function testCategorizationOfContacts()
+    public function test_categorization_of_contacts()
     {
         Contact::factory()->count(3)->create(['status' => 'lead']);
         Contact::factory()->count(2)->create(['status' => 'customer']);

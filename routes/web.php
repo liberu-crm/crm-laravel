@@ -1,20 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ContactListController;
+use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
-use App\Http\Controllers\EmailTrackingController;
-use App\Http\Controllers\TwilioController;
-use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\TeamInvitationController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TwilioController;
+use Illuminate\Support\Facades\Route;
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
-Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete');
+Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete')->middleware('auth');
 Route::get('/contacts/autocomplete', [ContactListController::class, 'autocomplete'])->name('contacts.autocomplete');
 // Optional {created_at?} path parameter ensures Carbon objects are serialized via __toString()
 // when passed to route() helper, unlike query string params which are skipped by http_build_query()
@@ -24,9 +24,9 @@ Route::get('/contacts/{created_at?}', [ContactListController::class, 'index'])->
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-// Twilio TwiML routes (public, Twilio callback)
-Route::post('/twilio/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->name('twilio.twiml.outbound');
-Route::post('/twilio/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->name('twilio.recording.callback');
+// Twilio TwiML routes (public, Twilio callback, signature-verified)
+Route::post('/twilio/twiml/outbound', [TwilioController::class, 'handleOutboundCall'])->middleware('twilio.verify')->name('twilio.twiml.outbound');
+Route::post('/twilio/recording/callback', [TwilioController::class, 'handleRecordingCallback'])->middleware('twilio.verify')->name('twilio.recording.callback');
 
 // Email tracking routes (public, no auth required)
 Route::get('/email/track/pixel/{tracking_id}', [EmailTrackingController::class, 'pixel'])->name('email.tracking.pixel');
@@ -42,7 +42,7 @@ Route::get('/email/track/link/{tracking_id}', [EmailTrackingController::class, '
 Route::middleware(['auth'])->group(function () {
     // Route::get('/app', [HomeController::class, 'app'])->name('app');
     // Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
-    
+
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('knowledge-base.index');
     Route::get('/knowledge-base/{article}', [KnowledgeBaseController::class, 'show'])->name('knowledge-base.show');
@@ -63,3 +63,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{service}/callback', [OAuthConfigurationController::class, 'oauthCallback'])->name('oauth.configurations.callback');
     });
 });
+
+Route::post('/forms/{leadForm}/submit', [LeadFormController::class, 'submit'])->name('forms.submit');

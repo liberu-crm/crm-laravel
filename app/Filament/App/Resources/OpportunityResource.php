@@ -1,34 +1,28 @@
 <?php
+
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
 use App\Filament\App\Resources\OpportunityResource\Pages\CreateOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\EditOpportunity;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Tables\Table;
+use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
 use App\Models\Opportunity;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\OpportunityResource\Pages;
-use App\Filament\App\Resources\OpportunityResource\RelationManagers;
-
-use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 
 class OpportunityResource extends Resource
 {
     protected static ?string $model = Opportunity::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
 
     public static function form(Schema $schema): Schema
     {

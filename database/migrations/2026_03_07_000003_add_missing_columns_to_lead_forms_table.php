@@ -9,28 +9,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lead_forms', function (Blueprint $table) {
-            if (!Schema::hasColumn('lead_forms', 'team_id')) {
+            if (! Schema::hasColumn('lead_forms', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->after('id');
             }
-            if (!Schema::hasColumn('lead_forms', 'description')) {
+            if (! Schema::hasColumn('lead_forms', 'description')) {
                 $table->text('description')->nullable()->after('name');
             }
-            if (!Schema::hasColumn('lead_forms', 'settings')) {
+            if (! Schema::hasColumn('lead_forms', 'settings')) {
                 $table->json('settings')->nullable()->after('fields');
             }
-            if (!Schema::hasColumn('lead_forms', 'style')) {
+            if (! Schema::hasColumn('lead_forms', 'style')) {
                 $table->json('style')->nullable()->after('settings');
             }
-            if (!Schema::hasColumn('lead_forms', 'status')) {
+            if (! Schema::hasColumn('lead_forms', 'status')) {
                 $table->string('status')->default('active')->after('style');
             }
-            if (!Schema::hasColumn('lead_forms', 'conversion_rate')) {
+            if (! Schema::hasColumn('lead_forms', 'conversion_rate')) {
                 $table->decimal('conversion_rate', 5, 2)->default(0)->after('status');
             }
-            if (!Schema::hasColumn('lead_forms', 'views')) {
+            if (! Schema::hasColumn('lead_forms', 'views')) {
                 $table->unsignedInteger('views')->default(0)->after('conversion_rate');
             }
-            if (!Schema::hasColumn('lead_forms', 'submissions')) {
+            if (! Schema::hasColumn('lead_forms', 'submissions')) {
                 $table->unsignedInteger('submissions')->default(0)->after('views');
             }
             // Make landing_page_id nullable since it may not always be required

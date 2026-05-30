@@ -3,8 +3,8 @@
 namespace App\Filament\App\Resources\AnalyticsDashboardResource\Pages;
 
 use App\Filament\App\Resources\AnalyticsDashboardResource;
-use Filament\Resources\Pages\Page;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Resources\Pages\Page;
 
 class ViewAnalyticsDashboard extends Page
 {

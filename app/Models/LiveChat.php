@@ -38,8 +38,11 @@ class LiveChat extends Model
     ];
 
     const STATUS_WAITING = 'waiting';
+
     const STATUS_ACTIVE = 'active';
+
     const STATUS_ENDED = 'ended';
+
     const STATUS_MISSED = 'missed';
 
     public function contact(): BelongsTo
@@ -59,7 +62,7 @@ class LiveChat extends Model
 
     public function getDurationAttribute(): ?int
     {
-        if (!$this->started_at || !$this->ended_at) {
+        if (! $this->started_at || ! $this->ended_at) {
             return null;
         }
 

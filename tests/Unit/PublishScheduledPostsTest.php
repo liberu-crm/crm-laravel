@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Console\Commands\PublishScheduledPosts;
 use App\Models\ConnectedAccount;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
@@ -28,9 +27,9 @@ class PublishScheduledPostsTest extends TestCase
     private function makePost(array $platforms, array $extra = []): SocialMediaPost
     {
         return SocialMediaPost::create(array_merge([
-            'content'      => "Line one\nMore detail",
-            'platforms'    => $platforms,
-            'status'       => SocialMediaPost::STATUS_SCHEDULED,
+            'content' => "Line one\nMore detail",
+            'platforms' => $platforms,
+            'status' => SocialMediaPost::STATUS_SCHEDULED,
             'scheduled_at' => now()->subMinute(),
         ], $extra));
     }
@@ -52,9 +51,9 @@ class PublishScheduledPostsTest extends TestCase
     {
         $account = ConnectedAccount::factory()->create([
             'account_type' => 'twitter',
-            'is_primary'   => true,
-            'token'        => 'tok',
-            'secret'       => 'sec',
+            'is_primary' => true,
+            'token' => 'tok',
+            'secret' => 'sec',
         ]);
 
         $post = $this->makePost(['twitter']);
@@ -72,8 +71,8 @@ class PublishScheduledPostsTest extends TestCase
     {
         $account = ConnectedAccount::factory()->create([
             'account_type' => 'instagram',
-            'is_primary'   => true,
-            'token'        => 'tok',
+            'is_primary' => true,
+            'token' => 'tok',
         ]);
 
         $post = $this->makePost(['instagram'], ['image' => 'posts/img.jpg']);
@@ -91,8 +90,8 @@ class PublishScheduledPostsTest extends TestCase
     {
         $account = ConnectedAccount::factory()->create([
             'account_type' => 'linkedin',
-            'is_primary'   => true,
-            'token'        => 'tok',
+            'is_primary' => true,
+            'token' => 'tok',
         ]);
 
         $post = $this->makePost(['linkedin']);
@@ -110,8 +109,8 @@ class PublishScheduledPostsTest extends TestCase
     {
         $account = ConnectedAccount::factory()->create([
             'account_type' => 'youtube',
-            'is_primary'   => true,
-            'token'        => 'tok',
+            'is_primary' => true,
+            'token' => 'tok',
         ]);
 
         $post = $this->makePost(['youtube'], ['video' => 'videos/clip.mp4']);
@@ -134,8 +133,8 @@ class PublishScheduledPostsTest extends TestCase
     {
         ConnectedAccount::factory()->create([
             'account_type' => 'youtube',
-            'is_primary'   => true,
-            'token'        => 'tok',
+            'is_primary' => true,
+            'token' => 'tok',
         ]);
 
         // No 'video' field set
@@ -168,9 +167,9 @@ class PublishScheduledPostsTest extends TestCase
     {
         ConnectedAccount::factory()->create([
             'account_type' => 'twitter',
-            'is_primary'   => true,
-            'token'        => 'tok',
-            'secret'       => 'sec',
+            'is_primary' => true,
+            'token' => 'tok',
+            'secret' => 'sec',
         ]);
 
         $post = $this->makePost(['facebook', 'twitter']);

@@ -7,6 +7,7 @@ use App\Models\Task;
 class GoogleCalendarService implements CalendarService
 {
     public $client;
+
     public $service;
 
     public function __construct()
@@ -17,7 +18,7 @@ class GoogleCalendarService implements CalendarService
     protected function getService()
     {
         if ($this->service === null) {
-            $client = new \Google_Client();
+            $client = new \Google_Client;
             $client->setAuthConfig(config('services.google.credentials_path'));
             $client->addScope(\Google_Service_Calendar::CALENDAR);
             $this->service = new \Google_Service_Calendar($client);
@@ -29,10 +30,10 @@ class GoogleCalendarService implements CalendarService
     public function createEvent(Task $task): void
     {
         $event = new \Google_Service_Calendar_Event([
-            'summary'     => $task->name,
+            'summary' => $task->name,
             'description' => $task->description,
-            'start'       => ['dateTime' => $task->due_date->toRfc3339String()],
-            'end'         => ['dateTime' => $task->due_date->addHour()->toRfc3339String()],
+            'start' => ['dateTime' => $task->due_date->toRfc3339String()],
+            'end' => ['dateTime' => $task->due_date->addHour()->toRfc3339String()],
         ]);
 
         $createdEvent = $this->getService()->events->insert('primary', $event);
@@ -63,13 +64,14 @@ class GoogleCalendarService implements CalendarService
     public function fetchEvents(array $params = []): array
     {
         $optParams = array_merge([
-            'maxResults'   => 100,
-            'orderBy'      => 'startTime',
+            'maxResults' => 100,
+            'orderBy' => 'startTime',
             'singleEvents' => true,
-            'timeMin'      => date('c'),
+            'timeMin' => date('c'),
         ], $params);
 
         $results = $this->getService()->events->listEvents('primary', $optParams);
+
         return $results->getItems();
     }
 
@@ -79,15 +81,15 @@ class GoogleCalendarService implements CalendarService
             $task = Task::where('google_event_id', $event->id)->first();
 
             if ($task) {
-                $task->name        = $event->getSummary();
+                $task->name = $event->getSummary();
                 $task->description = $event->getDescription();
-                $task->due_date    = $event->getStart()->getDateTime();
+                $task->due_date = $event->getStart()->getDateTime();
                 $task->save();
             } else {
                 Task::create([
-                    'name'            => $event->getSummary(),
-                    'description'     => $event->getDescription(),
-                    'due_date'        => $event->getStart()->getDateTime(),
+                    'name' => $event->getSummary(),
+                    'description' => $event->getDescription(),
+                    'due_date' => $event->getStart()->getDateTime(),
                     'google_event_id' => $event->id,
                 ]);
             }
