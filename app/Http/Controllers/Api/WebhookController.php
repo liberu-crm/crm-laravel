@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Webhook;
 use App\Services\WebhookService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Uri;
 
 class WebhookController extends Controller
 {
@@ -35,18 +36,18 @@ class WebhookController extends Controller
             'url'       => [
                 'required',
                 'url',
-                function ($attribute, $value, $fail) {
+                function ($_attribute, $value, $fail) {
                     if (!app()->environment('production')) {
                         return;
                     }
 
-                    $scheme = parse_url($value, PHP_URL_SCHEME);
+                    $scheme = Uri::of($value)->scheme();
                     if ($scheme !== 'https') {
                         $fail('Webhook URL must use HTTPS in production.');
                         return;
                     }
 
-                    $host = parse_url($value, PHP_URL_HOST);
+                    $host = Uri::of($value)->host();
                     if (!$host) {
                         $fail('URL is invalid.');
                         return;
@@ -94,18 +95,18 @@ class WebhookController extends Controller
             'url'       => [
                 'sometimes',
                 'url',
-                function ($attribute, $value, $fail) {
+                function ($_attribute, $value, $fail) {
                     if (!app()->environment('production')) {
                         return;
                     }
 
-                    $scheme = parse_url($value, PHP_URL_SCHEME);
+                    $scheme = Uri::of($value)->scheme();
                     if ($scheme !== 'https') {
                         $fail('Webhook URL must use HTTPS in production.');
                         return;
                     }
 
-                    $host = parse_url($value, PHP_URL_HOST);
+                    $host = Uri::of($value)->host();
                     if (!$host) {
                         $fail('URL is invalid.');
                         return;

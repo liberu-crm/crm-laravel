@@ -53,11 +53,14 @@ class LeadFormController extends Controller
         foreach ($leadForm->fields as $field) {
             $raw = $field['validation'] ?? 'required';
             $parts = is_array($raw) ? $raw : explode('|', $raw);
-            $filtered = array_filter($parts, function ($rule) {
+            $filtered = [];
+            foreach ($parts as $rule) {
                 $name = is_string($rule) ? explode(':', $rule)[0] : '';
-                return !in_array($name, ['regex', 'not_regex'], true)
-                    && !str_contains((string) $rule, '\\');
-            });
+                if (!in_array($name, ['regex', 'not_regex'], true)
+                    && !str_contains((string) $rule, '\\')) {
+                    $filtered[] = $rule;
+                }
+            }
             $rules[$field['name']] = array_values($filtered) ?: ['required'];
         }
         return $rules;

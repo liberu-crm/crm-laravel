@@ -43,7 +43,7 @@ class TeamsPermissionTest extends TestCase
     {
         $request = Request::create('/_test/teams', 'GET');
 
-        $response = $this->middleware->handle($request, fn ($req) => response('ok'));
+        $response = $this->middleware->handle($request, fn ($_) => response('ok'));
 
         $this->assertEquals(302, $response->getStatusCode());
     }

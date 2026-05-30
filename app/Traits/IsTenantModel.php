@@ -16,7 +16,7 @@ trait IsTenantModel
     public function scopeByTeam(Builder $query, ?int $teamId): void
     {
         if ($teamId) {
-            $query->where($query->qualifyColumn('team_id'), $teamId);
+            $query->where($query->qualifyColumn('team_id'), (int) $teamId);
         }
     }
 

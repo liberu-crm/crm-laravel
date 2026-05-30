@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\Email;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Uri;
 
 class WorkflowAutomationService
 {
@@ -312,7 +313,7 @@ class WorkflowAutomationService
 
     private function ensurePublicUrl(string $url): void
     {
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = Uri::of($url)->host();
 
         if (!$host) {
             return;

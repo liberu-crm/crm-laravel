@@ -60,6 +60,15 @@ class EmailTrackingService
     }
 
     /**
+     * Decode a base64-encoded tracked URL.
+     */
+    public function decodeTrackedUrl(string $encoded): string
+    {
+        $decoded = base64_decode($encoded, true);
+        return $decoded === false ? '' : $decoded;
+    }
+
+    /**
      * Inject tracking pixel into email HTML
      */
     public function injectTrackingPixel(string $html, EmailTracking $tracking): string

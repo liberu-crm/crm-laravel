@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\EmailTracking;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Uri;
 use Tests\TestCase;
 
 class EmailTrackingLinkTest extends TestCase
@@ -45,7 +46,7 @@ class EmailTrackingLinkTest extends TestCase
     public function test_redirects_to_subdomain_url()
     {
         $tracking = EmailTracking::factory()->create();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $appHost = Uri::of(config('app.url'))->host();
         $url = 'https://sub.' . $appHost . '/page';
 
         $response = $this->get($this->signedRoute($tracking, $url));

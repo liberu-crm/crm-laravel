@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\EmailTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Uri;
 
 class EmailTrackingController extends Controller
 {
@@ -55,9 +56,9 @@ class EmailTrackingController extends Controller
             return redirect(config('app.url'));
         }
 
-        $url = base64_decode($encodedUrl, true);
+        $url = $this->trackingService->decodeTrackedUrl((string) $encodedUrl);
 
-        if ($url === false || $url === '') {
+        if ($url === '') {
             $url = config('app.url');
         }
 
@@ -79,13 +80,13 @@ class EmailTrackingController extends Controller
 
     private function validateRedirectUrl(string $url): string
     {
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = Uri::of($url)->host();
 
         if ($host === null) {
             return $url;
         }
 
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $appHost = Uri::of(config('app.url'))->host();
 
         if ($host === $appHost || str_ends_with($host, '.' . $appHost)) {
             return $url;
