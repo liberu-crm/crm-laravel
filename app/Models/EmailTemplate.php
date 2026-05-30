@@ -44,7 +44,7 @@ class EmailTemplate extends Model
         $htmlBody = $this->html_body;
 
         foreach ($data as $key => $value) {
-            $placeholder = '{{' . $key . '}}';
+            $placeholder = '{{'.$key.'}}';
             $subject = str_replace($placeholder, $value, $subject);
             $body = str_replace($placeholder, $value, $body);
             $htmlBody = str_replace($placeholder, $value, $htmlBody);
@@ -63,6 +63,7 @@ class EmailTemplate extends Model
     public static function extractVariables(string $content): array
     {
         preg_match_all('/\{\{([^}]+)\}\}/', $content, $matches);
+
         return array_unique($matches[1] ?? []);
     }
 }

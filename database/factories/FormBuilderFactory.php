@@ -21,30 +21,30 @@ class FormBuilderFactory extends Factory
                     'type' => 'text',
                     'label' => 'Full Name',
                     'required' => true,
-                    'placeholder' => 'Enter your full name'
+                    'placeholder' => 'Enter your full name',
                 ],
                 [
                     'type' => 'email',
                     'label' => 'Email Address',
                     'required' => true,
-                    'placeholder' => 'Enter your email'
+                    'placeholder' => 'Enter your email',
                 ],
                 [
                     'type' => 'select',
                     'label' => 'Interest',
                     'options' => ['Product A', 'Product B', 'Service X'],
-                    'required' => false
-                ]
+                    'required' => false,
+                ],
             ]),
             'settings' => json_encode([
                 'submit_button_text' => 'Submit Form',
                 'success_message' => 'Thank you for your submission!',
                 'redirect_url' => $this->faker->url,
-                'email_notification' => true
+                'email_notification' => true,
             ]),
             'status' => $this->faker->randomElement(['draft', 'published', 'archived']),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

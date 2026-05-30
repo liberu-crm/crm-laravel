@@ -11,10 +11,10 @@ return new class extends Migration
         // Enhance workflows table
         if (Schema::hasTable('workflows')) {
             Schema::table('workflows', function (Blueprint $table) {
-                if (!Schema::hasColumn('workflows', 'is_active')) {
+                if (! Schema::hasColumn('workflows', 'is_active')) {
                     $table->boolean('is_active')->default(true)->after('actions');
                 }
-                if (!Schema::hasColumn('workflows', 'metadata')) {
+                if (! Schema::hasColumn('workflows', 'metadata')) {
                     $table->json('metadata')->nullable()->after('is_active');
                 }
             });

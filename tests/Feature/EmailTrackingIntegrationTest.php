@@ -2,18 +2,19 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use App\Models\Email;
 use App\Services\GmailService;
 use App\Services\MailChimpService;
-use App\Models\Email;
-use Mockery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Tests\TestCase;
 
 class EmailTrackingIntegrationTest extends TestCase
 {
     use RefreshDatabase;
 
     protected $gmailService;
+
     protected $mailChimpService;
 
     protected function setUp(): void
@@ -25,7 +26,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function testEmailOpenTrackingService()
+    public function test_email_open_tracking_service()
     {
         $this->mailChimpService->shouldReceive('trackEmailOpen')
             ->once()
@@ -36,7 +37,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testEmailClickTrackingService()
+    public function test_email_click_tracking_service()
     {
         $this->mailChimpService->shouldReceive('trackEmailClick')
             ->once()
@@ -47,7 +48,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCampaignPerformanceReportService()
+    public function test_campaign_performance_report_service()
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -72,7 +73,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertEquals(0.5, $report['open_rate']);
     }
 
-    public function testEmailModelCreation()
+    public function test_email_model_creation()
     {
         $email = Email::factory()->create([
             'subject' => 'Test Subject',

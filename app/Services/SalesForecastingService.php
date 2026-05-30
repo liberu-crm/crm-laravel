@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Models\Deal;
-use App\Models\SalesForecast;
 use App\Models\Pipeline;
+use App\Models\SalesForecast;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class SalesForecastingService
 {
@@ -80,7 +79,7 @@ class SalesForecastingService
         $weightedRevenue = $deals->sum(function ($deal) {
             $stageWeight = $this->getStageWeight($deal->stage);
             $probabilityWeight = $deal->probability / 100;
-            
+
             return $deal->value * $stageWeight * $probabilityWeight;
         });
 
@@ -116,34 +115,34 @@ class SalesForecastingService
 
         // Predict revenue for each month in the requested window
         $predictedRevenue = 0.0;
-        $forecastMonths   = 0;
+        $forecastMonths = 0;
         $current = $startDate->copy()->startOfMonth();
 
         while ($current->lte($endDate)) {
-            $monthIndex   = $trainingMonths + $forecastMonths;
-            $base         = $intercept + $slope * $monthIndex;
-            $seasonalKey  = $current->month;
-            $seasonal     = $seasonalFactors[$seasonalKey] ?? 1.0;
+            $monthIndex = $trainingMonths + $forecastMonths;
+            $base = $intercept + $slope * $monthIndex;
+            $seasonalKey = $current->month;
+            $seasonal = $seasonalFactors[$seasonalKey] ?? 1.0;
             $predictedRevenue += max(0, $base * $seasonal);
             $forecastMonths++;
             $current->addMonth();
         }
 
-        $rSquared   = $this->calculateRSquared(array_column($trend, 'revenue'), $slope, $intercept);
+        $rSquared = $this->calculateRSquared(array_column($trend, 'revenue'), $slope, $intercept);
         $confidence = (int) round(max(0, min(100, $rSquared * 100)));
 
         return SalesForecast::create([
-            'name'              => 'AI Linear-Regression Forecast',
-            'period_start'      => $startDate,
-            'period_end'        => $endDate,
-            'forecast_type'     => SalesForecast::TYPE_AI_PREDICTED,
+            'name' => 'AI Linear-Regression Forecast',
+            'period_start' => $startDate,
+            'period_end' => $endDate,
+            'forecast_type' => SalesForecast::TYPE_AI_PREDICTED,
             'predicted_revenue' => round($predictedRevenue, 2),
-            'confidence_level'  => $confidence,
-            'metadata'          => [
-                'slope'            => round($slope, 4),
-                'intercept'        => round($intercept, 4),
-                'r_squared'        => round($rSquared, 4),
-                'training_months'  => $trainingMonths,
+            'confidence_level' => $confidence,
+            'metadata' => [
+                'slope' => round($slope, 4),
+                'intercept' => round($intercept, 4),
+                'r_squared' => round($rSquared, 4),
+                'training_months' => $trainingMonths,
                 'seasonal_factors' => $seasonalFactors,
             ],
         ]);
@@ -162,16 +161,16 @@ class SalesForecastingService
         // 1. More deals = more predictable
         // 2. Higher probability deals
         // 3. Deals further along in pipeline
-        
+
         $dealCount = $deals->count();
         $avgProbability = $deals->avg('probability');
-        
+
         $countScore = min(100, ($dealCount / 10) * 100); // Max at 10 deals
         $probabilityScore = $avgProbability;
-        
+
         // Weighted average
         $confidence = ($countScore * 0.3) + ($probabilityScore * 0.7);
-        
+
         return round($confidence, 2);
     }
 
@@ -187,7 +186,7 @@ class SalesForecastingService
         $previousQuarter = Deal::where('status', 'won')
             ->whereBetween('closed_at', [
                 now()->subQuarter()->startOfQuarter(),
-                now()->subQuarter()->endOfQuarter()
+                now()->subQuarter()->endOfQuarter(),
             ])
             ->sum('value');
 
@@ -203,14 +202,14 @@ class SalesForecastingService
      */
     protected function getStageWeight($stage): float
     {
-        if (!$stage) {
+        if (! $stage) {
             return 0.5;
         }
 
         // Earlier stages get lower weight
         $order = $stage->order ?? 0;
         $maxOrder = 5; // Typical number of stages
-        
+
         return min(1, ($order / $maxOrder) + 0.2);
     }
 
@@ -266,23 +265,23 @@ class SalesForecastingService
     public function getRevenueTrend(int $months = 12): array
     {
         $data = [];
-        
+
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $startDate = $date->copy()->startOfMonth();
             $endDate = $date->copy()->endOfMonth();
-            
+
             $revenue = Deal::where('status', 'won')
                 ->whereBetween('closed_at', [$startDate, $endDate])
                 ->sum('value');
-            
+
             $data[] = [
-                'month'   => $date->format('M Y'),
+                'month' => $date->format('M Y'),
                 'revenue' => (float) $revenue,
                 'month_number' => (int) $date->month,
             ];
         }
-        
+
         return $data;
     }
 
@@ -294,8 +293,8 @@ class SalesForecastingService
      * Ordinary-least-squares linear regression on an array of y values
      * (x = 0, 1, 2, ...).
      *
-     * @param  float[] $values
-     * @return array{float, float}  [slope, intercept]
+     * @param  float[]  $values
+     * @return array{float, float} [slope, intercept]
      */
     private function linearRegression(array $values): array
     {
@@ -305,14 +304,14 @@ class SalesForecastingService
             return [0.0, (float) ($values[0] ?? 0)];
         }
 
-        $sumX  = 0.0;
-        $sumY  = 0.0;
+        $sumX = 0.0;
+        $sumY = 0.0;
         $sumXY = 0.0;
         $sumX2 = 0.0;
 
         for ($i = 0; $i < $n; $i++) {
-            $sumX  += $i;
-            $sumY  += $values[$i];
+            $sumX += $i;
+            $sumY += $values[$i];
             $sumXY += $i * $values[$i];
             $sumX2 += $i * $i;
         }
@@ -323,7 +322,7 @@ class SalesForecastingService
             return [0.0, $sumY / $n];
         }
 
-        $slope     = ($n * $sumXY - $sumX * $sumY) / $denominator;
+        $slope = ($n * $sumXY - $sumX * $sumY) / $denominator;
         $intercept = ($sumY - $slope * $sumX) / $n;
 
         return [$slope, $intercept];
@@ -332,19 +331,19 @@ class SalesForecastingService
     /**
      * Calculate the coefficient of determination (R²) for a linear fit.
      *
-     * @param  float[] $values
+     * @param  float[]  $values
      */
     private function calculateRSquared(array $values, float $slope, float $intercept): float
     {
-        $n    = count($values);
+        $n = count($values);
         $mean = array_sum($values) / max(1, $n);
         $ssTot = 0.0;
         $ssRes = 0.0;
 
         for ($i = 0; $i < $n; $i++) {
             $predicted = $intercept + $slope * $i;
-            $ssTot    += ($values[$i] - $mean) ** 2;
-            $ssRes    += ($values[$i] - $predicted) ** 2;
+            $ssTot += ($values[$i] - $mean) ** 2;
+            $ssRes += ($values[$i] - $predicted) ** 2;
         }
 
         if ($ssTot === 0.0) {
@@ -358,8 +357,8 @@ class SalesForecastingService
      * Calculate monthly seasonal factors from historical data.
      * Each factor is the ratio of that month's average to the overall monthly average.
      *
-     * @param  array<array{revenue: float, month_number: int}> $trend
-     * @return array<int, float>  Keys are month numbers (1–12)
+     * @param  array<array{revenue: float, month_number: int}>  $trend
+     * @return array<int, float> Keys are month numbers (1–12)
      */
     private function calculateSeasonalFactors(array $trend): array
     {

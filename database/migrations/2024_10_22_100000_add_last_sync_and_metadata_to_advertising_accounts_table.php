@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('advertising_accounts', function (Blueprint $table) {
-            if (!Schema::hasColumn('advertising_accounts', 'team_id')) {
+            if (! Schema::hasColumn('advertising_accounts', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete()->after('id');
             }
             $table->timestamp('last_sync')->nullable()->after('status');

@@ -12,7 +12,6 @@ class Company extends Model
     use HasFactory;
     use IsTenantModel;
 
-
     protected $fillable = [
         'name',
         'address',

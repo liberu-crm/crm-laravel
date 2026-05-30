@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Filament\App\Resources\ContactResource;
 use Filament\Panel;
 use Filament\PanelProvider;
-use App\Filament\App\Resources\ContactResource;
 
 class FilamentServiceProvider extends PanelProvider
 {

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\Task;
 use App\Notifications\TaskReminderNotification;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class ReminderService

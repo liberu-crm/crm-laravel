@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Lead;
 use App\Models\Contact;
-use App\Models\Task;
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +14,7 @@ class LeadManagementUITest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->withPersonalTeam()->create();
@@ -40,7 +39,7 @@ class LeadManagementUITest extends TestCase
     public function test_lead_index_page_loads()
     {
         $team = $this->user->ownedTeams->first();
-        $response = $this->actingAs($this->user)->get('/app/' . $team->id . '/leads');
+        $response = $this->actingAs($this->user)->get('/app/'.$team->id.'/leads');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected leads page to return 200 or 302, got {$response->status()}"

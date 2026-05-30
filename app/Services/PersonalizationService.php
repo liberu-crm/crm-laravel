@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\LandingPage;
 use App\Models\Contact;
+use App\Models\LandingPage;
 use App\Models\Lead;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,16 +13,16 @@ class PersonalizationService
      * Segment definitions mapped to lifecycle stages and characteristics.
      */
     protected array $segments = [
-        'new_visitor'    => ['lifecycle_stage' => null, 'activity_count' => 0],
-        'prospect'       => ['lifecycle_stage' => 'subscriber', 'activity_count' => 1],
-        'engaged_lead'   => ['lifecycle_stage' => 'lead', 'activity_count' => 3],
+        'new_visitor' => ['lifecycle_stage' => null, 'activity_count' => 0],
+        'prospect' => ['lifecycle_stage' => 'subscriber', 'activity_count' => 1],
+        'engaged_lead' => ['lifecycle_stage' => 'lead', 'activity_count' => 3],
         'marketing_qualified' => ['lifecycle_stage' => 'mql', 'activity_count' => 5],
-        'sales_qualified'     => ['lifecycle_stage' => 'sql', 'activity_count' => 8],
-        'opportunity'    => ['lifecycle_stage' => 'opportunity', 'activity_count' => 10],
-        'customer'       => ['lifecycle_stage' => 'customer', 'activity_count' => null],
+        'sales_qualified' => ['lifecycle_stage' => 'sql', 'activity_count' => 8],
+        'opportunity' => ['lifecycle_stage' => 'opportunity', 'activity_count' => 10],
+        'customer' => ['lifecycle_stage' => 'customer', 'activity_count' => null],
     ];
 
-    public function personalizeContent(LandingPage $landingPage, array $userData = null): string
+    public function personalizeContent(LandingPage $landingPage, ?array $userData = null): string
     {
         $content = $landingPage->content;
 
@@ -48,7 +48,7 @@ class PersonalizationService
     public function determineSegment(array $userData): string
     {
         $lifecycleStage = $userData['lifecycle_stage'] ?? null;
-        $activityCount  = (int) ($userData['activity_count'] ?? 0);
+        $activityCount = (int) ($userData['activity_count'] ?? 0);
 
         if ($lifecycleStage === 'customer') {
             return 'customer';
@@ -88,6 +88,7 @@ class PersonalizationService
             '/\[segment:([^\]]+)\](.*?)\[\/segment\]/s',
             function (array $matches) use ($segment) {
                 $allowedSegments = array_map('trim', explode(',', $matches[1]));
+
                 return in_array($segment, $allowedSegments, true) ? $matches[2] : '';
             },
             $content
@@ -98,7 +99,8 @@ class PersonalizationService
             '/\[not_segment:([^\]]+)\](.*?)\[\/not_segment\]/s',
             function (array $matches) use ($segment) {
                 $excludedSegments = array_map('trim', explode(',', $matches[1]));
-                return !in_array($segment, $excludedSegments, true) ? $matches[2] : '';
+
+                return ! in_array($segment, $excludedSegments, true) ? $matches[2] : '';
             },
             $content
         );
@@ -115,9 +117,10 @@ class PersonalizationService
         return preg_replace_callback(
             '/\[if:([^=\]]+)=([^\]]+)\](.*?)\[\/if\]/s',
             function (array $matches) use ($userData) {
-                $key      = trim($matches[1]);
+                $key = trim($matches[1]);
                 $expected = trim($matches[2]);
-                $actual   = (string) ($userData[$key] ?? '');
+                $actual = (string) ($userData[$key] ?? '');
+
                 return $actual === $expected ? $matches[3] : '';
             },
             $content
@@ -129,14 +132,14 @@ class PersonalizationService
      */
     private function getUserData(): array
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return [
-                'name'            => 'Visitor',
-                'email'           => '',
+                'name' => 'Visitor',
+                'email' => '',
                 'lifecycle_stage' => null,
-                'activity_count'  => 0,
-                'industry'        => '',
-                'company'         => '',
+                'activity_count' => 0,
+                'industry' => '',
+                'company' => '',
             ];
         }
 
@@ -144,17 +147,17 @@ class PersonalizationService
 
         // Enrich with contact / lead data when available
         $contact = Contact::where('email', $user->email)->first();
-        $lead    = Lead::where('email', $user->email)->first();
+        $lead = Lead::where('email', $user->email)->first();
 
         return [
-            'name'            => $user->name,
-            'email'           => $user->email,
+            'name' => $user->name,
+            'email' => $user->email,
             'lifecycle_stage' => $contact?->lifecycle_stage ?? $lead?->lifecycle_stage,
-            'activity_count'  => $contact?->activities()->count() ?? 0,
-            'industry'        => $contact?->industry ?? '',
-            'company'         => $contact?->company?->name ?? '',
-            'first_name'      => $user->name,
-            'last_name'       => $contact?->last_name ?? '',
+            'activity_count' => $contact?->activities()->count() ?? 0,
+            'industry' => $contact?->industry ?? '',
+            'company' => $contact?->company?->name ?? '',
+            'first_name' => $user->name,
+            'last_name' => $contact?->last_name ?? '',
         ];
     }
 }

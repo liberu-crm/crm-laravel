@@ -2,14 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Exception;
-use App\Models\SocialMediaPost;
 use App\Models\ConnectedAccount;
+use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
-use App\Services\TwitterService;
-use App\Services\InstagramService;
-use App\Services\LinkedInService;
-use App\Services\YouTubeService;
+use Exception;
 use Illuminate\Console\Command;
 
 class UpdatePostAnalytics extends Command
@@ -39,7 +35,7 @@ class UpdatePostAnalytics extends Command
                     }
                 }
 
-                if (!empty($analytics)) {
+                if (! empty($analytics)) {
                     $post->update($analytics);
                 }
 
@@ -59,8 +55,9 @@ class UpdatePostAnalytics extends Command
         switch ($platform) {
             case 'facebook':
                 if (isset($postIds['facebook'])) {
-                    $service = new FacebookService();
+                    $service = new FacebookService;
                     $insights = $service->getPostInsights($postIds['facebook']);
+
                     return [
                         'impressions' => $insights['post_impressions'] ?? 0,
                     ];

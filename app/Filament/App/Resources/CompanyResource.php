@@ -2,31 +2,25 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
 use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
 use App\Models\Company;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\CompanyResource\Pages;
-use App\Filament\App\Resources\CompanyResource\RelationManagers;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {

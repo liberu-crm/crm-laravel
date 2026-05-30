@@ -11,7 +11,7 @@ class ContactResourceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $user = User::factory()->withPersonalTeam()->create();
@@ -27,7 +27,7 @@ class ContactResourceTest extends TestCase
         $user->current_team_id = $team->id;
         $user->save();
 
-        $response = $this->actingAs($user)->get('/app/' . $team->id . '/contacts');
+        $response = $this->actingAs($user)->get('/app/'.$team->id.'/contacts');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected /app/{team_id}/contacts to return 200 or 302, got {$response->status()}"

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Lead;
-use App\Models\User;
 use App\Models\Workflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

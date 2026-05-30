@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\AdvertisingAccount;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AdPerformanceWidget extends BaseWidget
 {
@@ -16,12 +16,12 @@ class AdPerformanceWidget extends BaseWidget
 
         // Fetch data from all advertising accounts
         AdvertisingAccount::where('status', true)->each(function ($account) use (&$totalImpressions, &$totalClicks, &$totalConversions) {
-            $serviceClass = 'App\\Services\\' . str_replace(' ', '', $account->platform) . 'Service';
+            $serviceClass = 'App\\Services\\'.str_replace(' ', '', $account->platform).'Service';
             $service = new $serviceClass($account);
-            
+
             // Assuming each service has a getPerformanceMetrics method
             $metrics = $service->getPerformanceMetrics();
-            
+
             $totalImpressions += $metrics['impressions'];
             $totalClicks += $metrics['clicks'];
             $totalConversions += $metrics['conversions'];

@@ -13,6 +13,7 @@ class TaskReminderNotification extends Notification implements ShouldQueue
     use Queueable;
 
     protected $task;
+
     protected $type;
 
     public function __construct(Task $task, string $type)
@@ -30,15 +31,15 @@ class TaskReminderNotification extends Notification implements ShouldQueue
     {
         $message = (new MailMessage)
             ->line('Reminder: You have a task due soon.')
-            ->line('Task: ' . $this->task->name)
-            ->line('Due Date: ' . $this->task->due_date->format('Y-m-d H:i'));
+            ->line('Task: '.$this->task->name)
+            ->line('Due Date: '.$this->task->due_date->format('Y-m-d H:i'));
 
         switch ($this->type) {
             case 'contact':
-                $message->line('Related Contact: ' . $this->task->contact->name);
+                $message->line('Related Contact: '.$this->task->contact->name);
                 break;
             case 'lead':
-                $message->line('Related Lead: ' . $this->task->lead->name);
+                $message->line('Related Lead: '.$this->task->lead->name);
                 break;
             case 'assigned':
                 $message->line('This task is assigned to you.');
@@ -46,7 +47,7 @@ class TaskReminderNotification extends Notification implements ShouldQueue
         }
 
         return $message
-            ->action('View Task', url('/tasks/' . $this->task->id))
+            ->action('View Task', url('/tasks/'.$this->task->id))
             ->line('Thank you for using our application!');
     }
 

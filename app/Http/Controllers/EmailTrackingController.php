@@ -28,12 +28,12 @@ class EmailTrackingController extends Controller
                 $request->ip()
             );
         } catch (\Exception $e) {
-            Log::error("Error recording email open: " . $e->getMessage());
+            Log::error('Error recording email open: '.$e->getMessage());
         }
 
         // Return 1x1 transparent GIF
         $gif = base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
-        
+
         return response($gif)
             ->header('Content-Type', 'image/gif')
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -51,8 +51,9 @@ class EmailTrackingController extends Controller
 
         $expectedSig = $this->trackingService->generateLinkSignature($trackingId, (string) $encodedUrl);
 
-        if (!hash_equals($expectedSig, (string) $signature)) {
+        if (! hash_equals($expectedSig, (string) $signature)) {
             Log::warning("Invalid link signature for tracking: {$trackingId}");
+
             return redirect(config('app.url'));
         }
 
@@ -72,7 +73,7 @@ class EmailTrackingController extends Controller
                 $request->ip()
             );
         } catch (\Exception $e) {
-            Log::error("Error recording link click: " . $e->getMessage());
+            Log::error('Error recording link click: '.$e->getMessage());
         }
 
         return redirect($safeUrl);
@@ -88,7 +89,7 @@ class EmailTrackingController extends Controller
 
         $appHost = Uri::of(config('app.url'))->host();
 
-        if ($host === $appHost || str_ends_with($host, '.' . $appHost)) {
+        if ($host === $appHost || str_ends_with($host, '.'.$appHost)) {
             return $url;
         }
 

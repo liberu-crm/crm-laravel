@@ -2,32 +2,25 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\ActivationResource\Pages\ListActivations;
 use App\Filament\App\Resources\ActivationResource\Pages\CreateActivation;
 use App\Filament\App\Resources\ActivationResource\Pages\EditActivation;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\ActivationResource\Pages\ListActivations;
 use App\Models\Activation;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\App\Resources\ActivationResource\Pages;
-use App\Filament\App\Resources\ActivationResource\RelationManagers;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ActivationResource extends Resource
 {
     protected static ?string $model = Activation::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {
@@ -52,7 +45,7 @@ class ActivationResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->label('User')
+                    ->label('User'),
             ])
             ->filters([
                 //

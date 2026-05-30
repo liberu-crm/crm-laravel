@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Services\Pop3Service;
 use App\Actions\Helpdesk\CreateTicketFromEmail;
 use App\Models\OAuthConfiguration;
+use App\Services\Pop3Service;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +26,7 @@ class FetchPop3Tickets implements ShouldQueue
     public function handle(Pop3Service $pop3Service, CreateTicketFromEmail $createTicket)
     {
         try {
-            $configs = $this->configId 
+            $configs = $this->configId
                 ? [OAuthConfiguration::findOrFail($this->configId)]
                 : OAuthConfiguration::where('service_name', 'pop3')
                     ->where('is_active', true)
@@ -40,11 +40,11 @@ class FetchPop3Tickets implements ShouldQueue
                         $createTicket->execute($message, 'pop3');
                     }
                 } catch (\Exception $e) {
-                    Log::error("Error fetching POP3 tickets for config {$config->id}: " . $e->getMessage());
+                    Log::error("Error fetching POP3 tickets for config {$config->id}: ".$e->getMessage());
                 }
             }
         } catch (\Exception $e) {
-            Log::error('Error in FetchPop3Tickets job: ' . $e->getMessage());
+            Log::error('Error in FetchPop3Tickets job: '.$e->getMessage());
         }
     }
 }

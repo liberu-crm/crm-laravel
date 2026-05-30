@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Notifications;
 
+use App\Models\User;
 use App\Notifications\CRMEventNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class CRMEventNotificationTest extends TestCase
 {
@@ -22,7 +22,7 @@ class CRMEventNotificationTest extends TestCase
 
         $this->assertEquals("CRM Event: {$event}", $mailMessage->subject);
         $this->assertStringContainsString("A new CRM event has occurred: {$event}", $mailMessage->introLines[0]);
-        $this->assertStringContainsString("Details: " . json_encode($data), $mailMessage->introLines[1]);
+        $this->assertStringContainsString('Details: '.json_encode($data), $mailMessage->introLines[1]);
     }
 
     public function test_in_app_notification_data_structure()

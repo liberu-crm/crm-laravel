@@ -24,6 +24,7 @@ class TwilioController extends Controller
 
         if ($call) {
             $this->twilioService->logCall($call->sid, $contactId, 'outbound', null, 'initiated');
+
             return response()->json(['success' => true, 'call_sid' => $call->sid]);
         }
 
@@ -32,7 +33,7 @@ class TwilioController extends Controller
 
     public function handleOutboundCall(Request $request)
     {
-        $response = new VoiceResponse();
+        $response = new VoiceResponse;
         $dial = $response->dial('', ['callerId' => config('services.twilio.phone_number')]);
         $dial->number($request->input('To'));
 
@@ -41,7 +42,7 @@ class TwilioController extends Controller
 
     public function handleInboundCall(Request $request)
     {
-        $response = new VoiceResponse();
+        $response = new VoiceResponse;
         $response->say('Welcome to Liberu CRM. Please wait while we connect you to an agent.');
         $response->dial('', ['callerId' => $request->input('To')]);
 
@@ -81,7 +82,6 @@ class TwilioController extends Controller
         if ($success) {
             return response()->json(['success' => true]);
         }
-
 
         return response()->json(['success' => false, 'message' => 'Failed to stop recording'], 500);
     }

@@ -9,7 +9,6 @@ class AccountingIntegration extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'user_id',
         'platform',
@@ -17,13 +16,11 @@ class AccountingIntegration extends Model
         'last_synced',
     ];
 
-    
     protected $casts = [
         'connection_details' => 'array',
         'last_synced' => 'datetime',
     ];
 
-    
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use App\Models\OAuthConfiguration;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WhatsAppBusinessService
 {
     protected $apiUrl;
+
     protected $accessToken;
 
     public function __construct()
@@ -31,33 +32,34 @@ class WhatsAppBusinessService
     {
         try {
             $this->initializeFromConfig($config);
-            
+
             $response = Http::withToken($this->accessToken)
-                ->get($this->apiUrl . '/messages', [
+                ->get($this->apiUrl.'/messages', [
                     'status' => 'unread',
                     'limit' => 10,
                 ]);
 
             $messages = $response->json()['messages'] ?? [];
-            
+
             return collect($messages)->map(function ($msg) {
                 $body = $msg['text']['body'] ?? $msg['body'] ?? $msg['message'] ?? '';
+
                 return [
-                    'id'           => $msg['id'] ?? '',
-                    'from'         => $msg['from'] ?? '',
-                    'body'         => $body,
-                    'message'      => $body,
-                    'content'      => $body,
-                    'timestamp'    => $msg['timestamp'] ?? time(),
-                    'thread_id'    => $msg['conversation_id'] ?? null,
-                    'attachments'  => $msg['attachments'] ?? [],
-                    'status'       => 'received',
-                    'type'         => $msg['type'] ?? 'text',
+                    'id' => $msg['id'] ?? '',
+                    'from' => $msg['from'] ?? '',
+                    'body' => $body,
+                    'message' => $body,
+                    'content' => $body,
+                    'timestamp' => $msg['timestamp'] ?? time(),
+                    'thread_id' => $msg['conversation_id'] ?? null,
+                    'attachments' => $msg['attachments'] ?? [],
+                    'status' => 'received',
+                    'type' => $msg['type'] ?? 'text',
                     'phone_number' => $msg['from'] ?? '',
                 ];
             });
         } catch (\Exception $e) {
-            Log::error('Error fetching WhatsApp messages: ' . $e->getMessage());
+            Log::error('Error fetching WhatsApp messages: '.$e->getMessage());
             throw $e;
         }
     }
@@ -70,9 +72,9 @@ class WhatsAppBusinessService
     public function getMessage($messageId, ?OAuthConfiguration $config = null)
     {
         $this->initializeFromConfig($config);
-        
+
         $response = Http::withToken($this->accessToken)
-            ->get($this->apiUrl . '/messages/' . $messageId);
+            ->get($this->apiUrl.'/messages/'.$messageId);
 
         return $response->json();
     }
@@ -80,14 +82,14 @@ class WhatsAppBusinessService
     public function sendReply($to, $body, ?OAuthConfiguration $config = null)
     {
         $this->initializeFromConfig($config);
-        
+
         $response = Http::withToken($this->accessToken)
-            ->post($this->apiUrl . '/messages', [
+            ->post($this->apiUrl.'/messages', [
                 'to' => $to,
                 'type' => 'text',
                 'text' => [
-                    'body' => $body
-                ]
+                    'body' => $body,
+                ],
             ]);
 
         return $response->json();
@@ -96,14 +98,14 @@ class WhatsAppBusinessService
     public function sendMessage($to, $body, ?OAuthConfiguration $config = null)
     {
         $this->initializeFromConfig($config);
-        
+
         $response = Http::withToken($this->accessToken)
-            ->post($this->apiUrl . '/messages', [
+            ->post($this->apiUrl.'/messages', [
                 'to' => $to,
                 'type' => 'text',
                 'text' => [
-                    'body' => $body
-                ]
+                    'body' => $body,
+                ],
             ]);
 
         return $response->json();

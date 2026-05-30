@@ -2,27 +2,32 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Schemas\Schema;
-use App\Services\ReportingService;
 use App\Services\MailChimpService;
-use Filament\Pages\Page;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DatePicker;
+use App\Services\ReportingService;
 use Filament\Actions\Action;
-use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 class ReportPage extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-chart-bar';
+
     protected string $view = 'filament.app.pages.report-page';
 
     public ?array $data = [];
+
     public ?string $selectedReport = null;
+
     public ?string $campaignId = null;
+
     public ?string $startDate = null;
+
     public ?string $endDate = null;
 
     protected $reportingService;
+
     protected $mailChimpService;
 
     public function __construct(ReportingService $reportingService, MailChimpService $mailChimpService)
@@ -74,7 +79,7 @@ class ReportPage extends Page
                         $this->data = [
                             'type' => 'pie',
                             'data' => [
-                                'labels'   => $raw->pluck('name'),
+                                'labels' => $raw->pluck('name'),
                                 'datasets' => [['label' => 'Activities count', 'data' => $raw->pluck('activities_count')]],
                             ],
                             'raw' => $raw,
@@ -85,7 +90,7 @@ class ReportPage extends Page
                         $this->data = [
                             'type' => 'bar',
                             'data' => [
-                                'labels'   => $raw->pluck('stage'),
+                                'labels' => $raw->pluck('stage'),
                                 'datasets' => [['label' => 'Total value', 'data' => $raw->pluck('total_value')]],
                             ],
                             'raw' => $raw,
@@ -96,7 +101,7 @@ class ReportPage extends Page
                         $this->data = [
                             'type' => 'line',
                             'data' => [
-                                'labels'   => $raw->pluck('date'),
+                                'labels' => $raw->pluck('date'),
                                 'datasets' => [['label' => 'Count', 'data' => $raw->pluck('count')]],
                             ],
                             'raw' => $raw,

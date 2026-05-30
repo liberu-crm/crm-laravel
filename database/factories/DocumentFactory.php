@@ -15,8 +15,8 @@ class DocumentFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'name' => $this->faker->words(3, true),
-            'file_name' => $this->faker->uuid . '.' . $this->faker->fileExtension(),
-            'file_path' => 'documents/' . $this->faker->uuid,
+            'file_name' => $this->faker->uuid.'.'.$this->faker->fileExtension(),
+            'file_path' => 'documents/'.$this->faker->uuid,
             'file_size' => $this->faker->numberBetween(1024, 10485760),
             'mime_type' => $this->faker->mimeType(),
             'type' => $this->faker->randomElement(['contract', 'proposal', 'invoice', 'other']),
@@ -27,7 +27,7 @@ class DocumentFactory extends Factory
             'status' => $this->faker->randomElement(['draft', 'final', 'archived']),
             'version' => 1,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

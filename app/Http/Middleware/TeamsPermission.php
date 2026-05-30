@@ -14,7 +14,7 @@ class TeamsPermission
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login')->with('error', 'You must be logged in to access this area.');
         }
 
@@ -22,7 +22,7 @@ class TeamsPermission
             return $next($request);
         }
 
-        if (!$user->currentTeam) {
+        if (! $user->currentTeam) {
             return $next($request);
         }
 
@@ -32,7 +32,7 @@ class TeamsPermission
         }
 
         $permission = $this->getPermissionForRoute($request);
-        if ($permission && !$user->checkPermissionTo($permission)) {
+        if ($permission && ! $user->checkPermissionTo($permission)) {
             return redirect()->route('home')->with('error', 'You do not have permission to perform this action.');
         }
 
@@ -42,13 +42,13 @@ class TeamsPermission
     private function getPermissionForRoute(Request $request): ?string
     {
         $route = $request->route();
-        if (!$route || !$route->getName()) {
+        if (! $route || ! $route->getName()) {
             return null;
         }
 
         $routeName = $route->getName();
 
-        if (!str_starts_with($routeName, 'filament.app.resources.')) {
+        if (! str_starts_with($routeName, 'filament.app.resources.')) {
             return null;
         }
 
@@ -63,14 +63,14 @@ class TeamsPermission
         ];
 
         $actionType = $actionMap[$action] ?? null;
-        if (!$actionType) {
+        if (! $actionType) {
             return null;
         }
 
         $modelName = Str::studly(Str::singular($resourceSlug));
         $permissionName = "{$actionType}:{$modelName}";
 
-        if (!Permission::where('name', $permissionName)->exists()) {
+        if (! Permission::where('name', $permissionName)->exists()) {
             return null;
         }
 

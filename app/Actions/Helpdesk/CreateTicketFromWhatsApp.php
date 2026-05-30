@@ -14,7 +14,7 @@ class CreateTicketFromWhatsApp
         $messageId = $message['id'] ?? null;
 
         // Synthesize a unique email for WhatsApp contacts who don't have one
-        $syntheticEmail = 'whatsapp+' . preg_replace('/[^a-zA-Z0-9]/', '', $from) . '@whatsapp.invalid';
+        $syntheticEmail = 'whatsapp+'.preg_replace('/[^a-zA-Z0-9]/', '', $from).'@whatsapp.invalid';
 
         $user = User::firstOrCreate(
             ['email' => $syntheticEmail],
@@ -22,7 +22,7 @@ class CreateTicketFromWhatsApp
         );
 
         return Ticket::create([
-            'subject' => 'WhatsApp message from ' . $from,
+            'subject' => 'WhatsApp message from '.$from,
             'body' => $content,
             'status' => 'open',
             'priority' => 'medium',

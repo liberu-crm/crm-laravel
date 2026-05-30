@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Modules\ModuleManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -29,7 +30,7 @@ class ModuleSystemTest extends TestCase
     public function it_can_list_modules_as_collection()
     {
         $modules = $this->moduleManager->all();
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $modules);
+        $this->assertInstanceOf(Collection::class, $modules);
     }
 
     #[Test]

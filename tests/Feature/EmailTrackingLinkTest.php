@@ -14,7 +14,8 @@ class EmailTrackingLinkTest extends TestCase
     private function signedRoute(EmailTracking $tracking, string $url): string
     {
         $encoded = base64_encode($url);
-        $sig = hash_hmac('sha256', $tracking->tracking_id . ':' . $encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
+
         return route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
             'url' => $encoded,
@@ -36,7 +37,7 @@ class EmailTrackingLinkTest extends TestCase
     {
         $tracking = EmailTracking::factory()->create();
         $appUrl = config('app.url');
-        $url = rtrim($appUrl, '/') . '/page';
+        $url = rtrim($appUrl, '/').'/page';
 
         $response = $this->get($this->signedRoute($tracking, $url));
 
@@ -47,7 +48,7 @@ class EmailTrackingLinkTest extends TestCase
     {
         $tracking = EmailTracking::factory()->create();
         $appHost = Uri::of(config('app.url'))->host();
-        $url = 'https://sub.' . $appHost . '/page';
+        $url = 'https://sub.'.$appHost.'/page';
 
         $response = $this->get($this->signedRoute($tracking, $url));
 
@@ -68,7 +69,7 @@ class EmailTrackingLinkTest extends TestCase
     {
         $tracking = EmailTracking::factory()->create();
         $encoded = 'not-valid-base64!!!';
-        $sig = hash_hmac('sha256', $tracking->tracking_id . ':' . $encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
@@ -83,7 +84,7 @@ class EmailTrackingLinkTest extends TestCase
     {
         $tracking = EmailTracking::factory()->create();
         $encoded = '';
-        $sig = hash_hmac('sha256', $tracking->tracking_id . ':' . $encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
@@ -139,7 +140,7 @@ class EmailTrackingLinkTest extends TestCase
         $trackingB = EmailTracking::factory()->create();
         $url = '/internal/page';
         $encoded = base64_encode($url);
-        $sigB = hash_hmac('sha256', $trackingB->tracking_id . ':' . $encoded, config('app.key'));
+        $sigB = hash_hmac('sha256', $trackingB->tracking_id.':'.$encoded, config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $trackingA->tracking_id,

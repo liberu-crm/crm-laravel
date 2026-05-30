@@ -16,14 +16,14 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'due_date'      => 'nullable|date',
-            'status'        => 'nullable|string|in:pending,in_progress,completed',
-            'assigned_to'   => 'nullable|integer|exists:users,id',
-            'contact_id'    => 'nullable|integer|exists:contacts,id',
-            'lead_id'       => 'nullable|integer|exists:leads,id',
-            'company_id'    => 'nullable|integer|exists:companies,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'nullable|date',
+            'status' => 'nullable|string|in:pending,in_progress,completed',
+            'assigned_to' => 'nullable|integer|exists:users,id',
+            'contact_id' => 'nullable|integer|exists:contacts,id',
+            'lead_id' => 'nullable|integer|exists:leads,id',
+            'company_id' => 'nullable|integer|exists:companies,id',
             'calendar_type' => 'nullable|string|in:google,outlook',
         ]);
 
@@ -45,14 +45,14 @@ class TaskController extends Controller
         abort_unless($task->belongsToTeam($request->user()?->currentTeam?->id), 403);
 
         $validated = $request->validate([
-            'name'          => 'string|max:255',
-            'description'   => 'nullable|string',
-            'due_date'      => 'nullable|date',
-            'status'        => 'string|in:pending,in_progress,completed',
-            'assigned_to'   => 'nullable|integer|exists:users,id',
-            'contact_id'    => 'nullable|integer|exists:contacts,id',
-            'lead_id'       => 'nullable|integer|exists:leads,id',
-            'company_id'    => 'nullable|integer|exists:companies,id',
+            'name' => 'string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'nullable|date',
+            'status' => 'string|in:pending,in_progress,completed',
+            'assigned_to' => 'nullable|integer|exists:users,id',
+            'contact_id' => 'nullable|integer|exists:contacts,id',
+            'lead_id' => 'nullable|integer|exists:leads,id',
+            'company_id' => 'nullable|integer|exists:companies,id',
             'calendar_type' => 'nullable|string|in:google,outlook',
         ]);
 
@@ -78,10 +78,10 @@ class TaskController extends Controller
     public function bulkUpdate(Request $request)
     {
         $request->validate([
-            'ids'          => 'required|array|min:1',
-            'ids.*'        => 'integer|exists:tasks,id',
-            'data'         => 'required|array',
-            'data.status'  => 'sometimes|string|in:pending,in_progress,completed',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:tasks,id',
+            'data' => 'required|array',
+            'data.status' => 'sometimes|string|in:pending,in_progress,completed',
             'data.due_date' => 'sometimes|nullable|date',
         ]);
 
@@ -107,7 +107,7 @@ class TaskController extends Controller
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'ids'   => 'required|array|min:1',
+            'ids' => 'required|array|min:1',
             'ids.*' => 'integer|exists:tasks,id',
         ]);
 
@@ -126,8 +126,8 @@ class TaskController extends Controller
     public function bulkAssign(Request $request)
     {
         $request->validate([
-            'ids'     => 'required|array|min:1',
-            'ids.*'   => 'integer|exists:tasks,id',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:tasks,id',
             'user_id' => 'required|integer|exists:users,id',
         ]);
 

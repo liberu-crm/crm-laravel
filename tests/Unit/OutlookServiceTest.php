@@ -2,22 +2,23 @@
 
 namespace Tests\Unit;
 
-use App\Services\OutlookService;
 use App\Models\OAuthConfiguration;
-use Tests\TestCase;
+use App\Services\OutlookService;
 use Mockery;
+use Tests\TestCase;
 
 class OutlookServiceTest extends TestCase
 {
     protected $outlookService;
+
     protected $mockConfig;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->outlookService = new OutlookService();
-        
-        $this->mockConfig = new OAuthConfiguration();
+        $this->outlookService = new OutlookService;
+
+        $this->mockConfig = new OAuthConfiguration;
         $this->mockConfig->forceFill([
             'id' => 1,
             'additional_settings' => [
@@ -32,14 +33,14 @@ class OutlookServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testOutlookServiceCanBeInstantiated()
+    public function test_outlook_service_can_be_instantiated()
     {
         $this->assertInstanceOf(OutlookService::class, $this->outlookService);
     }
 
-    public function testGetUnreadMessagesRequiresAccessToken()
+    public function test_get_unread_messages_requires_access_token()
     {
-        $configWithoutToken = new OAuthConfiguration();
+        $configWithoutToken = new OAuthConfiguration;
         $configWithoutToken->forceFill(['additional_settings' => []]);
 
         $this->expectException(\Exception::class);

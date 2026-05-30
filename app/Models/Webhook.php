@@ -42,10 +42,10 @@ class Webhook extends Model
     ];
 
     protected $casts = [
-        'events'             => 'array',
-        'is_active'          => 'boolean',
-        'last_triggered_at'  => 'datetime',
-        'failure_count'      => 'integer',
+        'events' => 'array',
+        'is_active' => 'boolean',
+        'last_triggered_at' => 'datetime',
+        'failure_count' => 'integer',
     ];
 
     protected $hidden = ['secret'];

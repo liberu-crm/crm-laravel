@@ -9,19 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('custom_fields', function (Blueprint $table) {
-            if (!Schema::hasColumn('custom_fields', 'label')) {
+            if (! Schema::hasColumn('custom_fields', 'label')) {
                 $table->string('label')->nullable()->after('name');
             }
-            if (!Schema::hasColumn('custom_fields', 'options')) {
+            if (! Schema::hasColumn('custom_fields', 'options')) {
                 $table->json('options')->nullable()->after('model_type');
             }
-            if (!Schema::hasColumn('custom_fields', 'required')) {
+            if (! Schema::hasColumn('custom_fields', 'required')) {
                 $table->boolean('required')->default(false)->after('options');
             }
-            if (!Schema::hasColumn('custom_fields', 'validation_rules')) {
+            if (! Schema::hasColumn('custom_fields', 'validation_rules')) {
                 $table->json('validation_rules')->nullable()->after('required');
             }
-            if (!Schema::hasColumn('custom_fields', 'order')) {
+            if (! Schema::hasColumn('custom_fields', 'order')) {
                 $table->integer('order')->default(0)->after('validation_rules');
             }
         });

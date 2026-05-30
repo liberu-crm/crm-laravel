@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\OAuthConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Client;
+use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Message;
 
 class ImapService
@@ -25,7 +25,7 @@ class ImapService
 
             return $parsed;
         } catch (\Exception $e) {
-            Log::error('Error fetching IMAP messages: ' . $e->getMessage());
+            Log::error('Error fetching IMAP messages: '.$e->getMessage());
             throw $e;
         }
     }
@@ -37,13 +37,13 @@ class ImapService
             $folder = $client->getFolder('INBOX');
             $message = $folder->messages()->getMessageByUid($messageId);
 
-            if (!$message) {
+            if (! $message) {
                 return null;
             }
 
             return $this->parseMessage($message);
         } catch (\Exception $e) {
-            Log::error('Error fetching IMAP message: ' . $e->getMessage());
+            Log::error('Error fetching IMAP message: '.$e->getMessage());
             throw $e;
         }
     }
@@ -55,19 +55,19 @@ class ImapService
             $folder = $client->getFolder('INBOX');
             $message = $folder->messages()->getMessageByUid($messageId);
 
-            if (!$message) {
-                throw new \Exception('Message not found: ' . $messageId);
+            if (! $message) {
+                throw new \Exception('Message not found: '.$messageId);
             }
 
             $from = $message->getFrom()->first();
             $to = $from->mail;
-            $subject = 'Re: ' . $message->getSubject()->toString();
+            $subject = 'Re: '.$message->getSubject()->toString();
 
             $this->sendViaSmtp($to, $subject, $content, $config);
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending IMAP reply: ' . $e->getMessage());
+            Log::error('Error sending IMAP reply: '.$e->getMessage());
             throw $e;
         }
     }
@@ -76,9 +76,10 @@ class ImapService
     {
         try {
             $this->sendViaSmtp($to, $subject, $content, $config);
+
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending IMAP message: ' . $e->getMessage());
+            Log::error('Error sending IMAP message: '.$e->getMessage());
             throw $e;
         }
     }
@@ -101,7 +102,7 @@ class ImapService
             default => false,
         };
 
-        $cm = new ClientManager();
+        $cm = new ClientManager;
         $client = $cm->make([
             'host' => $host,
             'port' => $port,
@@ -162,7 +163,7 @@ class ImapService
                     ->from($from);
             });
         } catch (\Exception $e) {
-            Log::error('Error sending email via SMTP: ' . $e->getMessage());
+            Log::error('Error sending email via SMTP: '.$e->getMessage());
             throw $e;
         }
     }

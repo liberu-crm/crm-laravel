@@ -22,7 +22,7 @@ class DashboardWidgetTest extends TestCase
 
     public function test_dashboard_widget_has_correct_fillable_attributes()
     {
-        $widget = new DashboardWidget();
+        $widget = new DashboardWidget;
 
         $this->assertEquals([
             'user_id',

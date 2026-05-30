@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\DashboardWidget;
+use Livewire\Component;
 
 class Dashboard extends Component
 {

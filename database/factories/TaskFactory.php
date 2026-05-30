@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Lead;
-use App\Models\Company;
 use App\Models\Opportunity;
+use App\Models\Task;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskFactory extends Factory

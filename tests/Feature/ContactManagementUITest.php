@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Contact;
 use App\Http\Livewire\ContactCollaboration;
+use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Livewire\Livewire;
+use Tests\TestCase;
 
 class ContactManagementUITest extends TestCase
 {
@@ -15,7 +15,7 @@ class ContactManagementUITest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
@@ -64,7 +64,7 @@ class ContactManagementUITest extends TestCase
         $user->current_team_id = $team->id;
         $user->save();
 
-        $response = $this->actingAs($user)->get('/app/' . $team->id . '/contacts');
+        $response = $this->actingAs($user)->get('/app/'.$team->id.'/contacts');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected /app/{team_id}/contacts to return 200 or 302, got {$response->status()}"

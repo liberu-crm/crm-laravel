@@ -2,10 +2,10 @@
 
 namespace App\Http\Responses;
 
-use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
 {
@@ -17,7 +17,7 @@ class LoginResponse implements LoginResponseContract
     protected function shouldRedirect(Request $request, $redirect)
     {
         // Check if the current request path matches the redirect path
-        return !$request->is($redirect) && !$request->is($redirect . '/*');
+        return ! $request->is($redirect) && ! $request->is($redirect.'/*');
     }
 
     public function toResponse($request)
@@ -37,6 +37,7 @@ class LoginResponse implements LoginResponseContract
 
         // Default redirection
         $redirect = '/app';
+
         return $request->wantsJson()
             ? new JsonResponse(['two_factor' => false], 200)
             : ($this->shouldRedirect($request, $redirect)

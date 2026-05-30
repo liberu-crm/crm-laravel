@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Opportunity;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class OpportunityResourceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $user = User::factory()->withPersonalTeam()->create();
@@ -27,7 +27,7 @@ class OpportunityResourceTest extends TestCase
         $user->current_team_id = $team->id;
         $user->save();
 
-        $response = $this->actingAs($user)->get('/app/' . $team->id . '/opportunities');
+        $response = $this->actingAs($user)->get('/app/'.$team->id.'/opportunities');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected /app/{team_id}/opportunities to return 200 or 302, got {$response->status()}"

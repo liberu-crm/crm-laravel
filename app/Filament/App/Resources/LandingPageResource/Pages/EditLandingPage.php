@@ -2,9 +2,8 @@
 
 namespace App\Filament\App\Resources\LandingPageResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\LandingPageResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditLandingPage extends EditRecord

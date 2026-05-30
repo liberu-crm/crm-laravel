@@ -2,27 +2,31 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Schemas\Schema;
 use App\Models\Contact;
 use App\Models\Lead;
 use App\Services\TwilioService;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Config;
 use Twilio\Exceptions\RestException;
 
 class TwilioIntegration extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-phone';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-phone';
 
     protected string $view = 'filament.app.pages.twilio-integration';
 
     public ?string $to = null;
+
     public ?string $message = null;
+
     public ?string $sid = null;
+
     public ?string $auth_token = null;
+
     public ?string $phone_number = null;
 
     public function form(Schema $schema): Schema
@@ -73,7 +77,7 @@ class TwilioIntegration extends Page
         $contacts = Contact::whereIn('id', $contactIds)->get();
 
         foreach ($contacts as $contact) {
-            if (!$contact->phone_number) {
+            if (! $contact->phone_number) {
                 continue;
             }
             try {
@@ -127,7 +131,7 @@ class TwilioIntegration extends Page
 
         foreach ($leads as $lead) {
             $phone = optional($lead->contact)->phone_number;
-            if (!$phone) {
+            if (! $phone) {
                 continue;
             }
             try {
@@ -151,8 +155,8 @@ class TwilioIntegration extends Page
     public function submit(): void
     {
         $this->validate([
-            'sid'          => 'required|string|min:1',
-            'auth_token'   => 'required|string|min:1',
+            'sid' => 'required|string|min:1',
+            'auth_token' => 'required|string|min:1',
             'phone_number' => 'required|regex:/^\+[1-9]\d{1,14}$/',
         ]);
 
@@ -167,4 +171,3 @@ class TwilioIntegration extends Page
         $this->dispatch('notify', title: 'Twilio settings updated', color: 'success');
     }
 }
-

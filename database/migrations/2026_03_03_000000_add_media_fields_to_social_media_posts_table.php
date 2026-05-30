@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('social_media_posts', function (Blueprint $table) {
-            if (!Schema::hasColumn('social_media_posts', 'link')) {
+            if (! Schema::hasColumn('social_media_posts', 'link')) {
                 $table->string('link')->nullable()->after('content');
             }
-            if (!Schema::hasColumn('social_media_posts', 'image_path')) {
+            if (! Schema::hasColumn('social_media_posts', 'image_path')) {
                 $table->string('image_path')->nullable()->after('link');
             }
-            if (!Schema::hasColumn('social_media_posts', 'video_url')) {
+            if (! Schema::hasColumn('social_media_posts', 'video_url')) {
                 $table->string('video_url')->nullable()->after('image_path');
             }
         });

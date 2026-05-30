@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contacts', function (Blueprint $table) {
-            if (!Schema::hasColumn('contacts', 'company_id')) {
+            if (! Schema::hasColumn('contacts', 'company_id')) {
                 $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
             }
-            if (!Schema::hasColumn('contacts', 'custom_fields')) {
+            if (! Schema::hasColumn('contacts', 'custom_fields')) {
                 $table->json('custom_fields')->nullable();
             }
         });

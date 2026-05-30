@@ -2,11 +2,9 @@
 
 namespace App\Filament\App\Resources\AdvertisingDashboardResource\Pages;
 
-use Filament\Actions\Action;
 use App\Filament\App\Resources\AdvertisingDashboardResource;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\Page;
-use Filament\Pages\Actions;
-use Filament\Forms\Components\Card;
 
 class ViewAdvertisingDashboard extends Page
 {
@@ -22,12 +20,14 @@ class ViewAdvertisingDashboard extends Page
     protected function getHeaderWidgets(): array
     {
         $widgets = AdvertisingDashboardResource::getWidgets();
+
         return array_slice($widgets, 0, 2);
     }
 
     protected function getFooterWidgets(): array
     {
-       $widgets = AdvertisingDashboardResource::getWidgets();
+        $widgets = AdvertisingDashboardResource::getWidgets();
+
         return array_slice($widgets, 2, 1);
     }
 

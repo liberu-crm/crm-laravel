@@ -22,6 +22,6 @@ trait IsTenantModel
 
     public function belongsToTeam(?int $teamId): bool
     {
-        return !$teamId || $this->team_id === $teamId;
+        return ! $teamId || $this->team_id === $teamId;
     }
 }

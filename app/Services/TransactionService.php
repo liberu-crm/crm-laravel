@@ -3,13 +3,11 @@
 namespace App\Services;
 
 use App\Models\Transaction;
-use App\Models\Document;
-use App\Services\DigitalSignatureService;
-use App\Services\BlockchainService;
 
 class TransactionService
 {
     protected $digitalSignatureService;
+
     protected $blockchainService;
 
     public function __construct(DigitalSignatureService $digitalSignatureService, BlockchainService $blockchainService)

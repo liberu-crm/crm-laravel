@@ -20,16 +20,16 @@ class CustomFieldFactory extends Factory
             'model_type' => $this->faker->randomElement(['App\\Models\\Contact', 'App\\Models\\Lead', 'App\\Models\\Deal']),
             'options' => json_encode($this->faker->randomElement([
                 ['option1', 'option2', 'option3'],
-                null
+                null,
             ])),
             'required' => $this->faker->boolean,
             'validation_rules' => json_encode([
                 'min' => $this->faker->optional()->numberBetween(1, 10),
-                'max' => $this->faker->optional()->numberBetween(10, 100)
+                'max' => $this->faker->optional()->numberBetween(10, 100),
             ]),
             'order' => $this->faker->numberBetween(1, 10),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

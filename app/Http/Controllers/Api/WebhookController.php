@@ -32,41 +32,45 @@ class WebhookController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'      => 'required|string|max:255',
-            'url'       => [
+            'name' => 'required|string|max:255',
+            'url' => [
                 'required',
                 'url',
                 function ($_attribute, $value, $fail) {
-                    if (!app()->environment('production')) {
+                    if (! app()->environment('production')) {
                         return;
                     }
 
                     $scheme = Uri::of($value)->scheme();
                     if ($scheme !== 'https') {
                         $fail('Webhook URL must use HTTPS in production.');
+
                         return;
                     }
 
                     $host = Uri::of($value)->host();
-                    if (!$host) {
+                    if (! $host) {
                         $fail('URL is invalid.');
+
                         return;
                     }
 
                     if (filter_var($host, FILTER_VALIDATE_IP)) {
                         $fail('URL must use a domain name, not a raw IP address.');
+
                         return;
                     }
 
                     if (in_array(strtolower($host), ['localhost', 'localhost.localdomain', '0.0.0.0', '[::1]'], true)) {
                         $fail('URL must point to a publicly reachable endpoint.');
+
                         return;
                     }
                 },
             ],
-            'events'    => 'required|array|min:1',
-            'events.*'  => 'string|in:' . implode(',', Webhook::EVENTS),
-            'secret'    => 'nullable|string|min:8',
+            'events' => 'required|array|min:1',
+            'events.*' => 'string|in:'.implode(',', Webhook::EVENTS),
+            'secret' => 'nullable|string|min:8',
             'is_active' => 'boolean',
         ]);
 
@@ -91,40 +95,44 @@ class WebhookController extends Controller
     public function update(Request $request, Webhook $webhook)
     {
         $data = $request->validate([
-            'name'      => 'sometimes|string|max:255',
-            'url'       => [
+            'name' => 'sometimes|string|max:255',
+            'url' => [
                 'sometimes',
                 'url',
                 function ($_attribute, $value, $fail) {
-                    if (!app()->environment('production')) {
+                    if (! app()->environment('production')) {
                         return;
                     }
 
                     $scheme = Uri::of($value)->scheme();
                     if ($scheme !== 'https') {
                         $fail('Webhook URL must use HTTPS in production.');
+
                         return;
                     }
 
                     $host = Uri::of($value)->host();
-                    if (!$host) {
+                    if (! $host) {
                         $fail('URL is invalid.');
+
                         return;
                     }
 
                     if (filter_var($host, FILTER_VALIDATE_IP)) {
                         $fail('URL must use a domain name, not a raw IP address.');
+
                         return;
                     }
 
                     if (in_array(strtolower($host), ['localhost', 'localhost.localdomain', '0.0.0.0', '[::1]'], true)) {
                         $fail('URL must point to a publicly reachable endpoint.');
+
                         return;
                     }
                 },
             ],
-            'events'    => 'sometimes|array|min:1',
-            'events.*'  => 'string|in:' . implode(',', Webhook::EVENTS),
+            'events' => 'sometimes|array|min:1',
+            'events.*' => 'string|in:'.implode(',', Webhook::EVENTS),
             'is_active' => 'sometimes|boolean',
         ]);
 
@@ -139,6 +147,7 @@ class WebhookController extends Controller
     public function destroy(Webhook $webhook)
     {
         $webhook->delete();
+
         return response()->json(null, 204);
     }
 

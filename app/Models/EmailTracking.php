@@ -61,10 +61,10 @@ class EmailTracking extends Model
         return $this->belongsTo(Contact::class);
     }
 
-    public function recordOpen(string $userAgent = null, string $ipAddress = null): void
+    public function recordOpen(?string $userAgent = null, ?string $ipAddress = null): void
     {
         $now = now();
-        
+
         $this->update([
             'opened_at' => $now,
             'first_opened_at' => $this->first_opened_at ?? $now,
@@ -75,10 +75,10 @@ class EmailTracking extends Model
         ]);
     }
 
-    public function recordClick(string $url, string $userAgent = null, string $ipAddress = null): void
+    public function recordClick(string $url, ?string $userAgent = null, ?string $ipAddress = null): void
     {
         $now = now();
-        
+
         $this->update([
             'clicked_at' => $now,
             'first_clicked_at' => $this->first_clicked_at ?? $now,
@@ -98,7 +98,7 @@ class EmailTracking extends Model
         ]);
     }
 
-    public function recordBounce(string $bounceType, string $reason = null): void
+    public function recordBounce(string $bounceType, ?string $reason = null): void
     {
         $this->update([
             'bounced_at' => now(),

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TeamSubscription extends Model
 {
@@ -43,7 +43,7 @@ class TeamSubscription extends Model
 
     public function isActive(): bool
     {
-        return $this->stripe_status === 'active' && !$this->hasExpired();
+        return $this->stripe_status === 'active' && ! $this->hasExpired();
     }
 
     public function cancelAt(): bool

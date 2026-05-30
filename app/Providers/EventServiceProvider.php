@@ -2,16 +2,16 @@
 
 namespace App\Providers;
 
+use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\SendCRMEventNotification;
 use App\Models\Task;
 use App\Observers\TaskObserver;
+use App\Services\AuditLogService;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use App\Services\AuditLogService;
-use Illuminate\Auth\Events\Login;
-use App\Listeners\LogSuccessfulLogin;
-use App\Listeners\SendCRMEventNotification;
 
 class EventServiceProvider extends ServiceProvider
 {

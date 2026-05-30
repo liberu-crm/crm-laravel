@@ -2,16 +2,19 @@
 
 namespace Tests\Performance;
 
-use Tests\TestCase;
+use App\Models\Activity;
 use App\Models\Contact;
-use Illuminate\Support\Facades\DB;
+use App\Models\Deal;
+use App\Models\Note;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
 
 class ContactProfileLoadTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withoutExceptionHandling();
@@ -23,13 +26,13 @@ class ContactProfileLoadTest extends TestCase
         // Create a contact with related data
         $contact = Contact::factory()->create();
         $contact->notes()->createMany(
-            \App\Models\Note::factory()->count(5)->make()->toArray()
+            Note::factory()->count(5)->make()->toArray()
         );
         $contact->deals()->createMany(
-            \App\Models\Deal::factory()->count(3)->make()->toArray()
+            Deal::factory()->count(3)->make()->toArray()
         );
         $contact->activities()->createMany(
-            \App\Models\Activity::factory()->count(10)->make()->toArray()
+            Activity::factory()->count(10)->make()->toArray()
         );
 
         // Warm up the cache

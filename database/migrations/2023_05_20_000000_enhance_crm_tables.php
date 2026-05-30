@@ -10,7 +10,7 @@ return new class extends Migration
     {
         // Add other table enhancements here
 
-        if (!Schema::hasTable('leads')) {
+        if (! Schema::hasTable('leads')) {
             Schema::create('leads', function (Blueprint $table) {
                 $table->id();
                 $table->string('status')->default('new');

@@ -2,10 +2,9 @@
 
 namespace App\Filament\App\Resources\ContactResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\ContactResource;
 use App\Models\Contact;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Http\Request;
 
@@ -30,12 +29,12 @@ class ListContacts extends ListRecords
         if ($request->filled('search')) {
             $term = $request->search;
             $query->where(function ($q) use ($term) {
-                $q->where('name', 'like', '%' . $term . '%')
-                  ->orWhere('last_name', 'like', '%' . $term . '%')
-                  ->orWhere('email', 'like', '%' . $term . '%')
-                  ->orWhere('phone_number', 'like', '%' . $term . '%')
-                  ->orWhere('company_size', 'like', '%' . $term . '%')
-                  ->orWhere('industry', 'like', '%' . $term . '%');
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('last_name', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone_number', 'like', '%'.$term.'%')
+                    ->orWhere('company_size', 'like', '%'.$term.'%')
+                    ->orWhere('industry', 'like', '%'.$term.'%');
             });
         }
 
@@ -55,7 +54,7 @@ class ListContacts extends ListRecords
     {
         $ids = $request->input('ids', []);
 
-        if (!empty($ids)) {
+        if (! empty($ids)) {
             Contact::whereIn('id', $ids)->delete();
         }
 
@@ -70,8 +69,8 @@ class ListContacts extends ListRecords
         $term = $request->input('query', '');
 
         $contacts = Contact::where(function ($q) use ($term) {
-            $q->where('name', 'like', $term . '%')
-              ->orWhere('email', 'like', '%' . $term . '%');
+            $q->where('name', 'like', $term.'%')
+                ->orWhere('email', 'like', '%'.$term.'%');
         })
             ->limit(10)
             ->get(['id', 'name', 'email']);

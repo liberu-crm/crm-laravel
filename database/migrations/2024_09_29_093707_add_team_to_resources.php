@@ -6,10 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     protected $tables = [
         'contacts', 'menus', 'activations', 'opportunities', 'notes', 'companies',
-        'activations', 'tasks','workflows',
+        'activations', 'tasks', 'workflows',
 
     ];
 
@@ -19,7 +18,7 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->tables as $table) {
-            if (!Schema::hasColumn($table, 'team_id')) {
+            if (! Schema::hasColumn($table, 'team_id')) {
                 Schema::table($table, function (Blueprint $table) {
                     $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->default(1);
                 });

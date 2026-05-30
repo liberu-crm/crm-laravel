@@ -44,6 +44,7 @@ class CreateTicketFromEmail
         foreach ($message->getPayload()->getHeaders() as $header) {
             $headers[$header->getName()] = $header->getValue();
         }
+
         return $headers;
     }
 

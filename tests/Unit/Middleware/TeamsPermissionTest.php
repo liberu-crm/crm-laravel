@@ -36,7 +36,7 @@ class TeamsPermissionTest extends TestCase
             ]);
         }
 
-        $this->middleware = new TeamsPermission();
+        $this->middleware = new TeamsPermission;
     }
 
     public function test_unauthenticated_user_is_redirected()

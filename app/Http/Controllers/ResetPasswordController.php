@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Laravel\Jetstream\Http\Controllers\AuthenticatedSessionController;
 
 class ResetPasswordController extends AuthAuthenticatedSessionController
 {
@@ -20,8 +19,8 @@ class ResetPasswordController extends AuthAuthenticatedSessionController
     public function reset(Request $request)
     {
         $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
+            'token' => 'required',
+            'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
 

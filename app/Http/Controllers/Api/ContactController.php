@@ -16,15 +16,15 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'              => 'required|string|max:255',
-            'email'             => 'required|email|unique:contacts,email',
-            'phone_number'      => 'nullable|string|max:20',
-            'last_name'         => 'nullable|string|max:255',
-            'status'            => 'nullable|string|max:255',
-            'source'            => 'nullable|string|max:255',
-            'industry'          => 'nullable|string|max:255',
-            'lifecycle_stage'   => 'nullable|string|max:255',
-            'company_id'        => 'nullable|integer|exists:companies,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:contacts,email',
+            'phone_number' => 'nullable|string|max:20',
+            'last_name' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
+            'source' => 'nullable|string|max:255',
+            'industry' => 'nullable|string|max:255',
+            'lifecycle_stage' => 'nullable|string|max:255',
+            'company_id' => 'nullable|integer|exists:companies,id',
         ]);
 
         $validated['team_id'] = $request->user()?->currentTeam?->id;
@@ -45,15 +45,15 @@ class ContactController extends Controller
         abort_unless($contact->belongsToTeam($request->user()?->currentTeam?->id), 403);
 
         $validated = $request->validate([
-            'name'              => 'string|max:255',
-            'email'             => 'email|unique:contacts,email,' . $contact->id,
-            'phone_number'      => 'nullable|string|max:20',
-            'last_name'         => 'nullable|string|max:255',
-            'status'            => 'nullable|string|max:255',
-            'source'            => 'nullable|string|max:255',
-            'industry'          => 'nullable|string|max:255',
-            'lifecycle_stage'   => 'nullable|string|max:255',
-            'company_id'        => 'nullable|integer|exists:companies,id',
+            'name' => 'string|max:255',
+            'email' => 'email|unique:contacts,email,'.$contact->id,
+            'phone_number' => 'nullable|string|max:20',
+            'last_name' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
+            'source' => 'nullable|string|max:255',
+            'industry' => 'nullable|string|max:255',
+            'lifecycle_stage' => 'nullable|string|max:255',
+            'company_id' => 'nullable|integer|exists:companies,id',
         ]);
 
         $contact->update($validated);
@@ -78,12 +78,12 @@ class ContactController extends Controller
     public function bulkUpdate(Request $request)
     {
         $request->validate([
-            'ids'        => 'required|array|min:1',
-            'ids.*'      => 'integer|exists:contacts,id',
-            'data'       => 'required|array',
-            'data.status'          => 'sometimes|string|max:255',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:contacts,id',
+            'data' => 'required|array',
+            'data.status' => 'sometimes|string|max:255',
             'data.lifecycle_stage' => 'sometimes|string|max:255',
-            'data.source'          => 'sometimes|string|max:255',
+            'data.source' => 'sometimes|string|max:255',
         ]);
 
         $allowedFields = ['status', 'lifecycle_stage', 'source', 'industry'];
@@ -108,7 +108,7 @@ class ContactController extends Controller
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'ids'   => 'required|array|min:1',
+            'ids' => 'required|array|min:1',
             'ids.*' => 'integer|exists:contacts,id',
         ]);
 
@@ -127,8 +127,8 @@ class ContactController extends Controller
     public function bulkAssign(Request $request)
     {
         $request->validate([
-            'ids'     => 'required|array|min:1',
-            'ids.*'   => 'integer|exists:contacts,id',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:contacts,id',
             'user_id' => 'required|integer|exists:users,id',
         ]);
 

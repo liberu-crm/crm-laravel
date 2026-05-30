@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Contact;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Contact;
-use App\Models\Lead;
 use App\Notifications\TaskReminderNotification;
 use App\Services\GoogleCalendarService;
 use App\Services\OutlookCalendarService;
@@ -19,6 +18,7 @@ class TaskReminderTest extends TestCase
     use RefreshDatabase;
 
     protected $googleCalendarService;
+
     protected $outlookCalendarService;
 
     protected function setUp(): void
@@ -30,7 +30,7 @@ class TaskReminderTest extends TestCase
         $this->app->instance(OutlookCalendarService::class, $this->outlookCalendarService);
     }
 
-    public function testCreateTaskWithGoogleCalendar()
+    public function test_create_task_with_google_calendar()
     {
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
@@ -44,7 +44,7 @@ class TaskReminderTest extends TestCase
             'contact_id' => $contact->id,
             'assigned_to' => $user->id,
             'calendar_type' => 'google',
-            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task()),
+            'google_event_id' => app(GoogleCalendarService::class)->createEvent(new Task),
         ]);
 
         $this->assertDatabaseHas('tasks', [
@@ -55,7 +55,7 @@ class TaskReminderTest extends TestCase
         ]);
     }
 
-    public function testTaskReminderNotificationIsSent()
+    public function test_task_reminder_notification_is_sent()
     {
         Notification::fake();
 
@@ -71,7 +71,7 @@ class TaskReminderTest extends TestCase
         Notification::assertSentTo($user, TaskReminderNotification::class);
     }
 
-    public function testTaskHasReminderDate()
+    public function test_task_has_reminder_date()
     {
         $task = Task::factory()->withReminder()->create();
 

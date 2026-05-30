@@ -10,7 +10,7 @@ class SiteSettingsService
     public function get($key = null)
     {
         $settings = Cache::remember(config('site-settings.cache_key'), config('site-settings.cache_duration'), function () {
-            return SiteSettings::first() ?? new SiteSettings();
+            return SiteSettings::first() ?? new SiteSettings;
         });
 
         return $key ? $settings->$key : $settings;

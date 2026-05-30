@@ -2,18 +2,22 @@
 
 namespace App\Modules;
 
-use ReflectionClass;
-use Artisan;
 use App\Modules\Contracts\ModuleInterface;
+use Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use ReflectionClass;
 
 abstract class BaseModule implements ModuleInterface
 {
     protected string $name;
+
     protected string $version;
+
     protected string $description;
+
     protected array $dependencies = [];
+
     protected array $config = [];
 
     public function __construct()
@@ -115,11 +119,11 @@ abstract class BaseModule implements ModuleInterface
     protected function loadModuleInfo(): void
     {
         $modulePath = $this->getModulePath();
-        $moduleInfoPath = $modulePath . '/module.json';
+        $moduleInfoPath = $modulePath.'/module.json';
 
         if (File::exists($moduleInfoPath)) {
             $moduleInfo = json_decode(File::get($moduleInfoPath), true);
-            
+
             $this->name = $moduleInfo['name'] ?? class_basename($this);
             $this->version = $moduleInfo['version'] ?? '1.0.0';
             $this->description = $moduleInfo['description'] ?? '';
@@ -134,6 +138,7 @@ abstract class BaseModule implements ModuleInterface
     protected function getModulePath(): string
     {
         $reflection = new ReflectionClass($this);
+
         return dirname($reflection->getFileName());
     }
 
@@ -142,11 +147,11 @@ abstract class BaseModule implements ModuleInterface
      */
     protected function runMigrations(): void
     {
-        $migrationsPath = $this->getModulePath() . '/database/migrations';
-        
+        $migrationsPath = $this->getModulePath().'/database/migrations';
+
         if (File::exists($migrationsPath)) {
             Artisan::call('migrate', [
-                '--path' => 'app/Modules/' . $this->name . '/database/migrations',
+                '--path' => 'app/Modules/'.$this->name.'/database/migrations',
                 '--force' => true,
             ]);
         }
@@ -167,7 +172,7 @@ abstract class BaseModule implements ModuleInterface
     protected function publishAssets(): void
     {
         Artisan::call('vendor:publish', [
-            '--tag' => strtolower($this->name) . '-assets',
+            '--tag' => strtolower($this->name).'-assets',
             '--force' => true,
         ]);
     }

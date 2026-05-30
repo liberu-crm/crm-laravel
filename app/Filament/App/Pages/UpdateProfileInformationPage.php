@@ -12,6 +12,7 @@ class UpdateProfileInformationPage extends Page
     protected string $view = 'filament.app.pages.update-profile-information-page';
 
     public $name;
+
     public $email;
 
     protected $auditLogService;
