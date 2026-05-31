@@ -23,7 +23,7 @@ class FacebookMessengerServiceTest extends TestCase
         $this->facebookMessengerService = new FacebookMessengerService;
     }
 
-    public function test_get_unread_messages()
+    public function test_get_unread_messages(): void
     {
         $mockResponse = Mockery::mock();
         $mockResponse->shouldReceive('getGraphEdge')->andReturn([
@@ -50,7 +50,7 @@ class FacebookMessengerServiceTest extends TestCase
         $this->assertEquals('Hello', $unreadMessages[0]['message']);
     }
 
-    public function test_get_message()
+    public function test_get_message(): void
     {
         $mockResponse = Mockery::mock();
         $mockResponse->shouldReceive('getGraphNode')->andReturn(
@@ -72,7 +72,7 @@ class FacebookMessengerServiceTest extends TestCase
         $this->assertEquals('Hello', $message['message']);
     }
 
-    public function test_send_reply()
+    public function test_send_reply(): void
     {
         $mockGraphNode = Mockery::mock();
         $mockGraphNode->shouldReceive('getField')

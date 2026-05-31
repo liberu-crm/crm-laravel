@@ -22,7 +22,7 @@ class LeadFormControllerTest extends TestCase
         ]);
     }
 
-    public function test_submits_valid_data_and_creates_lead()
+    public function test_submits_valid_data_and_creates_lead(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string', 'type' => 'text'],
@@ -39,7 +39,7 @@ class LeadFormControllerTest extends TestCase
         $this->assertDatabaseHas('leads', ['status' => 'new']);
     }
 
-    public function test_rejects_missing_required_field()
+    public function test_rejects_missing_required_field(): void
     {
         $form = $this->createForm([
             ['name' => 'email', 'validation' => 'required|email', 'type' => 'email'],
@@ -50,7 +50,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_accepts_nullable_field_when_absent()
+    public function test_accepts_nullable_field_when_absent(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string', 'type' => 'text'],
@@ -66,7 +66,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_strips_regex_rule()
+    public function test_strips_regex_rule(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string', 'type' => 'text'],
@@ -83,7 +83,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_strips_class_based_rule()
+    public function test_strips_class_based_rule(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string', 'type' => 'text'],
@@ -100,7 +100,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_falls_back_to_required_when_all_rules_stripped()
+    public function test_falls_back_to_required_when_all_rules_stripped(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'regex:/^[A-Z]+$/', 'type' => 'email'],
@@ -113,7 +113,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_mixed_rules_safe_rules_still_apply()
+    public function test_mixed_rules_safe_rules_still_apply(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string|regex:/^[a-z]+$/|max:255', 'type' => 'text'],
@@ -128,7 +128,7 @@ class LeadFormControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_contact_created_with_name()
+    public function test_contact_created_with_name(): void
     {
         $form = $this->createForm([
             ['name' => 'name', 'validation' => 'required|string', 'type' => 'text'],

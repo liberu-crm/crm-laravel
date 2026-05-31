@@ -15,7 +15,7 @@ class RegisterResponse implements RegisterResponseContract
         'free' => '/app',
     ];
 
-    protected function shouldRedirect(Request $request, $redirect)
+    protected function shouldRedirect(Request $request, string $redirect): bool
     {
         // Check if the current request path matches the redirect path
         return ! $request->is($redirect) && ! $request->is($redirect.'/*');

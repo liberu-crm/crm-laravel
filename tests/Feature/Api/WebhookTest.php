@@ -25,15 +25,15 @@ class WebhookTest extends TestCase
 
     protected function withProductionEnv(): void
     {
-        $this->app->detectEnvironment(fn () => 'production');
+        $this->app->detectEnvironment(fn (): string => 'production');
     }
 
     protected function withTestingEnv(): void
     {
-        $this->app->detectEnvironment(fn () => 'testing');
+        $this->app->detectEnvironment(fn (): string => 'testing');
     }
 
-    public function test_accepts_public_https_url_in_non_production()
+    public function test_accepts_public_https_url_in_non_production(): void
     {
         Http::fake();
 
@@ -46,7 +46,7 @@ class WebhookTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_rejects_localhost_url_in_production()
+    public function test_rejects_localhost_url_in_production(): void
     {
         $this->withProductionEnv();
 
@@ -62,7 +62,7 @@ class WebhookTest extends TestCase
         $this->withTestingEnv();
     }
 
-    public function test_rejects_raw_ip_url_in_production()
+    public function test_rejects_raw_ip_url_in_production(): void
     {
         $this->withProductionEnv();
 
@@ -78,7 +78,7 @@ class WebhookTest extends TestCase
         $this->withTestingEnv();
     }
 
-    public function test_rejects_non_https_url_in_production()
+    public function test_rejects_non_https_url_in_production(): void
     {
         $this->withProductionEnv();
 
@@ -94,7 +94,7 @@ class WebhookTest extends TestCase
         $this->withTestingEnv();
     }
 
-    public function test_service_skips_ssrf_check_in_non_production()
+    public function test_service_skips_ssrf_check_in_non_production(): void
     {
         Http::fake();
 
@@ -109,12 +109,10 @@ class WebhookTest extends TestCase
         $service = app(WebhookService::class);
         $service->send($webhook, 'contact.created', []);
 
-        Http::assertSent(function (Request $r) {
-            return $r->url() === 'https://example.com/hook';
-        });
+        Http::assertSent(fn(Request $r) => $r->url() === 'https://example.com/hook');
     }
 
-    public function test_update_rejects_localhost_url_in_production()
+    public function test_update_rejects_localhost_url_in_production(): void
     {
         $this->withProductionEnv();
 
@@ -136,7 +134,7 @@ class WebhookTest extends TestCase
         $this->withTestingEnv();
     }
 
-    public function test_uses_https_for_production_webhooks()
+    public function test_uses_https_for_production_webhooks(): void
     {
         $this->withProductionEnv();
 
@@ -162,7 +160,7 @@ class WebhookTest extends TestCase
         return [$user, $team];
     }
 
-    public function test_other_team_cannot_view_webhook()
+    public function test_other_team_cannot_view_webhook(): void
     {
         [$owner] = $this->createUserWithTeam();
         Sanctum::actingAs($owner);
@@ -179,7 +177,7 @@ class WebhookTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_other_team_cannot_update_webhook()
+    public function test_other_team_cannot_update_webhook(): void
     {
         [$owner] = $this->createUserWithTeam();
         Sanctum::actingAs($owner);
@@ -196,7 +194,7 @@ class WebhookTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_other_team_cannot_delete_webhook()
+    public function test_other_team_cannot_delete_webhook(): void
     {
         [$owner] = $this->createUserWithTeam();
         Sanctum::actingAs($owner);
@@ -213,7 +211,7 @@ class WebhookTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_other_team_cannot_regenerate_secret()
+    public function test_other_team_cannot_regenerate_secret(): void
     {
         [$owner] = $this->createUserWithTeam();
         Sanctum::actingAs($owner);

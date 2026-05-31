@@ -34,7 +34,7 @@ class ReminderServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_send_reminders_for_contact_task()
+    public function test_send_reminders_for_contact_task(): void
     {
         Notification::fake();
 
@@ -54,7 +54,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function test_send_reminders_for_lead_task()
+    public function test_send_reminders_for_lead_task(): void
     {
         Notification::fake();
 
@@ -74,7 +74,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function test_handle_failed_notification()
+    public function test_handle_failed_notification(): void
     {
         Notification::fake();
         Log::shouldReceive('error')->once();
@@ -95,12 +95,10 @@ class ReminderServiceTest extends TestCase
         $this->assertFalse($task->fresh()->reminder_sent);
     }
 
-    public function test_log_reminder_activity()
+    public function test_log_reminder_activity(): void
     {
         Notification::fake();
-        Log::shouldReceive('info')->once()->withArgs(function ($message) {
-            return strpos($message, 'Reminder sent successfully') !== false;
-        });
+        Log::shouldReceive('info')->once()->withArgs(fn($message) => str_contains((string) $message, 'Reminder sent successfully'));
 
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
@@ -116,7 +114,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function test_schedule_reminder()
+    public function test_schedule_reminder(): void
     {
         $task = Task::factory()->create();
         $reminderDate = now()->addDays(2)->startOfSecond();

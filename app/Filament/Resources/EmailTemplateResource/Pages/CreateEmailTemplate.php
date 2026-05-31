@@ -9,6 +9,7 @@ class CreateEmailTemplate extends CreateRecord
 {
     protected static string $resource = EmailTemplateResource::class;
 
+    #[\Override]
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['created_by'] = auth()->id();

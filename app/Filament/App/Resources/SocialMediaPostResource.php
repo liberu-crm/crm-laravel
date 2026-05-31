@@ -42,6 +42,7 @@ class SocialMediaPostResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -55,7 +56,7 @@ class SocialMediaPostResource extends Resource
                                     ->maxLength(65535)
                                     ->helperText('Write your post content here. Character limits vary by platform.')
                                     ->live()
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('character_count', strlen($state))),
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('character_count', strlen((string) $state))),
                                 TextInput::make('character_count')
                                     ->label('Character Count')
                                     ->disabled()
@@ -79,7 +80,7 @@ class SocialMediaPostResource extends Resource
                                 Select::make('status')
                                     ->options(SocialMediaPost::getStatuses())
                                     ->required()
-                                    ->disabled(fn ($record) => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
+                                    ->disabled(fn ($record): bool => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
                             ->columnSpan(2),
 
@@ -108,28 +109,27 @@ class SocialMediaPostResource extends Resource
                         Section::make('Preview')
                             ->schema([
                                 View::make('filament.components.social-media-preview')
-                                    ->visible(fn ($get) => ! empty($get('content'))),
+                                    ->visible(fn ($get): bool => ! empty($get('content'))),
                             ])
                             ->columnSpan(2),
 
                         Section::make('Analytics')
                             ->schema([
                                 Placeholder::make('Analytics')
-                                    ->content(function (SocialMediaPost $record) {
-                                        return view('filament.components.social-media-analytics', [
-                                            'post' => $record,
-                                            'detailed' => true,
-                                        ]);
-                                    }),
+                                    ->content(fn(SocialMediaPost $record) => view('filament.components.social-media-analytics', [
+                                        'post' => $record,
+                                        'detailed' => true,
+                                    ])),
                                 View::make('filament.components.engagement-chart')
-                                    ->visible(fn ($record) => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
+                                    ->visible(fn ($record): bool => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
                             ->columnSpan(1)
-                            ->hidden(fn ($record) => $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
+                            ->hidden(fn ($record): bool => $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
                     ]),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -171,17 +171,18 @@ class SocialMediaPostResource extends Resource
                 ViewAction::make(),
                 EditAction::make(),
                 Action::make('publish')
-                    ->action(function (SocialMediaPost $record) {
+                    ->action(function (SocialMediaPost $record): void {
                         self::publishPost($record);
                     })
                     ->requiresConfirmation()
-                    ->visible(fn (SocialMediaPost $record) => $record->status === SocialMediaPost::STATUS_SCHEDULED),
+                    ->visible(fn (SocialMediaPost $record): bool => $record->status === SocialMediaPost::STATUS_SCHEDULED),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -189,6 +190,7 @@ class SocialMediaPostResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

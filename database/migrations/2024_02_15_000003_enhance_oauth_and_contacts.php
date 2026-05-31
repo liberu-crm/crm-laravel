@@ -10,7 +10,7 @@ return new class extends Migration
     {
         // Enhance connected_accounts table if it exists
         if (Schema::hasTable('connected_accounts')) {
-            Schema::table('connected_accounts', function (Blueprint $table) {
+            Schema::table('connected_accounts', function (Blueprint $table): void {
                 if (! Schema::hasColumn('connected_accounts', 'metadata')) {
                     $table->json('metadata')->nullable()->after('expires_at');
                 }
@@ -25,7 +25,7 @@ return new class extends Migration
 
         // Add metadata to contacts for engagement tracking
         if (Schema::hasTable('contacts') && ! Schema::hasColumn('contacts', 'metadata')) {
-            Schema::table('contacts', function (Blueprint $table) {
+            Schema::table('contacts', function (Blueprint $table): void {
                 $table->json('metadata')->nullable();
             });
         }
@@ -34,7 +34,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('connected_accounts')) {
-            Schema::table('connected_accounts', function (Blueprint $table) {
+            Schema::table('connected_accounts', function (Blueprint $table): void {
                 if (Schema::hasColumn('connected_accounts', 'metadata')) {
                     $table->dropColumn('metadata');
                 }
@@ -48,7 +48,7 @@ return new class extends Migration
         }
 
         if (Schema::hasTable('contacts') && Schema::hasColumn('contacts', 'metadata')) {
-            Schema::table('contacts', function (Blueprint $table) {
+            Schema::table('contacts', function (Blueprint $table): void {
                 $table->dropColumn('metadata');
             });
         }

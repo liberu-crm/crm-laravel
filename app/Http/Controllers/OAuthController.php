@@ -36,7 +36,7 @@ class OAuthController extends Controller
 
         if (! $config) {
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'OAuth provider not configured. Please add your '.ucfirst($provider).' credentials first.');
+                ->with('error', 'OAuth provider not configured. Please add your '.ucfirst((string) $provider).' credentials first.');
         }
 
         $driver = Socialite::driver($provider);
@@ -78,7 +78,7 @@ class OAuthController extends Controller
                     'token' => $socialiteUser->token,
                     'refresh_token' => $socialiteUser->refreshToken,
                     'token_secret' => $socialiteUser->tokenSecret ?? null,
-                    'expires_at' => isset($socialiteUser->expiresIn)
+                    'expires_at' => property_exists($socialiteUser, 'expiresIn') && $socialiteUser->expiresIn !== null
                         ? Carbon::now()->addSeconds($socialiteUser->expiresIn)
                         : null,
                     'metadata' => $this->getProviderMetadata($provider, $socialiteUser),
@@ -86,12 +86,12 @@ class OAuthController extends Controller
             );
 
             return redirect()->route('oauth.configurations.index')
-                ->with('success', ucfirst($provider).' account connected successfully.');
+                ->with('success', ucfirst((string) $provider).' account connected successfully.');
         } catch (\Exception $e) {
             Log::error("OAuth callback failed for {$provider}: ".$e->getMessage());
 
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'Failed to connect '.ucfirst($provider).' account: '.$e->getMessage());
+                ->with('error', 'Failed to connect '.ucfirst((string) $provider).' account: '.$e->getMessage());
         }
     }
 

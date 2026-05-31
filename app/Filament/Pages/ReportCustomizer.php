@@ -150,9 +150,9 @@ class ReportCustomizer extends Page
 
         if (! empty($rows)) {
             $file = fopen($path, 'w');
-            fputcsv($file, array_keys($rows[0]));
+            fputcsv($file, array_keys($rows[0]), escape: '\\');
             foreach ($rows as $row) {
-                fputcsv($file, $row);
+                fputcsv($file, $row, escape: '\\');
             }
             fclose($file);
         }
@@ -160,6 +160,7 @@ class ReportCustomizer extends Page
         $this->dispatch('report-exported', ['filename' => $filename]);
     }
 
+    #[\Override]
     protected function getActions(): array
     {
         return [

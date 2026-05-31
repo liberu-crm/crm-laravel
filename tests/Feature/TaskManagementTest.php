@@ -13,12 +13,12 @@ class TaskManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_create_task_for_contact()
+    public function test_create_task_for_contact(): void
     {
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
 
-        $task = Task::factory()->create([
+        Task::factory()->create([
             'name' => 'Test Task',
             'description' => 'Test Description',
             'contact_id' => $contact->id,
@@ -32,12 +32,12 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function test_create_task_for_lead()
+    public function test_create_task_for_lead(): void
     {
         $user = User::factory()->create();
         $lead = Lead::factory()->create();
 
-        $task = Task::factory()->create([
+        Task::factory()->create([
             'name' => 'Lead Task',
             'lead_id' => $lead->id,
             'assigned_to' => $user->id,
@@ -50,7 +50,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function test_assign_task()
+    public function test_assign_task(): void
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -65,7 +65,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function test_update_task_status()
+    public function test_update_task_status(): void
     {
         $task = Task::factory()->create(['status' => 'pending']);
 
@@ -77,7 +77,7 @@ class TaskManagementTest extends TestCase
         ]);
     }
 
-    public function test_task_filter_by_status()
+    public function test_task_filter_by_status(): void
     {
         $pendingBefore = Task::where('status', 'pending')->count();
         $completedBefore = Task::where('status', 'completed')->count();
@@ -92,7 +92,7 @@ class TaskManagementTest extends TestCase
         $this->assertEquals($completedBefore + 2, $completedTasks);
     }
 
-    public function test_task_search_by_name()
+    public function test_task_search_by_name(): void
     {
         Task::factory()->create(['name' => 'Unique Task Alpha Search']);
         Task::factory()->create(['name' => 'Another Unrelated Task']);

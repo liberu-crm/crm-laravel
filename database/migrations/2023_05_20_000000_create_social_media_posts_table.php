@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('social_media_posts', function (Blueprint $table) {
+        Schema::create('social_media_posts', function (Blueprint $table): void {
             $table->id();
             $table->text('content');
             $table->dateTime('scheduled_at')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('social_media_posts');
     }

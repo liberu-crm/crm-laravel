@@ -21,7 +21,7 @@ class ContactProfileLoadTest extends TestCase
     }
 
     /** @test */
-    public function it_loads_contact_profile_within_500ms()
+    public function it_loads_contact_profile_within_500ms(): void
     {
         // Create a contact with related data
         $contact = Contact::factory()->create();

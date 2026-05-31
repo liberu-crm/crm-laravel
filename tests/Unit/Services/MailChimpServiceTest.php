@@ -22,12 +22,12 @@ class MailChimpServiceTest extends TestCase
         $this->mailChimpService->setClient($this->mockApiClient);
     }
 
-    public function test_mail_chimp_service_can_be_instantiated()
+    public function test_mail_chimp_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function test_get_lists_method_can_be_called()
+    public function test_get_lists_method_can_be_called(): void
     {
         $mockResponse = (object) ['lists' => [
             (object) ['id' => '1', 'name' => 'List 1'],

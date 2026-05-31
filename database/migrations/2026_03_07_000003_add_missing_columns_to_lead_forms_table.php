@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('lead_forms', function (Blueprint $table) {
+        Schema::table('lead_forms', function (Blueprint $table): void {
             if (! Schema::hasColumn('lead_forms', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->after('id');
             }
@@ -42,7 +42,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('lead_forms', function (Blueprint $table) {
+        Schema::table('lead_forms', function (Blueprint $table): void {
             $columns = ['team_id', 'description', 'settings', 'style', 'status', 'conversion_rate', 'views', 'submissions'];
             foreach ($columns as $column) {
                 if (Schema::hasColumn('lead_forms', $column)) {

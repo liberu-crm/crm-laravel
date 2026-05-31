@@ -20,11 +20,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->middleware('auth:sanctum')->group(function (): void {
     // Core resources
     Route::apiResource('contacts', ContactController::class);
     Route::apiResource('deals', DealController::class);

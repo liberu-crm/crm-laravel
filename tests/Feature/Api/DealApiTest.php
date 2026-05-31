@@ -19,7 +19,7 @@ class DealApiTest extends TestCase
         Sanctum::actingAs($user);
     }
 
-    public function test_can_list_deals()
+    public function test_can_list_deals(): void
     {
         $beforeCount = Deal::count();
         Deal::factory()->count(3)->create();
@@ -30,7 +30,7 @@ class DealApiTest extends TestCase
             ->assertJsonCount($beforeCount + 3);
     }
 
-    public function test_can_create_deal()
+    public function test_can_create_deal(): void
     {
         $dealData = [
             'name' => 'New Deal',
@@ -47,7 +47,7 @@ class DealApiTest extends TestCase
             ]);
     }
 
-    public function test_can_show_deal()
+    public function test_can_show_deal(): void
     {
         $deal = Deal::factory()->create();
 
@@ -57,7 +57,7 @@ class DealApiTest extends TestCase
             ->assertJson($deal->toArray());
     }
 
-    public function test_can_update_deal()
+    public function test_can_update_deal(): void
     {
         $deal = Deal::factory()->create();
         $updatedData = [
@@ -75,7 +75,7 @@ class DealApiTest extends TestCase
             ]);
     }
 
-    public function test_can_delete_deal()
+    public function test_can_delete_deal(): void
     {
         $deal = Deal::factory()->create();
 

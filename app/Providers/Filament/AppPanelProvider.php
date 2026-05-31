@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\App\Pages;
@@ -53,7 +55,7 @@ class AppPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Profile')
                     ->icon('heroicon-o-user-circle')
-                    ->url(fn () => $this->shouldRegisterMenuItem()
+                    ->url(fn (): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
                         ? url(EditProfile::getUrl())
                         : url($panel->getPath())),
             ])
@@ -104,7 +106,7 @@ class AppPanelProvider extends PanelProvider
                     MenuItem::make()
                         ->label('Team Settings')
                         ->icon('heroicon-o-cog-6-tooth')
-                        ->url(fn () => $this->shouldRegisterMenuItem()
+                        ->url(fn (): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
                             ? url(Pages\EditTeam::getUrl())
                             : url($panel->getPath())),
                 ]);
@@ -113,13 +115,8 @@ class AppPanelProvider extends PanelProvider
         return $panel;
     }
 
-    public function boot()
+    public function boot(): void
     {
-        /**
-         * Disable Fortify routes.
-         */
-        Fortify::$registersRoutes = false;
-
         /**
          * Disable Fortify routes (using Filament for auth instead).
          */

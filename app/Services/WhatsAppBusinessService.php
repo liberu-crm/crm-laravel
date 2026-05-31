@@ -22,7 +22,7 @@ class WhatsAppBusinessService
 
     protected function initializeFromConfig(?OAuthConfiguration $config = null)
     {
-        if ($config) {
+        if ($config instanceof \App\Models\OAuthConfiguration) {
             $this->apiUrl = $config->additional_settings['api_url'] ?? $this->apiUrl;
             $this->accessToken = $config->additional_settings['access_token'] ?? $config->client_secret;
         }
@@ -41,7 +41,7 @@ class WhatsAppBusinessService
 
             $messages = $response->json()['messages'] ?? [];
 
-            return collect($messages)->map(function ($msg) {
+            return collect($messages)->map(function (array $msg): array {
                 $body = $msg['text']['body'] ?? $msg['body'] ?? $msg['message'] ?? '';
 
                 return [
@@ -69,7 +69,7 @@ class WhatsAppBusinessService
         return $this->getUnreadMessages($config);
     }
 
-    public function getMessage($messageId, ?OAuthConfiguration $config = null)
+    public function getMessage(string $messageId, ?OAuthConfiguration $config = null)
     {
         $this->initializeFromConfig($config);
 

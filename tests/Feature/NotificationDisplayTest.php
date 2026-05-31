@@ -11,7 +11,7 @@ class NotificationDisplayTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_page_loads_for_authenticated_user()
+    public function test_home_page_loads_for_authenticated_user(): void
     {
         $user = User::factory()->create();
 
@@ -20,14 +20,14 @@ class NotificationDisplayTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_home_page_loads_for_unauthenticated_user()
+    public function test_home_page_loads_for_unauthenticated_user(): void
     {
         $response = $this->get('/');
 
         $response->assertStatus(200);
     }
 
-    public function test_user_can_have_notifications()
+    public function test_user_can_have_notifications(): void
     {
         $user = User::factory()->create();
 

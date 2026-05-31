@@ -32,7 +32,7 @@ class DocumentService
             'tags' => $metadata['tags'] ?? null,
             'version' => 1,
             'documentable_id' => $documentable->getKey(),
-            'documentable_type' => get_class($documentable),
+            'documentable_type' => $documentable::class,
         ]);
     }
 
@@ -112,8 +112,8 @@ class DocumentService
         $likeQuery = '%'.$query.'%';
 
         return Document::where('documentable_id', $documentable->getKey())
-            ->where('documentable_type', get_class($documentable))
-            ->where(function ($q) use ($likeQuery) {
+            ->where('documentable_type', $documentable::class)
+            ->where(function ($q) use ($likeQuery): void {
                 $q->where('title', 'like', $likeQuery)
                     ->orWhere('description', 'like', $likeQuery)
                     ->orWhere('original_filename', 'like', $likeQuery)
@@ -132,7 +132,7 @@ class DocumentService
     public function list(Model $documentable, array $filters = [])
     {
         $query = Document::where('documentable_id', $documentable->getKey())
-            ->where('documentable_type', get_class($documentable));
+            ->where('documentable_type', $documentable::class);
 
         if (! empty($filters['mime_type'])) {
             $query->where('mime_type', $filters['mime_type']);

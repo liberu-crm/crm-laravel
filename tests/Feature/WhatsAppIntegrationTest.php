@@ -13,7 +13,7 @@ class WhatsAppIntegrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_fetch_messages_job_can_be_queued()
+    public function test_fetch_messages_job_can_be_queued(): void
     {
         Queue::fake();
 
@@ -22,7 +22,7 @@ class WhatsAppIntegrationTest extends TestCase
         Queue::assertPushed(FetchMessages::class);
     }
 
-    public function test_message_service_get_unread_messages()
+    public function test_message_service_get_unread_messages(): void
     {
         $messageService = $this->mock(MessageService::class);
         $messageService->shouldReceive('getUnreadMessages')->andReturn([
@@ -44,9 +44,9 @@ class WhatsAppIntegrationTest extends TestCase
         $this->assertEquals('Test WhatsApp message', $result['whatsapp'][0]['body']);
     }
 
-    public function test_ticket_can_be_created_for_whats_app_message()
+    public function test_ticket_can_be_created_for_whats_app_message(): void
     {
-        $ticket = Ticket::factory()->create([
+        Ticket::factory()->create([
             'subject' => 'WhatsApp message from 1234567890',
             'source' => 'whatsapp',
         ]);

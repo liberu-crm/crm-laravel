@@ -36,7 +36,7 @@ class WebhookController extends Controller
             'url' => [
                 'required',
                 'url',
-                function ($_attribute, $value, $fail) {
+                function ($_attribute, \League\Uri\Contracts\UriInterface|\Stringable|string $value, $fail): void {
                     if (! app()->environment('production')) {
                         return;
                     }
@@ -99,7 +99,7 @@ class WebhookController extends Controller
             'url' => [
                 'sometimes',
                 'url',
-                function ($_attribute, $value, $fail) {
+                function ($_attribute, \League\Uri\Contracts\UriInterface|\Stringable|string $value, $fail): void {
                     if (! app()->environment('production')) {
                         return;
                     }

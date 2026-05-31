@@ -15,19 +15,19 @@ class ReportCustomizer extends Component
 
     protected $reportingService;
 
-    public function boot(ReportingService $reportingService)
+    public function boot(ReportingService $reportingService): void
     {
         $this->reportingService = $reportingService;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $data = $this->generateReport();
 
-        return view('livewire.report-customizer', compact('data'));
+        return view('livewire.report-customizer', ['data' => $data]);
     }
 
-    public function generateReport()
+    public function generateReport(): array
     {
         switch ($this->reportType) {
             case 'contact-interactions':
@@ -68,12 +68,12 @@ class ReportCustomizer extends Component
         }
     }
 
-    public function updatedReportType()
+    public function updatedReportType(): void
     {
         $this->filters = [];
     }
 
-    public function updatedDateRange()
+    public function updatedDateRange(): void
     {
         $this->filters['date_range'] = $this->dateRange;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmailTemplateResource\Pages;
@@ -25,6 +27,7 @@ class EmailTemplateResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -95,6 +98,7 @@ class EmailTemplateResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -159,6 +163,7 @@ class EmailTemplateResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

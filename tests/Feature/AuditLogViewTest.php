@@ -11,7 +11,7 @@ class AuditLogViewTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_view_audit_logs()
+    public function test_admin_can_view_audit_logs(): void
     {
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $admin = User::factory()->create();
@@ -22,7 +22,7 @@ class AuditLogViewTest extends TestCase
         $response->assertSuccessful();
     }
 
-    public function test_non_admin_cannot_view_audit_logs()
+    public function test_non_admin_cannot_view_audit_logs(): void
     {
         $user = User::factory()->create();
 

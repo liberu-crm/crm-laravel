@@ -58,7 +58,7 @@ class FormBuilder extends Model
         return array_values(
             array_filter(
                 $this->fields ?? [],
-                fn ($field) => in_array($field['key'] ?? null, $fieldKeys, true)
+                fn (array $field): bool => in_array($field['key'] ?? null, $fieldKeys, true)
             )
         );
     }
@@ -102,7 +102,7 @@ class FormBuilder extends Model
             }
 
             $results = array_map(
-                fn ($cond) => $this->evaluateCondition($cond, $values),
+                fn (array $cond): bool => $this->evaluateCondition($cond, $values),
                 $conditions
             );
 

@@ -13,17 +13,11 @@ class ExecuteWorkflowAction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $action;
-
-    protected $lead;
-
-    public function __construct(array $action, Lead $lead)
+    public function __construct(protected array $action, protected \App\Models\Lead $lead)
     {
-        $this->action = $action;
-        $this->lead = $lead;
     }
 
-    public function handle()
+    public function handle(): void
     {
         switch ($this->action['type']) {
             case 'send_email':

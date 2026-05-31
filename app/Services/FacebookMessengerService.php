@@ -38,7 +38,7 @@ class FacebookMessengerService
     {
         $fb = $this->getFacebook();
 
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
             $pageId = $account->provider_id;
         } else {
@@ -77,7 +77,7 @@ class FacebookMessengerService
     {
         $fb = $this->getFacebook();
 
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
         }
 
@@ -103,7 +103,7 @@ class FacebookMessengerService
         $fb = $this->getFacebook();
 
         $pageId = 'me';
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
             $pageId = $account->provider_id;
         }

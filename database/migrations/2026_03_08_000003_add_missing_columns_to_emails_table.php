@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('emails', function (Blueprint $table) {
+        Schema::table('emails', function (Blueprint $table): void {
             if (! Schema::hasColumn('emails', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->after('id');
             }
@@ -75,7 +75,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('emails', function (Blueprint $table) {
+        Schema::table('emails', function (Blueprint $table): void {
             $columns = [
                 'team_id', 'user_id', 'body', 'from', 'to', 'cc', 'bcc',
                 'status', 'scheduled_at', 'sent_at', 'opened_at', 'clicked_at',

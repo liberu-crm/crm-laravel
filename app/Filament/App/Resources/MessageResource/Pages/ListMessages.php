@@ -14,11 +14,12 @@ class ListMessages extends ListRecords
 {
     protected static string $resource = MessageResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             Action::make('sync')
-                ->action(function (UnifiedHelpDeskService $helpDeskService) {
+                ->action(function (UnifiedHelpDeskService $helpDeskService): void {
                     try {
                         $messages = $helpDeskService->getAllMessages(null, false);
 

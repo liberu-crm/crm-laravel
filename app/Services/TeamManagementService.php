@@ -14,7 +14,7 @@ class TeamManagementService
     {
         try {
             $defaultBranch = Branch::firstOrFail();
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             throw new Exception('No default branch found. Please set up at least one branch.');
         }
 
@@ -40,7 +40,7 @@ class TeamManagementService
         if (! $defaultTeam) {
             try {
                 $defaultTeam = $this->createDefaultTeamForUser($user);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Fallback: create a personal team when no branch/default team exists
                 $defaultTeam = $this->createPersonalTeamForUser($user);
                 $user->current_team_id = $defaultTeam->id;

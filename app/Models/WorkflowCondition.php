@@ -63,8 +63,8 @@ class WorkflowCondition extends Model
         return match ($this->operator) {
             self::OPERATOR_EQUALS => $fieldValue == $compareValue,
             self::OPERATOR_NOT_EQUALS => $fieldValue != $compareValue,
-            self::OPERATOR_CONTAINS => str_contains($fieldValue, $compareValue),
-            self::OPERATOR_NOT_CONTAINS => ! str_contains($fieldValue, $compareValue),
+            self::OPERATOR_CONTAINS => str_contains((string) $fieldValue, $compareValue),
+            self::OPERATOR_NOT_CONTAINS => ! str_contains((string) $fieldValue, $compareValue),
             self::OPERATOR_GREATER_THAN => $fieldValue > $compareValue,
             self::OPERATOR_LESS_THAN => $fieldValue < $compareValue,
             self::OPERATOR_IS_SET => ! empty($fieldValue),

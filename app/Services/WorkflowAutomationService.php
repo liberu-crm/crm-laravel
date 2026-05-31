@@ -29,7 +29,7 @@ class WorkflowAutomationService
      */
     public function trigger(string $triggerType, $entity, array $context = []): void
     {
-        $workflows = Workflow::whereHas('triggers', function ($query) use ($triggerType) {
+        $workflows = Workflow::whereHas('triggers', function ($query) use ($triggerType): void {
             $query->where('type', $triggerType)
                 ->where('is_active', true);
         })->where('is_active', true)->get();
@@ -46,7 +46,7 @@ class WorkflowAutomationService
     {
         $execution = WorkflowExecution::create([
             'workflow_id' => $workflow->id,
-            'entity_type' => get_class($entity),
+            'entity_type' => $entity::class,
             'entity_id' => $entity->id,
             'status' => WorkflowExecution::STATUS_PENDING,
             'metadata' => $context,
@@ -66,10 +66,8 @@ class WorkflowAutomationService
                 }
 
                 // Check conditions if any
-                if ($action->conditions()->count() > 0) {
-                    if (! $this->evaluateConditions($action, $entity)) {
-                        continue;
-                    }
+                if ($action->conditions()->count() > 0 && ! $this->evaluateConditions($action, $entity)) {
+                    continue;
                 }
 
                 // Apply delay if specified
@@ -97,7 +95,7 @@ class WorkflowAutomationService
 
             Log::error('Workflow execution failed: '.$e->getMessage(), [
                 'workflow_id' => $workflow->id,
-                'entity_type' => get_class($entity),
+                'entity_type' => $entity::class,
                 'entity_id' => $entity->id,
             ]);
         }
@@ -126,7 +124,8 @@ class WorkflowAutomationService
 
         // Evaluate conditions based on logical operators
         $finalResult = $results[0]['result'];
-        for ($i = 1; $i < count($results); $i++) {
+        $counter = count($results);
+        for ($i = 1; $i < $counter; $i++) {
             if ($results[$i - 1]['operator'] === 'and') {
                 $finalResult = $finalResult && $results[$i]['result'];
             } else {
@@ -144,58 +143,21 @@ class WorkflowAutomationService
     {
         $config = $action->config ?? [];
 
-        switch ($action->type) {
-            case WorkflowAction::TYPE_SEND_EMAIL:
-                $this->sendEmail($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_UPDATE_CONTACT:
-                $this->updateContact($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_CREATE_TASK:
-                $this->createTask($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_ADD_TAG:
-                $this->addTag($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_REMOVE_TAG:
-                $this->removeTag($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_CHANGE_STAGE:
-                $this->changeStage($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_SEND_SMS:
-                $this->sendSms($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_CREATE_DEAL:
-                $this->createDeal($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_WEBHOOK:
-                $this->callWebhook($entity, $config, $context);
-                break;
-
-            case WorkflowAction::TYPE_ASSIGN_TO_USER:
-                $this->assignToUser($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_ADD_TO_LIST:
-                $this->addToList($entity, $config);
-                break;
-
-            case WorkflowAction::TYPE_REMOVE_FROM_LIST:
-                $this->removeFromList($entity, $config);
-                break;
-
-            default:
-                Log::warning("Unknown workflow action type: {$action->type}");
-        }
+        match ($action->type) {
+            WorkflowAction::TYPE_SEND_EMAIL => $this->sendEmail($entity, $config),
+            WorkflowAction::TYPE_UPDATE_CONTACT => $this->updateContact($entity, $config),
+            WorkflowAction::TYPE_CREATE_TASK => $this->createTask($entity, $config),
+            WorkflowAction::TYPE_ADD_TAG => $this->addTag($entity, $config),
+            WorkflowAction::TYPE_REMOVE_TAG => $this->removeTag($entity, $config),
+            WorkflowAction::TYPE_CHANGE_STAGE => $this->changeStage($entity, $config),
+            WorkflowAction::TYPE_SEND_SMS => $this->sendSms($entity, $config),
+            WorkflowAction::TYPE_CREATE_DEAL => $this->createDeal($entity, $config),
+            WorkflowAction::TYPE_WEBHOOK => $this->callWebhook($entity, $config, $context),
+            WorkflowAction::TYPE_ASSIGN_TO_USER => $this->assignToUser($entity, $config),
+            WorkflowAction::TYPE_ADD_TO_LIST => $this->addToList($entity, $config),
+            WorkflowAction::TYPE_REMOVE_FROM_LIST => $this->removeFromList($entity, $config),
+            default => Log::warning("Unknown workflow action type: {$action->type}"),
+        };
     }
 
     protected function sendEmail($entity, array $config): void
@@ -225,7 +187,7 @@ class WorkflowAutomationService
             'title' => $config['title'] ?? 'Workflow Task',
             'description' => $config['description'] ?? '',
             'due_date' => $config['due_date'] ?? null,
-            'taskable_type' => get_class($entity),
+            'taskable_type' => $entity::class,
             'taskable_id' => $entity->id,
         ]);
     }

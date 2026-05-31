@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\ActivationResource\Pages;
 
 use App\Filament\App\Resources\ActivationResource;
@@ -10,6 +12,7 @@ class EditActivation extends EditRecord
 {
     protected static string $resource = ActivationResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

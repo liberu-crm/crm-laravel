@@ -62,7 +62,7 @@ class Deal extends Model
         return $this->belongsTo(Stage::class);
     }
 
-    public function updateStage(Stage $newStage)
+    public function updateStage(Stage $newStage): void
     {
         $this->stage()->associate($newStage);
         $this->save();

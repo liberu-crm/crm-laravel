@@ -45,7 +45,7 @@ class SocialstreamRegistrationTest extends TestCase
 
     #[Test]
     #[DataProvider('socialiteProvidersDataProvider')]
-    public function test_users_can_register_using_socialite_providers(string $socialiteProvider)
+    public function test_users_can_register_using_socialite_providers(string $socialiteProvider): void
     {
         if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
             $this->markTestSkipped('Registration support is not enabled.');
@@ -70,11 +70,7 @@ class SocialstreamRegistrationTest extends TestCase
 
         // Use a generic mock to avoid class name issues with providers like 'twitter-oauth-2'
         $providerClass = 'Laravel\\Socialite\\Two\\'.$socialiteProvider.'Provider';
-        if (preg_match('/[^a-zA-Z0-9_\\\\]/', $providerClass)) {
-            $provider = Mockery::mock();
-        } else {
-            $provider = Mockery::mock($providerClass);
-        }
+        $provider = preg_match('/[^a-zA-Z0-9_\\\\]/', $providerClass) ? Mockery::mock() : Mockery::mock($providerClass);
         $provider->shouldReceive('user')->once()->andReturn($user);
 
         Socialite::shouldReceive('driver')->once()->with($socialiteProvider)->andReturn($provider);

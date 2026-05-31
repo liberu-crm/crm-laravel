@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\DashboardWidgetResource\Pages;
 
 use App\Filament\App\Resources\DashboardWidgetResource;
@@ -10,6 +12,7 @@ class EditDashboardWidget extends EditRecord
 {
     protected static string $resource = DashboardWidgetResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

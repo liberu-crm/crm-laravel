@@ -10,6 +10,7 @@ use Tests\TestCase;
 
 class TwilioIntegrationTest extends TestCase
 {
+    public $twilioService;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -19,7 +20,7 @@ class TwilioIntegrationTest extends TestCase
         $this->app->instance(TwilioService::class, $this->twilioService);
     }
 
-    public function test_initiate_call_service()
+    public function test_initiate_call_service(): void
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
 
@@ -37,7 +38,7 @@ class TwilioIntegrationTest extends TestCase
         $this->assertEquals('CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', $call->sid);
     }
 
-    public function test_send_sms_service()
+    public function test_send_sms_service(): void
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
 
@@ -51,7 +52,7 @@ class TwilioIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_contact_has_phone_number()
+    public function test_contact_has_phone_number(): void
     {
         $contact = Contact::factory()->create(['phone_number' => '+1234567890']);
 

@@ -27,7 +27,7 @@ class PersonalizationService
         $content = $landingPage->content;
 
         // Replace placeholders with user data
-        $userData = $userData ?? $this->getUserData();
+        $userData ??= $this->getUserData();
         foreach ($userData as $key => $value) {
             $content = str_replace("{{$key}}", (string) $value, $content);
         }
@@ -86,8 +86,8 @@ class PersonalizationService
         // Handle [segment:name]...[/segment] blocks
         $content = preg_replace_callback(
             '/\[segment:([^\]]+)\](.*?)\[\/segment\]/s',
-            function (array $matches) use ($segment) {
-                $allowedSegments = array_map('trim', explode(',', $matches[1]));
+            function (array $matches) use ($segment): string {
+                $allowedSegments = array_map(trim(...), explode(',', (string) $matches[1]));
 
                 return in_array($segment, $allowedSegments, true) ? $matches[2] : '';
             },
@@ -97,12 +97,12 @@ class PersonalizationService
         // Handle [not_segment:name]...[/not_segment] blocks (show when NOT in segment)
         $content = preg_replace_callback(
             '/\[not_segment:([^\]]+)\](.*?)\[\/not_segment\]/s',
-            function (array $matches) use ($segment) {
-                $excludedSegments = array_map('trim', explode(',', $matches[1]));
+            function (array $matches) use ($segment): string {
+                $excludedSegments = array_map(trim(...), explode(',', (string) $matches[1]));
 
-                return ! in_array($segment, $excludedSegments, true) ? $matches[2] : '';
+                return in_array($segment, $excludedSegments, true) ? '' : $matches[2];
             },
-            $content
+            (string) $content
         );
 
         return $content;
@@ -116,9 +116,9 @@ class PersonalizationService
     {
         return preg_replace_callback(
             '/\[if:([^=\]]+)=([^\]]+)\](.*?)\[\/if\]/s',
-            function (array $matches) use ($userData) {
-                $key = trim($matches[1]);
-                $expected = trim($matches[2]);
+            function (array $matches) use ($userData): string {
+                $key = trim((string) $matches[1]);
+                $expected = trim((string) $matches[2]);
                 $actual = (string) ($userData[$key] ?? '');
 
                 return $actual === $expected ? $matches[3] : '';

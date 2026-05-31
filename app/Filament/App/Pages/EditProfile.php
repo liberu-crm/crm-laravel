@@ -60,6 +60,7 @@ class EditProfile extends Page
             ->send();
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

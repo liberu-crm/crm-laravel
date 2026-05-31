@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
+        Schema::table('documents', function (Blueprint $table): void {
             if (! Schema::hasColumn('documents', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->after('id');
             }
@@ -32,7 +32,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
+        Schema::table('documents', function (Blueprint $table): void {
             $columns = ['team_id', 'name', 'file_name', 'file_size', 'type', 'status'];
             foreach ($columns as $column) {
                 if (Schema::hasColumn('documents', $column)) {

@@ -9,11 +9,8 @@ use Illuminate\Support\Uri;
 
 class EmailTrackingController extends Controller
 {
-    protected $trackingService;
-
-    public function __construct(EmailTrackingService $trackingService)
+    public function __construct(protected \App\Services\EmailTrackingService $trackingService)
     {
-        $this->trackingService = $trackingService;
     }
 
     /**
@@ -44,7 +41,7 @@ class EmailTrackingController extends Controller
     /**
      * Track link clicks and redirect
      */
-    public function link(Request $request, string $trackingId)
+    public function link(Request $request, string $trackingId): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         $encodedUrl = $request->get('url');
         $signature = $request->get('s');

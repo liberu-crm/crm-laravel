@@ -11,7 +11,7 @@ class CRMEventNotificationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_email_notification_content()
+    public function test_email_notification_content(): void
     {
         $user = User::factory()->create();
         $event = 'NewLead';
@@ -25,7 +25,7 @@ class CRMEventNotificationTest extends TestCase
         $this->assertStringContainsString('Details: '.json_encode($data), $mailMessage->introLines[1]);
     }
 
-    public function test_in_app_notification_data_structure()
+    public function test_in_app_notification_data_structure(): void
     {
         $user = User::factory()->create();
         $event = 'DealClosed';

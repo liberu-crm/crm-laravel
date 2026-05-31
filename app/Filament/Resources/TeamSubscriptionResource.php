@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TeamSubscriptionResource\Pages\CreateTeamSubscription;
@@ -24,6 +26,7 @@ class TeamSubscriptionResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -47,6 +50,7 @@ class TeamSubscriptionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -82,6 +86,7 @@ class TeamSubscriptionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -89,6 +94,7 @@ class TeamSubscriptionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

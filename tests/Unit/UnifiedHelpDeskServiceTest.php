@@ -63,12 +63,12 @@ class UnifiedHelpDeskServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_unified_help_desk_service_can_be_instantiated()
+    public function test_unified_help_desk_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(UnifiedHelpDeskService::class, $this->unifiedHelpDeskService);
     }
 
-    public function test_get_all_messages_returns_collection()
+    public function test_get_all_messages_returns_collection(): void
     {
         // With RefreshDatabase, OAuthConfiguration table is empty, so no configs will be fetched
         $result = $this->unifiedHelpDeskService->getAllMessages(null, false);
@@ -76,7 +76,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertInstanceOf(Collection::class, $result);
     }
 
-    public function test_new_message_received_event_can_be_instantiated()
+    public function test_new_message_received_event_can_be_instantiated(): void
     {
         $message = [
             'id' => '123',
@@ -92,7 +92,7 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals($message, $event->message);
     }
 
-    public function test_message_reply_sent_event_can_be_instantiated()
+    public function test_message_reply_sent_event_can_be_instantiated(): void
     {
         $event = new MessageReplySent('msg-123', 'Reply content', 'gmail', 1);
 
@@ -103,10 +103,9 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals(1, $event->accountId);
     }
 
-    public function test_calculate_priority_detects_urgent_in_message_key()
+    public function test_calculate_priority_detects_urgent_in_message_key(): void
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
-        $method->setAccessible(true);
 
         $message = ['message' => 'This is urgent please help'];
         $priority = $method->invoke($this->unifiedHelpDeskService, $message);
@@ -114,10 +113,9 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('high', $priority);
     }
 
-    public function test_calculate_priority_detects_urgent_in_content_key()
+    public function test_calculate_priority_detects_urgent_in_content_key(): void
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
-        $method->setAccessible(true);
 
         $message = ['content' => 'This is an emergency situation'];
         $priority = $method->invoke($this->unifiedHelpDeskService, $message);
@@ -125,10 +123,9 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('high', $priority);
     }
 
-    public function test_calculate_priority_returns_normal_for_regular_messages()
+    public function test_calculate_priority_returns_normal_for_regular_messages(): void
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
-        $method->setAccessible(true);
 
         $message = ['content' => 'Hello, I have a general question.'];
         $priority = $method->invoke($this->unifiedHelpDeskService, $message);
@@ -136,10 +133,9 @@ class UnifiedHelpDeskServiceTest extends TestCase
         $this->assertEquals('normal', $priority);
     }
 
-    public function test_calculate_priority_handles_empty_message()
+    public function test_calculate_priority_handles_empty_message(): void
     {
         $method = new ReflectionMethod(UnifiedHelpDeskService::class, 'calculatePriority');
-        $method->setAccessible(true);
 
         $priority = $method->invoke($this->unifiedHelpDeskService, []);
 

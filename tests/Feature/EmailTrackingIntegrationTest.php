@@ -26,7 +26,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function test_email_open_tracking_service()
+    public function test_email_open_tracking_service(): void
     {
         $this->mailChimpService->shouldReceive('trackEmailOpen')
             ->once()
@@ -37,7 +37,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_email_click_tracking_service()
+    public function test_email_click_tracking_service(): void
     {
         $this->mailChimpService->shouldReceive('trackEmailClick')
             ->once()
@@ -48,7 +48,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_campaign_performance_report_service()
+    public function test_campaign_performance_report_service(): void
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -73,7 +73,7 @@ class EmailTrackingIntegrationTest extends TestCase
         $this->assertEquals(0.5, $report['open_rate']);
     }
 
-    public function test_email_model_creation()
+    public function test_email_model_creation(): void
     {
         $email = Email::factory()->create([
             'subject' => 'Test Subject',

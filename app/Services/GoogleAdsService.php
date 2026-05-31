@@ -71,11 +71,11 @@ class GoogleAdsService
             return $campaigns;
         } catch (ApiException $e) {
             Log::error('Google Ads API Error: '.$e->getMessage());
-            throw new Exception('Failed to fetch campaigns: '.$e->getMessage());
+            throw new Exception('Failed to fetch campaigns: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function createCampaign($accountId, $campaignData)
+    public function createCampaign($accountId, array $campaignData)
     {
         try {
             if (! isset($this->clients[$accountId])) {
@@ -102,11 +102,11 @@ class GoogleAdsService
             return $createdCampaign->getResourceName();
         } catch (ApiException $e) {
             Log::error('Google Ads API Error: '.$e->getMessage());
-            throw new Exception('Failed to create campaign: '.$e->getMessage());
+            throw new Exception('Failed to create campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function updateCampaign($accountId, $campaignId, $campaignData)
+    public function updateCampaign($accountId, $campaignId, array $campaignData)
     {
         try {
             if (! isset($this->clients[$accountId])) {
@@ -135,7 +135,7 @@ class GoogleAdsService
             return $updatedCampaign->getResourceName();
         } catch (ApiException $e) {
             Log::error('Google Ads API Error: '.$e->getMessage());
-            throw new Exception('Failed to update campaign: '.$e->getMessage());
+            throw new Exception('Failed to update campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -160,7 +160,7 @@ class GoogleAdsService
             return $deletedCampaign->getResourceName();
         } catch (ApiException $e) {
             Log::error('Google Ads API Error: '.$e->getMessage());
-            throw new Exception('Failed to delete campaign: '.$e->getMessage());
+            throw new Exception('Failed to delete campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

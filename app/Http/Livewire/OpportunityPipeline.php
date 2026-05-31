@@ -17,12 +17,12 @@ class OpportunityPipeline extends Component
 
     protected $listeners = ['dealMoved' => 'updateDealStage'];
 
-    public function mount()
+    public function mount(): void
     {
         $this->loadPipeline();
     }
 
-    public function loadPipeline()
+    public function loadPipeline(): void
     {
         $pipeline = Pipeline::where('is_active', true)->first();
         if ($pipeline) {
@@ -32,7 +32,7 @@ class OpportunityPipeline extends Component
         }
     }
 
-    public function updateDealStage($dealId, $newStageId)
+    public function updateDealStage($dealId, $newStageId): void
     {
         $deal = Deal::findOrFail($dealId);
         Stage::findOrFail($newStageId);
@@ -43,7 +43,7 @@ class OpportunityPipeline extends Component
         $this->loadPipeline();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.opportunity-pipeline');
     }

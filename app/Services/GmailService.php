@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class GmailService
 {
-    protected $client;
+    protected \Google_Client $client;
 
     protected $service;
 
@@ -69,7 +69,7 @@ class GmailService
         }
     }
 
-    protected function parseMessageForUnified($message)
+    protected function parseMessageForUnified($message): array
     {
         $headers = $this->parseHeaders($message->getPayload()->getHeaders());
         $body = $this->getEmailContent($message);
@@ -128,7 +128,10 @@ class GmailService
         ]);
     }
 
-    protected function parseHeaders($headers)
+    /**
+     * @return mixed[]
+     */
+    protected function parseHeaders($headers): array
     {
         $parsedHeaders = [];
         foreach ($headers as $header) {
@@ -138,7 +141,7 @@ class GmailService
         return $parsedHeaders;
     }
 
-    protected function getEmailContent($message)
+    protected function getEmailContent($message): string
     {
         $payload = $message->getPayload();
         if (! $payload) {
@@ -165,7 +168,7 @@ class GmailService
         return '';
     }
 
-    protected function createReplyMessage($originalMessageId, $replyBody)
+    protected function createReplyMessage($originalMessageId, $replyBody): \Google_Service_Gmail_Message
     {
         $originalMessage = $this->service->users_messages->get('me', $originalMessageId);
         $headers = $this->parseHeaders($originalMessage->getPayload()->getHeaders());
@@ -176,7 +179,7 @@ class GmailService
         $rawMessageString .= 'Subject: Re: '.($headers['Subject'] ?? '')."\r\n";
         $rawMessageString .= "Content-Type: text/plain; charset=utf-8\r\n";
         $rawMessageString .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $rawMessageString .= base64_encode($replyBody);
+        $rawMessageString .= base64_encode((string) $replyBody);
 
         $replyMessage->setRaw(base64_encode($rawMessageString));
         $replyMessage->setThreadId($originalMessage->getThreadId());

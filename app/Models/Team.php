@@ -27,6 +27,7 @@ class Team extends JetstreamTeam
     /**
      * Get the team's invitations.
      */
+    #[\Override]
     public function teamInvitations(): HasMany
     {
         return $this->hasMany(TeamInvitation::class);
@@ -56,6 +57,7 @@ class Team extends JetstreamTeam
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

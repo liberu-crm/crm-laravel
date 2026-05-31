@@ -14,11 +14,8 @@ class FacebookAdsService
 {
     protected $api;
 
-    protected $account;
-
-    public function __construct(AdvertisingAccount $account)
+    public function __construct(protected \App\Models\AdvertisingAccount $account)
     {
-        $this->account = $account;
         $this->api = $this->initializeApi();
     }
 
@@ -51,11 +48,11 @@ class FacebookAdsService
             return $campaignData;
         } catch (FacebookException $e) {
             Log::error('Facebook API Error: '.$e->getMessage());
-            throw new Exception('Failed to fetch campaigns: '.$e->getMessage());
+            throw new Exception('Failed to fetch campaigns: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function createAndSchedulePost($pageId, $postData)
+    public function createAndSchedulePost($pageId, array $postData)
     {
         try {
             $page = new Page($pageId);
@@ -82,7 +79,7 @@ class FacebookAdsService
             ];
         } catch (FacebookException $e) {
             Log::error('Facebook API Error: '.$e->getMessage());
-            throw new Exception('Failed to create and schedule post: '.$e->getMessage());
+            throw new Exception('Failed to create and schedule post: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

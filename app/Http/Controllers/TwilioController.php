@@ -8,11 +8,8 @@ use Twilio\TwiML\VoiceResponse;
 
 class TwilioController extends Controller
 {
-    protected $twilioService;
-
-    public function __construct(TwilioService $twilioService)
+    public function __construct(protected \App\Services\TwilioService $twilioService)
     {
-        $this->twilioService = $twilioService;
     }
 
     public function initiateCall(Request $request)
@@ -49,11 +46,11 @@ class TwilioController extends Controller
         return response($response)->header('Content-Type', 'text/xml');
     }
 
-    public function handleRecordingCallback(Request $request)
+    public function handleRecordingCallback(Request $request): \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
     {
-        $callSid = $request->input('CallSid');
-        $recordingUrl = $request->input('RecordingUrl');
-        $duration = $request->input('RecordingDuration');
+        $request->input('CallSid');
+        $request->input('RecordingUrl');
+        $request->input('RecordingDuration');
 
         // Here you would typically update your CallLog model with the recording information
         // For example:

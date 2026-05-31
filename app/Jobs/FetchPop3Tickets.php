@@ -16,14 +16,11 @@ class FetchPop3Tickets implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $configId;
-
-    public function __construct($configId = null)
+    public function __construct(protected $configId = null)
     {
-        $this->configId = $configId;
     }
 
-    public function handle(Pop3Service $pop3Service, CreateTicketFromEmail $createTicket)
+    public function handle(Pop3Service $pop3Service, CreateTicketFromEmail $createTicket): void
     {
         try {
             $configs = $this->configId

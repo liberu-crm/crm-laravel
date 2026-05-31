@@ -27,7 +27,7 @@ class AdvertisingManagementTest extends TestCase
         $this->user->teams()->attach($this->team);
     }
 
-    public function test_advertising_account_can_be_created()
+    public function test_advertising_account_can_be_created(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
 
@@ -37,11 +37,11 @@ class AdvertisingManagementTest extends TestCase
         ]);
     }
 
-    public function test_campaign_can_be_created_for_advertising_account()
+    public function test_campaign_can_be_created_for_advertising_account(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
 
-        $campaign = Campaign::create([
+        Campaign::create([
             'team_id' => $this->team->id,
             'advertising_account_id' => $account->id,
             'name' => 'Test Campaign',
@@ -58,7 +58,7 @@ class AdvertisingManagementTest extends TestCase
         ]);
     }
 
-    public function test_advertising_account_has_many_campaigns()
+    public function test_advertising_account_has_many_campaigns(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
 
@@ -79,7 +79,7 @@ class AdvertisingManagementTest extends TestCase
         $this->assertCount(2, $account->campaigns);
     }
 
-    public function test_ad_set_can_be_created_for_campaign()
+    public function test_ad_set_can_be_created_for_campaign(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -89,7 +89,7 @@ class AdvertisingManagementTest extends TestCase
             'status' => 'active',
         ]);
 
-        $adSet = AdSet::create([
+        AdSet::create([
             'team_id' => $this->team->id,
             'advertising_account_id' => $account->id,
             'campaign_id' => $campaign->id,
@@ -106,7 +106,7 @@ class AdvertisingManagementTest extends TestCase
         ]);
     }
 
-    public function test_ad_can_be_created_for_ad_set()
+    public function test_ad_can_be_created_for_ad_set(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -123,7 +123,7 @@ class AdvertisingManagementTest extends TestCase
             'status' => 'active',
         ]);
 
-        $ad = Ad::create([
+        Ad::create([
             'team_id' => $this->team->id,
             'advertising_account_id' => $account->id,
             'campaign_id' => $campaign->id,
@@ -142,7 +142,7 @@ class AdvertisingManagementTest extends TestCase
         ]);
     }
 
-    public function test_campaign_belongs_to_advertising_account()
+    public function test_campaign_belongs_to_advertising_account(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -155,7 +155,7 @@ class AdvertisingManagementTest extends TestCase
         $this->assertEquals($account->id, $campaign->advertisingAccount->id);
     }
 
-    public function test_ad_set_belongs_to_campaign_and_account()
+    public function test_ad_set_belongs_to_campaign_and_account(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -176,7 +176,7 @@ class AdvertisingManagementTest extends TestCase
         $this->assertEquals($account->id, $adSet->advertisingAccount->id);
     }
 
-    public function test_ad_belongs_to_ad_set_campaign_and_account()
+    public function test_ad_belongs_to_ad_set_campaign_and_account(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -206,7 +206,7 @@ class AdvertisingManagementTest extends TestCase
         $this->assertEquals($account->id, $ad->advertisingAccount->id);
     }
 
-    public function test_campaign_has_many_ad_sets()
+    public function test_campaign_has_many_ad_sets(): void
     {
         $account = AdvertisingAccount::factory()->create(['team_id' => $this->team->id]);
         $campaign = Campaign::create([
@@ -235,7 +235,7 @@ class AdvertisingManagementTest extends TestCase
         $this->assertCount(2, $campaign->adSets);
     }
 
-    public function test_advertising_account_metadata_is_cast_to_array()
+    public function test_advertising_account_metadata_is_cast_to_array(): void
     {
         $account = AdvertisingAccount::factory()->create([
             'team_id' => $this->team->id,

@@ -14,6 +14,7 @@ class EditTask extends EditRecord
 {
     protected static string $resource = TaskResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -21,6 +22,7 @@ class EditTask extends EditRecord
         ];
     }
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)

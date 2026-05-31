@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('email_trackings', function (Blueprint $table) {
+        Schema::create('email_trackings', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('email_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('contact_id')->nullable()->constrained()->onDelete('cascade');
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->index('tracking_id');
         });
 
-        Schema::create('email_link_clicks', function (Blueprint $table) {
+        Schema::create('email_link_clicks', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('email_tracking_id')->constrained()->onDelete('cascade');
             $table->text('url');
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->index(['email_tracking_id', 'clicked_at']);
         });
 
-        Schema::create('email_templates', function (Blueprint $table) {
+        Schema::create('email_templates', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('subject');

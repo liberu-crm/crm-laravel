@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\NoteResource\Pages;
 
 use App\Filament\App\Resources\NoteResource;
@@ -10,6 +12,7 @@ class ListNotes extends ListRecords
 {
     protected static string $resource = NoteResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

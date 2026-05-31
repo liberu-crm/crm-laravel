@@ -16,7 +16,7 @@ class WhatsAppBusinessServiceTest extends TestCase
         $this->whatsAppService = new WhatsAppBusinessService;
     }
 
-    public function test_get_unread_messages()
+    public function test_get_unread_messages(): void
     {
         Http::fake([
             '*' => Http::response([
@@ -34,7 +34,7 @@ class WhatsAppBusinessServiceTest extends TestCase
         $this->assertEquals('Test message 2', $messages[1]['body']);
     }
 
-    public function test_get_message()
+    public function test_get_message(): void
     {
         Http::fake([
             '*' => Http::response([
@@ -51,7 +51,7 @@ class WhatsAppBusinessServiceTest extends TestCase
         $this->assertEquals('1234567890', $message['from']);
     }
 
-    public function test_send_reply()
+    public function test_send_reply(): void
     {
         Http::fake([
             '*' => Http::response([

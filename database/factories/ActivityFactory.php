@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Activity;
@@ -17,7 +19,7 @@ class ActivityFactory extends Factory
             'description' => $this->faker->sentence(),
             'outcome' => $this->faker->optional()->sentence(),
             'activitable_id' => 1,
-            'activitable_type' => 'App\Models\Contact',
+            'activitable_type' => \App\Models\Contact::class,
         ];
     }
 }

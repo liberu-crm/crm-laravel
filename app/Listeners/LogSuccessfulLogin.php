@@ -7,11 +7,8 @@ use Illuminate\Auth\Events\Login;
 
 class LogSuccessfulLogin
 {
-    protected $auditLogService;
-
-    public function __construct(AuditLogService $auditLogService)
+    public function __construct(protected \App\Services\AuditLogService $auditLogService)
     {
-        $this->auditLogService = $auditLogService;
     }
 
     public function handle(Login $event): void

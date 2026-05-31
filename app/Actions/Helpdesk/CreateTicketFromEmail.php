@@ -38,7 +38,10 @@ class CreateTicketFromEmail
         ]);
     }
 
-    private function getHeaders($message)
+    /**
+     * @return mixed[]
+     */
+    private function getHeaders($message): array
     {
         $headers = [];
         foreach ($message->getPayload()->getHeaders() as $header) {
@@ -48,7 +51,7 @@ class CreateTicketFromEmail
         return $headers;
     }
 
-    private function getBody($message)
+    private function getBody($message): string
     {
         $parts = $message->getPayload()->getParts();
         $body = '';

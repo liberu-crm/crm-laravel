@@ -49,7 +49,7 @@ class PublishScheduledPostsTest extends TestCase
 
     public function test_publishes_twitter_post(): void
     {
-        $account = ConnectedAccount::factory()->create([
+        ConnectedAccount::factory()->create([
             'account_type' => 'twitter',
             'is_primary' => true,
             'token' => 'tok',
@@ -69,7 +69,7 @@ class PublishScheduledPostsTest extends TestCase
 
     public function test_publishes_instagram_post(): void
     {
-        $account = ConnectedAccount::factory()->create([
+        ConnectedAccount::factory()->create([
             'account_type' => 'instagram',
             'is_primary' => true,
             'token' => 'tok',
@@ -88,7 +88,7 @@ class PublishScheduledPostsTest extends TestCase
 
     public function test_publishes_linkedin_post(): void
     {
-        $account = ConnectedAccount::factory()->create([
+        ConnectedAccount::factory()->create([
             'account_type' => 'linkedin',
             'is_primary' => true,
             'token' => 'tok',
@@ -107,7 +107,7 @@ class PublishScheduledPostsTest extends TestCase
 
     public function test_publishes_youtube_video(): void
     {
-        $account = ConnectedAccount::factory()->create([
+        ConnectedAccount::factory()->create([
             'account_type' => 'youtube',
             'is_primary' => true,
             'token' => 'tok',

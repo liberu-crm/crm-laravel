@@ -13,7 +13,7 @@ class LogSuccessfulLoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_handle_method_logs_successful_login()
+    public function test_handle_method_logs_successful_login(): void
     {
         // Mock the AuditLogService
         $auditLogService = Mockery::mock(AuditLogService::class);

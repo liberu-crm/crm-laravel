@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 
 class FacebookService
 {
-    protected $fb;
+    protected \Facebook\Facebook $fb;
 
     public function __construct()
     {
@@ -33,9 +33,9 @@ class FacebookService
 
             return $response->getGraphNode();
         } catch (FacebookResponseException $e) {
-            throw new Exception('Graph returned an error: '.$e->getMessage());
+            throw new Exception('Graph returned an error: '.$e->getMessage(), $e->getCode(), $e);
         } catch (FacebookSDKException $e) {
-            throw new Exception('Facebook SDK returned an error: '.$e->getMessage());
+            throw new Exception('Facebook SDK returned an error: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -49,9 +49,9 @@ class FacebookService
 
             return $response->getGraphEdge();
         } catch (FacebookResponseException $e) {
-            throw new Exception('Graph returned an error: '.$e->getMessage());
+            throw new Exception('Graph returned an error: '.$e->getMessage(), $e->getCode(), $e);
         } catch (FacebookSDKException $e) {
-            throw new Exception('Facebook SDK returned an error: '.$e->getMessage());
+            throw new Exception('Facebook SDK returned an error: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 }

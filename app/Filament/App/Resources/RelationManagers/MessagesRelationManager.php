@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\RelationManagers;
 
 use Filament\Actions\BulkActionGroup;
@@ -24,6 +26,7 @@ class MessagesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'content';
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return $schema

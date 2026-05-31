@@ -7,7 +7,7 @@ use MailchimpMarketing\ApiClient;
 
 class MailChimpService
 {
-    protected $client;
+    protected \MailchimpMarketing\ApiClient $client;
 
     public function __construct()
     {
@@ -18,7 +18,7 @@ class MailChimpService
         ]);
     }
 
-    public function setClient(ApiClient $client)
+    public function setClient(ApiClient $client): void
     {
         $this->client = $client;
     }
@@ -123,19 +123,17 @@ class MailChimpService
     {
         $response = $this->client->campaigns->list();
 
-        return collect($response->campaigns)->map(function ($campaign) {
-            return [
-                'id' => $campaign->id,
-                'web_id' => $campaign->web_id,
-                'name' => $campaign->settings->title,
-                'subject_line' => $campaign->settings->subject_line,
-                'status' => $campaign->status,
-                'type' => $campaign->type,
-            ];
-        })->toArray();
+        return collect($response->campaigns)->map(fn($campaign) => [
+            'id' => $campaign->id,
+            'web_id' => $campaign->web_id,
+            'name' => $campaign->settings->title,
+            'subject_line' => $campaign->settings->subject_line,
+            'status' => $campaign->status,
+            'type' => $campaign->type,
+        ])->toArray();
     }
 
-    public function getCampaignReport($campaign_id)
+    public function getCampaignReport($campaign_id): array
     {
         $report = $this->client->reports->getCampaignReport($campaign_id);
 
@@ -151,9 +149,9 @@ class MailChimpService
         ];
     }
 
-    public function getABTestResults($campaign_id)
+    public function getABTestResults($campaign_id): array
     {
-        $report = $this->client->reports->getCampaignReport($campaign_id);
+        $this->client->reports->getCampaignReport($campaign_id);
         $abResults = $this->client->reports->getABTestReportSummary($campaign_id);
 
         return [
@@ -170,21 +168,17 @@ class MailChimpService
         ];
     }
 
-    public function trackEmailOpen($campaign_id, $email_id)
+    public function trackEmailOpen($campaign_id, $email_id): bool
     {
-        // Implement tracking for email opens
-        // This method would typically be called when an email is opened
-        // You might need to set up a webhook or use a tracking pixel for this
-        // For now, we'll just log the open event
         Log::info("Email opened: Campaign ID {$campaign_id}, Email ID {$email_id}");
+
+        return true;
     }
 
-    public function trackEmailClick($campaign_id, $email_id, $url)
+    public function trackEmailClick($campaign_id, $email_id, $url): bool
     {
-        // Implement tracking for email clicks
-        // This method would typically be called when a link in an email is clicked
-        // You might need to set up a webhook or use tracked links for this
-        // For now, we'll just log the click event
         Log::info("Email link clicked: Campaign ID {$campaign_id}, Email ID {$email_id}, URL: {$url}");
+
+        return true;
     }
 }

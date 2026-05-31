@@ -12,11 +12,8 @@ use Illuminate\Http\Request;
 
 class LeadFormController extends Controller
 {
-    protected $leadScoringService;
-
-    public function __construct(LeadScoringService $leadScoringService)
+    public function __construct(protected \App\Services\LeadScoringService $leadScoringService)
     {
-        $this->leadScoringService = $leadScoringService;
     }
 
     public function submit(Request $request, LeadForm $leadForm)
@@ -49,7 +46,7 @@ class LeadFormController extends Controller
         $rules = [];
         foreach ($leadForm->fields as $field) {
             $raw = $field['validation'] ?? 'required';
-            $parts = is_array($raw) ? $raw : explode('|', $raw);
+            $parts = is_array($raw) ? $raw : explode('|', (string) $raw);
             $filtered = [];
             foreach ($parts as $rule) {
                 $name = is_string($rule) ? explode(':', $rule)[0] : '';
@@ -66,7 +63,7 @@ class LeadFormController extends Controller
 
     private function createOrUpdateContact(array $data)
     {
-        $contact = Contact::updateOrCreate(
+        return Contact::updateOrCreate(
             ['email' => $data['email']],
             [
                 'name' => $data['name'] ?? null,
@@ -76,11 +73,9 @@ class LeadFormController extends Controller
                 'industry' => $data['industry'] ?? null,
             ]
         );
-
-        return $contact;
     }
 
-    private function triggerWorkflow(Lead $lead)
+    private function triggerWorkflow(Lead $lead): void
     {
         $workflows = Workflow::whereJsonContains('triggers->type', 'lead_created')->get();
 
@@ -89,7 +84,7 @@ class LeadFormController extends Controller
         }
     }
 
-    private function executeWorkflowActions(Workflow $workflow, Lead $lead)
+    private function executeWorkflowActions(Workflow $workflow, Lead $lead): void
     {
         foreach ($workflow->actions as $action) {
             ExecuteWorkflowAction::dispatch($action, $lead);

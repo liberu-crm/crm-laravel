@@ -25,6 +25,7 @@ class MailchimpCampaignResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -42,15 +43,15 @@ class MailchimpCampaignResource extends Resource
                 TextInput::make('subject_line')
                     ->required()
                     ->maxLength(255)
-                    ->visible(fn (callable $get) => $get('type') === 'regular'),
+                    ->visible(fn (callable $get): bool => $get('type') === 'regular'),
                 TextInput::make('subject_line_a')
                     ->required()
                     ->maxLength(255)
-                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                    ->visible(fn (callable $get): bool => $get('type') === 'abtest'),
                 TextInput::make('subject_line_b')
                     ->required()
                     ->maxLength(255)
-                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                    ->visible(fn (callable $get): bool => $get('type') === 'abtest'),
                 Select::make('status')
                     ->options([
                         'save' => 'Save',
@@ -67,7 +68,7 @@ class MailchimpCampaignResource extends Resource
                         'manual' => 'Manual',
                     ])
                     ->required()
-                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                    ->visible(fn (callable $get): bool => $get('type') === 'abtest'),
                 TextInput::make('test_size')
                     ->numeric()
                     ->minValue(1)
@@ -75,10 +76,11 @@ class MailchimpCampaignResource extends Resource
                     ->default(50)
                     ->suffix('%')
                     ->required()
-                    ->visible(fn (callable $get) => $get('type') === 'abtest'),
+                    ->visible(fn (callable $get): bool => $get('type') === 'abtest'),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -98,7 +100,7 @@ class MailchimpCampaignResource extends Resource
                     ->requiresConfirmation(),
                 Action::make('view_ab_results')
                     ->action(fn (MailChimpService $service, MailchimpCampaign $record) => redirect()->route('filament.app.resources.mailchimp-campaigns.ab-test-results', ['record' => $record->id]))
-                    ->visible(fn (MailchimpCampaign $record) => $record->type === 'abtest' && $record->status === 'sent'),
+                    ->visible(fn (MailchimpCampaign $record): bool => $record->type === 'abtest' && $record->status === 'sent'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -107,6 +109,7 @@ class MailchimpCampaignResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -114,6 +117,7 @@ class MailchimpCampaignResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

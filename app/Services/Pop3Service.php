@@ -129,14 +129,14 @@ class Pop3Service
         }
     }
 
-    protected function sendCommand($command)
+    protected function sendCommand(string $command)
     {
         fwrite($this->connection, $command."\r\n");
 
         return $this->getResponse();
     }
 
-    protected function getResponse()
+    protected function getResponse(): string|false
     {
         $response = fgets($this->connection, 512);
 
@@ -147,15 +147,15 @@ class Pop3Service
         return $response;
     }
 
-    protected function getMessageCount()
+    protected function getMessageCount(): int
     {
         $response = $this->sendCommand('STAT');
-        preg_match('/\+OK (\d+)/', $response, $matches);
+        preg_match('/\+OK (\d+)/', (string) $response, $matches);
 
         return isset($matches[1]) ? (int) $matches[1] : 0;
     }
 
-    protected function parseMessage($messageNumber)
+    protected function parseMessage($messageNumber): array
     {
         // Retrieve message
         $this->sendCommand("RETR {$messageNumber}");
@@ -189,15 +189,15 @@ class Pop3Service
         ];
     }
 
-    protected function parseRawMessage($rawMessage)
+    protected function parseRawMessage($rawMessage): array
     {
-        $parts = explode("\r\n\r\n", $rawMessage, 2);
+        $parts = explode("\r\n\r\n", (string) $rawMessage, 2);
         $headerLines = explode("\r\n", $parts[0]);
-        $body = isset($parts[1]) ? $parts[1] : '';
+        $body = $parts[1] ?? '';
 
         $headers = [];
         foreach ($headerLines as $line) {
-            if (strpos($line, ':') !== false) {
+            if (str_contains($line, ':')) {
                 [$key, $value] = explode(':', $line, 2);
                 $headers[trim($key)] = trim($value);
             }
@@ -220,7 +220,7 @@ class Pop3Service
         $from = $this->config->additional_settings['from_email'] ?? $this->config->additional_settings['username'] ?? $this->config->client_id;
 
         try {
-            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from): void {
                 $message->to($to)
                     ->subject($subject)
                     ->from($from);

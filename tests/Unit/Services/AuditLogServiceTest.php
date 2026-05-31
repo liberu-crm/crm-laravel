@@ -19,7 +19,7 @@ class AuditLogServiceTest extends TestCase
         $this->auditLogService = new AuditLogService;
     }
 
-    public function test_it_creates_audit_log()
+    public function test_it_creates_audit_log(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);

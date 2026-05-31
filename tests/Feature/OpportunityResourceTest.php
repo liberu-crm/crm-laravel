@@ -20,7 +20,7 @@ class OpportunityResourceTest extends TestCase
         $this->actingAs($user);
     }
 
-    public function test_opportunity_index_page_loads()
+    public function test_opportunity_index_page_loads(): void
     {
         $user = User::factory()->withPersonalTeam()->create();
         $team = $user->ownedTeams->first();
@@ -34,7 +34,7 @@ class OpportunityResourceTest extends TestCase
         );
     }
 
-    public function test_opportunity_model_can_be_created()
+    public function test_opportunity_model_can_be_created(): void
     {
         $opportunity = Opportunity::factory()->create([
             'deal_size' => 50000,
@@ -48,7 +48,7 @@ class OpportunityResourceTest extends TestCase
         ]);
     }
 
-    public function test_opportunity_model_can_be_updated()
+    public function test_opportunity_model_can_be_updated(): void
     {
         $opportunity = Opportunity::factory()->create(['stage' => 'prospect']);
 

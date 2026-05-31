@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
@@ -22,6 +24,7 @@ class CompanyResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -49,6 +52,7 @@ class CompanyResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -90,6 +94,7 @@ class CompanyResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -97,6 +102,7 @@ class CompanyResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -36,6 +36,7 @@ class AdvertisingAccountResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Advertising';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -72,7 +73,7 @@ class AdvertisingAccountResource extends Resource
                                         ->openUrlInNewTab(),
                                 ]),
                             ])
-                            ->visible(fn ($record) => ! $record),
+                            ->visible(fn ($record): bool => ! $record),
                         Toggle::make('status')
                             ->label('Active')
                             ->default(true)
@@ -87,6 +88,7 @@ class AdvertisingAccountResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -129,6 +131,7 @@ class AdvertisingAccountResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -138,6 +141,7 @@ class AdvertisingAccountResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

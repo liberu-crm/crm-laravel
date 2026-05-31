@@ -10,7 +10,7 @@ class WorkflowManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_workflow_creation()
+    public function test_workflow_creation(): void
     {
         $workflow = Workflow::factory()->create([
             'name' => 'Test Workflow',
@@ -24,7 +24,7 @@ class WorkflowManagementTest extends TestCase
         ]);
     }
 
-    public function test_workflow_customization()
+    public function test_workflow_customization(): void
     {
         $workflow = Workflow::factory()->create([
             'name' => 'Original Workflow',
@@ -40,7 +40,7 @@ class WorkflowManagementTest extends TestCase
         ]);
     }
 
-    public function test_workflow_deletion()
+    public function test_workflow_deletion(): void
     {
         $workflow = Workflow::factory()->create();
 
@@ -49,7 +49,7 @@ class WorkflowManagementTest extends TestCase
         $this->assertDatabaseMissing('workflows', ['id' => $workflow->id]);
     }
 
-    public function test_workflow_has_triggers()
+    public function test_workflow_has_triggers(): void
     {
         $workflow = Workflow::factory()->create();
 
@@ -57,7 +57,7 @@ class WorkflowManagementTest extends TestCase
         $this->assertIsArray($workflow->triggers);
     }
 
-    public function test_workflow_has_actions()
+    public function test_workflow_has_actions(): void
     {
         $workflow = Workflow::factory()->create();
 

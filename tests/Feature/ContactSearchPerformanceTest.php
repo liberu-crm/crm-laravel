@@ -16,7 +16,7 @@ class ContactSearchPerformanceTest extends TestCase
         Contact::factory()->count(50)->create();
     }
 
-    public function test_contact_query_can_handle_multiple_records()
+    public function test_contact_query_can_handle_multiple_records(): void
     {
         $start = microtime(true);
         $result = Contact::all();
@@ -26,7 +26,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertLessThan(5.0, $elapsed, 'Contact query took more than 5 seconds');
     }
 
-    public function test_contact_search_by_name()
+    public function test_contact_search_by_name(): void
     {
         $contact = Contact::factory()->create(['name' => 'UniqueSearchName12345']);
 
@@ -36,7 +36,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertEquals($contact->id, $results->first()->id);
     }
 
-    public function test_contact_search_by_email()
+    public function test_contact_search_by_email(): void
     {
         $contact = Contact::factory()->create(['email' => 'uniquesearch12345@example.com']);
 
@@ -46,7 +46,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertEquals($contact->id, $results->first()->id);
     }
 
-    public function test_contact_filter_by_status()
+    public function test_contact_filter_by_status(): void
     {
         $activeBefore = Contact::where('status', 'active')->count();
         $inactiveBefore = Contact::where('status', 'inactive')->count();

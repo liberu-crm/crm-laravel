@@ -18,14 +18,14 @@ class VisualPipeline extends Page
 
     public $deals;
 
-    public function mount()
+    public function mount(): void
     {
         $this->pipeline = Pipeline::with('stages')->first();
         $this->stages = $this->pipeline->stages;
         $this->deals = Deal::where('pipeline_id', $this->pipeline->id)->get()->groupBy('stage_id');
     }
 
-    public function updateDealStage($dealId, $newStageId)
+    public function updateDealStage($dealId, $newStageId): void
     {
         $deal = Deal::findOrFail($dealId);
         $deal->update(['stage_id' => $newStageId]);

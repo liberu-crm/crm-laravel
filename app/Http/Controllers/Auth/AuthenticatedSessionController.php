@@ -11,11 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    protected $auditLogService;
-
-    public function __construct(AuditLogService $auditLogService)
+    public function __construct(protected \App\Services\AuditLogService $auditLogService)
     {
-        $this->auditLogService = $auditLogService;
     }
 
     public function store(LoginRequest $request)
@@ -29,7 +26,7 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         $this->auditLogService->log('logout', 'User logged out');
 

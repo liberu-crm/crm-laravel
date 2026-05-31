@@ -62,7 +62,7 @@ class Task extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    public function syncWithCalendar()
+    public function syncWithCalendar(): void
     {
         $calendarService = $this->getCalendarService();
         if ($calendarService) {
@@ -74,7 +74,7 @@ class Task extends Model
         }
     }
 
-    public function deleteFromCalendar()
+    public function deleteFromCalendar(): void
     {
         $calendarService = $this->getCalendarService();
         if ($calendarService && ($this->google_event_id || $this->outlook_event_id)) {
@@ -93,25 +93,25 @@ class Task extends Model
         return null;
     }
 
-    public function assign(User $user)
+    public function assign(User $user): void
     {
         $this->assigned_to = $user->id;
         $this->save();
     }
 
-    public function markAsComplete()
+    public function markAsComplete(): void
     {
         $this->status = 'completed';
         $this->save();
     }
 
-    public function markAsIncomplete()
+    public function markAsIncomplete(): void
     {
         $this->status = 'incomplete';
         $this->save();
     }
 
-    public function isOverdue()
+    public function isOverdue(): bool
     {
         return $this->due_date && $this->due_date->isPast() && $this->status !== 'completed';
     }

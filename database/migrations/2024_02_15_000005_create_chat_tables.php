@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('live_chats', function (Blueprint $table) {
+        Schema::create('live_chats', function (Blueprint $table): void {
             $table->id();
             $table->string('visitor_id');
             $table->foreignId('contact_id')->nullable()->constrained()->onDelete('set null');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->index('contact_id');
         });
 
-        Schema::create('chatbots', function (Blueprint $table) {
+        Schema::create('chatbots', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -49,7 +49,7 @@ return new class extends Migration
             $table->index('is_active');
         });
 
-        Schema::create('chatbot_interactions', function (Blueprint $table) {
+        Schema::create('chatbot_interactions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('chatbot_id')->constrained()->onDelete('cascade');
             $table->string('visitor_id');

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('social_media_posts', function (Blueprint $table) {
+        Schema::table('social_media_posts', function (Blueprint $table): void {
             $table->string('link')->nullable()->after('status');
             $table->string('image')->nullable()->after('link');
             $table->string('video')->nullable()->after('image');
@@ -18,7 +18,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('social_media_posts', function (Blueprint $table) {
+        Schema::table('social_media_posts', function (Blueprint $table): void {
             $table->dropColumn(['link', 'image', 'video', 'platform_post_ids']);
         });
     }

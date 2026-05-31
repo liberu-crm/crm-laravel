@@ -21,12 +21,12 @@ class CallManager extends Component
 
     protected $listeners = ['callInitiated', 'updateCallStatus'];
 
-    public function mount($contactId)
+    public function mount($contactId): void
     {
         $this->contactId = $contactId;
     }
 
-    public function initiateCall()
+    public function initiateCall(): void
     {
         $twilioService = app(TwilioService::class);
         $contact = Contact::find($this->contactId);
@@ -49,7 +49,7 @@ class CallManager extends Component
         }
     }
 
-    public function startRecording()
+    public function startRecording(): void
     {
         if (! $this->callSid) {
             $this->addError('recording', 'No active call to record');
@@ -67,7 +67,7 @@ class CallManager extends Component
         }
     }
 
-    public function stopRecording()
+    public function stopRecording(): void
     {
         if (! $this->callSid || $this->recordingStatus !== 'recording') {
             $this->addError('recording', 'No active recording to stop');
@@ -86,7 +86,7 @@ class CallManager extends Component
         }
     }
 
-    public function endCall()
+    public function endCall(): void
     {
         if (! $this->callSid) {
             $this->addError('call', 'No active call to end');
@@ -106,19 +106,19 @@ class CallManager extends Component
         }
     }
 
-    public function saveNotes()
+    public function saveNotes(): void
     {
         // Save notes to the database
         CallLog::where('call_sid', $this->callSid)->update(['notes' => $this->notes]);
         $this->dispatch('notesSaved');
     }
 
-    public function updateCallStatus($status)
+    public function updateCallStatus($status): void
     {
         $this->status = $status;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.call-manager');
     }

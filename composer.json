@@ -15,7 +15,10 @@
         "filament/spatie-laravel-settings-plugin": "^5.0",
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^13.0",
+        "laravel/horizon": "^5.0",
         "laravel/jetstream": "^5.1",
+        "laravel/octane": "^2.0",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "livewire/livewire": "^4.0",
@@ -28,13 +31,13 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
-        "filament/upgrade": "^5.0",
+        "larastan/larastan": "^3.10",
         "laravel/pint": "^1.14",
         "laravel/sail": "^1.28",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
-        "nunomaduro/larastan": "^3.9",
-        "phpunit/phpunit": "^11.0",
+        "phpunit/phpunit": "^13.0",
+        "rector/rector": "^2.4",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {

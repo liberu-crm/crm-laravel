@@ -11,12 +11,12 @@ class NotificationController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $user = Auth::user();
         $notifications = $user->inAppNotifications()->paginate(10);
 
-        return view('notifications.index', compact('notifications'));
+        return view('notifications.index', ['notifications' => $notifications]);
     }
 
     public function markAsRead($id)

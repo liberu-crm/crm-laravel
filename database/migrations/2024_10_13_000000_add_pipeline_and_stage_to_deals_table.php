@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AddPipelineAndStageToDealsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         if (! Schema::hasTable('deals')) {
-            Schema::create('deals', function (Blueprint $table) {
+            Schema::create('deals', function (Blueprint $table): void {
                 $table->id();
                 $table->string('name');
                 $table->decimal('value', 15, 2);
@@ -22,15 +24,15 @@ class AddPipelineAndStageToDealsTable extends Migration
             });
         }
 
-        Schema::table('deals', function (Blueprint $table) {
+        Schema::table('deals', function (Blueprint $table): void {
             $table->foreignId('pipeline_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('stage_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('deals', function (Blueprint $table) {
+        Schema::table('deals', function (Blueprint $table): void {
             $table->dropForeign(['pipeline_id']);
             $table->dropForeign(['stage_id']);
             $table->dropColumn(['pipeline_id', 'stage_id']);

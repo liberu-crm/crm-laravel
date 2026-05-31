@@ -20,7 +20,7 @@ class ContactResourceTest extends TestCase
         $this->actingAs($user);
     }
 
-    public function test_can_view_contact_index_page()
+    public function test_can_view_contact_index_page(): void
     {
         $user = User::factory()->withPersonalTeam()->create();
         $team = $user->ownedTeams->first();
@@ -34,9 +34,9 @@ class ContactResourceTest extends TestCase
         );
     }
 
-    public function test_can_create_contact_model()
+    public function test_can_create_contact_model(): void
     {
-        $contact = Contact::factory()->create([
+        Contact::factory()->create([
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'phone_number' => '1234567890',
@@ -49,7 +49,7 @@ class ContactResourceTest extends TestCase
         ]);
     }
 
-    public function test_can_edit_contact_model()
+    public function test_can_edit_contact_model(): void
     {
         $contact = Contact::factory()->create();
 

@@ -8,6 +8,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AdPerformanceWidget extends BaseWidget
 {
+    #[\Override]
     protected function getCards(): array
     {
         $totalImpressions = 0;
@@ -15,7 +16,7 @@ class AdPerformanceWidget extends BaseWidget
         $totalConversions = 0;
 
         // Fetch data from all advertising accounts
-        AdvertisingAccount::where('status', true)->each(function ($account) use (&$totalImpressions, &$totalClicks, &$totalConversions) {
+        AdvertisingAccount::where('status', true)->each(function ($account) use (&$totalImpressions, &$totalClicks, &$totalConversions): void {
             $serviceClass = 'App\\Services\\'.str_replace(' ', '', $account->platform).'Service';
             $service = new $serviceClass($account);
 

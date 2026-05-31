@@ -36,7 +36,7 @@ class ContactListController extends Controller
 
         $contacts = $query->get();
 
-        return view('contacts.list', compact('contacts'));
+        return view('contacts.list', ['contacts' => $contacts]);
     }
 
     public function bulkDelete(Request $request): JsonResponse

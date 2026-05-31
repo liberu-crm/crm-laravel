@@ -61,7 +61,7 @@ class StripeService
                 'ends_at' => null,
             ]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to create subscription: '.$e->getMessage());
+            throw new Exception('Failed to create subscription: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -76,7 +76,7 @@ class StripeService
                 'ends_at' => now(),
             ]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to cancel subscription: '.$e->getMessage());
+            throw new Exception('Failed to cancel subscription: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -113,7 +113,7 @@ class StripeService
 
             $subscription->update(['quantity' => $quantity]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to update subscription quantity: '.$e->getMessage());
+            throw new Exception('Failed to update subscription quantity: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 }

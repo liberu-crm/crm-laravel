@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\AdvertisingDashboardResource\Pages;
 
 use App\Filament\App\Resources\AdvertisingDashboardResource;
@@ -12,11 +14,13 @@ class ViewAdvertisingDashboard extends Page
 
     protected string $view = 'filament.app.resources.advertising-dashboard-resource.pages.view-advertising-dashboard';
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'Advertising Dashboard';
     }
 
+    #[\Override]
     protected function getHeaderWidgets(): array
     {
         $widgets = AdvertisingDashboardResource::getWidgets();
@@ -24,6 +28,7 @@ class ViewAdvertisingDashboard extends Page
         return array_slice($widgets, 0, 2);
     }
 
+    #[\Override]
     protected function getFooterWidgets(): array
     {
         $widgets = AdvertisingDashboardResource::getWidgets();
@@ -31,16 +36,19 @@ class ViewAdvertisingDashboard extends Page
         return array_slice($widgets, 2, 1);
     }
 
+    #[\Override]
     public function getHeaderWidgetsColumns(): int|array
     {
         return 2;
     }
 
+    #[\Override]
     public function getFooterWidgetsColumns(): int|array
     {
         return 1;
     }
 
+    #[\Override]
     protected function getActions(): array
     {
         return [

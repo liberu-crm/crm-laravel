@@ -24,7 +24,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->outlookCalendarService->graph = $this->mockGraph;
     }
 
-    public function test_create_event()
+    public function test_create_event(): void
     {
         $task = Task::factory()->create();
 
@@ -45,7 +45,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertEquals('test_event_id', $task->outlook_event_id);
     }
 
-    public function test_update_event()
+    public function test_update_event(): void
     {
         $this->expectNotToPerformAssertions();
         $task = Task::factory()->create(['outlook_event_id' => 'existing_event_id']);
@@ -61,7 +61,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->outlookCalendarService->updateEvent($task);
     }
 
-    public function test_delete_event()
+    public function test_delete_event(): void
     {
         $task = Task::factory()->create(['outlook_event_id' => 'existing_event_id']);
 
@@ -77,7 +77,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertNull($task->outlook_event_id);
     }
 
-    public function test_fetch_events()
+    public function test_fetch_events(): void
     {
         $mockEvent1 = Mockery::mock();
         $mockEvent1->shouldReceive('getId')->andReturn('event1');
@@ -100,7 +100,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertEquals('event2', $events[1]->getId());
     }
 
-    public function test_sync_events()
+    public function test_sync_events(): void
     {
         $mockBody1 = Mockery::mock();
         $mockBody1->shouldReceive('getContent')->andReturn('Test Description 1');

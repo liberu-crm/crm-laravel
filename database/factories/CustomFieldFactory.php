@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\CustomField;
@@ -17,7 +19,7 @@ class CustomFieldFactory extends Factory
             'name' => $this->faker->word,
             'label' => $this->faker->words(2, true),
             'type' => $this->faker->randomElement(['text', 'number', 'date', 'select', 'checkbox']),
-            'model_type' => $this->faker->randomElement(['App\\Models\\Contact', 'App\\Models\\Lead', 'App\\Models\\Deal']),
+            'model_type' => $this->faker->randomElement([\App\Models\Contact::class, \App\Models\Lead::class, \App\Models\Deal::class]),
             'options' => json_encode($this->faker->randomElement([
                 ['option1', 'option2', 'option3'],
                 null,

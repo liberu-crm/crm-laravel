@@ -57,6 +57,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         'profile_photo_url',
     ];
 
+    #[\Override]
     protected function casts(): array
     {
         return [

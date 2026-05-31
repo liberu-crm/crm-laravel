@@ -13,7 +13,7 @@ class ReportingService
     public function getContactInteractionsData(array $filters = [])
     {
         $query = Contact::select('contacts.*', DB::raw('COUNT(activities.id) as activities_count'))
-            ->leftJoin('activities', function ($join) {
+            ->leftJoin('activities', function ($join): void {
                 $join->on('activities.activitable_id', '=', 'contacts.id')
                     ->where('activities.activitable_type', '=', Contact::class);
             });
@@ -115,7 +115,7 @@ class ReportingService
         return $this->formatDataForChart($data, 'pie', 'score_range', 'count');
     }
 
-    private function formatDataForChart($data, $chartType, $labelKey, $valueKey)
+    private function formatDataForChart($data, string $chartType, string $labelKey, string $valueKey): array
     {
         $labels = $data->pluck($labelKey);
         $values = $data->pluck($valueKey);

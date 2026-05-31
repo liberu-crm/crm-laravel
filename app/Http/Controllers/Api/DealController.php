@@ -33,7 +33,7 @@ class DealController extends Controller
         return response()->json($deal, 201);
     }
 
-    public function show(Request $request, Deal $deal)
+    public function show(Request $request, Deal $deal): Deal
     {
         abort_unless($deal->belongsToTeam($request->user()?->currentTeam?->id), 403);
 
@@ -88,7 +88,7 @@ class DealController extends Controller
         $allowedFields = ['status', 'stage_id', 'pipeline_id'];
         $updateData = array_intersect_key($request->input('data'), array_flip($allowedFields));
 
-        if (empty($updateData)) {
+        if ($updateData === []) {
             return response()->json(['message' => 'No valid fields to update.'], 422);
         }
 

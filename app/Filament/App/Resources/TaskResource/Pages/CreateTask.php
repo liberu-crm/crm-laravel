@@ -12,6 +12,7 @@ class CreateTask extends CreateRecord
 {
     protected static string $resource = TaskResource::class;
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)

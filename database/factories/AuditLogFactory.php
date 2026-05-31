@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\AuditLog;
@@ -16,7 +18,7 @@ class AuditLogFactory extends Factory
         return [
             'user_id' => User::factory(),
             'team_id' => Team::factory(),
-            'auditable_type' => $this->faker->randomElement(['App\\Models\\Lead', 'App\\Models\\Contact', 'App\\Models\\Deal']),
+            'auditable_type' => $this->faker->randomElement([\App\Models\Lead::class, \App\Models\Contact::class, \App\Models\Deal::class]),
             'auditable_id' => $this->faker->numberBetween(1, 100),
             'event' => $this->faker->randomElement(['created', 'updated', 'deleted']),
             'old_values' => json_encode([]),

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             if (! Schema::hasColumn('contacts', 'company_id')) {
                 $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
             }
@@ -20,7 +20,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             if (Schema::hasColumn('contacts', 'company_id')) {
                 $table->dropForeign(['company_id']);
                 $table->dropColumn('company_id');

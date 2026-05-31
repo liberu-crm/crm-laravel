@@ -19,10 +19,8 @@ namespace Microsoft\Graph {
 
             public function createRequest(string $method, string $uri): object
             {
-                return new class($method, $uri)
+                return new readonly class($method, $uri)
                 {
-                    public function __construct(private string $method, private string $uri) {}
-
                     public function attachBody($body): static
                     {
                         return $this;
@@ -33,7 +31,7 @@ namespace Microsoft\Graph {
                         return $this;
                     }
 
-                    public function execute()
+                    public function execute(): null
                     {
                         return null;
                     }
@@ -47,11 +45,8 @@ namespace Microsoft\Graph\Model {
     if (! class_exists(Event::class)) {
         class Event
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getId(): ?string
@@ -125,11 +120,8 @@ namespace Microsoft\Graph\Model {
     if (! class_exists(ItemBody::class)) {
         class ItemBody
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getContent(): ?string
@@ -142,11 +134,8 @@ namespace Microsoft\Graph\Model {
     if (! class_exists(DateTimeTimeZone::class)) {
         class DateTimeTimeZone
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getDateTime(): ?string

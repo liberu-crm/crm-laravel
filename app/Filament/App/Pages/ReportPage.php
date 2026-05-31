@@ -26,15 +26,9 @@ class ReportPage extends Page
 
     public ?string $endDate = null;
 
-    protected $reportingService;
-
-    protected $mailChimpService;
-
-    public function __construct(ReportingService $reportingService, MailChimpService $mailChimpService)
+    public function __construct(protected \App\Services\ReportingService $reportingService, protected \App\Services\MailChimpService $mailChimpService)
     {
         parent::__construct();
-        $this->reportingService = $reportingService;
-        $this->mailChimpService = $mailChimpService;
     }
 
     public function form(Schema $schema): Schema
@@ -56,7 +50,7 @@ class ReportPage extends Page
                     ->options([
                         // Add your campaign options here
                     ])
-                    ->visible(fn (callable $get) => in_array($get('selectedReport'), ['ab-test-results', 'email-campaign-performance'])),
+                    ->visible(fn (callable $get): bool => in_array($get('selectedReport'), ['ab-test-results', 'email-campaign-performance'])),
                 DatePicker::make('startDate')
                     ->label('Start Date'),
                 DatePicker::make('endDate')
@@ -68,7 +62,7 @@ class ReportPage extends Page
     {
         return Action::make('generateReport')
             ->label('Generate Report')
-            ->action(function (array $data) {
+            ->action(function (array $data): void {
                 $filters = [
                     'start_date' => $this->startDate,
                     'end_date' => $this->endDate,
@@ -119,6 +113,7 @@ class ReportPage extends Page
             });
     }
 
+    #[\Override]
     public function getViewData(): array
     {
         return [

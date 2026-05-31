@@ -22,7 +22,7 @@ class TaskListUITest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    public function test_task_list_displays_tasks()
+    public function test_task_list_displays_tasks(): void
     {
         $tasks = Task::factory()->count(3)->create();
 
@@ -33,10 +33,10 @@ class TaskListUITest extends TestCase
             ->assertSee($tasks[2]->name);
     }
 
-    public function test_task_search_functionality()
+    public function test_task_search_functionality(): void
     {
-        $task1 = Task::factory()->create(['name' => 'Test Task Alpha']);
-        $task2 = Task::factory()->create(['name' => 'Another Unrelated Task']);
+        Task::factory()->create(['name' => 'Test Task Alpha']);
+        Task::factory()->create(['name' => 'Another Unrelated Task']);
 
         Livewire::actingAs($this->user)
             ->test(TaskList::class)
@@ -45,10 +45,10 @@ class TaskListUITest extends TestCase
             ->assertDontSee('Another Unrelated Task');
     }
 
-    public function test_task_status_filtering()
+    public function test_task_status_filtering(): void
     {
-        $task1 = Task::factory()->create(['name' => 'Pending Task Alpha', 'status' => 'pending']);
-        $task2 = Task::factory()->create(['name' => 'Completed Task Beta', 'status' => 'completed']);
+        Task::factory()->create(['name' => 'Pending Task Alpha', 'status' => 'pending']);
+        Task::factory()->create(['name' => 'Completed Task Beta', 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(TaskList::class)
@@ -57,12 +57,12 @@ class TaskListUITest extends TestCase
             ->assertDontSee('Completed Task Beta');
     }
 
-    public function test_task_lead_filtering()
+    public function test_task_lead_filtering(): void
     {
         $lead1 = Lead::factory()->create();
         $lead2 = Lead::factory()->create();
-        $task1 = Task::factory()->create(['name' => 'Task for Lead One', 'lead_id' => $lead1->id]);
-        $task2 = Task::factory()->create(['name' => 'Task for Lead Two', 'lead_id' => $lead2->id]);
+        Task::factory()->create(['name' => 'Task for Lead One', 'lead_id' => $lead1->id]);
+        Task::factory()->create(['name' => 'Task for Lead Two', 'lead_id' => $lead2->id]);
 
         Livewire::actingAs($this->user)
             ->test(TaskList::class)
@@ -71,10 +71,10 @@ class TaskListUITest extends TestCase
             ->assertDontSee('Task for Lead Two');
     }
 
-    public function test_task_sorting()
+    public function test_task_sorting(): void
     {
-        $task1 = Task::factory()->create(['name' => 'Aardvark Task', 'due_date' => now()->addDays(5)]);
-        $task2 = Task::factory()->create(['name' => 'Zebra Task', 'due_date' => now()->addDays(2)]);
+        Task::factory()->create(['name' => 'Aardvark Task', 'due_date' => now()->addDays(5)]);
+        Task::factory()->create(['name' => 'Zebra Task', 'due_date' => now()->addDays(2)]);
 
         Livewire::actingAs($this->user)
             ->test(TaskList::class)

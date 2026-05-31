@@ -12,6 +12,7 @@ class ListContacts extends ListRecords
 {
     protected static string $resource = ContactResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -22,13 +23,13 @@ class ListContacts extends ListRecords
     /**
      * Handle the index request for the contacts list.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $query = Contact::query();
 
         if ($request->filled('search')) {
             $term = $request->search;
-            $query->where(function ($q) use ($term) {
+            $query->where(function ($q) use ($term): void {
                 $q->where('name', 'like', '%'.$term.'%')
                     ->orWhere('last_name', 'like', '%'.$term.'%')
                     ->orWhere('email', 'like', '%'.$term.'%')
@@ -44,7 +45,7 @@ class ListContacts extends ListRecords
 
         $contacts = $query->get();
 
-        return view('contacts.list', compact('contacts'));
+        return view('contacts.list', ['contacts' => $contacts]);
     }
 
     /**
@@ -68,7 +69,7 @@ class ListContacts extends ListRecords
     {
         $term = $request->input('query', '');
 
-        $contacts = Contact::where(function ($q) use ($term) {
+        $contacts = Contact::where(function ($q) use ($term): void {
             $q->where('name', 'like', $term.'%')
                 ->orWhere('email', 'like', '%'.$term.'%');
         })

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class OAuthManager
 {
-    protected $client;
+    protected \GuzzleHttp\Client $client;
 
     protected $providers = [
         'mailchimp' => [
@@ -143,7 +143,7 @@ class OAuthManager
                 ],
             ]);
 
-            $data = json_decode($response->getBody(), true);
+            $data = json_decode((string) $response->getBody(), true);
 
             // Get additional metadata for some providers
             if ($provider === 'mailchimp') {
@@ -154,7 +154,7 @@ class OAuthManager
             return $data;
         } catch (\Exception $e) {
             Log::error("OAuth token exchange failed for {$provider}: ".$e->getMessage());
-            throw new \RuntimeException('Failed to exchange code for token: '.$e->getMessage());
+            throw new \RuntimeException('Failed to exchange code for token: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -196,7 +196,7 @@ class OAuthManager
                 ],
             ]);
 
-            $data = json_decode($response->getBody(), true);
+            $data = json_decode((string) $response->getBody(), true);
 
             $account->update([
                 'token' => $data['access_token'],
@@ -220,7 +220,7 @@ class OAuthManager
      */
     public function saveConnectedAccount(string $provider, array $tokenData, ?int $userId = null): ConnectedAccount
     {
-        $userId = $userId ?? Auth::id();
+        $userId ??= Auth::id();
 
         $accountData = [
             'user_id' => $userId,
@@ -293,7 +293,7 @@ class OAuthManager
                 ],
             ]);
 
-            return json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         } catch (\Exception $e) {
             Log::error('Failed to get MailChimp metadata: '.$e->getMessage());
 

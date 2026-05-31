@@ -13,7 +13,7 @@ class NotificationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_notifications_are_created_for_crm_events()
+    public function test_notifications_are_created_for_crm_events(): void
     {
         Notification::fake();
 
@@ -29,7 +29,7 @@ class NotificationTest extends TestCase
         );
     }
 
-    public function test_notification_can_be_stored_in_database()
+    public function test_notification_can_be_stored_in_database(): void
     {
         $user = User::factory()->create();
 
@@ -42,7 +42,7 @@ class NotificationTest extends TestCase
         $this->assertEquals(1, $user->notifications()->count());
     }
 
-    public function test_notifications_can_be_marked_as_read()
+    public function test_notifications_can_be_marked_as_read(): void
     {
         $user = User::factory()->create();
 
@@ -58,7 +58,7 @@ class NotificationTest extends TestCase
         $this->assertEquals(0, $user->unreadNotifications()->count());
     }
 
-    public function test_unread_notification_count_is_tracked()
+    public function test_unread_notification_count_is_tracked(): void
     {
         $user = User::factory()->create();
 

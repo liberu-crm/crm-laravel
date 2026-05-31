@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\ActivationResource\Pages\CreateActivation;
@@ -22,6 +24,7 @@ class ActivationResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -34,6 +37,7 @@ class ActivationResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -60,6 +64,7 @@ class ActivationResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -67,6 +72,7 @@ class ActivationResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

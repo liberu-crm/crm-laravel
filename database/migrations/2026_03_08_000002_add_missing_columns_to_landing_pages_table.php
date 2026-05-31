@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        Schema::table('landing_pages', function (Blueprint $table): void {
             if (! Schema::hasColumn('landing_pages', 'name')) {
                 $table->string('name')->nullable()->after('id');
             }
@@ -26,7 +26,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        Schema::table('landing_pages', function (Blueprint $table): void {
             foreach (['name', 'slug', 'template', 'settings'] as $column) {
                 if (Schema::hasColumn('landing_pages', $column)) {
                     $table->dropColumn($column);

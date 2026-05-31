@@ -38,6 +38,7 @@ class Contact extends Model
 
     protected $touches = ['team'];
 
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -80,6 +81,7 @@ class Contact extends Model
         return $this->morphMany(Document::class, 'documentable');
     }
 
+    #[\Override]
     protected static function booted(): void
     {
         static::creating(fn ($contact) => $contact->associateWithCompany());
@@ -100,7 +102,7 @@ class Contact extends Model
 
     public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->where(function (Builder $q) use ($search) {
+        return $query->where(function (Builder $q) use ($search): void {
             $q->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
                 ->orWhere('company_size', 'like', '%'.$search.'%')
                 ->orWhere('annual_revenue', 'like', '%'.$search.'%')

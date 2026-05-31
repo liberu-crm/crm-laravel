@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\AdvertisingDashboardResource\Pages\ViewAdvertisingDashboard;
@@ -14,6 +16,7 @@ class AdvertisingDashboardResource extends Resource
 
     protected static ?string $navigationLabel = 'Advertising Dashboard';
 
+    #[\Override]
     public static function getWidgets(): array
     {
         return [
@@ -23,6 +26,7 @@ class AdvertisingDashboardResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

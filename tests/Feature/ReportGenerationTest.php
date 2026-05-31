@@ -15,7 +15,7 @@ class ReportGenerationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_contact_interactions_report_service()
+    public function test_contact_interactions_report_service(): void
     {
         Contact::factory()->count(3)->create();
 
@@ -25,7 +25,7 @@ class ReportGenerationTest extends TestCase
         $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function test_sales_pipeline_report_service()
+    public function test_sales_pipeline_report_service(): void
     {
         Deal::factory()->count(5)->create();
 
@@ -35,7 +35,7 @@ class ReportGenerationTest extends TestCase
         $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function test_customer_engagement_report_service()
+    public function test_customer_engagement_report_service(): void
     {
         $service = app(ReportingService::class);
         $data = $service->getCustomerEngagementData([]);
@@ -43,7 +43,7 @@ class ReportGenerationTest extends TestCase
         $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function test_ab_test_results_with_mocked_mailchimp()
+    public function test_ab_test_results_with_mocked_mailchimp(): void
     {
         $mockMailChimpService = Mockery::mock(MailChimpService::class);
         $mockMailChimpService->shouldReceive('getABTestResults')

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\App\Pages;
@@ -67,7 +69,7 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-    public function boot()
+    public function boot(): void
     {
         Fortify::$registersRoutes = false;
         // Jetstream routes remain enabled for team management features.

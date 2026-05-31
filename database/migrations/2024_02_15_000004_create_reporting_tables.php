@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('report_builders', function (Blueprint $table) {
+        Schema::create('report_builders', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->index('created_by');
         });
 
-        Schema::create('sales_forecasts', function (Blueprint $table) {
+        Schema::create('sales_forecasts', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->date('period_start');

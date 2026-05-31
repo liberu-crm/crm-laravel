@@ -13,7 +13,7 @@ class ReportCustomizerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_view_report_customizer_page()
+    public function test_can_view_report_customizer_page(): void
     {
         $role = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $user = User::factory()->create();
@@ -24,7 +24,7 @@ class ReportCustomizerTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function test_can_generate_contact_interactions_report()
+    public function test_can_generate_contact_interactions_report(): void
     {
         $user = User::factory()->create();
 
@@ -38,7 +38,7 @@ class ReportCustomizerTest extends TestCase
             ->assertSet('data.data.datasets.0.label', 'Activities count');
     }
 
-    public function test_can_generate_sales_pipeline_report()
+    public function test_can_generate_sales_pipeline_report(): void
     {
         $user = User::factory()->create();
 
@@ -52,7 +52,7 @@ class ReportCustomizerTest extends TestCase
             ->assertSet('data.data.datasets.0.label', 'Total value');
     }
 
-    public function test_can_generate_customer_engagement_report()
+    public function test_can_generate_customer_engagement_report(): void
     {
         $user = User::factory()->create();
 
@@ -66,7 +66,7 @@ class ReportCustomizerTest extends TestCase
             ->assertSet('data.data.datasets.0.label', 'Count');
     }
 
-    public function test_can_export_pdf_report()
+    public function test_can_export_pdf_report(): void
     {
         $user = User::factory()->create();
 
@@ -79,7 +79,7 @@ class ReportCustomizerTest extends TestCase
             ->assertDispatched('report-exported');
     }
 
-    public function test_can_export_csv_report()
+    public function test_can_export_csv_report(): void
     {
         $user = User::factory()->create();
 

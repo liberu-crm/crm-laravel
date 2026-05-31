@@ -25,7 +25,7 @@ class AnalyticsDashboardTest extends TestCase
         $this->user->save();
     }
 
-    public function test_analytics_dashboard_access()
+    public function test_analytics_dashboard_access(): void
     {
         $team = $this->user->ownedTeams->first();
         $response = $this->actingAs($this->user)
@@ -37,7 +37,7 @@ class AnalyticsDashboardTest extends TestCase
         );
     }
 
-    public function test_contact_stats_data()
+    public function test_contact_stats_data(): void
     {
         Contact::factory()->count(5)->create();
         Lead::factory()->count(3)->create();
@@ -46,7 +46,7 @@ class AnalyticsDashboardTest extends TestCase
         $this->assertEquals(3, Lead::count());
     }
 
-    public function test_sales_pipeline_data_retrieval()
+    public function test_sales_pipeline_data_retrieval(): void
     {
         $dealStages = ['Prospecting', 'Qualification', 'Proposal'];
         foreach ($dealStages as $stage) {
@@ -60,7 +60,7 @@ class AnalyticsDashboardTest extends TestCase
         $this->assertGreaterThan(0, $data->count());
     }
 
-    public function test_customer_engagement_data_retrieval()
+    public function test_customer_engagement_data_retrieval(): void
     {
         $service = app(ReportingService::class);
         $data = $service->getContactInteractionsData([]);
@@ -68,7 +68,7 @@ class AnalyticsDashboardTest extends TestCase
         $this->assertInstanceOf(Collection::class, $data);
     }
 
-    public function test_data_retrieval_for_charts()
+    public function test_data_retrieval_for_charts(): void
     {
         Deal::factory()->count(10)->create();
         Contact::factory()->count(20)->create();

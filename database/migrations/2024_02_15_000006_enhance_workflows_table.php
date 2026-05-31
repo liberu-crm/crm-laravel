@@ -10,7 +10,7 @@ return new class extends Migration
     {
         // Enhance workflows table
         if (Schema::hasTable('workflows')) {
-            Schema::table('workflows', function (Blueprint $table) {
+            Schema::table('workflows', function (Blueprint $table): void {
                 if (! Schema::hasColumn('workflows', 'is_active')) {
                     $table->boolean('is_active')->default(true)->after('actions');
                 }
@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('workflows')) {
-            Schema::table('workflows', function (Blueprint $table) {
+            Schema::table('workflows', function (Blueprint $table): void {
                 if (Schema::hasColumn('workflows', 'is_active')) {
                     $table->dropColumn('is_active');
                 }

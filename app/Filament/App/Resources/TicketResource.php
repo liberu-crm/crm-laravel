@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\RelationManagers\MessagesRelationManager;
@@ -33,6 +35,7 @@ class TicketResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -67,6 +70,7 @@ class TicketResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -114,7 +118,7 @@ class TicketResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('reply')
-                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService) {
+                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService): void {
                         try {
                             $helpDeskService->sendReply(
                                 $record->source_id,
@@ -144,7 +148,7 @@ class TicketResource extends Resource
                             ->label('Reply'),
                     ]),
                 Action::make('view_messages')
-                    ->url(fn (Ticket $record) => MessageResource::getUrl('index', [
+                    ->url(fn (Ticket $record): string => MessageResource::getUrl('index', [
                         'tableFilters[source_id][value]' => $record->source_id,
                     ]))
                     ->icon('heroicon-o-chat-bubble-left-right')
@@ -157,6 +161,7 @@ class TicketResource extends Resource
             ->poll('30s');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -164,6 +169,7 @@ class TicketResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

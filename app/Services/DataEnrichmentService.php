@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Company;
@@ -14,7 +16,7 @@ class DataEnrichmentService
         $this->apiKey = config('services.data_enrichment.api_key');
     }
 
-    public function enrichCompanyData(Company $company)
+    public function enrichCompanyData(Company $company): bool
     {
         $response = Http::withHeaders([
             'Authorization' => "Bearer {$this->apiKey}",

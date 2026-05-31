@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use App\Models\DashboardWidget;
@@ -11,7 +13,7 @@ class DashboardWidgetTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_dashboard_widget_belongs_to_user()
+    public function test_dashboard_widget_belongs_to_user(): void
     {
         $user = User::factory()->create();
         $widget = DashboardWidget::factory()->create(['user_id' => $user->id]);
@@ -20,7 +22,7 @@ class DashboardWidgetTest extends TestCase
         $this->assertEquals($user->id, $widget->user->id);
     }
 
-    public function test_dashboard_widget_has_correct_fillable_attributes()
+    public function test_dashboard_widget_has_correct_fillable_attributes(): void
     {
         $widget = new DashboardWidget;
 
@@ -32,7 +34,7 @@ class DashboardWidgetTest extends TestCase
         ], $widget->getFillable());
     }
 
-    public function test_dashboard_widget_casts_settings_to_array()
+    public function test_dashboard_widget_casts_settings_to_array(): void
     {
         $widget = DashboardWidget::factory()->create([
             'settings' => ['key' => 'value'],

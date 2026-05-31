@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\Users\Pages;
 
 use App\Filament\Admin\Resources\Users\UserResource;
@@ -15,6 +17,7 @@ class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -22,6 +25,7 @@ class ViewUser extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function infolist(Schema $schema): Schema
     {
         return $schema
@@ -32,7 +36,7 @@ class ViewUser extends ViewRecord
                         ImageEntry::make('profile_photo_url')
                             ->label('Profile Photo')
                             ->circular()
-                            ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF')
+                            ->defaultImageUrl(fn ($record): string => 'https://ui-avatars.com/api/?name='.urlencode((string) $record->name).'&color=7F9CF5&background=EBF4FF')
                             ->columnSpanFull(),
 
                         TextEntry::make('name')
@@ -66,7 +70,7 @@ class ViewUser extends ViewRecord
                             ->label('Assigned Roles')
                             ->badge()
                             ->color('success')
-                            ->formatStateUsing(fn ($state) => ucfirst($state))
+                            ->formatStateUsing(fn ($state): string => ucfirst((string) $state))
                             ->placeholder('No roles assigned')
                             ->columnSpanFull(),
 
@@ -115,9 +119,9 @@ class ViewUser extends ViewRecord
 
                         TextEntry::make('two_factor_confirmed_at')
                             ->label('Two-Factor Enabled')
-                            ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                            ->formatStateUsing(fn ($state): string => $state ? 'Yes' : 'No')
                             ->badge()
-                            ->color(fn ($state) => $state ? 'success' : 'gray'),
+                            ->color(fn ($state): string => $state ? 'success' : 'gray'),
 
                         TextEntry::make('profile_photo_path')
                             ->label('Profile Photo Path')

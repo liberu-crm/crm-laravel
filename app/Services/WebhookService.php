@@ -100,7 +100,7 @@ class WebhookService
             'url' => $data['url'] ?? null,
             'events' => $data['events'] ?? null,
             'is_active' => $data['is_active'] ?? null,
-        ], fn ($v) => ! is_null($v)));
+        ], fn ($v): bool => ! is_null($v)));
 
         return $webhook->refresh();
     }

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('workflow_triggers', function (Blueprint $table) {
+        Schema::create('workflow_triggers', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('type');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->index('is_active');
         });
 
-        Schema::create('workflow_actions', function (Blueprint $table) {
+        Schema::create('workflow_actions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('type');
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->index(['workflow_id', 'order']);
         });
 
-        Schema::create('workflow_conditions', function (Blueprint $table) {
+        Schema::create('workflow_conditions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_action_id')->constrained()->onDelete('cascade');
             $table->string('field');
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('workflow_executions', function (Blueprint $table) {
+        Schema::create('workflow_executions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('entity_type');

@@ -39,6 +39,7 @@ class MessageResource extends Resource
         return static::getModel()::where('status', 'unread')->count();
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -75,6 +76,7 @@ class MessageResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -139,7 +141,7 @@ class MessageResource extends Resource
                             ->required()
                             ->label('Reply'),
                     ])
-                    ->action(function (Message $record, array $data, UnifiedHelpDeskService $helpDeskService) {
+                    ->action(function (Message $record, array $data, UnifiedHelpDeskService $helpDeskService): void {
                         try {
                             $helpDeskService->sendReply(
                                 $record->id,
@@ -165,7 +167,7 @@ class MessageResource extends Resource
                     }),
                 Action::make('mark_as_read')
                     ->action(fn (Message $record) => $record->update(['status' => 'read']))
-                    ->visible(fn (Message $record) => $record->status === 'unread'),
+                    ->visible(fn (Message $record): bool => $record->status === 'unread'),
             ])
             ->toolbarActions([
                 BulkAction::make('mark_as_read')
@@ -175,6 +177,7 @@ class MessageResource extends Resource
             ->poll('30s');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -182,6 +185,7 @@ class MessageResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

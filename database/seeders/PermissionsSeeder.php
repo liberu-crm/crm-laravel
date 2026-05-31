@@ -34,7 +34,7 @@ class PermissionsSeeder extends Seeder
         foreach ($resources as $resource) {
             foreach ($permissionPrefixes as $prefix) {
                 Permission::firstOrCreate([
-                    'name' => $prefix.'_'.strtolower($resource),
+                    'name' => $prefix.'_'.strtolower((string) $resource),
                     'guard_name' => 'web',
                 ]);
             }

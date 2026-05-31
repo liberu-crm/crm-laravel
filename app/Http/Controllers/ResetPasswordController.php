@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends AuthAuthenticatedSessionController
 {
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm(Request $request, $token = null): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('admin.auth.reset-password', ['token' => $token, 'email' => $request->email]);
     }
@@ -26,7 +26,7 @@ class ResetPasswordController extends AuthAuthenticatedSessionController
 
         $status = Password::broker('admins')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
+            function ($user, $password): void {
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));

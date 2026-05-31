@@ -43,7 +43,7 @@ class TwilioIntegration extends Page
             ]);
     }
 
-    public function sendSMS()
+    public function sendSMS(): void
     {
         $this->validate();
 
@@ -82,7 +82,7 @@ class TwilioIntegration extends Page
             }
             try {
                 $twilioService->sendSMS($contact->phone_number, $this->message);
-            } catch (RestException $e) {
+            } catch (RestException) {
                 $failCount++;
             }
         }
@@ -98,7 +98,7 @@ class TwilioIntegration extends Page
         }
     }
 
-    public function makeCall()
+    public function makeCall(): void
     {
         $this->validate([
             'to' => 'required',
@@ -136,7 +136,7 @@ class TwilioIntegration extends Page
             }
             try {
                 $twilioService->makeCall($phone, route('twilio.twiml.outbound'));
-            } catch (RestException $e) {
+            } catch (RestException) {
                 $failCount++;
             }
         }

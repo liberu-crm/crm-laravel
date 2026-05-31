@@ -14,7 +14,7 @@ class EmailTrackingLinkTest extends TestCase
     private function signedRoute(EmailTracking $tracking, string $url): string
     {
         $encoded = base64_encode($url);
-        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, (string) config('app.key'));
 
         return route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
@@ -23,7 +23,7 @@ class EmailTrackingLinkTest extends TestCase
         ]);
     }
 
-    public function test_redirects_to_relative_url()
+    public function test_redirects_to_relative_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $url = '/some/internal/page';
@@ -33,18 +33,18 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect($url);
     }
 
-    public function test_redirects_to_same_domain_url()
+    public function test_redirects_to_same_domain_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $appUrl = config('app.url');
-        $url = rtrim($appUrl, '/').'/page';
+        $url = rtrim((string) $appUrl, '/').'/page';
 
         $response = $this->get($this->signedRoute($tracking, $url));
 
         $response->assertRedirect($url);
     }
 
-    public function test_redirects_to_subdomain_url()
+    public function test_redirects_to_subdomain_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $appHost = Uri::of(config('app.url'))->host();
@@ -55,7 +55,7 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect($url);
     }
 
-    public function test_blocks_external_url()
+    public function test_blocks_external_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $url = 'https://evil.com/phish';
@@ -65,11 +65,11 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect(config('app.url'));
     }
 
-    public function test_blocks_invalid_base64()
+    public function test_blocks_invalid_base64(): void
     {
         $tracking = EmailTracking::factory()->create();
         $encoded = 'not-valid-base64!!!';
-        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, (string) config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
@@ -80,11 +80,11 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect(config('app.url'));
     }
 
-    public function test_blocks_empty_url()
+    public function test_blocks_empty_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $encoded = '';
-        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, config('app.key'));
+        $sig = hash_hmac('sha256', $tracking->tracking_id.':'.$encoded, (string) config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
@@ -95,7 +95,7 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect(config('app.url'));
     }
 
-    public function test_records_click_with_original_url()
+    public function test_records_click_with_original_url(): void
     {
         $tracking = EmailTracking::factory()->create();
         $originalUrl = 'https://evil.com/phish';
@@ -107,7 +107,7 @@ class EmailTrackingLinkTest extends TestCase
         ]);
     }
 
-    public function test_blocks_missing_signature()
+    public function test_blocks_missing_signature(): void
     {
         $tracking = EmailTracking::factory()->create();
         $url = '/internal/page';
@@ -120,7 +120,7 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect(config('app.url'));
     }
 
-    public function test_blocks_wrong_signature()
+    public function test_blocks_wrong_signature(): void
     {
         $tracking = EmailTracking::factory()->create();
         $url = '/internal/page';
@@ -134,13 +134,13 @@ class EmailTrackingLinkTest extends TestCase
         $response->assertRedirect(config('app.url'));
     }
 
-    public function test_blocks_signature_from_different_tracking()
+    public function test_blocks_signature_from_different_tracking(): void
     {
         $trackingA = EmailTracking::factory()->create();
         $trackingB = EmailTracking::factory()->create();
         $url = '/internal/page';
         $encoded = base64_encode($url);
-        $sigB = hash_hmac('sha256', $trackingB->tracking_id.':'.$encoded, config('app.key'));
+        $sigB = hash_hmac('sha256', $trackingB->tracking_id.':'.$encoded, (string) config('app.key'));
 
         $response = $this->get(route('email.tracking.link', [
             'tracking_id' => $trackingA->tracking_id,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,7 +28,7 @@ class TwilioWebhookTest extends TestCase
         return $validator->computeSignature($url, $params);
     }
 
-    public function test_passes_with_valid_signature()
+    public function test_passes_with_valid_signature(): void
     {
         $params = ['To' => '+1234567890'];
         $url = route('twilio.twiml.outbound');
@@ -37,14 +39,14 @@ class TwilioWebhookTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_rejects_missing_signature()
+    public function test_rejects_missing_signature(): void
     {
         $response = $this->post(route('twilio.twiml.outbound'), ['To' => '+1234567890']);
 
         $response->assertStatus(403);
     }
 
-    public function test_rejects_bad_signature()
+    public function test_rejects_bad_signature(): void
     {
         $response = $this->post(
             route('twilio.twiml.outbound'),
@@ -55,7 +57,7 @@ class TwilioWebhookTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_recording_callback_passes_with_valid_signature()
+    public function test_recording_callback_passes_with_valid_signature(): void
     {
         $params = ['CallSid' => 'CA123', 'RecordingUrl' => 'https://recording.twilio.com/abc'];
         $url = route('twilio.recording.callback');
@@ -66,7 +68,7 @@ class TwilioWebhookTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_recording_callback_rejects_bad_signature()
+    public function test_recording_callback_rejects_bad_signature(): void
     {
         $response = $this->post(
             route('twilio.recording.callback'),
@@ -77,7 +79,7 @@ class TwilioWebhookTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_skips_validation_when_token_not_configured()
+    public function test_skips_validation_when_token_not_configured(): void
     {
         config(['services.twilio.auth_token' => null]);
 

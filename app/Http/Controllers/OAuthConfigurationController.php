@@ -66,14 +66,14 @@ class OAuthConfigurationController extends Controller
         ],
     ];
 
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $configurations = OAuthConfiguration::where('user_id', Auth::id())->get();
 
-        return view('oauth.configurations.index', compact('configurations'));
+        return view('oauth.configurations.index', ['configurations' => $configurations]);
     }
 
-    public function create()
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('oauth.configurations.create');
     }
@@ -118,7 +118,7 @@ class OAuthConfigurationController extends Controller
             Log::error("OAuth redirect failed for {$service}: ".$e->getMessage());
 
             return redirect()->route('oauth.configurations.index')
-                ->with('error', 'Failed to start OAuth for '.ucfirst($service).'. Please ensure the credentials are configured in settings.');
+                ->with('error', 'Failed to start OAuth for '.ucfirst((string) $service).'. Please ensure the credentials are configured in settings.');
         }
     }
 
@@ -151,7 +151,7 @@ class OAuthConfigurationController extends Controller
                 $updateData['refresh_token'] = $socialiteUser->refreshToken;
             }
             if (Schema::hasColumn('oauth_configurations', 'token_expires_at')) {
-                $updateData['token_expires_at'] = isset($socialiteUser->expiresIn)
+                $updateData['token_expires_at'] = property_exists($socialiteUser, 'expiresIn') && $socialiteUser->expiresIn !== null
                     ? now()->addSeconds((int) $socialiteUser->expiresIn)
                     : null;
             }
@@ -159,7 +159,7 @@ class OAuthConfigurationController extends Controller
             $config->update($updateData);
 
             return redirect()->route('oauth.configurations.index')
-                ->with('success', ucfirst($service).' account connected successfully!');
+                ->with('success', ucfirst((string) $service).' account connected successfully!');
         } catch (\Exception $e) {
             Log::error("OAuth callback failed for {$service}: ".$e->getMessage());
 

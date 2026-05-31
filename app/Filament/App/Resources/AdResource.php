@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\AdResource\Pages\CreateAd;
@@ -29,6 +31,7 @@ class AdResource extends Resource
 
     protected static ?string $navigationLabel = 'Ads';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -75,6 +78,7 @@ class AdResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -110,11 +114,13 @@ class AdResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

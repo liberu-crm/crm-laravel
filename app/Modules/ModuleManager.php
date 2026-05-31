@@ -40,7 +40,7 @@ class ModuleManager
      */
     public function disabled(): Collection
     {
-        return $this->modules->filter(fn ($module) => ! $module->isEnabled());
+        return $this->modules->filter(fn ($module): bool => ! $module->isEnabled());
     }
 
     /**
@@ -48,7 +48,7 @@ class ModuleManager
      */
     public function get(string $name): ?ModuleInterface
     {
-        return $this->modules->first(fn ($module) => $module->getName() === $name);
+        return $this->modules->first(fn ($module): bool => $module->getName() === $name);
     }
 
     /**
@@ -56,7 +56,7 @@ class ModuleManager
      */
     public function has(string $name): bool
     {
-        return $this->modules->contains(fn ($module) => $module->getName() === $name);
+        return $this->modules->contains(fn ($module): bool => $module->getName() === $name);
     }
 
     /**
@@ -66,7 +66,7 @@ class ModuleManager
     {
         $module = $this->get($name);
 
-        if (! $module) {
+        if (!$module instanceof \App\Modules\Contracts\ModuleInterface) {
             return false;
         }
 
@@ -87,7 +87,7 @@ class ModuleManager
     {
         $module = $this->get($name);
 
-        if (! $module) {
+        if (!$module instanceof \App\Modules\Contracts\ModuleInterface) {
             return false;
         }
 
@@ -108,7 +108,7 @@ class ModuleManager
     {
         $module = $this->get($name);
 
-        if (! $module) {
+        if (!$module instanceof \App\Modules\Contracts\ModuleInterface) {
             return false;
         }
 
@@ -129,7 +129,7 @@ class ModuleManager
     {
         $module = $this->get($name);
 
-        if (! $module) {
+        if (!$module instanceof \App\Modules\Contracts\ModuleInterface) {
             return false;
         }
 
@@ -165,7 +165,7 @@ class ModuleManager
         $modules = File::directories($modulesPath);
 
         foreach ($modules as $modulePath) {
-            $moduleName = basename($modulePath);
+            $moduleName = basename((string) $modulePath);
             $this->loadModule($moduleName, $modulePath);
         }
     }
@@ -205,9 +205,7 @@ class ModuleManager
      */
     protected function hasDependents(string $moduleName): bool
     {
-        return $this->enabled()->contains(function ($module) use ($moduleName) {
-            return in_array($moduleName, $module->getDependencies());
-        });
+        return $this->enabled()->contains(fn($module) => in_array($moduleName, $module->getDependencies()));
     }
 
     /**
@@ -217,7 +215,7 @@ class ModuleManager
     {
         $module = $this->get($name);
 
-        if (! $module) {
+        if (!$module instanceof \App\Modules\Contracts\ModuleInterface) {
             return [];
         }
 
@@ -236,8 +234,6 @@ class ModuleManager
      */
     public function getAllModulesInfo(): array
     {
-        return $this->modules->map(function ($module) {
-            return $this->getModuleInfo($module->getName());
-        })->toArray();
+        return $this->modules->map(fn($module) => $this->getModuleInfo($module->getName()))->toArray();
     }
 }

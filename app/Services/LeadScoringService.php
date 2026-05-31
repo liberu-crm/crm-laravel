@@ -13,7 +13,7 @@ class LeadScoringService
 
     public function recalculateAllScores(): void
     {
-        Lead::chunk(100, function ($leads) {
+        Lead::chunk(100, function ($leads): void {
             foreach ($leads as $lead) {
                 $this->scoreLeads($lead);
             }

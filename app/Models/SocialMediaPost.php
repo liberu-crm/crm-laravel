@@ -51,7 +51,7 @@ class SocialMediaPost extends Model
 
     const STATUS_FAILED = 'failed';
 
-    public static function getStatuses()
+    public static function getStatuses(): array
     {
         return [
             self::STATUS_DRAFT => 'Draft',
@@ -61,23 +61,23 @@ class SocialMediaPost extends Model
         ];
     }
 
-    public function isScheduled()
+    public function isScheduled(): bool
     {
         return $this->status === self::STATUS_SCHEDULED && $this->scheduled_at > now();
     }
 
-    public function isPublishable()
+    public function isPublishable(): bool
     {
         return $this->status === self::STATUS_SCHEDULED && $this->scheduled_at <= now();
     }
 
-    public function markAsPublished()
+    public function markAsPublished(): void
     {
         $this->status = self::STATUS_PUBLISHED;
         $this->save();
     }
 
-    public function markAsFailed()
+    public function markAsFailed(): void
     {
         $this->status = self::STATUS_FAILED;
         $this->save();

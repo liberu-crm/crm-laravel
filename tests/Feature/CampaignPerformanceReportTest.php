@@ -20,7 +20,7 @@ class CampaignPerformanceReportTest extends TestCase
         $this->app->instance(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function test_get_campaign_performance_report()
+    public function test_get_campaign_performance_report(): void
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -45,7 +45,7 @@ class CampaignPerformanceReportTest extends TestCase
         $this->assertEquals(0.5, $result['open_rate']);
     }
 
-    public function test_get_ab_test_results_report()
+    public function test_get_ab_test_results_report(): void
     {
         $mockResults = [
             'campaign_id' => 'campaign_123',

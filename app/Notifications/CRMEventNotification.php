@@ -11,17 +11,11 @@ class CRMEventNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $event;
-
-    protected $data;
-
-    public function __construct($event, $data)
+    public function __construct(protected $event, protected $data)
     {
-        $this->event = $event;
-        $this->data = $data;
     }
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail', 'database'];
     }
@@ -36,7 +30,7 @@ class CRMEventNotification extends Notification implements ShouldQueue
             ->line('Thank you for using our application!');
     }
 
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             'event' => $this->event,

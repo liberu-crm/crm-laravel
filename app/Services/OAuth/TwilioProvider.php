@@ -43,6 +43,7 @@ class TwilioProvider extends AbstractProvider implements ProviderInterface
         ]);
     }
 
+    #[\Override]
     protected function getTokenFields($code)
     {
         return array_merge(parent::getTokenFields($code), [

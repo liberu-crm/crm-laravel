@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('activations', function (Blueprint $table) {
+        Schema::create('activations', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('user_id')->unsigned()->index();
             $table->string('token');
@@ -24,10 +22,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('activations');
     }

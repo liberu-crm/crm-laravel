@@ -21,7 +21,7 @@ class ReportingServiceTest extends TestCase
         $this->reportingService = new ReportingService;
     }
 
-    public function test_get_contact_interactions_data()
+    public function test_get_contact_interactions_data(): void
     {
         Contact::factory()->count(5)->create();
         Activity::factory()->count(20)->create();
@@ -32,7 +32,7 @@ class ReportingServiceTest extends TestCase
         $this->assertArrayHasKey('activities_count', $result->first());
     }
 
-    public function test_get_sales_pipeline_data()
+    public function test_get_sales_pipeline_data(): void
     {
         Deal::factory()->count(10)->create();
 
@@ -45,7 +45,7 @@ class ReportingServiceTest extends TestCase
         $this->assertArrayHasKey('total_value', $result->first());
     }
 
-    public function test_get_customer_engagement_data()
+    public function test_get_customer_engagement_data(): void
     {
         Activity::factory()->count(30)->create();
 

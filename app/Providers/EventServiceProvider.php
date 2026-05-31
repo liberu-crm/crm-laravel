@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Listeners\LogSuccessfulLogin;
@@ -24,8 +26,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        'App\Events\ContactUpdated' => [
-            'App\Listeners\NotifyTeamMembers',
+        \App\Events\ContactUpdated::class => [
+            \App\Listeners\NotifyTeamMembers::class,
         ],
         Login::class => [
             LogSuccessfulLogin::class,
@@ -54,11 +56,12 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Register any events for your application.
      */
+    #[\Override]
     public function boot(): void
     {
         Task::observe(TaskObserver::class);
 
-        Event::listen('Illuminate\Auth\Events\Logout', function ($event) {
+        Event::listen(\Illuminate\Auth\Events\Logout::class, function ($event): void {
             app(AuditLogService::class)->log('logout', 'User logged out');
         });
     }
@@ -66,6 +69,7 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Determine if events and listeners should be automatically discovered.
      */
+    #[\Override]
     public function shouldDiscoverEvents(): bool
     {
         return false;

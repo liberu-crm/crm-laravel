@@ -39,12 +39,12 @@ class Pop3ServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_pop3_service_can_be_instantiated()
+    public function test_pop3_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(Pop3Service::class, $this->pop3Service);
     }
 
-    public function test_pop3_service_requires_configuration()
+    public function test_pop3_service_requires_configuration(): void
     {
         $configWithoutSettings = new OAuthConfiguration;
         $configWithoutSettings->forceFill([

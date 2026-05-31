@@ -14,7 +14,7 @@ class FetchGmailTickets implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle(GmailService $gmailService, CreateTicketFromEmail $createTicket)
+    public function handle(GmailService $gmailService, CreateTicketFromEmail $createTicket): void
     {
         $messages = $gmailService->getUnreadMessages();
 

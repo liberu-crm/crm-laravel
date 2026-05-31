@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Pages;
 
 use App\Settings\GeneralSettings;
@@ -21,6 +23,7 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'General Settings';
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return $schema

@@ -30,7 +30,7 @@ class ImapService
         }
     }
 
-    public function getMessage($messageId, OAuthConfiguration $config)
+    public function getMessage($messageId, OAuthConfiguration $config): ?array
     {
         try {
             $client = $this->connect($config);
@@ -48,7 +48,7 @@ class ImapService
         }
     }
 
-    public function sendReply($messageId, $content, OAuthConfiguration $config)
+    public function sendReply(string $messageId, $content, OAuthConfiguration $config)
     {
         try {
             $client = $this->connect($config);
@@ -157,7 +157,7 @@ class ImapService
         $from = $config->additional_settings['from_email'] ?? $config->additional_settings['username'] ?? $config->client_id;
 
         try {
-            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from): void {
                 $message->to($to)
                     ->subject($subject)
                     ->from($from);

@@ -12,6 +12,7 @@ use Tests\TestCase;
 
 class TeamSubscriptionTest extends TestCase
 {
+    public $stripeService;
     use RefreshDatabase;
     use WithFaker;
 
@@ -22,11 +23,11 @@ class TeamSubscriptionTest extends TestCase
         $this->app->instance(StripeService::class, $this->stripeService);
     }
 
-    public function test_create_team_subscription()
+    public function test_create_team_subscription(): void
     {
         $team = Team::factory()->create();
 
-        $subscription = TeamSubscription::factory()->create([
+        TeamSubscription::factory()->create([
             'team_id' => $team->id,
             'stripe_status' => 'active',
         ]);
@@ -37,7 +38,7 @@ class TeamSubscriptionTest extends TestCase
         ]);
     }
 
-    public function test_cancel_team_subscription()
+    public function test_cancel_team_subscription(): void
     {
         $team = Team::factory()->create();
         $subscription = TeamSubscription::factory()->create([
@@ -53,7 +54,7 @@ class TeamSubscriptionTest extends TestCase
         ]);
     }
 
-    public function test_team_subscription_belongs_to_team()
+    public function test_team_subscription_belongs_to_team(): void
     {
         $team = Team::factory()->create();
         $subscription = TeamSubscription::factory()->create(['team_id' => $team->id]);
@@ -61,7 +62,7 @@ class TeamSubscriptionTest extends TestCase
         $this->assertEquals($team->id, $subscription->team->id);
     }
 
-    public function test_stripe_service_mock()
+    public function test_stripe_service_mock(): void
     {
         $team = Team::factory()->create();
 

@@ -19,9 +19,7 @@ class SalesForecastingService
             ->where('status', '!=', 'lost')
             ->get();
 
-        $predictedRevenue = $deals->sum(function ($deal) {
-            return $deal->value * ($deal->probability / 100);
-        });
+        $predictedRevenue = $deals->sum(fn($deal) => $deal->value * ($deal->probability / 100));
 
         return SalesForecast::create([
             'name' => "Pipeline Forecast: {$pipeline->name}",
@@ -76,7 +74,7 @@ class SalesForecastingService
             ->with('stage')
             ->get();
 
-        $weightedRevenue = $deals->sum(function ($deal) {
+        $weightedRevenue = $deals->sum(function ($deal): float {
             $stageWeight = $this->getStageWeight($deal->stage);
             $probabilityWeight = $deal->probability / 100;
 
@@ -244,12 +242,10 @@ class SalesForecastingService
             ];
         }
 
-        $byType = $forecasts->groupBy('forecast_type')->map(function ($group) {
-            return [
-                'count' => $group->count(),
-                'average_accuracy' => round($group->avg('accuracy'), 2),
-            ];
-        });
+        $byType = $forecasts->groupBy('forecast_type')->map(fn($group) => [
+            'count' => $group->count(),
+            'average_accuracy' => round($group->avg('accuracy'), 2),
+        ]);
 
         return [
             'average_accuracy' => round($forecasts->avg('accuracy'), 2),
@@ -369,7 +365,7 @@ class SalesForecastingService
             $byMonth[$month][] = $point['revenue'];
         }
 
-        if (empty($byMonth)) {
+        if ($byMonth === []) {
             return array_fill_keys(range(1, 12), 1.0);
         }
 

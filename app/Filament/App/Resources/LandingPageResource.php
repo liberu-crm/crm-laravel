@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\LandingPageResource\Pages\CreateLandingPage;
@@ -24,6 +26,7 @@ class LandingPageResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -46,6 +49,7 @@ class LandingPageResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -71,6 +75,7 @@ class LandingPageResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -78,6 +83,7 @@ class LandingPageResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -27,7 +27,7 @@ class EmailTrackingTest extends TestCase
         $this->mailChimpService = Mockery::mock(MailChimpService::class)->makePartial();
     }
 
-    public function test_track_email()
+    public function test_track_email(): void
     {
         $message = $this->createMockMessage();
 
@@ -42,7 +42,7 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
-    public function test_track_sent_email()
+    public function test_track_sent_email(): void
     {
         $message = $this->createMockMessage();
 
@@ -57,7 +57,7 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
-    public function test_track_email_open()
+    public function test_track_email_open(): void
     {
         Log::shouldReceive('info')
             ->once()
@@ -68,7 +68,7 @@ class EmailTrackingTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_track_email_click()
+    public function test_track_email_click(): void
     {
         Log::shouldReceive('info')
             ->once()
@@ -79,7 +79,7 @@ class EmailTrackingTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_get_campaign_report()
+    public function test_get_campaign_report(): void
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -121,7 +121,7 @@ class EmailTrackingTest extends TestCase
         $payload->shouldReceive('getBody->getData')->andReturn(base64_encode('Test email content'));
         $payload->shouldReceive('getParts')->andReturn([]);
         $payload->shouldReceive('getBody')->andReturn(
-            (object) ['getData' => fn () => base64_encode('Test email content')]
+            (object) ['getData' => fn (): string => base64_encode('Test email content')]
         );
 
         return $message;

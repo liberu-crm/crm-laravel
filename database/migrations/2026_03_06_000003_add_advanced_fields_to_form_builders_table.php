@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('form_builders', function (Blueprint $table) {
+        Schema::table('form_builders', function (Blueprint $table): void {
             $table->json('validation_rules')->nullable()->after('fields');
             $table->json('conditional_logic')->nullable()->after('validation_rules');
             $table->json('steps')->nullable()->after('conditional_logic');
@@ -18,7 +18,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('form_builders', function (Blueprint $table) {
+        Schema::table('form_builders', function (Blueprint $table): void {
             $table->dropColumn(['validation_rules', 'conditional_logic', 'steps', 'is_multi_step']);
         });
     }

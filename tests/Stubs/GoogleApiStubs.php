@@ -18,11 +18,6 @@ if (! class_exists('Google_Service_Calendar')) {
         const CALENDAR = 'https://www.googleapis.com/auth/calendar';
 
         public $events;
-
-        public function __construct($client = null)
-        {
-            $this->events = null;
-        }
     }
 }
 
@@ -61,7 +56,7 @@ if (! class_exists('Google_Service_Calendar_Event')) {
             $this->data['description'] = $description;
         }
 
-        public function getStart()
+        public function getStart(): ?\stdClass
         {
             if (isset($this->data['start'])) {
                 return (object) $this->data['start'];

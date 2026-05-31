@@ -18,7 +18,7 @@ class PublishScheduledPosts extends Command
 
     protected $description = 'Publish scheduled social media posts';
 
-    public function handle()
+    public function handle(): void
     {
         $posts = SocialMediaPost::where('status', SocialMediaPost::STATUS_SCHEDULED)
             ->where('scheduled_at', '<=', now())

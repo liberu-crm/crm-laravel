@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
 use App\Models\Contact;
@@ -13,6 +15,9 @@ class ContactUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @var \App\Models\Contact
+     */
     public $contact;
 
     public function __construct(Contact $contact)
@@ -25,7 +30,7 @@ class ContactUpdated implements ShouldBroadcast
         return new PrivateChannel('contact.'.$this->contact->id);
     }
 
-    public function broadcastWith()
+    public function broadcastWith(): array
     {
         return [
             'id' => $this->contact->id,

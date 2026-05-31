@@ -123,9 +123,8 @@ class EmailTrackingService
     public function processEmailHtml(string $html, EmailTracking $tracking): string
     {
         $html = $this->replaceLinksWithTracked($html, $tracking);
-        $html = $this->injectTrackingPixel($html, $tracking);
 
-        return $html;
+        return $this->injectTrackingPixel($html, $tracking);
     }
 
     /**

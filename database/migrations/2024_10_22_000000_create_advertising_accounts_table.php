@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('advertising_accounts', function (Blueprint $table) {
+        Schema::create('advertising_accounts', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->enum('platform', ['Google AdWords', 'LinkedIn Business', 'Facebook Advertising']);

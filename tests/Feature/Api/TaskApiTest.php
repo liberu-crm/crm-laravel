@@ -19,7 +19,7 @@ class TaskApiTest extends TestCase
         Sanctum::actingAs($user);
     }
 
-    public function test_can_list_tasks()
+    public function test_can_list_tasks(): void
     {
         $beforeCount = Task::count();
         Task::factory()->count(3)->create();
@@ -30,7 +30,7 @@ class TaskApiTest extends TestCase
             ->assertJsonCount($beforeCount + 3);
     }
 
-    public function test_can_create_task()
+    public function test_can_create_task(): void
     {
         $taskData = [
             'name' => 'New Task',
@@ -49,7 +49,7 @@ class TaskApiTest extends TestCase
             ]);
     }
 
-    public function test_can_show_task()
+    public function test_can_show_task(): void
     {
         $task = Task::factory()->create();
 
@@ -59,7 +59,7 @@ class TaskApiTest extends TestCase
             ->assertJson($task->toArray());
     }
 
-    public function test_can_update_task()
+    public function test_can_update_task(): void
     {
         $task = Task::factory()->create();
         $updatedData = [
@@ -79,7 +79,7 @@ class TaskApiTest extends TestCase
             ]);
     }
 
-    public function test_can_delete_task()
+    public function test_can_delete_task(): void
     {
         $task = Task::factory()->create();
 

@@ -8,6 +8,7 @@ use Laravel\Jetstream\Http\Livewire\CreateTeamForm;
 
 class CreateTeam extends CreateTeamForm
 {
+    #[\Override]
     public function createTeam(CreatesTeams $creator)
     {
         $this->validate();

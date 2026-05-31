@@ -32,12 +32,12 @@ class ImapServiceTest extends TestCase
         ]);
     }
 
-    public function test_imap_service_can_be_instantiated()
+    public function test_imap_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(ImapService::class, $this->imapService);
     }
 
-    public function test_imap_service_requires_configuration()
+    public function test_imap_service_requires_configuration(): void
     {
         $configWithoutSettings = new OAuthConfiguration;
         $configWithoutSettings->forceFill([

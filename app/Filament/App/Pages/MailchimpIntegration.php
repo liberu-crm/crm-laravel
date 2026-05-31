@@ -21,7 +21,7 @@ class MailchimpIntegration extends Page
 
     public ?array $campaignData = [];
 
-    public function mount(MailChimpService $mailchimpService)
+    public function mount(MailChimpService $mailchimpService): void
     {
         $this->listData = $mailchimpService->getLists();
     }
@@ -38,7 +38,7 @@ class MailchimpIntegration extends Page
             ]);
     }
 
-    public function createList(MailChimpService $mailchimpService)
+    public function createList(MailChimpService $mailchimpService): void
     {
         $data = $this->createListForm(new Schema)->getState();
         $result = $mailchimpService->createList(
@@ -78,7 +78,7 @@ class MailchimpIntegration extends Page
             ]);
     }
 
-    public function createCampaign(MailChimpService $mailchimpService)
+    public function createCampaign(MailChimpService $mailchimpService): void
     {
         $data = $this->createCampaignForm(new Schema)->getState();
         $result = $mailchimpService->createCampaign(
@@ -103,6 +103,7 @@ class MailchimpIntegration extends Page
         }
     }
 
+    #[\Override]
     public function getViewData(): array
     {
         return [

@@ -12,17 +12,11 @@ class TaskReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $task;
-
-    protected $type;
-
-    public function __construct(Task $task, string $type)
+    public function __construct(protected \App\Models\Task $task, protected string $type)
     {
-        $this->task = $task;
-        $this->type = $type;
     }
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail', 'database'];
     }
@@ -34,24 +28,21 @@ class TaskReminderNotification extends Notification implements ShouldQueue
             ->line('Task: '.$this->task->name)
             ->line('Due Date: '.$this->task->due_date->format('Y-m-d H:i'));
 
-        switch ($this->type) {
-            case 'contact':
-                $message->line('Related Contact: '.$this->task->contact->name);
-                break;
-            case 'lead':
-                $message->line('Related Lead: '.$this->task->lead->name);
-                break;
-            case 'assigned':
-                $message->line('This task is assigned to you.');
-                break;
-        }
+        match ($this->type) {
+            'contact' => $message->line('Related Contact: '.$this->task->contact->name),
+            'lead' => $message->line('Related Lead: '.$this->task->lead->name),
+            'assigned' => $message->line('This task is assigned to you.'),
+            default => $message
+                ->action('View Task', url('/tasks/'.$this->task->id))
+                ->line('Thank you for using our application!'),
+        };
 
         return $message
             ->action('View Task', url('/tasks/'.$this->task->id))
             ->line('Thank you for using our application!');
     }
 
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             'task_id' => $this->task->id,

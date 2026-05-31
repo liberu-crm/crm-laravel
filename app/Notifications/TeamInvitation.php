@@ -12,29 +12,19 @@ class TeamInvitation extends Notification
 {
     use Queueable;
 
-    protected $team;
-
-    protected $invitedBy;
-
     /**
      * Create a new notification instance.
-
-     *
-     * @return void
      */
-    public function __construct(Team $team, User $invitedBy)
+    public function __construct(protected \App\Models\Team $team, protected \App\Models\User $invitedBy)
     {
-        $this->team = $team;
-        $this->invitedBy = $invitedBy;
     }
 
     /**
      * Get the notification's delivery channels.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -57,9 +47,8 @@ class TeamInvitation extends Notification
      * Get the array representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             //

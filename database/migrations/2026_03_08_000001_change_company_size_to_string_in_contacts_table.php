@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             if (Schema::hasColumn('contacts', 'company_size')) {
                 $table->string('company_size')->nullable()->change();
             }
@@ -17,7 +17,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             if (Schema::hasColumn('contacts', 'company_size')) {
                 $table->integer('company_size')->nullable()->change();
             }

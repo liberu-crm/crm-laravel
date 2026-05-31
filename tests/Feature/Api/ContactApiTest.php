@@ -19,7 +19,7 @@ class ContactApiTest extends TestCase
         Sanctum::actingAs($user);
     }
 
-    public function test_can_list_contacts()
+    public function test_can_list_contacts(): void
     {
         $beforeCount = Contact::count();
         Contact::factory()->count(3)->create();
@@ -30,7 +30,7 @@ class ContactApiTest extends TestCase
             ->assertJsonCount($beforeCount + 3);
     }
 
-    public function test_can_create_contact()
+    public function test_can_create_contact(): void
     {
         $contactData = [
             'name' => 'John Doe',
@@ -44,7 +44,7 @@ class ContactApiTest extends TestCase
             ->assertJsonFragment(['name' => 'John Doe', 'email' => 'john@example.com']);
     }
 
-    public function test_can_show_contact()
+    public function test_can_show_contact(): void
     {
         $contact = Contact::factory()->create();
 
@@ -58,7 +58,7 @@ class ContactApiTest extends TestCase
             ]);
     }
 
-    public function test_can_update_contact()
+    public function test_can_update_contact(): void
     {
         $contact = Contact::factory()->create();
         $updatedData = [
@@ -72,7 +72,7 @@ class ContactApiTest extends TestCase
             ->assertJsonFragment($updatedData);
     }
 
-    public function test_can_delete_contact()
+    public function test_can_delete_contact(): void
     {
         $contact = Contact::factory()->create();
 

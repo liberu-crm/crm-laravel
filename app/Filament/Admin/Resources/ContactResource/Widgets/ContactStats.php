@@ -10,6 +10,7 @@ class ContactStats extends Widget
 {
     protected string $view = 'filament.admin.resources.contact-resource.widgets.contact-stats';
 
+    #[\Override]
     public function render(): View
     {
         $totalContacts = DB::table('contacts')->count();

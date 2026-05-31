@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('lead_forms', function (Blueprint $table) {
+        Schema::create('lead_forms', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->json('fields');
@@ -17,7 +17,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('lead_forms');
     }

@@ -14,7 +14,7 @@ class UpdatePostAnalytics extends Command
 
     protected $description = 'Update analytics for published social media posts';
 
-    public function handle()
+    public function handle(): void
     {
         $posts = SocialMediaPost::where('status', SocialMediaPost::STATUS_PUBLISHED)
             ->where('updated_at', '<=', now()->subHours(1))
@@ -28,14 +28,12 @@ class UpdatePostAnalytics extends Command
 
                 foreach ($post->platforms as $platform) {
                     $platformAnalytics = $this->fetchPlatformAnalytics($platform, $post);
-                    if ($platformAnalytics) {
-                        foreach ($platformAnalytics as $key => $value) {
-                            $analytics[$key] = ($analytics[$key] ?? 0) + $value;
-                        }
+                    foreach ($platformAnalytics as $key => $value) {
+                        $analytics[$key] = ($analytics[$key] ?? 0) + $value;
                     }
                 }
 
-                if (! empty($analytics)) {
+                if ($analytics !== []) {
                     $post->update($analytics);
                 }
 

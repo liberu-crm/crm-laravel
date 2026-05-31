@@ -79,6 +79,7 @@ class SocialstreamServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         //
@@ -108,7 +109,7 @@ class SocialstreamServiceProvider extends ServiceProvider
     {
         try {
             $providers = OAuthConfiguration::where('is_active', true)->get();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Database may not be available yet (e.g. during migrations)
             return;
         }
@@ -117,14 +118,12 @@ class SocialstreamServiceProvider extends ServiceProvider
             $serviceName = $provider->service_name;
 
             if ($serviceName === 'twilio') {
-                Socialite::extend($serviceName, function () use ($provider) {
-                    return new TwilioProvider(
-                        $this->app['request'],
-                        $provider->client_id,
-                        $provider->client_secret,
-                        config('app.url').'/oauth/twilio/callback'
-                    );
-                });
+                Socialite::extend($serviceName, fn() => new TwilioProvider(
+                    $this->app['request'],
+                    $provider->client_id,
+                    $provider->client_secret,
+                    config('app.url').'/oauth/twilio/callback'
+                ));
 
                 continue;
             }

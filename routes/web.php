@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\HomeController;
@@ -39,7 +41,7 @@ Route::get('/email/track/link/{tracking_id}', [EmailTrackingController::class, '
 
 // Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function (): void {
     // Route::get('/app', [HomeController::class, 'app'])->name('app');
     // Route::get('/admin', [HomeController::class, 'admin'])->middleware('admin')->name('admin');
 
@@ -51,14 +53,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/team-invitations', [TeamInvitationController::class, 'sendInvitation'])->name('team-invitations.send');
     Route::post('/team-invitations/{invitationId}/accept', [TeamInvitationController::class, 'acceptInvitation'])->name('team-invitations.accept');
 
-    Route::prefix('social-connections')->group(function () {
+    Route::prefix('social-connections')->group(function (): void {
         Route::get('/', [OAuthConfigurationController::class, 'index'])->name('oauth.configurations.index');
         Route::get('/create', [OAuthConfigurationController::class, 'create'])->name('oauth.configurations.create');
         Route::post('/', [OAuthConfigurationController::class, 'store'])->name('oauth.configurations.store');
         Route::delete('/{configuration}', [OAuthConfigurationController::class, 'destroy'])->name('oauth.configurations.destroy');
     });
 
-    Route::prefix('oauth')->group(function () {
+    Route::prefix('oauth')->group(function (): void {
         Route::get('/{service}/auth/{configId}', [OAuthConfigurationController::class, 'authenticate'])->name('oauth.authenticate');
         Route::get('/{service}/callback', [OAuthConfigurationController::class, 'oauthCallback'])->name('oauth.configurations.callback');
     });

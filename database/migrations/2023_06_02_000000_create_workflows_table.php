@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateWorkflowsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('workflows', function (Blueprint $table) {
+        Schema::create('workflows', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -18,7 +20,7 @@ class CreateWorkflowsTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('workflows');
     }

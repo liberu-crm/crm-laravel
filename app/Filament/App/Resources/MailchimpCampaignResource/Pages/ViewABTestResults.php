@@ -14,6 +14,7 @@ class ViewABTestResults extends Page
 
     protected string $view = 'filament.app.resources.mailchimp-campaign-resource.pages.view-a-b-test-results';
 
+    #[\Override]
     public function getTitle(): string
     {
         return "A/B Test Results for Campaign: {$this->record->name}";
@@ -62,14 +63,14 @@ class ViewABTestResults extends Page
             ]);
     }
 
-    public function getWinnerInfo()
+    public function getWinnerInfo(): array
     {
         $mailChimpService = app(MailChimpService::class);
         $results = $mailChimpService->getABTestResults($this->record->id);
 
         return [
             'winner' => $results['winner'] === 'a' ? 'Version A' : 'Version B',
-            'winning_metric' => ucfirst($results['winning_metric']),
+            'winning_metric' => ucfirst((string) $results['winning_metric']),
             'winning_metric_value' => $results['winning_metric_value'],
         ];
     }

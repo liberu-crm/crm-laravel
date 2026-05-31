@@ -33,12 +33,12 @@ class OutlookServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_outlook_service_can_be_instantiated()
+    public function test_outlook_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(OutlookService::class, $this->outlookService);
     }
 
-    public function test_get_unread_messages_requires_access_token()
+    public function test_get_unread_messages_requires_access_token(): void
     {
         $configWithoutToken = new OAuthConfiguration;
         $configWithoutToken->forceFill(['additional_settings' => []]);

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ad_sets', function (Blueprint $table) {
+        Schema::create('ad_sets', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('advertising_account_id')->constrained()->cascadeOnDelete();

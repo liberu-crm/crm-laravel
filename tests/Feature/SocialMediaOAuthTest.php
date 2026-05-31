@@ -65,7 +65,7 @@ class SocialMediaOAuthTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->post(route('oauth.configurations.store'), [
+        $this->post(route('oauth.configurations.store'), [
             'service_name' => $platform,
             'account_name' => 'Test '.ucfirst($platform).' Account',
         ]);
@@ -85,7 +85,7 @@ class SocialMediaOAuthTest extends TestCase
     {
         // Verify the mapping is correct by checking what driver would be used.
         // We test this via the controller method behavior rather than inspecting internals.
-        $controller = app(OAuthConfigurationController::class);
+        app(OAuthConfigurationController::class);
 
         // Create a config so authenticate() doesn't fail on missing config
         OAuthConfiguration::create([

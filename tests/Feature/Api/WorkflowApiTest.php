@@ -19,7 +19,7 @@ class WorkflowApiTest extends TestCase
         Sanctum::actingAs($user);
     }
 
-    public function test_can_list_workflows()
+    public function test_can_list_workflows(): void
     {
         Workflow::factory()->count(3)->create();
 
@@ -29,7 +29,7 @@ class WorkflowApiTest extends TestCase
             ->assertJsonCount(3);
     }
 
-    public function test_can_create_workflow()
+    public function test_can_create_workflow(): void
     {
         $payload = [
             'name' => 'Test Workflow',
@@ -44,7 +44,7 @@ class WorkflowApiTest extends TestCase
             ->assertJsonFragment(['name' => 'Test Workflow']);
     }
 
-    public function test_can_show_workflow()
+    public function test_can_show_workflow(): void
     {
         $workflow = Workflow::factory()->create();
 
@@ -54,7 +54,7 @@ class WorkflowApiTest extends TestCase
             ->assertJsonFragment(['id' => $workflow->id]);
     }
 
-    public function test_can_update_workflow()
+    public function test_can_update_workflow(): void
     {
         $workflow = Workflow::factory()->create();
 
@@ -70,7 +70,7 @@ class WorkflowApiTest extends TestCase
             ->assertJsonFragment(['name' => 'Updated Workflow']);
     }
 
-    public function test_can_delete_workflow()
+    public function test_can_delete_workflow(): void
     {
         $workflow = Workflow::factory()->create();
 
@@ -80,7 +80,7 @@ class WorkflowApiTest extends TestCase
         $this->assertDatabaseMissing('workflows', ['id' => $workflow->id]);
     }
 
-    public function test_requires_valid_triggers_json()
+    public function test_requires_valid_triggers_json(): void
     {
         $payload = [
             'name' => 'Test',
@@ -93,7 +93,7 @@ class WorkflowApiTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_requires_valid_actions_json()
+    public function test_requires_valid_actions_json(): void
     {
         $payload = [
             'name' => 'Test',
@@ -106,7 +106,7 @@ class WorkflowApiTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_triggers_must_be_object()
+    public function test_triggers_must_be_object(): void
     {
         $payload = [
             'name' => 'Test',
@@ -119,7 +119,7 @@ class WorkflowApiTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_actions_must_be_array()
+    public function test_actions_must_be_array(): void
     {
         $payload = [
             'name' => 'Test',

@@ -29,6 +29,7 @@ class ContactResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -95,6 +96,7 @@ class ContactResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -178,7 +180,7 @@ class ContactResource extends Resource
                             ->label('SMS Message')
                             ->required(),
                     ])
-                    ->action(function (Contact $record, array $data, TwilioService $twilioService) {
+                    ->action(function (Contact $record, array $data, TwilioService $twilioService): void {
                         $result = $twilioService->sendSMS($record->phone_number, $data['message']);
                         if ($result) {
                             Notification::make()->title('SMS sent successfully')->success()->send();
@@ -188,7 +190,7 @@ class ContactResource extends Resource
                     }),
                 Action::make('makeCall')
                     ->icon('heroicon-o-phone')
-                    ->action(function (Contact $record, TwilioService $twilioService) {
+                    ->action(function (Contact $record, TwilioService $twilioService): void {
                         $result = $twilioService->makeCall($record->phone_number, route('twilio.twiml.outbound'));
                         if ($result) {
                             Notification::make()->title('Call initiated successfully')->success()->send();
@@ -206,7 +208,7 @@ class ContactResource extends Resource
                             ->label('SMS Message')
                             ->required(),
                     ])
-                    ->action(function (Collection $records, array $data, TwilioService $twilioService) {
+                    ->action(function (Collection $records, array $data, TwilioService $twilioService): void {
                         $successCount = 0;
                         $failCount = 0;
                         foreach ($records as $record) {
@@ -219,7 +221,7 @@ class ContactResource extends Resource
                     }),
                 BulkAction::make('bulkMakeCall')
                     ->icon('heroicon-o-phone')
-                    ->action(function (Collection $records, TwilioService $twilioService) {
+                    ->action(function (Collection $records, TwilioService $twilioService): void {
                         $successCount = 0;
                         $failCount = 0;
                         foreach ($records as $record) {
@@ -233,6 +235,7 @@ class ContactResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

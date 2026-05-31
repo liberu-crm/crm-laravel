@@ -15,20 +15,20 @@ class OpportunityPipelineTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
-    public function test_pipeline_can_be_created_with_stages()
+    public function test_pipeline_can_be_created_with_stages(): void
     {
         $pipeline = Pipeline::factory()->create(['is_active' => true]);
-        $stages = Stage::factory(3)->create(['pipeline_id' => $pipeline->id]);
+        Stage::factory(3)->create(['pipeline_id' => $pipeline->id]);
 
         $this->assertDatabaseHas('pipelines', ['id' => $pipeline->id, 'is_active' => true]);
         $this->assertEquals(3, $pipeline->stages()->count());
     }
 
-    public function test_deals_can_be_associated_with_pipeline_stages()
+    public function test_deals_can_be_associated_with_pipeline_stages(): void
     {
         $pipeline = Pipeline::factory()->create(['is_active' => true]);
         $stages = Stage::factory(3)->create(['pipeline_id' => $pipeline->id]);
-        $deals = Deal::factory(5)->create([
+        Deal::factory(5)->create([
             'pipeline_id' => $pipeline->id,
             'stage_id' => $stages->first()->id,
         ]);
@@ -40,9 +40,9 @@ class OpportunityPipelineTest extends TestCase
         $this->assertEquals(5, Deal::where('pipeline_id', $pipeline->id)->count());
     }
 
-    public function test_deal_can_be_moved_to_different_stage()
+    public function test_deal_can_be_moved_to_different_stage(): void
     {
-        $user = User::factory()->create();
+        User::factory()->create();
         $pipeline = Pipeline::factory()->create(['is_active' => true]);
         $stages = Stage::factory(3)->create(['pipeline_id' => $pipeline->id]);
         $deal = Deal::factory()->create([
@@ -59,7 +59,7 @@ class OpportunityPipelineTest extends TestCase
         ]);
     }
 
-    public function test_opportunity_index_page_loads_for_authenticated_user()
+    public function test_opportunity_index_page_loads_for_authenticated_user(): void
     {
         $user = User::factory()->withPersonalTeam()->create();
         $team = $user->ownedTeams->first();

@@ -18,14 +18,11 @@ class SendMarketingCampaign implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $campaign;
-
-    public function __construct(MarketingCampaign $campaign)
+    public function __construct(protected \App\Models\MarketingCampaign $campaign)
     {
-        $this->campaign = $campaign;
     }
 
-    public function handle(MailChimpService $mailchimp, TwilioService $twilio, WhatsAppBusinessService $whatsapp)
+    public function handle(MailChimpService $mailchimp, TwilioService $twilio, WhatsAppBusinessService $whatsapp): void
     {
         try {
             switch ($this->campaign->type) {

@@ -14,6 +14,7 @@ class ViewCampaignPerformance extends Page
 
     protected string $view = 'filament.app.resources.mailchimp-campaign-resource.pages.view-campaign-performance';
 
+    #[\Override]
     public function getTitle(): string
     {
         return "Campaign Performance: {$this->record->name}";

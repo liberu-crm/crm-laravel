@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CampaignResource\Pages\CreateCampaign;
@@ -27,6 +29,7 @@ class CampaignResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Advertising';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -70,6 +73,7 @@ class CampaignResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -112,11 +116,13 @@ class CampaignResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('custom_fields', function (Blueprint $table) {
+        Schema::table('custom_fields', function (Blueprint $table): void {
             if (! Schema::hasColumn('custom_fields', 'label')) {
                 $table->string('label')->nullable()->after('name');
             }
@@ -29,7 +29,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('custom_fields', function (Blueprint $table) {
+        Schema::table('custom_fields', function (Blueprint $table): void {
             $columns = ['label', 'options', 'required', 'validation_rules', 'order'];
             foreach ($columns as $column) {
                 if (Schema::hasColumn('custom_fields', $column)) {

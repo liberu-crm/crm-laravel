@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class CalendarIntegrationTest extends TestCase
 {
+    public $mockGoogleCalendarService;
+    public $mockOutlookCalendarService;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -25,9 +27,9 @@ class CalendarIntegrationTest extends TestCase
         $this->app->instance(OutlookCalendarService::class, $this->mockOutlookCalendarService);
     }
 
-    public function test_task_can_be_created_with_google_calendar_type()
+    public function test_task_can_be_created_with_google_calendar_type(): void
     {
-        $user = User::factory()->create();
+        User::factory()->create();
 
         $this->mockGoogleCalendarService->shouldReceive('createEvent')
             ->once()
@@ -46,9 +48,9 @@ class CalendarIntegrationTest extends TestCase
         ]);
     }
 
-    public function test_task_can_be_created_with_outlook_calendar_type()
+    public function test_task_can_be_created_with_outlook_calendar_type(): void
     {
-        $user = User::factory()->create();
+        User::factory()->create();
 
         $this->mockOutlookCalendarService->shouldReceive('createEvent')
             ->once()
@@ -67,7 +69,7 @@ class CalendarIntegrationTest extends TestCase
         ]);
     }
 
-    public function test_task_has_calendar_fields()
+    public function test_task_has_calendar_fields(): void
     {
         $task = Task::factory()->create([
             'calendar_type' => 'google',

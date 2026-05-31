@@ -21,10 +21,10 @@ class ContactManagementUITest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    public function test_advanced_search_functionality()
+    public function test_advanced_search_functionality(): void
     {
-        $contact1 = Contact::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
-        $contact2 = Contact::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com']);
+        Contact::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
+        Contact::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com']);
 
         Livewire::actingAs($this->user)
             ->test(ContactCollaboration::class)
@@ -33,10 +33,10 @@ class ContactManagementUITest extends TestCase
             ->assertDontSee('Jane Smith');
     }
 
-    public function test_filtering_contacts_by_status()
+    public function test_filtering_contacts_by_status(): void
     {
-        $activeContact = Contact::factory()->create(['name' => 'Active User', 'status' => 'active']);
-        $inactiveContact = Contact::factory()->create(['name' => 'Inactive User', 'status' => 'inactive']);
+        Contact::factory()->create(['name' => 'Active User', 'status' => 'active']);
+        Contact::factory()->create(['name' => 'Inactive User', 'status' => 'inactive']);
 
         Livewire::actingAs($this->user)
             ->test(ContactCollaboration::class)
@@ -45,11 +45,11 @@ class ContactManagementUITest extends TestCase
             ->assertDontSee('Inactive User');
     }
 
-    public function test_sorting_contacts()
+    public function test_sorting_contacts(): void
     {
-        $contactA = Contact::factory()->create(['name' => 'Alice']);
-        $contactB = Contact::factory()->create(['name' => 'Bob']);
-        $contactC = Contact::factory()->create(['name' => 'Charlie']);
+        Contact::factory()->create(['name' => 'Alice']);
+        Contact::factory()->create(['name' => 'Bob']);
+        Contact::factory()->create(['name' => 'Charlie']);
 
         Livewire::actingAs($this->user)
             ->test(ContactCollaboration::class)
@@ -57,7 +57,7 @@ class ContactManagementUITest extends TestCase
             ->assertSeeInOrder(['Charlie', 'Bob', 'Alice']);
     }
 
-    public function test_contact_index_loads_for_authenticated_user()
+    public function test_contact_index_loads_for_authenticated_user(): void
     {
         $user = User::factory()->withPersonalTeam()->create();
         $team = $user->ownedTeams->first();

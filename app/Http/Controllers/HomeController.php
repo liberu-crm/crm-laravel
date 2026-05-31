@@ -11,6 +11,6 @@ class HomeController extends Controller
     {
         $knowledgeBaseArticles = KnowledgeBaseArticle::latest()->take(5)->get();
 
-        return view('home', compact('knowledgeBaseArticles'));
+        return view('home', ['knowledgeBaseArticles' => $knowledgeBaseArticles]);
     }
 }

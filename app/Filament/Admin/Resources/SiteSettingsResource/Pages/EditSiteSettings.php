@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\SiteSettingsResource\Pages;
 
 use App\Filament\Admin\Resources\SiteSettingsResource;
@@ -10,6 +12,7 @@ class EditSiteSettings extends EditRecord
 {
     protected static string $resource = SiteSettingsResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Stub classes for Twilio SDK (used in tests when the actual SDK is not installed).
  *
@@ -24,13 +26,15 @@ namespace Twilio\Rest {
     if (! class_exists(Client::class)) {
         class Client
         {
-            public function __construct(string $username = '', string $password = '', ?string $accountSid = null) {}
+            public function __construct()
+            {
+            }
 
             /**
              * Expose dynamic properties via __get so Mockery can intercept them
              * for Demeter chain expectations (e.g. shouldReceive('messages->create')).
              */
-            public function __get(string $name)
+            public function __get(string $name): mixed
             {
                 return null;
             }
@@ -54,7 +58,7 @@ namespace Twilio\Rest\Api\V2010\Account {
     if (! class_exists(CallInstance::class)) {
         class CallInstance
         {
-            public function fetch()
+            public function fetch(): static
             {
                 return $this;
             }

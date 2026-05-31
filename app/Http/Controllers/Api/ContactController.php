@@ -33,7 +33,7 @@ class ContactController extends Controller
         return response()->json($contact, 201);
     }
 
-    public function show(Request $request, Contact $contact)
+    public function show(Request $request, Contact $contact): Contact
     {
         abort_unless($contact->belongsToTeam($request->user()?->currentTeam?->id), 403);
 
@@ -89,7 +89,7 @@ class ContactController extends Controller
         $allowedFields = ['status', 'lifecycle_stage', 'source', 'industry'];
         $updateData = array_intersect_key($request->input('data'), array_flip($allowedFields));
 
-        if (empty($updateData)) {
+        if ($updateData === []) {
             return response()->json(['message' => 'No valid fields to update.'], 422);
         }
 

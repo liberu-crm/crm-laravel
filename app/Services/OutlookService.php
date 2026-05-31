@@ -10,7 +10,7 @@ use Microsoft\Graph\Model\Message;
 
 class OutlookService
 {
-    protected $graph;
+    protected \Microsoft\Graph\Graph $graph;
 
     public function __construct()
     {
@@ -97,12 +97,10 @@ class OutlookService
                 ],
             ];
 
-            $response = $this->graph
+            return $this->graph
                 ->createRequest('POST', "/me/messages/{$messageId}/reply")
                 ->attachBody($replyData)
                 ->execute();
-
-            return $response;
         } catch (\Exception $e) {
             Log::error('Error sending Outlook reply: '.$e->getMessage());
             throw $e;
@@ -131,12 +129,10 @@ class OutlookService
                 ],
             ];
 
-            $response = $this->graph
+            return $this->graph
                 ->createRequest('POST', '/me/sendMail')
                 ->attachBody($messageData)
                 ->execute();
-
-            return $response;
         } catch (\Exception $e) {
             Log::error('Error sending Outlook message: '.$e->getMessage());
             throw $e;
@@ -161,7 +157,7 @@ class OutlookService
         return $body ? $body->getContent() : '';
     }
 
-    protected function getAttachments($message)
+    protected function getAttachments($message): array
     {
         $attachments = [];
         if ($message->getHasAttachments()) {
@@ -173,7 +169,10 @@ class OutlookService
         return $attachments;
     }
 
-    protected function getCcRecipients($message)
+    /**
+     * @return mixed[]
+     */
+    protected function getCcRecipients($message): array
     {
         $cc = [];
         $ccRecipients = $message->getCcRecipients();
@@ -186,7 +185,10 @@ class OutlookService
         return $cc;
     }
 
-    protected function getBccRecipients($message)
+    /**
+     * @return mixed[]
+     */
+    protected function getBccRecipients($message): array
     {
         $bcc = [];
         $bccRecipients = $message->getBccRecipients();

@@ -14,34 +14,10 @@ use Throwable;
 
 class UnifiedHelpDeskService
 {
-    protected $whatsAppService;
-
-    protected $facebookMessengerService;
-
-    protected $gmailService;
-
-    protected $outlookService;
-
-    protected $imapService;
-
-    protected $pop3Service;
-
     protected $cacheTimeout = 300; // 5 minutes
 
-    public function __construct(
-        WhatsAppBusinessService $whatsAppService,
-        FacebookMessengerService $facebookMessengerService,
-        GmailService $gmailService,
-        OutlookService $outlookService,
-        ImapService $imapService,
-        Pop3Service $pop3Service
-    ) {
-        $this->whatsAppService = $whatsAppService;
-        $this->facebookMessengerService = $facebookMessengerService;
-        $this->gmailService = $gmailService;
-        $this->outlookService = $outlookService;
-        $this->imapService = $imapService;
-        $this->pop3Service = $pop3Service;
+    public function __construct(protected \App\Services\WhatsAppBusinessService $whatsAppService, protected \App\Services\FacebookMessengerService $facebookMessengerService, protected \App\Services\GmailService $gmailService, protected \App\Services\OutlookService $outlookService, protected \App\Services\ImapService $imapService, protected \App\Services\Pop3Service $pop3Service)
+    {
     }
 
     public function getAllMessages($accountId = null, $useCache = true)
@@ -137,7 +113,7 @@ class UnifiedHelpDeskService
             ->get();
     }
 
-    public function sendReply($messageId, $content, $channel, $accountId)
+    public function sendReply($messageId, $content, $channel, string $accountId)
     {
         $config = OAuthConfiguration::findOrFail($accountId);
 
@@ -166,9 +142,9 @@ class UnifiedHelpDeskService
         }
     }
 
-    protected function formatMessage($message, $channel, $config)
+    protected function formatMessage(array $message, $channel, $config): array
     {
-        $formatted = [
+        return [
             'id' => $message['id'],
             'channel' => $channel,
             'account_id' => $config->id,
@@ -186,11 +162,9 @@ class UnifiedHelpDeskService
                 'platform_specific' => $this->getPlatformSpecificData($message, $channel),
             ],
         ];
-
-        return $formatted;
     }
 
-    protected function normalizeTimestamp($timestamp)
+    protected function normalizeTimestamp($timestamp): \Carbon\Carbon
     {
         if (is_numeric($timestamp)) {
             return Carbon::createFromTimestamp($timestamp);
@@ -199,7 +173,7 @@ class UnifiedHelpDeskService
         return Carbon::parse($timestamp);
     }
 
-    protected function calculatePriority($message)
+    protected function calculatePriority(array $message): string
     {
         // Implement priority calculation logic based on keywords, sender, etc.
         $priority = 'normal';
@@ -218,31 +192,23 @@ class UnifiedHelpDeskService
         return $priority;
     }
 
-    protected function getPlatformSpecificData($message, $channel)
+    protected function getPlatformSpecificData(array $message, $channel): array
     {
-        switch ($channel) {
-            case 'whatsapp':
-                return [
-                    'message_type' => $message['type'] ?? 'text',
-                    'phone_number' => $message['phone_number'] ?? null,
-                ];
-            case 'facebook':
-                return [
-                    'page_id' => $message['page_id'] ?? null,
-                    'sender_id' => $message['sender_id'] ?? null,
-                ];
-            case 'gmail':
-            case 'outlook':
-            case 'microsoft365':
-            case 'imap':
-            case 'pop3':
-                return [
-                    'subject' => $message['subject'] ?? null,
-                    'cc' => $message['cc'] ?? [],
-                    'bcc' => $message['bcc'] ?? [],
-                ];
-            default:
-                return [];
-        }
+        return match ($channel) {
+            'whatsapp' => [
+                'message_type' => $message['type'] ?? 'text',
+                'phone_number' => $message['phone_number'] ?? null,
+            ],
+            'facebook' => [
+                'page_id' => $message['page_id'] ?? null,
+                'sender_id' => $message['sender_id'] ?? null,
+            ],
+            'gmail', 'outlook', 'microsoft365', 'imap', 'pop3' => [
+                'subject' => $message['subject'] ?? null,
+                'cc' => $message['cc'] ?? [],
+                'bcc' => $message['bcc'] ?? [],
+            ],
+            default => [],
+        };
     }
 }

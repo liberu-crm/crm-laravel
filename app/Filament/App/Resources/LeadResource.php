@@ -20,6 +20,7 @@ class LeadResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-funnel';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -58,6 +59,7 @@ class LeadResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -94,17 +96,15 @@ class LeadResource extends Resource
                         Forms\Components\TextInput::make('score_from')->numeric(),
                         Forms\Components\TextInput::make('score_to')->numeric(),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['score_from'],
-                                fn (Builder $query, $score): Builder => $query->where('score', '>=', $score),
-                            )
-                            ->when(
-                                $data['score_to'],
-                                fn (Builder $query, $score): Builder => $query->where('score', '<=', $score),
-                            );
-                    }),
+                    ->query(fn(Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['score_from'],
+                            fn (Builder $query, $score): Builder => $query->where('score', '>=', $score),
+                        )
+                        ->when(
+                            $data['score_to'],
+                            fn (Builder $query, $score): Builder => $query->where('score', '<=', $score),
+                        )),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -114,6 +114,7 @@ class LeadResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

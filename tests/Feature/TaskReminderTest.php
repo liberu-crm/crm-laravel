@@ -30,7 +30,7 @@ class TaskReminderTest extends TestCase
         $this->app->instance(OutlookCalendarService::class, $this->outlookCalendarService);
     }
 
-    public function test_create_task_with_google_calendar()
+    public function test_create_task_with_google_calendar(): void
     {
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
@@ -55,7 +55,7 @@ class TaskReminderTest extends TestCase
         ]);
     }
 
-    public function test_task_reminder_notification_is_sent()
+    public function test_task_reminder_notification_is_sent(): void
     {
         Notification::fake();
 
@@ -71,7 +71,7 @@ class TaskReminderTest extends TestCase
         Notification::assertSentTo($user, TaskReminderNotification::class);
     }
 
-    public function test_task_has_reminder_date()
+    public function test_task_has_reminder_date(): void
     {
         $task = Task::factory()->withReminder()->create();
 

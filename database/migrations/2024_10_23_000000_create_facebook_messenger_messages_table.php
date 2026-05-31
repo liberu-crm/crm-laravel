@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateFacebookMessengerMessagesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('facebook_messenger_messages', function (Blueprint $table) {
+        Schema::create('facebook_messenger_messages', function (Blueprint $table): void {
             $table->id();
             $table->string('message_id')->unique();
             $table->string('sender_id');
@@ -21,7 +23,7 @@ class CreateFacebookMessengerMessagesTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('facebook_messenger_messages');
     }
