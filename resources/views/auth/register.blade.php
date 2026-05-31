@@ -51,6 +51,8 @@
                     </x-button>
                 </div>
             </form>
+
+            <x-socialstream::socialstream />
         </div>
     </div>
 @endsection

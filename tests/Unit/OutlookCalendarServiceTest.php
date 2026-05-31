@@ -11,18 +11,20 @@ use Tests\TestCase;
 class OutlookCalendarServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     protected $outlookCalendarService;
+
     protected $mockGraph;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->mockGraph = Mockery::mock();
-        $this->outlookCalendarService = new OutlookCalendarService();
+        $this->outlookCalendarService = new OutlookCalendarService;
         $this->outlookCalendarService->graph = $this->mockGraph;
     }
 
-    public function testCreateEvent()
+    public function test_create_event(): void
     {
         $task = Task::factory()->create();
 
@@ -43,8 +45,9 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertEquals('test_event_id', $task->outlook_event_id);
     }
 
-    public function testUpdateEvent()
+    public function test_update_event(): void
     {
+        $this->expectNotToPerformAssertions();
         $task = Task::factory()->create(['outlook_event_id' => 'existing_event_id']);
 
         $mockRequest = Mockery::mock();
@@ -58,7 +61,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->outlookCalendarService->updateEvent($task);
     }
 
-    public function testDeleteEvent()
+    public function test_delete_event(): void
     {
         $task = Task::factory()->create(['outlook_event_id' => 'existing_event_id']);
 
@@ -74,7 +77,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertNull($task->outlook_event_id);
     }
 
-    public function testFetchEvents()
+    public function test_fetch_events(): void
     {
         $mockEvent1 = Mockery::mock();
         $mockEvent1->shouldReceive('getId')->andReturn('event1');
@@ -97,7 +100,7 @@ class OutlookCalendarServiceTest extends TestCase
         $this->assertEquals('event2', $events[1]->getId());
     }
 
-    public function testSyncEvents()
+    public function test_sync_events(): void
     {
         $mockBody1 = Mockery::mock();
         $mockBody1->shouldReceive('getContent')->andReturn('Test Description 1');

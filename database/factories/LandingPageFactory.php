@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\LandingPage;
@@ -23,30 +25,30 @@ class LandingPageFactory extends Factory
                     'title' => $this->faker->sentence(),
                     'subtitle' => $this->faker->paragraph(),
                     'cta_text' => $this->faker->words(3, true),
-                    'background_image' => $this->faker->imageUrl()
+                    'background_image' => $this->faker->imageUrl(),
                 ],
                 'sections' => [
                     [
                         'type' => 'features',
-                        'items' => $this->faker->paragraphs(3)
+                        'items' => $this->faker->paragraphs(3),
                     ],
                     [
                         'type' => 'testimonials',
-                        'items' => $this->faker->paragraphs(2)
-                    ]
-                ]
+                        'items' => $this->faker->paragraphs(2),
+                    ],
+                ],
             ]),
             'settings' => json_encode([
                 'meta_title' => $this->faker->sentence(),
                 'meta_description' => $this->faker->paragraph(),
                 'custom_css' => '',
                 'custom_js' => '',
-                'tracking_code' => $this->faker->optional()->uuid
+                'tracking_code' => $this->faker->optional()->uuid,
             ]),
             'status' => $this->faker->randomElement(['draft', 'published', 'archived']),
             'published_at' => $this->faker->optional()->dateTimeThisYear(),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

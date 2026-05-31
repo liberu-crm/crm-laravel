@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Document;
@@ -15,19 +17,19 @@ class DocumentFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'name' => $this->faker->words(3, true),
-            'file_name' => $this->faker->uuid . '.' . $this->faker->fileExtension(),
-            'file_path' => 'documents/' . $this->faker->uuid,
+            'file_name' => $this->faker->uuid.'.'.$this->faker->fileExtension(),
+            'file_path' => 'documents/'.$this->faker->uuid,
             'file_size' => $this->faker->numberBetween(1024, 10485760),
             'mime_type' => $this->faker->mimeType(),
             'type' => $this->faker->randomElement(['contract', 'proposal', 'invoice', 'other']),
-            'documentable_type' => $this->faker->randomElement(['App\\Models\\Deal', 'App\\Models\\Contact', 'App\\Models\\Company']),
+            'documentable_type' => $this->faker->randomElement([\App\Models\Deal::class, \App\Models\Contact::class, \App\Models\Company::class]),
             'documentable_id' => $this->faker->numberBetween(1, 100),
             'description' => $this->faker->optional()->sentence,
             'tags' => json_encode($this->faker->words(3)),
             'status' => $this->faker->randomElement(['draft', 'final', 'archived']),
             'version' => 1,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

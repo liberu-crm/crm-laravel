@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
@@ -9,10 +11,7 @@ class NewMessageReceived
 {
     use Dispatchable, SerializesModels;
 
-    public array $message;
-
-    public function __construct(array $message)
+    public function __construct(public array $message)
     {
-        $this->message = $message;
     }
 }

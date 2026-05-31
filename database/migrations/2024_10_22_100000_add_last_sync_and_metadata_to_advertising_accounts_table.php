@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('advertising_accounts', function (Blueprint $table) {
-            if (!Schema::hasColumn('advertising_accounts', 'team_id')) {
+        Schema::table('advertising_accounts', function (Blueprint $table): void {
+            if (! Schema::hasColumn('advertising_accounts', 'team_id')) {
                 $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete()->after('id');
             }
             $table->timestamp('last_sync')->nullable()->after('status');
@@ -19,7 +19,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('advertising_accounts', function (Blueprint $table) {
+        Schema::table('advertising_accounts', function (Blueprint $table): void {
             $table->dropColumn(['last_sync', 'metadata']);
             if (Schema::hasColumn('advertising_accounts', 'team_id')) {
                 $table->dropConstrainedForeignId('team_id');

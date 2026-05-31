@@ -2,31 +2,31 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\DashboardWidget;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public $widgets;
 
-    public function mount()
+    public function mount(): void
     {
         $this->widgets = auth()->user()->dashboardWidgets()->orderBy('position')->get();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.dashboard');
     }
 
-    public function updateWidgetOrder($orderedIds)
+    public function updateWidgetOrder($orderedIds): void
     {
         foreach ($orderedIds as $position => $id) {
             DashboardWidget::where('id', $id)->update(['position' => $position + 1]);
         }
     }
 
-    public function addWidget($type)
+    public function addWidget($type): void
     {
         $position = $this->widgets->count() + 1;
         $widget = auth()->user()->dashboardWidgets()->create([
@@ -36,11 +36,9 @@ class Dashboard extends Component
         $this->widgets->push($widget);
     }
 
-    public function removeWidget($widgetId)
+    public function removeWidget($widgetId): void
     {
         DashboardWidget::destroy($widgetId);
-        $this->widgets = $this->widgets->reject(function ($widget) use ($widgetId) {
-            return $widget->id == $widgetId;
-        })->values();
+        $this->widgets = $this->widgets->reject(fn($widget) => $widget->id == $widgetId)->values();
     }
 }

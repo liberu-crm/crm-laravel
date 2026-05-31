@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Livewire\Widgets;
 
 use App\Models\DashboardWidget;
@@ -9,7 +11,7 @@ class Stats extends Component
 {
     public DashboardWidget $widget;
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.widgets.stats');
     }

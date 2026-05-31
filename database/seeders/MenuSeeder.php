@@ -2,33 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Menu;
+use Illuminate\Database\Seeder;
 
 class MenuSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $menus = [
             [
                 'name' => 'Home',
                 'url' => '/',
-                'order' => 1
+                'order' => 1,
             ],
             [
                 'name' => 'Submit a Ticket',
                 'url' => '/#submit-ticket',
-                'order' => 2
+                'order' => 2,
             ],
             [
                 'name' => 'Knowledge Base',
                 'url' => '/knowledge-base',
-                'order' => 3
+                'order' => 3,
             ],
             [
                 'name' => 'Request a Quote',
                 'url' => '/#request-quote',
-                'order' => 4
+                'order' => 4,
             ],
             [
                 'name' => 'Properties',
@@ -37,7 +37,7 @@ class MenuSeeder extends Seeder
                 'children' => [
                     ['name' => 'For Sale', 'url' => '/properties/for-sale', 'order' => 1],
                     ['name' => 'For Rent', 'url' => '/properties/for-rent', 'order' => 2],
-                ]
+                ],
             ],
             [
                 'name' => 'Services',
@@ -47,22 +47,22 @@ class MenuSeeder extends Seeder
                     ['name' => 'Buying', 'url' => '/services/buying', 'order' => 1],
                     ['name' => 'Selling', 'url' => '/services/selling', 'order' => 2],
                     ['name' => 'Renting', 'url' => '/services/renting', 'order' => 3],
-                ]
+                ],
             ],
             [
                 'name' => 'About',
                 'url' => '/about',
-                'order' => 7
+                'order' => 7,
             ],
             [
                 'name' => 'Contact',
                 'url' => '/contact',
-                'order' => 8
+                'order' => 8,
             ],
             [
                 'name' => 'Calculators',
                 'url' => '/calculators',
-                'order' => 9
+                'order' => 9,
             ],
         ];
 
@@ -71,7 +71,7 @@ class MenuSeeder extends Seeder
         }
     }
 
-    private function createMenu($menuData, $parentId = null)
+    private function createMenu(array $menuData, $parentId = null): void
     {
         $children = $menuData['children'] ?? [];
         unset($menuData['children']);

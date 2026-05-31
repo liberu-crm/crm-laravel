@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Modules\ModuleManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ModuleSystemTest extends TestCase
@@ -18,35 +20,35 @@ class ModuleSystemTest extends TestCase
         $this->moduleManager = app(ModuleManager::class);
     }
 
-    /** @test */
-    public function it_can_instantiate_module_manager()
+    #[Test]
+    public function it_can_instantiate_module_manager(): void
     {
         $this->assertInstanceOf(ModuleManager::class, $this->moduleManager);
     }
 
-    /** @test */
-    public function it_can_list_modules_as_collection()
+    #[Test]
+    public function it_can_list_modules_as_collection(): void
     {
         $modules = $this->moduleManager->all();
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $modules);
+        $this->assertInstanceOf(Collection::class, $modules);
     }
 
-    /** @test */
-    public function it_can_get_nonexistent_module_as_null()
+    #[Test]
+    public function it_can_get_nonexistent_module_as_null(): void
     {
         $module = $this->moduleManager->get('NonExistentModule');
         $this->assertNull($module);
     }
 
-    /** @test */
-    public function it_returns_false_for_nonexistent_module()
+    #[Test]
+    public function it_returns_false_for_nonexistent_module(): void
     {
         $result = $this->moduleManager->has('NonExistentModule');
         $this->assertFalse($result);
     }
 
-    /** @test */
-    public function it_returns_empty_array_for_nonexistent_module_info()
+    #[Test]
+    public function it_returns_empty_array_for_nonexistent_module_info(): void
     {
         $info = $this->moduleManager->getModuleInfo('NonExistentModule');
         $this->assertIsArray($info);

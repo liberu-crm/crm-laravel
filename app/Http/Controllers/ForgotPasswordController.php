@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends AuthAuthenticatedSessionController
 {
-    public function showLinkRequestForm()
+    public function showLinkRequestForm(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('admin.auth.forgot-password');
     }

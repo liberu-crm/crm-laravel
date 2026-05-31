@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Lead;
 use App\Models\Contact;
-use App\Models\Task;
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +14,7 @@ class LeadManagementUITest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->withPersonalTeam()->create();
@@ -23,7 +22,7 @@ class LeadManagementUITest extends TestCase
         $this->user->save();
     }
 
-    public function test_create_and_retrieve_lead_with_custom_fields()
+    public function test_create_and_retrieve_lead_with_custom_fields(): void
     {
         $contact = Contact::factory()->create();
         $customFields = ['industry' => 'Technology', 'company_size' => '50-100'];
@@ -37,17 +36,17 @@ class LeadManagementUITest extends TestCase
         $this->assertEquals($contact->id, $lead->contact_id);
     }
 
-    public function test_lead_index_page_loads()
+    public function test_lead_index_page_loads(): void
     {
         $team = $this->user->ownedTeams->first();
-        $response = $this->actingAs($this->user)->get('/app/' . $team->id . '/leads');
+        $response = $this->actingAs($this->user)->get('/app/'.$team->id.'/leads');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),
             "Expected leads page to return 200 or 302, got {$response->status()}"
         );
     }
 
-    public function test_lead_can_be_created_via_model()
+    public function test_lead_can_be_created_via_model(): void
     {
         $lead = Lead::factory()->create([
             'status' => 'new',
@@ -60,7 +59,7 @@ class LeadManagementUITest extends TestCase
         ]);
     }
 
-    public function test_lead_score_can_be_calculated()
+    public function test_lead_score_can_be_calculated(): void
     {
         $lead = Lead::factory()->create([
             'lifecycle_stage' => 'sales_qualified_lead',

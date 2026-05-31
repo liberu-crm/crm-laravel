@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use Illuminate\Mail\Events\MessageSent;
 use App\Models\EmailCampaign;
 use App\Models\Lead;
+use Illuminate\Mail\Events\MessageSent;
 
 class EmailTracker
 {
-    public function handle(MessageSent $event)
+    public function handle(MessageSent $event): void
     {
         $message = $event->message;
         $campaignId = $message->getHeaders()->get('X-Campaign-ID');

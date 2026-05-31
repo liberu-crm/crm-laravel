@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Team;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use BezhanSalleh\FilamentShield\Support\Utils;
 
 class RolesSeeder extends Seeder
 {
@@ -15,19 +15,25 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        $roleData = [
-            'name' => 'super_admin',
-            'guard_name' => 'web',
-        ];
+        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep', 'free'];
 
-        if (Utils::isTenancyEnabled()) {
-            $team = Team::firstOrFail();
-            $roleData["team_id"] = $team->id;
+        foreach ($roleNames as $roleName) {
+            $roleData = [
+                'name' => $roleName,
+                'guard_name' => 'web',
+            ];
+
+            if (Utils::isTenancyEnabled()) {
+                $team = Team::firstOrFail();
+                $roleData['team_id'] = $team->id;
+            }
+
+            $role = Role::firstOrCreate($roleData);
+
+            if ($roleName === 'super_admin') {
+                $permissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
+                $role->syncPermissions($permissions);
+            }
         }
-
-        $adminRole = Role::firstOrCreate($roleData);
-
-        $permissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
-        $adminRole->syncPermissions($permissions);
     }
 }

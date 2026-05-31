@@ -2,12 +2,11 @@
 
 namespace App\Filament\App\Resources\MessageResource\Pages;
 
-use Filament\Actions\Action;
-use Exception;
-use Filament\Notifications\Notification;
 use App\Filament\App\Resources\MessageResource;
 use App\Services\UnifiedHelpDeskService;
-use Filament\Actions;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,19 +14,20 @@ class ListMessages extends ListRecords
 {
     protected static string $resource = MessageResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             Action::make('sync')
-                ->action(function (UnifiedHelpDeskService $helpDeskService) {
+                ->action(function (UnifiedHelpDeskService $helpDeskService): void {
                     try {
                         $messages = $helpDeskService->getAllMessages(null, false);
-                        
+
                         foreach ($messages as $message) {
                             static::getModel()::updateOrCreate(
                                 [
                                     'id' => $message['id'],
-                                    'channel' => $message['channel']
+                                    'channel' => $message['channel'],
                                 ],
                                 [
                                     'sender' => $message['from'],

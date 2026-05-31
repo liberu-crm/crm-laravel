@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\TeamSubscriptionResource\Pages\ListTeamSubscriptions;
 use App\Filament\Resources\TeamSubscriptionResource\Pages\CreateTeamSubscription;
 use App\Filament\Resources\TeamSubscriptionResource\Pages\EditTeamSubscription;
-use App\Filament\Resources\TeamSubscriptionResource\Pages;
+use App\Filament\Resources\TeamSubscriptionResource\Pages\ListTeamSubscriptions;
 use App\Models\TeamSubscription;
-use Filament\Forms;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class TeamSubscriptionResource extends Resource
 {
     protected static ?string $model = TeamSubscription::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -50,6 +50,7 @@ class TeamSubscriptionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -85,6 +86,7 @@ class TeamSubscriptionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -92,6 +94,7 @@ class TeamSubscriptionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

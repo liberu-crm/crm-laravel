@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('call_settings', function (Blueprint $table) {
+        Schema::create('call_settings', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('value');
@@ -17,7 +17,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('call_settings');
     }

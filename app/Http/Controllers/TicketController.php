@@ -16,7 +16,7 @@ class TicketController extends Controller
         ]);
 
         $user = Auth::user();
-        $ticket = Ticket::create([
+        Ticket::create([
             'subject' => $validatedData['subject'],
             'body' => $validatedData['body'],
             'status' => 'open',

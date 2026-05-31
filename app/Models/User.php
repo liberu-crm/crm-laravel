@@ -11,7 +11,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use JoelButcher\Socialstream\HasConnectedAccounts;
 use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
@@ -20,27 +23,21 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\DatabaseNotification;
 
-class User extends Authenticatable implements HasDefaultTenant, HasTenants, FilamentUser
+class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasApiTokens;
-    // use HasConnectedAccounts;
-    use HasRoles;
+    use HasConnectedAccounts;
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
-    use Notifiable;
-    // use SetsProfilePhotoFromUrl;
-    use TwoFactorAuthenticatable;
+    use HasRoles;
     use HasTeams;
+    use Notifiable;
+    use SetsProfilePhotoFromUrl;
+    use TwoFactorAuthenticatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -48,21 +45,6 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         'google_calendar_token',
     ];
 
-    public function dashboardWidgets()
-    {
-        return $this->hasMany(DashboardWidget::class);
-    }
-
-    public function inAppNotifications()
-    {
-        return $this->morphMany(DatabaseNotification::class, 'notifiable')->orderBy('created_at', 'desc');
-    }
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -71,40 +53,31 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         'google_calendar_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'google_calendar_token' => 'encrypted',
-    ];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
     protected $appends = [
         'profile_photo_url',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    #[\Override]
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
+            'google_calendar_token' => 'encrypted',
+            'password' => 'hashed',
         ];
     }
 
-    /**
-     * Get the URL to the user's profile photo.
-     */
+    public function dashboardWidgets(): HasMany
+    {
+        return $this->hasMany(DashboardWidget::class);
+    }
+
+    public function inAppNotifications(): MorphMany
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')
+            ->orderByDesc('created_at');
+    }
+
     public function profilePhotoUrl(): Attribute
     {
         return filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)
@@ -112,9 +85,6 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
             : $this->getPhotoUrl();
     }
 
-    /**
-     * @return array<Model> | Collection
-     */
     public function getTenants(Panel $panel): array|Collection
     {
         return $this->allTeams();
@@ -127,15 +97,17 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === "admin") {
-            return $this->hasRole('admin');
-        }
-        return true;
+        return match ($panel->getId()) {
+            'super_admin' => $this->hasRole('super_admin'),
+            'admin' => $this->hasRole('admin'),
+            default => true,
+        };
     }
 
     public function canAccessFilament(): bool
     {
-        return $this->hasVerifiedEmail() && $this->hasAnyRole(['admin', 'manager', 'sales_rep']);
+        return $this->hasVerifiedEmail()
+            && $this->hasAnyRole(['super_admin', 'admin', 'manager', 'sales_rep']);
     }
 
     public function getDefaultTenant(Panel $panel): ?Model
@@ -148,13 +120,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
         return $this->belongsTo(Team::class, 'current_team_id');
     }
 
-    /**
-     * Check if the user has a specific role.
-     *
-     * @param string $role
-     * @return bool
-     */
-    public function hasRole($role): bool
+    public function hasRole($role, ?string $guard = null): bool
     {
         return $this->roles->contains('name', $role);
     }

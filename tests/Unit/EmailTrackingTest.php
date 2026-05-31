@@ -2,21 +2,22 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Services\GmailService;
 use App\Services\MailChimpService;
-use App\Models\Email;
-use Mockery;
 use Google_Service_Gmail_Message;
 use Google_Service_Gmail_MessagePart;
 use Google_Service_Gmail_MessagePartHeader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
+use Mockery;
+use Tests\TestCase;
 
 class EmailTrackingTest extends TestCase
 {
     use RefreshDatabase;
+
     protected $gmailService;
+
     protected $mailChimpService;
 
     protected function setUp(): void
@@ -26,7 +27,7 @@ class EmailTrackingTest extends TestCase
         $this->mailChimpService = Mockery::mock(MailChimpService::class)->makePartial();
     }
 
-    public function testTrackEmail()
+    public function test_track_email(): void
     {
         $message = $this->createMockMessage();
 
@@ -41,7 +42,7 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
-    public function testTrackSentEmail()
+    public function test_track_sent_email(): void
     {
         $message = $this->createMockMessage();
 
@@ -56,32 +57,29 @@ class EmailTrackingTest extends TestCase
         ]);
     }
 
-
-    public function testTrackEmailOpen()
+    public function test_track_email_open(): void
     {
         Log::shouldReceive('info')
             ->once()
-            ->with("Email opened: Campaign ID campaign_123, Email ID email_456");
+            ->with('Email opened: Campaign ID campaign_123, Email ID email_456');
 
         $this->mailChimpService->trackEmailOpen('campaign_123', 'email_456');
 
-        $this->assertTrue(true); 
+        $this->assertTrue(true);
     }
 
-
-    public function testTrackEmailClick()
+    public function test_track_email_click(): void
     {
         Log::shouldReceive('info')
             ->once()
-            ->with("Email link clicked: Campaign ID campaign_123, Email ID email_456, URL: https://example.com");
+            ->with('Email link clicked: Campaign ID campaign_123, Email ID email_456, URL: https://example.com');
 
         $this->mailChimpService->trackEmailClick('campaign_123', 'email_456', 'https://example.com');
 
         $this->assertTrue(true);
     }
 
-
-    public function testGetCampaignReport()
+    public function test_get_campaign_report(): void
     {
         $mockReport = [
             'campaign_id' => 'campaign_123',
@@ -123,9 +121,8 @@ class EmailTrackingTest extends TestCase
         $payload->shouldReceive('getBody->getData')->andReturn(base64_encode('Test email content'));
         $payload->shouldReceive('getParts')->andReturn([]);
         $payload->shouldReceive('getBody')->andReturn(
-            (object)['getData' => fn() => base64_encode('Test email content')]
+            (object) ['getData' => fn (): string => base64_encode('Test email content')]
         );
-
 
         return $message;
     }
@@ -135,6 +132,7 @@ class EmailTrackingTest extends TestCase
         $header = Mockery::mock(Google_Service_Gmail_MessagePartHeader::class);
         $header->shouldReceive('getName')->andReturn($name);
         $header->shouldReceive('getValue')->andReturn($value);
+
         return $header;
     }
 

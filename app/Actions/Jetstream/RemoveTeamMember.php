@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Jetstream;
 
 use App\Models\Team;
@@ -31,9 +33,9 @@ class RemoveTeamMember implements RemovesTeamMembers
      */
     protected function authorize(User $user, Team $team, User $teamMember): void
     {
-        if (!Gate::forUser($user)->check('removeTeamMember', $team) &&
+        if (! Gate::forUser($user)->check('removeTeamMember', $team) &&
             $user->id !== $teamMember->id) {
-            throw new AuthorizationException();
+            throw new AuthorizationException;
         }
     }
 

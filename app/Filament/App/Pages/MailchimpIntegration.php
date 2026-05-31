@@ -2,24 +2,26 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Schemas\Schema;
 use App\Services\MailChimpService;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\RichEditor;
-use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 class MailchimpIntegration extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
+
     protected string $view = 'filament.app.pages.mailchimp-integration';
 
     public ?array $listData = [];
+
     public ?array $campaignData = [];
 
-    public function mount(MailChimpService $mailchimpService)
+    public function mount(MailChimpService $mailchimpService): void
     {
         $this->listData = $mailchimpService->getLists();
     }
@@ -36,9 +38,9 @@ class MailchimpIntegration extends Page
             ]);
     }
 
-    public function createList(MailChimpService $mailchimpService)
+    public function createList(MailChimpService $mailchimpService): void
     {
-        $data = $this->createListForm(new Schema())->getState();
+        $data = $this->createListForm(new Schema)->getState();
         $result = $mailchimpService->createList(
             $data['name'],
             $data['company'],
@@ -76,9 +78,9 @@ class MailchimpIntegration extends Page
             ]);
     }
 
-    public function createCampaign(MailChimpService $mailchimpService)
+    public function createCampaign(MailChimpService $mailchimpService): void
     {
-        $data = $this->createCampaignForm(new Schema())->getState();
+        $data = $this->createCampaignForm(new Schema)->getState();
         $result = $mailchimpService->createCampaign(
             $data['list_id'],
             $data['subject'],
@@ -101,6 +103,7 @@ class MailchimpIntegration extends Page
         }
     }
 
+    #[\Override]
     public function getViewData(): array
     {
         return [

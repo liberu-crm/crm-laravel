@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('tickets', function (Blueprint $table) {
+        Schema::table('tickets', function (Blueprint $table): void {
             $table->string('source')->nullable()->after('email_id');
             $table->string('source_id')->nullable()->after('source');
             $table->unsignedBigInteger('account_id')->nullable()->after('source_id');
@@ -17,7 +17,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('tickets', function (Blueprint $table) {
+        Schema::table('tickets', function (Blueprint $table): void {
             $table->dropColumn(['source', 'source_id', 'account_id']);
         });
     }

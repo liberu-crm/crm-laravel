@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('whats_app_numbers', function (Blueprint $table) {
+        Schema::create('whats_app_numbers', function (Blueprint $table): void {
             $table->id();
             $table->string('number')->unique();
             $table->string('display_name');
@@ -17,7 +17,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('whats_app_numbers');
     }

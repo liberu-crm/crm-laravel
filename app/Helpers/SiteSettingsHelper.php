@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Helpers;
+declare(strict_types=1);
 
-use App\Facades\SiteSettings;
+namespace App\Helpers;
 
 class SiteSettingsHelper
 {
     public static function get($key, $default = null)
     {
-        return  $default;
+        return $default;
     }
 }

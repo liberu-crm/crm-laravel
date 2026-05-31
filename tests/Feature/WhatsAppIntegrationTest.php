@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Jobs\FetchMessages;
 use App\Models\Ticket;
-use App\Models\User;
 use App\Services\MessageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -14,7 +13,7 @@ class WhatsAppIntegrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFetchMessagesJobCanBeQueued()
+    public function test_fetch_messages_job_can_be_queued(): void
     {
         Queue::fake();
 
@@ -23,7 +22,7 @@ class WhatsAppIntegrationTest extends TestCase
         Queue::assertPushed(FetchMessages::class);
     }
 
-    public function testMessageServiceGetUnreadMessages()
+    public function test_message_service_get_unread_messages(): void
     {
         $messageService = $this->mock(MessageService::class);
         $messageService->shouldReceive('getUnreadMessages')->andReturn([
@@ -33,8 +32,8 @@ class WhatsAppIntegrationTest extends TestCase
                     'id' => 'whatsapp_123',
                     'from' => '1234567890',
                     'body' => 'Test WhatsApp message',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $result = app(MessageService::class)->getUnreadMessages();
@@ -45,9 +44,9 @@ class WhatsAppIntegrationTest extends TestCase
         $this->assertEquals('Test WhatsApp message', $result['whatsapp'][0]['body']);
     }
 
-    public function testTicketCanBeCreatedForWhatsAppMessage()
+    public function test_ticket_can_be_created_for_whats_app_message(): void
     {
-        $ticket = Ticket::factory()->create([
+        Ticket::factory()->create([
             'subject' => 'WhatsApp message from 1234567890',
             'source' => 'whatsapp',
         ]);

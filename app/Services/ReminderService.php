@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\Task;
 use App\Notifications\TaskReminderNotification;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class ReminderService
 {
-    public function sendReminders()
+    public function sendReminders(): void
     {
         $tasks = Task::where('reminder_date', '<=', Carbon::now())
             ->where('reminder_sent', false)
@@ -40,7 +40,7 @@ class ReminderService
         }
     }
 
-    public function scheduleReminder(Task $task, Carbon $reminderDate)
+    public function scheduleReminder(Task $task, Carbon $reminderDate): void
     {
         try {
             $task->update([

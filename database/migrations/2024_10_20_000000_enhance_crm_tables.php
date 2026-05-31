@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             $table->string('status')->nullable();
             $table->string('source')->nullable();
 
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('annual_revenue', 15, 2)->nullable();
         });
 
-/**
+        /**
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->string('status');
@@ -28,8 +28,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
-**/
-        Schema::create('activities', function (Blueprint $table) {
+         **/
+        Schema::create('activities', function (Blueprint $table): void {
             $table->id();
             $table->string('type');
             $table->dateTime('date');
@@ -45,7 +45,7 @@ return new class extends Migration
         Schema::dropIfExists('activities');
         Schema::dropIfExists('deals');
         Schema::dropIfExists('leads');
-        Schema::table('contacts', function (Blueprint $table) {
+        Schema::table('contacts', function (Blueprint $table): void {
             $table->dropColumn(['status', 'source', 'industry', 'company_size', 'annual_revenue']);
         });
     }

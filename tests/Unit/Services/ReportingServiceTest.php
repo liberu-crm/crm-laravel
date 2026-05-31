@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Services;
 
+use App\Models\Activity;
 use App\Models\Contact;
 use App\Models\Deal;
-use App\Models\Activity;
 use App\Services\ReportingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,10 +18,10 @@ class ReportingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->reportingService = new ReportingService();
+        $this->reportingService = new ReportingService;
     }
 
-    public function testGetContactInteractionsData()
+    public function test_get_contact_interactions_data(): void
     {
         Contact::factory()->count(5)->create();
         Activity::factory()->count(20)->create();
@@ -32,7 +32,7 @@ class ReportingServiceTest extends TestCase
         $this->assertArrayHasKey('activities_count', $result->first());
     }
 
-    public function testGetSalesPipelineData()
+    public function test_get_sales_pipeline_data(): void
     {
         Deal::factory()->count(10)->create();
 
@@ -45,7 +45,7 @@ class ReportingServiceTest extends TestCase
         $this->assertArrayHasKey('total_value', $result->first());
     }
 
-    public function testGetCustomerEngagementData()
+    public function test_get_customer_engagement_data(): void
     {
         Activity::factory()->count(30)->create();
 

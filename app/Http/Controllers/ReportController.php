@@ -2,50 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ReportingService;
 use App\Services\MailChimpService;
+use App\Services\ReportingService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    protected $reportingService;
-    protected $mailChimpService;
-
-    public function __construct(ReportingService $reportingService, MailChimpService $mailChimpService)
+    public function __construct(protected \App\Services\ReportingService $reportingService, protected \App\Services\MailChimpService $mailChimpService)
     {
-        $this->reportingService = $reportingService;
-        $this->mailChimpService = $mailChimpService;
     }
 
-    public function generateContactInteractionsReport(Request $request)
+    public function generateContactInteractionsReport(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $data = $this->reportingService->getContactInteractionsData($request->all());
-        return view('reports.contact-interactions', compact('data'));
+
+        return view('reports.contact-interactions', ['data' => $data]);
     }
 
-    public function generateSalesPipelineReport(Request $request)
+    public function generateSalesPipelineReport(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $data = $this->reportingService->getSalesPipelineData($request->all());
-        return view('reports.sales-pipeline', compact('data'));
+
+        return view('reports.sales-pipeline', ['data' => $data]);
     }
 
-    public function generateCustomerEngagementReport(Request $request)
+    public function generateCustomerEngagementReport(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $data = $this->reportingService->getCustomerEngagementData($request->all());
-        return view('reports.customer-engagement', compact('data'));
+
+        return view('reports.customer-engagement', ['data' => $data]);
     }
 
-    public function generateABTestResultsReport(Request $request)
+    public function generateABTestResultsReport(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $campaignId = $request->input('campaign_id');
         $data = $this->mailChimpService->getABTestResults($campaignId);
-        return view('reports.ab-test-results', compact('data'));
+
+        return view('reports.ab-test-results', ['data' => $data]);
     }
 
-    public function generateEmailCampaignReport(Request $request)
+    public function generateEmailCampaignReport(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $campaignId = $request->input('campaign_id');
         $data = $this->mailChimpService->getCampaignReport($campaignId);
-        return view('reports.email-campaign-performance', compact('data'));
+
+        return view('reports.email-campaign-performance', ['data' => $data]);
     }
 }

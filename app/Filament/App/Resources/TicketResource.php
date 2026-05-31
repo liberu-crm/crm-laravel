@@ -1,38 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Exception;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Notifications\Notification;
 use App\Filament\App\Resources\RelationManagers\MessagesRelationManager;
-use App\Filament\App\Resources\TicketResource\Pages\ListTickets;
 use App\Filament\App\Resources\TicketResource\Pages\CreateTicket;
 use App\Filament\App\Resources\TicketResource\Pages\EditTicket;
-use App\Filament\App\Resources\TicketResource\Pages;
+use App\Filament\App\Resources\TicketResource\Pages\ListTickets;
 use App\Models\Ticket;
 use App\Services\UnifiedHelpDeskService;
-use Filament\Forms;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Illuminate\Support\Facades\Cache;
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
-    protected static string | \UnitEnum | null $navigationGroup = 'Help Desk';
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Help Desk';
+
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -67,6 +70,7 @@ class TicketResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -114,7 +118,7 @@ class TicketResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('reply')
-                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService) {
+                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService): void {
                         try {
                             $helpDeskService->sendReply(
                                 $record->source_id,
@@ -144,8 +148,8 @@ class TicketResource extends Resource
                             ->label('Reply'),
                     ]),
                 Action::make('view_messages')
-                    ->url(fn (Ticket $record) => MessageResource::getUrl('index', [
-                        'tableFilters[source_id][value]' => $record->source_id
+                    ->url(fn (Ticket $record): string => MessageResource::getUrl('index', [
+                        'tableFilters[source_id][value]' => $record->source_id,
                     ]))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->label('View Messages'),
@@ -157,6 +161,7 @@ class TicketResource extends Resource
             ->poll('30s');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -164,6 +169,7 @@ class TicketResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

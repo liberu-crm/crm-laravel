@@ -5,72 +5,69 @@ namespace App\Services;
 use App\Models\OAuthConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Webklex\PHPIMAP\Client;
+use Webklex\PHPIMAP\ClientManager;
+use Webklex\PHPIMAP\Message;
 
 class ImapService
 {
-    protected $connection;
-
     public function getUnreadMessages(OAuthConfiguration $config): Collection
     {
         try {
-            $this->connect($config);
-            
-            $mailbox = '{' . $config->additional_settings['host'] . ':' . ($config->additional_settings['port'] ?? 993) . '/imap/ssl}INBOX';
-            $emails = imap_search($this->connection, 'UNSEEN');
-            
-            $messages = collect();
-            if ($emails) {
-                foreach ($emails as $emailNumber) {
-                    $message = $this->parseMessage($emailNumber);
-                    if ($message) {
-                        $messages->push($message);
-                    }
-                }
+            $client = $this->connect($config);
+            $folder = $client->getFolder('INBOX');
+            $messages = $folder->messages()->whereUnseen()->get();
+
+            $parsed = collect();
+            foreach ($messages as $message) {
+                $parsed->push($this->parseMessage($message));
             }
-            
-            $this->disconnect();
-            return $messages;
+
+            return $parsed;
         } catch (\Exception $e) {
-            Log::error('Error fetching IMAP messages: ' . $e->getMessage());
-            $this->disconnect();
+            Log::error('Error fetching IMAP messages: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function getMessage($messageId, OAuthConfiguration $config)
+    public function getMessage($messageId, OAuthConfiguration $config): ?array
     {
         try {
-            $this->connect($config);
-            
-            $message = $this->parseMessage($messageId);
-            
-            $this->disconnect();
-            return $message;
+            $client = $this->connect($config);
+            $folder = $client->getFolder('INBOX');
+            $message = $folder->messages()->getMessageByUid($messageId);
+
+            if (! $message) {
+                return null;
+            }
+
+            return $this->parseMessage($message);
         } catch (\Exception $e) {
-            Log::error('Error fetching IMAP message: ' . $e->getMessage());
-            $this->disconnect();
+            Log::error('Error fetching IMAP message: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function sendReply($messageId, $content, OAuthConfiguration $config)
+    public function sendReply(string $messageId, $content, OAuthConfiguration $config)
     {
         try {
-            $this->connect($config);
-            
-            // Get original message to get recipient
-            $header = imap_headerinfo($this->connection, $messageId);
-            $to = $header->from[0]->mailbox . '@' . $header->from[0]->host;
-            $subject = 'Re: ' . ($header->subject ?? '');
-            
-            // Send reply via SMTP (IMAP doesn't support sending)
+            $client = $this->connect($config);
+            $folder = $client->getFolder('INBOX');
+            $message = $folder->messages()->getMessageByUid($messageId);
+
+            if (! $message) {
+                throw new \Exception('Message not found: '.$messageId);
+            }
+
+            $from = $message->getFrom()->first();
+            $to = $from->mail;
+            $subject = 'Re: '.$message->getSubject()->toString();
+
             $this->sendViaSmtp($to, $subject, $content, $config);
-            
-            $this->disconnect();
+
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending IMAP reply: ' . $e->getMessage());
-            $this->disconnect();
+            Log::error('Error sending IMAP reply: '.$e->getMessage());
             throw $e;
         }
     }
@@ -79,141 +76,94 @@ class ImapService
     {
         try {
             $this->sendViaSmtp($to, $subject, $content, $config);
+
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending IMAP message: ' . $e->getMessage());
+            Log::error('Error sending IMAP message: '.$e->getMessage());
             throw $e;
         }
     }
 
-    protected function connect(OAuthConfiguration $config)
+    protected function connect(OAuthConfiguration $config): Client
     {
         $host = $config->additional_settings['host'] ?? '';
-        $port = $config->additional_settings['port'] ?? 993;
+        $port = (int) ($config->additional_settings['port'] ?? 993);
         $username = $config->additional_settings['username'] ?? $config->client_id;
         $password = $config->additional_settings['password'] ?? $config->client_secret;
-        $ssl = $config->additional_settings['ssl'] ?? true;
-        
-        $mailbox = '{' . $host . ':' . $port . '/imap' . ($ssl ? '/ssl' : '') . '}INBOX';
-        
-        $this->connection = imap_open($mailbox, $username, $password);
-        
-        if (!$this->connection) {
-            throw new \Exception('Failed to connect to IMAP server: ' . imap_last_error());
+        $ssl = $config->additional_settings['ssl'] ?? 'ssl';
+
+        if (empty($host)) {
+            throw new \Exception('IMAP host is not configured');
         }
+
+        $encryption = match (true) {
+            $ssl === true || $ssl === 'ssl' => 'ssl',
+            $ssl === 'tls' => 'tls',
+            default => false,
+        };
+
+        $cm = new ClientManager;
+        $client = $cm->make([
+            'host' => $host,
+            'port' => $port,
+            'username' => $username,
+            'password' => $password,
+            'encryption' => $encryption,
+        ]);
+
+        $client->connect();
+
+        return $client;
     }
 
-    protected function disconnect()
+    protected function parseMessage(Message $message): array
     {
-        if ($this->connection) {
-            imap_close($this->connection);
-            $this->connection = null;
-        }
-    }
+        $from = $message->getFrom()->first();
 
-    protected function parseMessage($emailNumber)
-    {
-        $header = imap_headerinfo($this->connection, $emailNumber);
-        $structure = imap_fetchstructure($this->connection, $emailNumber);
-        
-        $body = $this->getMessageBody($emailNumber, $structure);
-        
-        $from = $header->from[0]->mailbox . '@' . $header->from[0]->host;
-        
-        // Get CC recipients
         $cc = [];
-        if (isset($header->cc)) {
-            foreach ($header->cc as $recipient) {
-                $cc[] = $recipient->mailbox . '@' . $recipient->host;
+        if ($message->getCc()->count() > 0) {
+            foreach ($message->getCc()->toArray() as $addr) {
+                $cc[] = $addr->mail;
             }
         }
-        
-        // Get BCC recipients (usually not available via IMAP)
-        $bcc = [];
-        if (isset($header->bcc)) {
-            foreach ($header->bcc as $recipient) {
-                $bcc[] = $recipient->mailbox . '@' . $recipient->host;
-            }
+
+        $attachments = [];
+        foreach ($message->getAttachments() as $attachment) {
+            $attachments[] = [
+                'filename' => $attachment->getName(),
+                'size' => $attachment->getSize(),
+            ];
         }
-        
+
+        $date = $message->getDate()?->toDate();
+
         return [
-            'id' => $emailNumber,
-            'from' => $from,
-            'subject' => $header->subject ?? '',
-            'message' => $body,
-            'content' => $body,
-            'timestamp' => isset($header->date) ? date('Y-m-d H:i:s', strtotime($header->date)) : now(),
-            'thread_id' => $header->message_id ?? null,
-            'attachments' => $this->getAttachments($emailNumber, $structure),
+            'id' => $message->getUid(),
+            'from' => $from ? $from->mail : '',
+            'subject' => $message->getSubject()->toString() ?? '',
+            'message' => $message->getTextBody() ?? $message->getHTMLBody() ?? '',
+            'content' => $message->getTextBody() ?? $message->getHTMLBody() ?? '',
+            'timestamp' => $date ? $date->format('Y-m-d H:i:s') : now(),
+            'thread_id' => $message->getMessageId()->toString() ?? null,
+            'attachments' => $attachments,
             'status' => 'received',
             'cc' => $cc,
-            'bcc' => $bcc,
+            'bcc' => [],
         ];
-    }
-
-    protected function getMessageBody($emailNumber, $structure)
-    {
-        $body = '';
-        
-        if (!isset($structure->parts)) {
-            // Simple message
-            $body = imap_body($this->connection, $emailNumber);
-            
-            if ($structure->encoding == 3) { // BASE64
-                $body = base64_decode($body);
-            } elseif ($structure->encoding == 4) { // QUOTED-PRINTABLE
-                $body = quoted_printable_decode($body);
-            }
-        } else {
-            // Multipart message
-            foreach ($structure->parts as $partNumber => $part) {
-                if ($part->type == 0) { // Text
-                    $body = imap_fetchbody($this->connection, $emailNumber, $partNumber + 1);
-                    
-                    if ($part->encoding == 3) { // BASE64
-                        $body = base64_decode($body);
-                    } elseif ($part->encoding == 4) { // QUOTED-PRINTABLE
-                        $body = quoted_printable_decode($body);
-                    }
-                    
-                    break;
-                }
-            }
-        }
-        
-        return $body;
-    }
-
-    protected function getAttachments($emailNumber, $structure)
-    {
-        $attachments = [];
-        
-        if (isset($structure->parts)) {
-            foreach ($structure->parts as $partNumber => $part) {
-                if (isset($part->disposition) && strtolower($part->disposition) == 'attachment') {
-                    $attachments[] = [
-                        'filename' => $part->dparameters[0]->value ?? 'unknown',
-                        'size' => $part->bytes ?? 0,
-                    ];
-                }
-            }
-        }
-        
-        return $attachments;
     }
 
     protected function sendViaSmtp($to, $subject, $content, OAuthConfiguration $config)
     {
         $from = $config->additional_settings['from_email'] ?? $config->additional_settings['username'] ?? $config->client_id;
-        
+
         try {
-            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from): void {
                 $message->to($to)
                     ->subject($subject)
                     ->from($from);
             });
         } catch (\Exception $e) {
-            Log::error('Error sending email via SMTP: ' . $e->getMessage());
+            Log::error('Error sending email via SMTP: '.$e->getMessage());
             throw $e;
         }
     }

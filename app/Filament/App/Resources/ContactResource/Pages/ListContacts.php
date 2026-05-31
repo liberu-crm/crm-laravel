@@ -2,10 +2,9 @@
 
 namespace App\Filament\App\Resources\ContactResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\ContactResource;
 use App\Models\Contact;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Http\Request;
 
@@ -13,6 +12,7 @@ class ListContacts extends ListRecords
 {
     protected static string $resource = ContactResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -23,19 +23,19 @@ class ListContacts extends ListRecords
     /**
      * Handle the index request for the contacts list.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $query = Contact::query();
 
         if ($request->filled('search')) {
             $term = $request->search;
-            $query->where(function ($q) use ($term) {
-                $q->where('name', 'like', '%' . $term . '%')
-                  ->orWhere('last_name', 'like', '%' . $term . '%')
-                  ->orWhere('email', 'like', '%' . $term . '%')
-                  ->orWhere('phone_number', 'like', '%' . $term . '%')
-                  ->orWhere('company_size', 'like', '%' . $term . '%')
-                  ->orWhere('industry', 'like', '%' . $term . '%');
+            $query->where(function ($q) use ($term): void {
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('last_name', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone_number', 'like', '%'.$term.'%')
+                    ->orWhere('company_size', 'like', '%'.$term.'%')
+                    ->orWhere('industry', 'like', '%'.$term.'%');
             });
         }
 
@@ -45,7 +45,7 @@ class ListContacts extends ListRecords
 
         $contacts = $query->get();
 
-        return view('contacts.list', compact('contacts'));
+        return view('contacts.list', ['contacts' => $contacts]);
     }
 
     /**
@@ -55,7 +55,7 @@ class ListContacts extends ListRecords
     {
         $ids = $request->input('ids', []);
 
-        if (!empty($ids)) {
+        if (! empty($ids)) {
             Contact::whereIn('id', $ids)->delete();
         }
 
@@ -69,9 +69,9 @@ class ListContacts extends ListRecords
     {
         $term = $request->input('query', '');
 
-        $contacts = Contact::where(function ($q) use ($term) {
-            $q->where('name', 'like', $term . '%')
-              ->orWhere('email', 'like', '%' . $term . '%');
+        $contacts = Contact::where(function ($q) use ($term): void {
+            $q->where('name', 'like', $term.'%')
+                ->orWhere('email', 'like', '%'.$term.'%');
         })
             ->limit(10)
             ->get(['id', 'name', 'email']);

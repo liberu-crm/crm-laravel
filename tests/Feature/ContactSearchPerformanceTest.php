@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ContactSearchPerformanceTest extends TestCase
@@ -17,7 +16,7 @@ class ContactSearchPerformanceTest extends TestCase
         Contact::factory()->count(50)->create();
     }
 
-    public function testContactQueryCanHandleMultipleRecords()
+    public function test_contact_query_can_handle_multiple_records(): void
     {
         $start = microtime(true);
         $result = Contact::all();
@@ -27,7 +26,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertLessThan(5.0, $elapsed, 'Contact query took more than 5 seconds');
     }
 
-    public function testContactSearchByName()
+    public function test_contact_search_by_name(): void
     {
         $contact = Contact::factory()->create(['name' => 'UniqueSearchName12345']);
 
@@ -37,7 +36,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertEquals($contact->id, $results->first()->id);
     }
 
-    public function testContactSearchByEmail()
+    public function test_contact_search_by_email(): void
     {
         $contact = Contact::factory()->create(['email' => 'uniquesearch12345@example.com']);
 
@@ -47,7 +46,7 @@ class ContactSearchPerformanceTest extends TestCase
         $this->assertEquals($contact->id, $results->first()->id);
     }
 
-    public function testContactFilterByStatus()
+    public function test_contact_filter_by_status(): void
     {
         $activeBefore = Contact::where('status', 'active')->count();
         $inactiveBefore = Contact::where('status', 'inactive')->count();

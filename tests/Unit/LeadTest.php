@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Models\Lead;
-use App\Models\Contact;
-use App\Models\User;
 use App\Models\Activity;
+use App\Models\Contact;
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

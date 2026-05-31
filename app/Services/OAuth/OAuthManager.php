@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class OAuthManager
 {
-    protected $client;
-    
+    protected \GuzzleHttp\Client $client;
+
     protected $providers = [
         'mailchimp' => [
             'authorize_url' => 'https://login.mailchimp.com/oauth2/authorize',
@@ -77,18 +77,18 @@ class OAuthManager
      */
     public function getAuthorizationUrl(string $provider, array $additionalScopes = []): string
     {
-        if (!isset($this->providers[$provider])) {
+        if (! isset($this->providers[$provider])) {
             throw new \InvalidArgumentException("Unsupported provider: {$provider}");
         }
 
         $config = OAuthConfiguration::getConfig($provider);
-        if (!$config) {
+        if (! $config) {
             throw new \RuntimeException("OAuth configuration not found for provider: {$provider}");
         }
 
         $providerConfig = $this->providers[$provider];
         $scopes = array_merge($providerConfig['scopes'], $additionalScopes);
-        
+
         $params = [
             'client_id' => $config->client_id,
             'redirect_uri' => $this->getRedirectUri($provider),
@@ -108,7 +108,7 @@ class OAuthManager
             $params['code_challenge_method'] = 'plain';
         }
 
-        return $providerConfig['authorize_url'] . '?' . http_build_query($params);
+        return $providerConfig['authorize_url'].'?'.http_build_query($params);
     }
 
     /**
@@ -116,17 +116,17 @@ class OAuthManager
      */
     public function exchangeCodeForToken(string $provider, string $code): array
     {
-        if (!isset($this->providers[$provider])) {
+        if (! isset($this->providers[$provider])) {
             throw new \InvalidArgumentException("Unsupported provider: {$provider}");
         }
 
         $config = OAuthConfiguration::getConfig($provider);
-        if (!$config) {
+        if (! $config) {
             throw new \RuntimeException("OAuth configuration not found for provider: {$provider}");
         }
 
         $providerConfig = $this->providers[$provider];
-        
+
         $params = [
             'grant_type' => 'authorization_code',
             'code' => $code,
@@ -143,8 +143,8 @@ class OAuthManager
                 ],
             ]);
 
-            $data = json_decode($response->getBody(), true);
-            
+            $data = json_decode((string) $response->getBody(), true);
+
             // Get additional metadata for some providers
             if ($provider === 'mailchimp') {
                 $metadata = $this->getMailChimpMetadata($data['access_token']);
@@ -153,8 +153,8 @@ class OAuthManager
 
             return $data;
         } catch (\Exception $e) {
-            Log::error("OAuth token exchange failed for {$provider}: " . $e->getMessage());
-            throw new \RuntimeException("Failed to exchange code for token: " . $e->getMessage());
+            Log::error("OAuth token exchange failed for {$provider}: ".$e->getMessage());
+            throw new \RuntimeException('Failed to exchange code for token: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -163,23 +163,24 @@ class OAuthManager
      */
     public function refreshToken(ConnectedAccount $account): bool
     {
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             Log::warning("No refresh token available for account {$account->id}");
+
             return false;
         }
 
         $provider = $account->provider;
-        if (!isset($this->providers[$provider])) {
+        if (! isset($this->providers[$provider])) {
             throw new \InvalidArgumentException("Unsupported provider: {$provider}");
         }
 
         $config = OAuthConfiguration::getConfig($provider);
-        if (!$config) {
+        if (! $config) {
             throw new \RuntimeException("OAuth configuration not found for provider: {$provider}");
         }
 
         $providerConfig = $this->providers[$provider];
-        
+
         $params = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $account->refresh_token,
@@ -195,19 +196,21 @@ class OAuthManager
                 ],
             ]);
 
-            $data = json_decode($response->getBody(), true);
-            
+            $data = json_decode((string) $response->getBody(), true);
+
             $account->update([
                 'token' => $data['access_token'],
                 'refresh_token' => $data['refresh_token'] ?? $account->refresh_token,
-                'expires_at' => isset($data['expires_in']) ? 
+                'expires_at' => isset($data['expires_in']) ?
                     Carbon::now()->addSeconds($data['expires_in']) : null,
             ]);
 
             Log::info("Successfully refreshed token for account {$account->id}");
+
             return true;
         } catch (\Exception $e) {
-            Log::error("OAuth token refresh failed for account {$account->id}: " . $e->getMessage());
+            Log::error("OAuth token refresh failed for account {$account->id}: ".$e->getMessage());
+
             return false;
         }
     }
@@ -217,14 +220,14 @@ class OAuthManager
      */
     public function saveConnectedAccount(string $provider, array $tokenData, ?int $userId = null): ConnectedAccount
     {
-        $userId = $userId ?? Auth::id();
-        
+        $userId ??= Auth::id();
+
         $accountData = [
             'user_id' => $userId,
             'provider' => $provider,
             'token' => $tokenData['access_token'],
             'refresh_token' => $tokenData['refresh_token'] ?? null,
-            'expires_at' => isset($tokenData['expires_in']) ? 
+            'expires_at' => isset($tokenData['expires_in']) ?
                 Carbon::now()->addSeconds($tokenData['expires_in']) : null,
         ];
 
@@ -249,7 +252,7 @@ class OAuthManager
      */
     public function needsRefresh(ConnectedAccount $account): bool
     {
-        if (!$account->expires_at) {
+        if (! $account->expires_at) {
             return false;
         }
 
@@ -290,9 +293,10 @@ class OAuthManager
                 ],
             ]);
 
-            return json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         } catch (\Exception $e) {
-            Log::error("Failed to get MailChimp metadata: " . $e->getMessage());
+            Log::error('Failed to get MailChimp metadata: '.$e->getMessage());
+
             return [];
         }
     }

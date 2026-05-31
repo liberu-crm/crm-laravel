@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\CampaignRecipient;
-use App\Models\MarketingCampaign;
 use App\Models\Contact;
+use App\Models\MarketingCampaign;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -27,10 +29,10 @@ class CampaignRecipientFactory extends Factory
             'metadata' => json_encode([
                 'ip_address' => $this->faker->ipv4,
                 'user_agent' => $this->faker->userAgent,
-                'location' => $this->faker->city
+                'location' => $this->faker->city,
             ]),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

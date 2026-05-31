@@ -3,22 +3,21 @@
 namespace App\Filament\App\Resources\TaskResource\Pages;
 
 use App\Filament\App\Resources\TaskResource;
-use App\Services\GoogleCalendarService;
-use App\Services\OutlookCalendarService;
-use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateTask extends CreateRecord
 {
     protected static string $resource = TaskResource::class;
 
-    protected function getFormSchema(): array
+    #[\Override]
+    public function form(Schema $schema): Schema
     {
-        return array_merge(
-            parent::getFormSchema(),
-            [
+        return parent::form($schema)
+            ->components([
+                ...parent::form($schema)->getComponents(),
                 DateTimePicker::make('reminder_date')
                     ->label('Reminder Date'),
                 Select::make('calendar_type')
@@ -29,9 +28,8 @@ class CreateTask extends CreateRecord
                         'outlook' => 'Outlook Calendar',
                     ])
                     ->default('none')
-                    ->reactive(),
-            ]
-        );
+                    ->live(),
+            ]);
     }
 
     protected function afterCreate(): void

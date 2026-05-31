@@ -2,11 +2,10 @@
 
 namespace App\Filament\App\Resources\MailchimpCampaignResource\Pages;
 
-use Filament\Tables\Columns\TextColumn;
 use App\Filament\App\Resources\MailchimpCampaignResource;
 use App\Services\MailChimpService;
 use Filament\Resources\Pages\Page;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ViewCampaignPerformance extends Page
@@ -15,6 +14,7 @@ class ViewCampaignPerformance extends Page
 
     protected string $view = 'filament.app.resources.mailchimp-campaign-resource.pages.view-campaign-performance';
 
+    #[\Override]
     public function getTitle(): string
     {
         return "Campaign Performance: {$this->record->name}";
@@ -43,7 +43,7 @@ class ViewCampaignPerformance extends Page
                 ],
                 [
                     'metric' => 'Open Rate',
-                    'value' => number_format($report['open_rate'] * 100, 2) . '%',
+                    'value' => number_format($report['open_rate'] * 100, 2).'%',
                 ],
                 [
                     'metric' => 'Clicks',
@@ -51,7 +51,7 @@ class ViewCampaignPerformance extends Page
                 ],
                 [
                     'metric' => 'Click Rate',
-                    'value' => number_format($report['click_rate'] * 100, 2) . '%',
+                    'value' => number_format($report['click_rate'] * 100, 2).'%',
                 ],
                 [
                     'metric' => 'Unsubscribes',
@@ -59,7 +59,7 @@ class ViewCampaignPerformance extends Page
                 ],
                 [
                     'metric' => 'Bounce Rate',
-                    'value' => number_format($report['bounce_rate'] * 100, 2) . '%',
+                    'value' => number_format($report['bounce_rate'] * 100, 2).'%',
                 ],
             ]);
     }

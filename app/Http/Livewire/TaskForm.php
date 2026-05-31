@@ -2,22 +2,30 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Task;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
 use App\Models\User;
 use Livewire\Component;
 
 class TaskForm extends Component
 {
     public $task;
+
     public $taskId;
+
     public $name;
+
     public $description;
+
     public $due_date;
+
     public $contact_id;
+
     public $lead_id;
+
     public $assigned_to;
+
     public $reminder_date;
 
     protected $rules = [
@@ -30,7 +38,7 @@ class TaskForm extends Component
         'reminder_date' => 'nullable|date|before_or_equal:due_date',
     ];
 
-    public function mount($taskId = null)
+    public function mount($taskId = null): void
     {
         if ($taskId) {
             $this->task = Task::findOrFail($taskId);
@@ -70,7 +78,7 @@ class TaskForm extends Component
         return redirect()->route('tasks.index');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.task-form', [
             'contacts' => Contact::all(),

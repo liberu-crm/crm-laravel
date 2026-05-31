@@ -19,7 +19,7 @@ class FetchMessages implements ShouldQueue
         MessageService $messageService,
         CreateTicketFromEmail $createTicketFromEmail,
         CreateTicketFromWhatsApp $createTicketFromWhatsApp
-    ) {
+    ): void {
         $messages = $messageService->getUnreadMessages();
 
         foreach ($messages['email'] as $message) {

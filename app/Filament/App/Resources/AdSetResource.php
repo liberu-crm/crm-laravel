@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\AdSetResource\Pages\CreateAdSet;
@@ -22,12 +24,13 @@ class AdSetResource extends Resource
 {
     protected static ?string $model = AdSet::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Advertising';
+    protected static string|\UnitEnum|null $navigationGroup = 'Advertising';
 
     protected static ?string $navigationLabel = 'Ad Sets';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -67,6 +70,7 @@ class AdSetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -101,11 +105,13 @@ class AdSetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

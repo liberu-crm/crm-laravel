@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuditLogService
 {
-    public function log($action, $description)
+    public function log($action, $description): void
     {
         AuditLog::create([
             'user_id' => Auth::id(),

@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Services\ImapService;
 use App\Actions\Helpdesk\CreateTicketFromEmail;
 use App\Models\OAuthConfiguration;
+use App\Services\ImapService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,17 +16,14 @@ class FetchImapTickets implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $configId;
-
-    public function __construct($configId = null)
+    public function __construct(protected $configId = null)
     {
-        $this->configId = $configId;
     }
 
-    public function handle(ImapService $imapService, CreateTicketFromEmail $createTicket)
+    public function handle(ImapService $imapService, CreateTicketFromEmail $createTicket): void
     {
         try {
-            $configs = $this->configId 
+            $configs = $this->configId
                 ? [OAuthConfiguration::findOrFail($this->configId)]
                 : OAuthConfiguration::where('service_name', 'imap')
                     ->where('is_active', true)
@@ -40,11 +37,11 @@ class FetchImapTickets implements ShouldQueue
                         $createTicket->execute($message, 'imap');
                     }
                 } catch (\Exception $e) {
-                    Log::error("Error fetching IMAP tickets for config {$config->id}: " . $e->getMessage());
+                    Log::error("Error fetching IMAP tickets for config {$config->id}: ".$e->getMessage());
                 }
             }
         } catch (\Exception $e) {
-            Log::error('Error in FetchImapTickets job: ' . $e->getMessage());
+            Log::error('Error in FetchImapTickets job: '.$e->getMessage());
         }
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use Exception;
 use App\Models\MarketingCampaign;
 use App\Services\MailChimpService;
 use App\Services\TwilioService;
 use App\Services\WhatsAppBusinessService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,14 +18,11 @@ class SendMarketingCampaign implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $campaign;
-
-    public function __construct(MarketingCampaign $campaign)
+    public function __construct(protected \App\Models\MarketingCampaign $campaign)
     {
-        $this->campaign = $campaign;
     }
 
-    public function handle(MailChimpService $mailchimp, TwilioService $twilio, WhatsAppBusinessService $whatsapp)
+    public function handle(MailChimpService $mailchimp, TwilioService $twilio, WhatsAppBusinessService $whatsapp): void
     {
         try {
             switch ($this->campaign->type) {
@@ -42,7 +39,7 @@ class SendMarketingCampaign implements ShouldQueue
 
             $this->campaign->update(['status' => 'sent']);
         } catch (Exception $e) {
-            Log::error('Failed to send marketing campaign: ' . $e->getMessage());
+            Log::error('Failed to send marketing campaign: '.$e->getMessage());
             $this->campaign->update(['status' => 'failed']);
         }
     }

@@ -2,47 +2,47 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\MultiSelect;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\View;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TagsColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\SocialMediaPostResource\Pages\ListSocialMediaPosts;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\CreateSocialMediaPost;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\EditSocialMediaPost;
-use Exception;
-use App\Filament\App\Resources\SocialMediaPostResource\Pages;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages\ListSocialMediaPosts;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookAdsService;
 use App\Services\LinkedInAdsService;
-use Filament\Forms;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TagsColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Illuminate\Support\Facades\Log;
-use Filament\Forms\Components\Tabs;
 
 class SocialMediaPostResource extends Resource
 {
     protected static ?string $model = SocialMediaPost::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-share';
-    protected static string | \UnitEnum | null $navigationGroup = 'Marketing';
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-share';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Marketing';
+
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -55,9 +55,8 @@ class SocialMediaPostResource extends Resource
                                     ->required()
                                     ->maxLength(65535)
                                     ->helperText('Write your post content here. Character limits vary by platform.')
-                                    ->reactive()
-                                    ->afterStateUpdated(fn ($state, callable $set) => 
-                                        $set('character_count', strlen($state))),
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('character_count', strlen((string) $state))),
                                 TextInput::make('character_count')
                                     ->label('Character Count')
                                     ->disabled()
@@ -81,11 +80,10 @@ class SocialMediaPostResource extends Resource
                                 Select::make('status')
                                     ->options(SocialMediaPost::getStatuses())
                                     ->required()
-                                    ->disabled(fn ($record) => 
-                                        $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
+                                    ->disabled(fn ($record): bool => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
                             ->columnSpan(2),
-                        
+
                         Section::make('Media & Links')
                             ->schema([
                                 TextInput::make('link')
@@ -111,30 +109,27 @@ class SocialMediaPostResource extends Resource
                         Section::make('Preview')
                             ->schema([
                                 View::make('filament.components.social-media-preview')
-                                    ->visible(fn ($get) => !empty($get('content')))
+                                    ->visible(fn ($get): bool => ! empty($get('content'))),
                             ])
                             ->columnSpan(2),
 
                         Section::make('Analytics')
                             ->schema([
                                 Placeholder::make('Analytics')
-                                    ->content(function (SocialMediaPost $record) {
-                                        return view('filament.components.social-media-analytics', [
-                                            'post' => $record,
-                                            'detailed' => true
-                                        ]);
-                                    }),
+                                    ->content(fn(SocialMediaPost $record) => view('filament.components.social-media-analytics', [
+                                        'post' => $record,
+                                        'detailed' => true,
+                                    ])),
                                 View::make('filament.components.engagement-chart')
-                                    ->visible(fn ($record) => 
-                                        $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
+                                    ->visible(fn ($record): bool => $record && $record->status === SocialMediaPost::STATUS_PUBLISHED),
                             ])
                             ->columnSpan(1)
-                            ->hidden(fn ($record) => 
-                                $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
+                            ->hidden(fn ($record): bool => $record === null || $record->status !== SocialMediaPost::STATUS_PUBLISHED),
                     ]),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -176,17 +171,18 @@ class SocialMediaPostResource extends Resource
                 ViewAction::make(),
                 EditAction::make(),
                 Action::make('publish')
-                    ->action(function (SocialMediaPost $record) {
+                    ->action(function (SocialMediaPost $record): void {
                         self::publishPost($record);
                     })
                     ->requiresConfirmation()
-                    ->visible(fn (SocialMediaPost $record) => $record->status === SocialMediaPost::STATUS_SCHEDULED),
+                    ->visible(fn (SocialMediaPost $record): bool => $record->status === SocialMediaPost::STATUS_SCHEDULED),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -194,6 +190,7 @@ class SocialMediaPostResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -227,12 +224,13 @@ class SocialMediaPostResource extends Resource
                         ]);
                         $post->platform_post_ids['linkedin'] = $result['id'];
                         break;
-                    // Add cases for other platforms as needed
+                        // Add cases for other platforms as needed
                 }
             } catch (Exception $e) {
-                Log::error("Failed to publish post to $platform: " . $e->getMessage());
+                Log::error("Failed to publish post to $platform: ".$e->getMessage());
                 $post->status = SocialMediaPost::STATUS_FAILED;
                 $post->save();
+
                 return;
             }
         }

@@ -32,9 +32,9 @@ class Activity extends Model
 
     public function scopeSearch($query, $search)
     {
-        return $query->where(function ($query) use ($search) {
+        return $query->where(function ($query) use ($search): void {
             $query->whereFullText(['type', 'description', 'outcome'], $search)
-                ->orWhere('date', 'like', '%' . $search . '%');
+                ->orWhere('date', 'like', '%'.$search.'%');
         });
     }
 

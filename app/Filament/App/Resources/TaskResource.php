@@ -1,35 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TaskResource\Pages\ListTasks;
 use App\Filament\App\Resources\TaskResource\Pages\CreateTask;
 use App\Filament\App\Resources\TaskResource\Pages\EditTask;
-use Filament\Forms;
+use App\Filament\App\Resources\TaskResource\Pages\ListTasks;
 use App\Models\Task;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\TaskResource\Pages;
-use App\Filament\App\Resources\TaskResource\RelationManagers;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -57,6 +54,7 @@ class TaskResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -90,6 +88,7 @@ class TaskResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -97,6 +96,7 @@ class TaskResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

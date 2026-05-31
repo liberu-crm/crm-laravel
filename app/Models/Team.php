@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -28,6 +27,7 @@ class Team extends JetstreamTeam
     /**
      * Get the team's invitations.
      */
+    #[\Override]
     public function teamInvitations(): HasMany
     {
         return $this->hasMany(TeamInvitation::class);
@@ -57,6 +57,7 @@ class Team extends JetstreamTeam
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -71,7 +72,7 @@ class Team extends JetstreamTeam
 
     public function hasActiveSubscription(): bool
     {
-        if (!config('services.stripe.subscriptions_enabled')) {
+        if (! config('services.stripe.subscriptions_enabled')) {
             return true;
         }
 
@@ -81,6 +82,7 @@ class Team extends JetstreamTeam
     public function canAddMoreUsers(): bool
     {
         $maxUsers = config('services.stripe.max_team_users', 5);
+
         return $this->allUsers()->count() < $maxUsers;
     }
 }

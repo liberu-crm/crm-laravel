@@ -7,7 +7,7 @@ use App\Models\ConnectedAccount;
 
 class TwitterService
 {
-    protected $connection;
+    protected \Abraham\TwitterOAuth\TwitterOAuth $connection;
 
     public function __construct()
     {
@@ -20,13 +20,15 @@ class TwitterService
     public function getTimeline(ConnectedAccount $account)
     {
         $this->connection->setOauthToken($account->token, $account->secret);
-        return $this->connection->get("statuses/home_timeline", ["count" => 25, "exclude_replies" => true]);
+
+        return $this->connection->get('statuses/home_timeline', ['count' => 25, 'exclude_replies' => true]);
     }
 
     public function postTweet(ConnectedAccount $account, $message)
     {
         $this->connection->setOauthToken($account->token, $account->secret);
-        return $this->connection->post("statuses/update", ["status" => $message]);
+
+        return $this->connection->post('statuses/update', ['status' => $message]);
     }
 
     public function getAllConnectedAccounts()

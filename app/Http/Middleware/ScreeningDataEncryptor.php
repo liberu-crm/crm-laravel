@@ -12,12 +12,12 @@ class ScreeningDataEncryptor
         $response = $next($request);
 
         if ($response->getContent()) {
-            $content = json_decode($response->getContent(), true);
+            $content = json_decode((string) $response->getContent(), true);
 
             $fieldsToEncrypt = [
                 'background_check_status',
                 'credit_report_status',
-                'rental_history_status'
+                'rental_history_status',
             ];
 
             foreach ($fieldsToEncrypt as $field) {

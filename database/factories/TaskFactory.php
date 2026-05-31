@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Lead;
-use App\Models\Company;
 use App\Models\Opportunity;
+use App\Models\Task;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskFactory extends Factory
@@ -38,55 +40,43 @@ class TaskFactory extends Factory
 
     public function withContact()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'contact_id' => Contact::factory(),
-                'lead_id' => null,
-            ];
-        });
+        return $this->state(fn(array $attributes) => [
+            'contact_id' => Contact::factory(),
+            'lead_id' => null,
+        ]);
     }
 
     public function withLead()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'lead_id' => Lead::factory(),
-                'contact_id' => null,
-            ];
-        });
+        return $this->state(fn(array $attributes) => [
+            'lead_id' => Lead::factory(),
+            'contact_id' => null,
+        ]);
     }
 
     public function withCompany()
     {
-        return $this->state(function (array $attributes) {
-            return ['company_id' => Company::factory()];
-        });
+        return $this->state(fn(array $attributes) => ['company_id' => Company::factory()]);
     }
 
     public function withOpportunity()
     {
-        return $this->state(function (array $attributes) {
-            return ['opportunity_id' => Opportunity::factory()];
-        });
+        return $this->state(fn(array $attributes) => ['opportunity_id' => Opportunity::factory()]);
     }
 
     public function withReminder()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'reminder_date' => $this->faker->dateTimeBetween('now', '+7 days'),
-                'reminder_sent' => false,
-            ];
-        });
+        return $this->state(fn(array $attributes) => [
+            'reminder_date' => $this->faker->dateTimeBetween('now', '+7 days'),
+            'reminder_sent' => false,
+        ]);
     }
 
     public function reminderDue()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'reminder_date' => now()->subMinutes(5),
-                'reminder_sent' => false,
-            ];
-        });
+        return $this->state(fn(array $attributes) => [
+            'reminder_date' => now()->subMinutes(5),
+            'reminder_sent' => false,
+        ]);
     }
 }

@@ -6,12 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         // Add other table enhancements here
 
-        if (!Schema::hasTable('leads')) {
-            Schema::create('leads', function (Blueprint $table) {
+        if (! Schema::hasTable('leads')) {
+            Schema::create('leads', function (Blueprint $table): void {
                 $table->id();
                 $table->string('status')->default('new');
                 $table->string('source')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
         }
     }
 
-    public function down()
+    public function down(): void
     {
         // Add rollback logic for other table enhancements here
 

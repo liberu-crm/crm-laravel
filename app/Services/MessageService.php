@@ -2,23 +2,22 @@
 
 namespace App\Services;
 
-use InvalidArgumentException;
-use Google_Service_Gmail_Message;
+use App\Models\ConnectedAccount;
+use App\Models\Email;
 use Google_Client;
 use Google_Service_Gmail;
-use App\Models\Email;
-use App\Models\ConnectedAccount;
+use Google_Service_Gmail_Message;
+use InvalidArgumentException;
 
 class MessageService
 {
-    protected $gmailClient;
-    protected $gmailService;
-    protected $whatsappService;
-    protected $facebookMessengerService;
+    protected \Google_Client $gmailClient;
 
-    public function __construct(WhatsAppBusinessService $whatsappService, FacebookMessengerService $facebookMessengerService)
+    protected \Google_Service_Gmail $gmailService;
+
+    public function __construct(protected \App\Services\WhatsAppBusinessService $whatsappService, protected \App\Services\FacebookMessengerService $facebookMessengerService)
     {
-        $this->gmailClient = new Google_Client();
+        $this->gmailClient = new Google_Client;
         $this->gmailClient->setApplicationName(config('services.gmail.application_name'));
         $this->gmailClient->setScopes(Google_Service_Gmail::GMAIL_MODIFY);
         $this->gmailClient->setAuthConfig(config('services.gmail.credentials_path'));
@@ -27,11 +26,9 @@ class MessageService
         $this->gmailClient->setPrompt('select_account consent');
 
         $this->gmailService = new Google_Service_Gmail($this->gmailClient);
-        $this->whatsappService = $whatsappService;
-        $this->facebookMessengerService = $facebookMessengerService;
     }
 
-    public function getUnreadMessages()
+    public function getUnreadMessages(): array
     {
         $messages = [
             'email' => [],
@@ -57,7 +54,7 @@ class MessageService
         return $messages;
     }
 
-    protected function getUnreadEmailMessages(ConnectedAccount $account)
+    protected function getUnreadEmailMessages(ConnectedAccount $account): array
     {
         $this->gmailClient->setAccessToken($account->token);
         $user = 'me';
@@ -68,8 +65,9 @@ class MessageService
 
         $messages = $this->gmailService->users_messages->listUsersMessages($user, $optParams);
 
-        return array_map(function($message) use ($account) {
+        return array_map(function ($message) use ($account) {
             $message->accountId = $account->id;
+
             return $message;
         }, $messages->getMessages());
     }
@@ -84,6 +82,7 @@ class MessageService
                 $user = 'me';
                 $message = $this->gmailService->users_messages->get($user, $messageId);
                 $this->trackEmail($message, $account);
+
                 return $message;
             case 'whatsapp':
                 return $this->whatsappService->getMessage($account, $messageId);
@@ -105,6 +104,7 @@ class MessageService
                 $reply = $this->createReplyMessage($messageId, $body);
                 $sentMessage = $this->gmailService->users_messages->send($user, $reply);
                 $this->trackEmail($sentMessage, $account, true);
+
                 return $sentMessage;
             case 'whatsapp':
                 return $this->whatsappService->sendReply($account, $messageId, $body);
@@ -131,19 +131,23 @@ class MessageService
         ]);
     }
 
-    protected function parseHeaders($headers)
+    /**
+     * @return mixed[]
+     */
+    protected function parseHeaders($headers): array
     {
         $parsedHeaders = [];
         foreach ($headers as $header) {
             $parsedHeaders[$header->getName()] = $header->getValue();
         }
+
         return $parsedHeaders;
     }
 
-    protected function getEmailContent($message)
+    protected function getEmailContent($message): string
     {
         $payload = $message->getPayload();
-        if (!$payload) {
+        if (! $payload) {
             return '';
         }
 
@@ -158,6 +162,7 @@ class MessageService
             foreach ($parts as $part) {
                 if ($part['mimeType'] === 'text/plain') {
                     $data = $part['body']['data'];
+
                     return base64_decode(strtr($data, '-_', '+/'));
                 }
             }
@@ -166,18 +171,18 @@ class MessageService
         return '';
     }
 
-    protected function createReplyMessage($originalMessageId, $replyBody)
+    protected function createReplyMessage($originalMessageId, $replyBody): \Google_Service_Gmail_Message
     {
         $originalMessage = $this->gmailService->users_messages->get('me', $originalMessageId);
         $headers = $this->parseHeaders($originalMessage->getPayload()->getHeaders());
 
-        $replyMessage = new Google_Service_Gmail_Message();
+        $replyMessage = new Google_Service_Gmail_Message;
         $rawMessageString = "From: me\r\n";
         $rawMessageString .= "To: {$headers['From']}\r\n";
-        $rawMessageString .= 'Subject: Re: ' . ($headers['Subject'] ?? '') . "\r\n";
+        $rawMessageString .= 'Subject: Re: '.($headers['Subject'] ?? '')."\r\n";
         $rawMessageString .= "Content-Type: text/plain; charset=utf-8\r\n";
         $rawMessageString .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $rawMessageString .= base64_encode($replyBody);
+        $rawMessageString .= base64_encode((string) $replyBody);
 
         $replyMessage->setRaw(base64_encode($rawMessageString));
         $replyMessage->setThreadId($originalMessage->getThreadId());

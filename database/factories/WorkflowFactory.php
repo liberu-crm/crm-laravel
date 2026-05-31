@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Workflow;
@@ -16,14 +18,14 @@ class WorkflowFactory extends Factory
             'description' => $this->faker->paragraph,
             'triggers' => [
                 'type' => 'event',
-                'event' => $this->faker->randomElement(['lead.created', 'contact.updated', 'deal.closed'])
+                'event' => $this->faker->randomElement(['lead.created', 'contact.updated', 'deal.closed']),
             ],
             'actions' => [
                 [
                     'type' => 'notification',
                     'channel' => 'email',
-                    'template' => 'default'
-                ]
+                    'template' => 'default',
+                ],
             ],
             'is_active' => true,
             'created_at' => now(),

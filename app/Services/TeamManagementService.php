@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Exception;
+use App\Models\Branch;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\Branch;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TeamManagementService
@@ -14,12 +14,12 @@ class TeamManagementService
     {
         try {
             $defaultBranch = Branch::firstOrFail();
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             throw new Exception('No default branch found. Please set up at least one branch.');
         }
 
         return $user->ownedTeams()->create([
-            'name' => $defaultBranch->name . ' Team',
+            'name' => $defaultBranch->name.' Team',
             'personal_team' => false,
             'branch_id' => $defaultBranch->id,
         ]);
@@ -28,7 +28,7 @@ class TeamManagementService
     public function createPersonalTeamForUser(User $user): Team
     {
         return $user->ownedTeams()->create([
-            'name' => $user->name . "'s Team",
+            'name' => $user->name."'s Team",
             'personal_team' => true,
         ]);
     }
@@ -37,14 +37,15 @@ class TeamManagementService
     {
         $defaultTeam = Team::where('personal_team', false)->first();
 
-        if (!$defaultTeam) {
+        if (! $defaultTeam) {
             try {
                 $defaultTeam = $this->createDefaultTeamForUser($user);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Fallback: create a personal team when no branch/default team exists
                 $defaultTeam = $this->createPersonalTeamForUser($user);
                 $user->current_team_id = $defaultTeam->id;
                 $user->save();
+
                 return;
             }
         }
@@ -54,7 +55,7 @@ class TeamManagementService
 
     public function assignUserToTeam(User $user, Team $team): void
     {
-        if (!$user->belongsToTeam($team)) {
+        if (! $user->belongsToTeam($team)) {
             $user->teams()->attach($team, ['role' => 'member']);
         }
         $user->switchTeam($team);
@@ -62,7 +63,7 @@ class TeamManagementService
 
     public function switchTeam(User $user, Team $team): void
     {
-        if (!$user->belongsToTeam($team)) {
+        if (! $user->belongsToTeam($team)) {
             throw new Exception('User does not belong to the specified team.');
         }
         $user->switchTeam($team);

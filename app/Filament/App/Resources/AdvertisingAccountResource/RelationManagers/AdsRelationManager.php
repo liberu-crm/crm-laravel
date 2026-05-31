@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers;
 
 use Filament\Actions\CreateAction;
@@ -24,6 +26,7 @@ class AdsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return $schema

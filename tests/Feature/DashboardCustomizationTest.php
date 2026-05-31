@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\DashboardWidget;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -12,7 +12,7 @@ class DashboardCustomizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_add_widget()
+    public function test_user_can_add_widget(): void
     {
         $user = User::factory()->create();
 
@@ -27,7 +27,7 @@ class DashboardCustomizationTest extends TestCase
         ]);
     }
 
-    public function test_user_can_remove_widget()
+    public function test_user_can_remove_widget(): void
     {
         $user = User::factory()->create();
         $widget = DashboardWidget::factory()->create(['user_id' => $user->id]);
@@ -40,7 +40,7 @@ class DashboardCustomizationTest extends TestCase
         $this->assertDatabaseMissing('dashboard_widgets', ['id' => $widget->id]);
     }
 
-    public function test_user_can_reorder_widgets()
+    public function test_user_can_reorder_widgets(): void
     {
         $user = User::factory()->create();
         $widget1 = DashboardWidget::factory()->create(['user_id' => $user->id, 'position' => 1]);

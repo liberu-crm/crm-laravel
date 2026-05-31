@@ -2,15 +2,15 @@
 
 namespace Tests\Unit;
 
-use App\Models\Task;
-use App\Models\User;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
+use App\Models\User;
 use App\Notifications\TaskReminderNotification;
 use App\Services\ReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ReminderServiceTest extends TestCase
@@ -22,7 +22,7 @@ class ReminderServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->reminderService = new ReminderService();
+        $this->reminderService = new ReminderService;
         restore_error_handler();
         restore_exception_handler();
     }
@@ -34,7 +34,7 @@ class ReminderServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testSendRemindersForContactTask()
+    public function test_send_reminders_for_contact_task(): void
     {
         Notification::fake();
 
@@ -54,7 +54,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function testSendRemindersForLeadTask()
+    public function test_send_reminders_for_lead_task(): void
     {
         Notification::fake();
 
@@ -74,7 +74,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function testHandleFailedNotification()
+    public function test_handle_failed_notification(): void
     {
         Notification::fake();
         Log::shouldReceive('error')->once();
@@ -95,12 +95,10 @@ class ReminderServiceTest extends TestCase
         $this->assertFalse($task->fresh()->reminder_sent);
     }
 
-    public function testLogReminderActivity()
+    public function test_log_reminder_activity(): void
     {
         Notification::fake();
-        Log::shouldReceive('info')->once()->withArgs(function ($message) {
-            return strpos($message, 'Reminder sent successfully') !== false;
-        });
+        Log::shouldReceive('info')->once()->withArgs(fn($message) => str_contains((string) $message, 'Reminder sent successfully'));
 
         $user = User::factory()->create();
         $contact = Contact::factory()->create();
@@ -116,7 +114,7 @@ class ReminderServiceTest extends TestCase
         $this->assertTrue($task->fresh()->reminder_sent);
     }
 
-    public function testScheduleReminder()
+    public function test_schedule_reminder(): void
     {
         $task = Task::factory()->create();
         $reminderDate = now()->addDays(2)->startOfSecond();

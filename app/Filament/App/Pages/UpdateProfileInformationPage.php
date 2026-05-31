@@ -4,39 +4,35 @@ namespace App\Filament\App\Pages;
 
 use App\Services\AuditLogService;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateProfileInformationPage extends Page
 {
     protected string $view = 'filament.app.pages.update-profile-information-page';
 
-    public $name;
-    public $email;
+    public string $name = '';
 
-    protected $auditLogService;
+    public string $email = '';
 
-    public function __construct(AuditLogService $auditLogService)
-    {
-        parent::__construct();
-        $this->auditLogService = $auditLogService;
-    }
-
-    public function mount()
+    public function mount(): void
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            TextInput::make('name')->required(),
-            TextInput::make('email')->email()->required(),
-        ];
+        return $schema
+            ->components([
+                TextInput::make('name')->required(),
+                TextInput::make('email')->email()->required(),
+            ]);
     }
 
-    public function submit()
+    public function submit(): void
     {
         $this->validate();
 
@@ -45,8 +41,11 @@ class UpdateProfileInformationPage extends Page
         $user->email = $this->email;
         $user->save();
 
-        $this->auditLogService->log('profile_update', 'User updated profile information');
+        app(AuditLogService::class)->log('profile_update', 'User updated profile information');
 
-        $this->notify('success', 'Your profile information has been updated.');
+        Notification::make()
+            ->title('Your profile information has been updated.')
+            ->success()
+            ->send();
     }
 }

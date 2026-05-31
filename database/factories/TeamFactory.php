@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Team;
@@ -13,7 +15,7 @@ class TeamFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->company,
+            'name' => $this->faker->company(),
             'user_id' => User::factory(),
             'personal_team' => false,
             'created_at' => now(),

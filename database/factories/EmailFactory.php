@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Email;
@@ -32,10 +34,10 @@ class EmailFactory extends Factory
             'metadata' => json_encode([
                 'ip' => $this->faker->ipv4,
                 'user_agent' => $this->faker->userAgent,
-                'attachments' => []
+                'attachments' => [],
             ]),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('social_media_posts', function (Blueprint $table) {
-            if (!Schema::hasColumn('social_media_posts', 'link')) {
+        Schema::table('social_media_posts', function (Blueprint $table): void {
+            if (! Schema::hasColumn('social_media_posts', 'link')) {
                 $table->string('link')->nullable()->after('content');
             }
-            if (!Schema::hasColumn('social_media_posts', 'image_path')) {
+            if (! Schema::hasColumn('social_media_posts', 'image_path')) {
                 $table->string('image_path')->nullable()->after('link');
             }
-            if (!Schema::hasColumn('social_media_posts', 'video_url')) {
+            if (! Schema::hasColumn('social_media_posts', 'video_url')) {
                 $table->string('video_url')->nullable()->after('image_path');
             }
         });
@@ -29,7 +29,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('social_media_posts', function (Blueprint $table) {
+        Schema::table('social_media_posts', function (Blueprint $table): void {
             $cols = ['link', 'image_path', 'video_url'];
             foreach ($cols as $col) {
                 if (Schema::hasColumn('social_media_posts', $col)) {

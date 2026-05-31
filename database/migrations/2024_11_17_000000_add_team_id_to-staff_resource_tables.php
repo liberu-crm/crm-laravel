@@ -6,36 +6,33 @@ use Illuminate\Support\Facades\Schema;
 
 class AddTeamIdToStaffResourceTables extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $tables = [
-	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets','oauth_configurations'
+            'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
+            'social_media_posts', 'tickets', 'oauth_configurations',
         ];
 
         foreach ($tables as $table) {
-            if (!Schema::hasColumn($table, 'team_id')) {
-                Schema::table($table, function (Blueprint $table) {
+            if (! Schema::hasColumn($table, 'team_id')) {
+                Schema::table($table, function (Blueprint $table): void {
                     $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->default(1);
                 });
             }
         }
     }
 
-    public function down()
+    public function down(): void
     {
 
         $tables = [
-	'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
-	'social_media_posts', 'tickets','oauth_configurations'
+            'call_settings', 'contacts', 'dashboard_widgets', 'landing_pages', 'leads', 'marketing_campaigns',
+            'social_media_posts', 'tickets', 'oauth_configurations',
         ];
-
-
-
 
         foreach ($tables as $table) {
             if (Schema::hasColumn($table, 'team_id')) {
-                Schema::table($table, function (Blueprint $table) {
+                Schema::table($table, function (Blueprint $table): void {
                     $table->dropForeign(['team_id']);
                     $table->dropColumn('team_id');
                 });

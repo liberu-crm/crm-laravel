@@ -5,7 +5,7 @@
  */
 
 namespace Microsoft\Graph {
-    if (!class_exists(\Microsoft\Graph\Graph::class)) {
+    if (! class_exists(Graph::class)) {
         class Graph
         {
             protected $accessToken;
@@ -13,16 +13,28 @@ namespace Microsoft\Graph {
             public function setAccessToken(string $token): static
             {
                 $this->accessToken = $token;
+
                 return $this;
             }
 
             public function createRequest(string $method, string $uri): object
             {
-                return new class ($method, $uri) {
-                    public function __construct(private string $method, private string $uri) {}
-                    public function attachBody($body): static { return $this; }
-                    public function setReturnType(string $class): static { return $this; }
-                    public function execute() { return null; }
+                return new readonly class($method, $uri)
+                {
+                    public function attachBody($body): static
+                    {
+                        return $this;
+                    }
+
+                    public function setReturnType(string $class): static
+                    {
+                        return $this;
+                    }
+
+                    public function execute(): null
+                    {
+                        return null;
+                    }
                 };
             }
         }
@@ -30,14 +42,11 @@ namespace Microsoft\Graph {
 }
 
 namespace Microsoft\Graph\Model {
-    if (!class_exists(\Microsoft\Graph\Model\Event::class)) {
+    if (! class_exists(Event::class)) {
         class Event
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getId(): ?string
@@ -64,11 +73,17 @@ namespace Microsoft\Graph\Model {
             {
                 $body = $this->data['body'] ?? null;
                 if (is_array($body)) {
-                    return new class ($body) {
+                    return new class($body)
+                    {
                         public function __construct(private array $data) {}
-                        public function getContent(): ?string { return $this->data['content'] ?? null; }
+
+                        public function getContent(): ?string
+                        {
+                            return $this->data['content'] ?? null;
+                        }
                     };
                 }
+
                 return $body;
             }
 
@@ -81,11 +96,17 @@ namespace Microsoft\Graph\Model {
             {
                 $start = $this->data['start'] ?? null;
                 if (is_array($start)) {
-                    return new class ($start) {
+                    return new class($start)
+                    {
                         public function __construct(private array $data) {}
-                        public function getDateTime(): ?string { return $this->data['dateTime'] ?? null; }
+
+                        public function getDateTime(): ?string
+                        {
+                            return $this->data['dateTime'] ?? null;
+                        }
                     };
                 }
+
                 return $start;
             }
 
@@ -96,14 +117,11 @@ namespace Microsoft\Graph\Model {
         }
     }
 
-    if (!class_exists(\Microsoft\Graph\Model\ItemBody::class)) {
+    if (! class_exists(ItemBody::class)) {
         class ItemBody
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getContent(): ?string
@@ -113,14 +131,11 @@ namespace Microsoft\Graph\Model {
         }
     }
 
-    if (!class_exists(\Microsoft\Graph\Model\DateTimeTimeZone::class)) {
+    if (! class_exists(DateTimeTimeZone::class)) {
         class DateTimeTimeZone
         {
-            protected $data = [];
-
-            public function __construct(array $data = [])
+            public function __construct(protected array $data = [])
             {
-                $this->data = $data;
             }
 
             public function getDateTime(): ?string

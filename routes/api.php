@@ -1,11 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\WorkflowController;
+use App\Models\Webhook;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +20,9 @@ use App\Http\Controllers\Api\WebhookController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
     // Core resources
     Route::apiResource('contacts', ContactController::class);
     Route::apiResource('deals', DealController::class);
@@ -44,8 +44,17 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('tasks/bulk/assign', [TaskController::class, 'bulkAssign']);
 
     // Webhook management
+    Route::bind('webhook', function ($value) {
+        $teamId = request()->user()?->currentTeam?->id;
+
+        return $teamId
+            ? Webhook::where('team_id', $teamId)->findOrFail($value)
+            : Webhook::findOrFail($value);
+    });
     Route::get('webhooks/events', [WebhookController::class, 'events']);
     Route::post('webhooks/{webhook}/secret', [WebhookController::class, 'regenerateSecret']);
     Route::apiResource('webhooks', WebhookController::class);
-});
 
+    // Workflow management
+    Route::apiResource('workflows', WorkflowController::class);
+});

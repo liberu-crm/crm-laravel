@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Laravel\Jetstream\Mail\TeamInvitation;
 use Tests\TestCase;
 
@@ -13,13 +14,13 @@ class TeamInvitationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_team_members_can_be_invited_to_team()
+    public function test_team_members_can_be_invited_to_team(): void
     {
         Mail::fake();
 
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
-        $response = $this->post('/team-invitations', [
+        $this->post('/team-invitations', [
             'email' => 'test@example.com',
             'role' => 'admin',
             'team_id' => $user->currentTeam->id,
@@ -30,22 +31,22 @@ class TeamInvitationTest extends TestCase
         $this->assertCount(1, $user->currentTeam->fresh()->teamInvitations);
     }
 
-    public function test_team_member_invitations_can_be_cancelled()
+    public function test_team_member_invitations_can_be_cancelled(): void
     {
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
         $invitation = $user->currentTeam->teamInvitations()->create([
             'email' => 'test@example.com',
             'role' => 'admin',
-            'token' => \Illuminate\Support\Str::random(40),
+            'token' => Str::random(40),
         ]);
 
-        $response = $this->delete('/team-invitations/'.$invitation->id);
+        $this->delete('/team-invitations/'.$invitation->id);
 
         $this->assertCount(0, $user->currentTeam->fresh()->teamInvitations);
     }
 
-    public function test_invited_email_address_must_be_a_valid_email()
+    public function test_invited_email_address_must_be_a_valid_email(): void
     {
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
@@ -60,7 +61,7 @@ class TeamInvitationTest extends TestCase
         $this->assertCount(0, $user->currentTeam->fresh()->teamInvitations);
     }
 
-    public function test_team_member_can_accept_the_invitation()
+    public function test_team_member_can_accept_the_invitation(): void
     {
         $team = Team::factory()->create();
 
@@ -69,10 +70,10 @@ class TeamInvitationTest extends TestCase
         $invitation = $team->teamInvitations()->create([
             'email' => $invitedUser->email,
             'role' => 'admin',
-            'token' => \Illuminate\Support\Str::random(40),
+            'token' => Str::random(40),
         ]);
 
-        $response = $this->actingAs($invitedUser)->post('/team-invitations/'.$invitation->id.'/accept');
+        $this->actingAs($invitedUser)->post('/team-invitations/'.$invitation->id.'/accept');
 
         $this->assertCount(1, $team->fresh()->users);
 

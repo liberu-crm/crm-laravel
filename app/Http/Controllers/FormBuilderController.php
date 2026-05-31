@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormBuilder;
 use App\Models\CustomField;
+use App\Models\FormBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class FormBuilderController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
 
         $user = Auth::user();
         $forms = FormBuilder::where('team_id', $user->currentTeam->id)->get();
-        return view('form-builders.index', compact('forms'));
+
+        return view('form-builders.index', ['forms' => $forms]);
     }
 
-    public function create()
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('form-builders.create');
     }
@@ -39,9 +40,9 @@ class FormBuilderController extends Controller
         return redirect()->route('form-builders.index')->with('success', 'Form created successfully.');
     }
 
-    public function edit(FormBuilder $formBuilder)
+    public function edit(FormBuilder $formBuilder): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        return view('form-builders.edit', compact('formBuilder'));
+        return view('form-builders.edit', ['formBuilder' => $formBuilder]);
     }
 
     public function update(Request $request, FormBuilder $formBuilder)
@@ -64,7 +65,7 @@ class FormBuilderController extends Controller
         return redirect()->route('form-builders.index')->with('success', 'Form deleted successfully.');
     }
 
-    public function createCustomField()
+    public function createCustomField(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('custom-fields.create');
     }
@@ -85,16 +86,17 @@ class FormBuilderController extends Controller
         return redirect()->route('custom-fields.index')->with('success', 'Custom field created successfully.');
     }
 
-    public function indexCustomFields()
+    public function indexCustomFields(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $user = Auth::user();
         $customFields = CustomField::where('team_id', $user->currentTeam->id)->get();
-        return view('custom-fields.index', compact('customFields'));
+
+        return view('custom-fields.index', ['customFields' => $customFields]);
     }
 
-    public function editCustomField(CustomField $customField)
+    public function editCustomField(CustomField $customField): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        return view('custom-fields.edit', compact('customField'));
+        return view('custom-fields.edit', ['customField' => $customField]);
     }
 
     public function updateCustomField(Request $request, CustomField $customField)

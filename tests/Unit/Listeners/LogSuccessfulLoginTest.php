@@ -6,14 +6,14 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Services\AuditLogService;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class LogSuccessfulLoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testHandleMethodLogsSuccessfulLogin()
+    public function test_handle_method_logs_successful_login(): void
     {
         // Mock the AuditLogService
         $auditLogService = Mockery::mock(AuditLogService::class);

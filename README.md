@@ -5,7 +5,7 @@
 ### Streamline Relationships. Supercharge Growth.
 
 ![](https://img.shields.io/badge/PHP-8.5-informational?style=flat&logo=php&color=4f5b93)
-![](https://img.shields.io/badge/Laravel-12-informational?style=flat&logo=laravel&color=ef3b2d)
+![](https://img.shields.io/badge/Laravel-13-informational?style=flat&logo=laravel&color=ef3b2d)
 ![](https://img.shields.io/badge/Filament-5-informational?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48cGF0aCBkPSJNMCAwaDQ4djQ4SDBWMHoiIGZpbGw9IiNmNGIyNWUiLz48cGF0aCBkPSJNMjggN2wtMSA2LTMuNDM3LjgxM0wyMCAxNWwtMSAzaDZ2NWgtN2wtMyAxOEg4Yy41MTUtNS44NTMgMS40NTQtMTEuMzMgMy0xN0g4di01bDUtMSAuMjUtMy4yNUMxNCAxMSAxNCAxMSAxNS40MzggOC41NjMgMTkuNDI5IDYuMTI4IDIzLjQ0MiA2LjY4NyAyOCA3eiIgZmlsbD0iIzI4MjQxZSIvPjxwYXRoIGQ9Ik0zMCAxOGg0YzIuMjMzIDUuMzM0IDIuMjMzIDUuMzM0IDEuMTI1IDguNUwzNCAyOWMtLjE2OCAzLjIwOS0uMTY4IDMuMjA5IDAgNmwtMiAxIDEgM2gtNXYyaC0yYy44NzUtNy42MjUuODc1LTcuNjI1IDItMTFoMnYtMmgtMnYtMmwyLTF2LTQtM3oiIGZpbGw9IiMyYTIwMTIiLz48cGF0aCBkPSJNMzUuNTYzIDYuODEzQzM4IDcgMzggNyAzOSA4Yy4xODggMi40MzguMTg4IDIuNDM4IDAgNWwtMiAyYy0yLjYyNS0uMzc1LTIuNjI1LS4zNzUtNS0xLS42MjUtMi4zNzUtLjYyNS0yLjM3NS0xLTUgMi0yIDItMiA0LjU2My0yLjE4N3oiIGZpbGw9IiM0MDM5MzEiLz48cGF0aCBkPSJNMzAgMThoNGMyLjA1NSA1LjMxOSAyLjA1NSA1LjMxOSAxLjgxMyA4LjMxM0wzNSAyOGwtMyAxdi0ybC00IDF2LTJsMi0xdi00LTN6IiBmaWxsPSIjMzEyODFlIi8+PHBhdGggZD0iTTI5IDI3aDN2MmgydjJoLTJ2MmwtNC0xdi0yaDJsLTEtM3oiIGZpbGw9IiMxNTEzMTAiLz48cGF0aCBkPSJNMzAgMThoNHYzaC0ydjJsLTMgMSAxLTZ6IiBmaWxsPSIjNjA0YjMyIi8+PC9zdmc+&&color=fdae4b&link=https://filamentphp.com)
 ![](https://img.shields.io/badge/Livewire-4-informational?style=flat&logo=Livewire&color=fb70a9)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -138,20 +138,68 @@ php artisan serve
 
 > **Note:** Ensure your `.env` file is correctly configured with your database connection details before running migrations.
 
-### Option 3 — Docker
+### Option 3 — Docker Compose
+
+The project ships with a production-ready `Dockerfile` (PHP 8.5, Alpine Linux, Laravel Octane + RoadRunner) and a `docker-compose.yml` that starts the app, MySQL 8, Redis 7, and optional Horizon/Reverb/Worker sidecars.
 
 ```bash
-docker build -t crm-laravel .
-docker run -p 8000:8000 crm-laravel
+cp .env.example .env
+# Edit .env with your secrets, then:
+docker compose up -d --build
+docker compose exec app php artisan migrate --seed
 ```
 
+Open `http://localhost:8000` in your browser.
+
+**Available profiles** (add with `--profile`):
+
+| Profile | Service started |
+|---|---|
+| `horizon` | Laravel Horizon queue dashboard |
+| `reverb` | Laravel Reverb WebSocket server |
+| `worker` | Generic queue worker |
+| `mail` | Mailpit local mail catcher |
+
+Example: `docker compose --profile horizon --profile reverb up -d`
+
+> The Dockerfile is based on [exaco/laravel-docktane](https://github.com/exaco/laravel-docktane). Configuration files (supervisord, php.ini, RoadRunner) live in `.docker/`.
+
 #### Using Laravel Sail
+
+Laravel Sail provides a lightweight Docker environment suitable for local development. It is pre-installed as a dev dependency.
 
 ```bash
 ./vendor/bin/sail up
 ```
 
 Once the containers are running, open `http://localhost` in your browser. Press `Ctrl+C` to stop. See the [official Sail docs](https://laravel.com/docs/sail) for further options.
+
+### Option 4 — Kubernetes
+
+A full Kubernetes configuration using Kustomize overlays is provided in the `k8s/` directory.
+
+```bash
+# Set required variables and run the deployment script:
+export APP_KEY="base64:your-key"
+export DB_PASSWORD="your-db-password"
+export DB_ROOT_PASSWORD="your-root-password"
+export DOMAIN="crm.example.com"
+bash k8s/deploy.sh
+```
+
+Or apply directly with `kubectl`:
+
+```bash
+# Development overlay
+kubectl apply -k k8s/overlays/development
+
+# Production overlay (3 replicas + HPA)
+kubectl apply -k k8s/overlays/production
+```
+
+The manifests are compatible with the [Liberu Control Panel](https://github.com/liberu-control-panel/control-panel-laravel) system. They include a Deployment, Horizon worker, MySQL StatefulSet, Redis Deployment, Ingress with TLS, NetworkPolicy, ResourceQuota, and a HorizontalPodAutoscaler for production.
+
+> **Note:** Replace placeholder values in `k8s/base/secret.yaml` with real secrets before deploying to production. Use an external secret manager (Sealed Secrets, External Secrets Operator, etc.) for production workloads.
 
 ## Testing
 

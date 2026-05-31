@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Company;
@@ -14,17 +16,17 @@ class DataEnrichmentService
         $this->apiKey = config('services.data_enrichment.api_key');
     }
 
-    public function enrichCompanyData(Company $company)
+    public function enrichCompanyData(Company $company): bool
     {
         $response = Http::withHeaders([
             'Authorization' => "Bearer {$this->apiKey}",
-        ])->get("https://api.example.com/v1/companies", [
+        ])->get('https://api.example.com/v1/companies', [
             'domain' => $company->domain,
         ]);
 
         if ($response->successful()) {
             $data = $response->json();
-            
+
             $company->update([
                 'industry' => $data['industry'] ?? $company->industry,
                 'size' => $data['size'] ?? $company->size,

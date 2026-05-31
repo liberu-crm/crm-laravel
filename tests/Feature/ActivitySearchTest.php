@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Activity;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,13 +15,13 @@ class ActivitySearchTest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
     }
 
-    public function test_activity_can_be_created_for_contact()
+    public function test_activity_can_be_created_for_contact(): void
     {
         $contact = Contact::factory()->create();
 
@@ -40,7 +40,7 @@ class ActivitySearchTest extends TestCase
         ]);
     }
 
-    public function test_activity_can_be_searched_by_type()
+    public function test_activity_can_be_searched_by_type(): void
     {
         $contact = Contact::factory()->create();
 
@@ -50,7 +50,7 @@ class ActivitySearchTest extends TestCase
             'activitable_type' => Contact::class,
         ]);
 
-        $emailActivity = Activity::factory()->create([
+        Activity::factory()->create([
             'type' => 'email',
             'activitable_id' => $contact->id,
             'activitable_type' => Contact::class,
@@ -64,7 +64,7 @@ class ActivitySearchTest extends TestCase
         $this->assertEquals($callActivity->id, $callActivities->first()->id);
     }
 
-    public function test_activity_can_be_filtered_by_activitable_type()
+    public function test_activity_can_be_filtered_by_activitable_type(): void
     {
         $contact = Contact::factory()->create();
         $lead = Lead::factory()->create();
@@ -84,7 +84,7 @@ class ActivitySearchTest extends TestCase
         $this->assertFalse($contactActivities->contains($leadActivity));
     }
 
-    public function test_activities_can_be_filtered_by_date_range()
+    public function test_activities_can_be_filtered_by_date_range(): void
     {
         $contact = Contact::factory()->create();
 

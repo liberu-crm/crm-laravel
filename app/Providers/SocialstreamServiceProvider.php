@@ -13,6 +13,13 @@ use App\Services\OAuth\TwilioProvider;
 use Illuminate\Support\ServiceProvider;
 use JoelButcher\Socialstream\Socialstream;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\BitbucketProvider;
+use Laravel\Socialite\Two\FacebookProvider;
+use Laravel\Socialite\Two\GithubProvider;
+use Laravel\Socialite\Two\GitlabProvider;
+use Laravel\Socialite\Two\GoogleProvider;
+use Laravel\Socialite\Two\LinkedInOpenIdProvider;
+use Laravel\Socialite\Two\TwitterProvider;
 
 class SocialstreamServiceProvider extends ServiceProvider
 {
@@ -72,6 +79,7 @@ class SocialstreamServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         //
@@ -101,7 +109,7 @@ class SocialstreamServiceProvider extends ServiceProvider
     {
         try {
             $providers = OAuthConfiguration::where('is_active', true)->get();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Database may not be available yet (e.g. during migrations)
             return;
         }
@@ -110,18 +118,17 @@ class SocialstreamServiceProvider extends ServiceProvider
             $serviceName = $provider->service_name;
 
             if ($serviceName === 'twilio') {
-                Socialite::extend($serviceName, function () use ($provider) {
-                    return new TwilioProvider(
-                        $this->app['request'],
-                        $provider->client_id,
-                        $provider->client_secret,
-                        config('app.url') . '/oauth/twilio/callback'
-                    );
-                });
+                Socialite::extend($serviceName, fn() => new TwilioProvider(
+                    $this->app['request'],
+                    $provider->client_id,
+                    $provider->client_secret,
+                    config('app.url').'/oauth/twilio/callback'
+                ));
+
                 continue;
             }
 
-            if (!isset($this->socialProviders[$serviceName])) {
+            if (! isset($this->socialProviders[$serviceName])) {
                 continue;
             }
 
@@ -134,7 +141,7 @@ class SocialstreamServiceProvider extends ServiceProvider
                 $config = [
                     'client_id' => $provider->client_id,
                     'client_secret' => $provider->client_secret,
-                    'redirect' => config('app.url') . '/oauth/' . $provider->service_name . '/callback',
+                    'redirect' => config('app.url').'/oauth/'.$provider->service_name.'/callback',
                 ];
 
                 $driver = Socialite::buildProvider(
@@ -142,7 +149,7 @@ class SocialstreamServiceProvider extends ServiceProvider
                     $config
                 );
 
-                if (!empty($scopes)) {
+                if (! empty($scopes)) {
                     $driver->scopes($scopes);
                 }
 
@@ -161,16 +168,16 @@ class SocialstreamServiceProvider extends ServiceProvider
     protected function getSocialiteProviderClass(string $driverName): string
     {
         $map = [
-            'facebook' => \Laravel\Socialite\Two\FacebookProvider::class,
-            'google' => \Laravel\Socialite\Two\GoogleProvider::class,
-            'linkedin-openid' => \Laravel\Socialite\Two\LinkedInOpenIdProvider::class,
-            'twitter-oauth-2' => \Laravel\Socialite\Two\TwitterProvider::class,
-            'github' => \Laravel\Socialite\Two\GithubProvider::class,
-            'gitlab' => \Laravel\Socialite\Two\GitlabProvider::class,
-            'bitbucket' => \Laravel\Socialite\Two\BitbucketProvider::class,
+            'facebook' => FacebookProvider::class,
+            'google' => GoogleProvider::class,
+            'linkedin-openid' => LinkedInOpenIdProvider::class,
+            'twitter-oauth-2' => TwitterProvider::class,
+            'github' => GithubProvider::class,
+            'gitlab' => GitlabProvider::class,
+            'bitbucket' => BitbucketProvider::class,
         ];
 
-        if (!isset($map[$driverName])) {
+        if (! isset($map[$driverName])) {
             throw new \InvalidArgumentException("Unsupported Socialite driver: {$driverName}");
         }
 

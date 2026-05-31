@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\CampaignResource\Pages;
 
 use App\Filament\App\Resources\CampaignResource;
@@ -10,6 +12,7 @@ class ListCampaigns extends ListRecords
 {
     protected static string $resource = CampaignResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

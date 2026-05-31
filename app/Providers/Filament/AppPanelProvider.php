@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\App\Pages;
@@ -52,7 +55,7 @@ class AppPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Profile')
                     ->icon('heroicon-o-user-circle')
-                    ->url(fn () => $this->shouldRegisterMenuItem()
+                    ->url(fn (): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
                         ? url(EditProfile::getUrl())
                         : url($panel->getPath())),
             ])
@@ -60,7 +63,7 @@ class AppPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
                 Dashboard::class,
-                Pages\EditProfile::class,
+                EditProfile::class,
             ])
             ->discoverWidgets(in: app_path('Filament/App/Widgets/Home'), for: 'App\\Filament\\App\\Widgets\\Home')
             ->widgets([
@@ -103,7 +106,7 @@ class AppPanelProvider extends PanelProvider
                     MenuItem::make()
                         ->label('Team Settings')
                         ->icon('heroicon-o-cog-6-tooth')
-                        ->url(fn () => $this->shouldRegisterMenuItem()
+                        ->url(fn (): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
                             ? url(Pages\EditTeam::getUrl())
                             : url($panel->getPath())),
                 ]);
@@ -112,13 +115,8 @@ class AppPanelProvider extends PanelProvider
         return $panel;
     }
 
-    public function boot()
+    public function boot(): void
     {
-        /**
-         * Disable Fortify routes.
-         */
-        Fortify::$registersRoutes = false;
-
         /**
          * Disable Fortify routes (using Filament for auth instead).
          */
@@ -148,6 +146,6 @@ class AppPanelProvider extends PanelProvider
 
     public function shouldRegisterMenuItem(): bool
     {
-        return true; //auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant();
+        return true; // auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant();
     }
 }

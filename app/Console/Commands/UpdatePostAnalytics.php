@@ -2,14 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Exception;
-use App\Models\SocialMediaPost;
 use App\Models\ConnectedAccount;
+use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
-use App\Services\TwitterService;
-use App\Services\InstagramService;
-use App\Services\LinkedInService;
-use App\Services\YouTubeService;
+use Exception;
 use Illuminate\Console\Command;
 
 class UpdatePostAnalytics extends Command
@@ -18,7 +14,7 @@ class UpdatePostAnalytics extends Command
 
     protected $description = 'Update analytics for published social media posts';
 
-    public function handle()
+    public function handle(): void
     {
         $posts = SocialMediaPost::where('status', SocialMediaPost::STATUS_PUBLISHED)
             ->where('updated_at', '<=', now()->subHours(1))
@@ -32,14 +28,12 @@ class UpdatePostAnalytics extends Command
 
                 foreach ($post->platforms as $platform) {
                     $platformAnalytics = $this->fetchPlatformAnalytics($platform, $post);
-                    if ($platformAnalytics) {
-                        foreach ($platformAnalytics as $key => $value) {
-                            $analytics[$key] = ($analytics[$key] ?? 0) + $value;
-                        }
+                    foreach ($platformAnalytics as $key => $value) {
+                        $analytics[$key] = ($analytics[$key] ?? 0) + $value;
                     }
                 }
 
-                if (!empty($analytics)) {
+                if ($analytics !== []) {
                     $post->update($analytics);
                 }
 
@@ -59,8 +53,9 @@ class UpdatePostAnalytics extends Command
         switch ($platform) {
             case 'facebook':
                 if (isset($postIds['facebook'])) {
-                    $service = new FacebookService();
+                    $service = new FacebookService;
                     $insights = $service->getPostInsights($postIds['facebook']);
+
                     return [
                         'impressions' => $insights['post_impressions'] ?? 0,
                     ];

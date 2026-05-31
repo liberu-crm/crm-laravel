@@ -1,30 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\KeyValue;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\OAuthConfigurationResource\Pages\ListOAuthConfigurations;
 use App\Filament\App\Resources\OAuthConfigurationResource\Pages\CreateOAuthConfiguration;
 use App\Filament\App\Resources\OAuthConfigurationResource\Pages\EditOAuthConfiguration;
-use App\Filament\App\Resources\OAuthConfigurationResource\Pages;
+use App\Filament\App\Resources\OAuthConfigurationResource\Pages\ListOAuthConfigurations;
 use App\Models\OAuthConfiguration;
-use Filament\Forms;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class OAuthConfigurationResource extends Resource
 {
     protected static ?string $model = OAuthConfiguration::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -42,6 +42,7 @@ class OAuthConfigurationResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -65,6 +66,7 @@ class OAuthConfigurationResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -72,6 +74,7 @@ class OAuthConfigurationResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\Jobs\ExecuteWorkflowAction;
-
+use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\LeadForm;
-use App\Models\Contact;
 use App\Models\Workflow;
 use App\Services\LeadScoringService;
 use Illuminate\Http\Request;
 
 class LeadFormController extends Controller
 {
-    protected $leadScoringService;
-
-    public function __construct(LeadScoringService $leadScoringService)
+    public function __construct(protected \App\Services\LeadScoringService $leadScoringService)
     {
-        $this->leadScoringService = $leadScoringService;
     }
 
     public function submit(Request $request, LeadForm $leadForm)
@@ -32,7 +26,7 @@ class LeadFormController extends Controller
             'status' => 'new',
             'source' => 'landing_page',
             'contact_id' => $contact->id,
-            'user_id' => $leadForm->landingPage->campaign->user_id,
+            'user_id' => $leadForm->landingPage?->campaign?->user_id,
             'potential_value' => $validatedData['potential_value'] ?? null,
             'expected_close_date' => $validatedData['expected_close_date'] ?? null,
             'lifecycle_stage' => 'lead',
@@ -51,14 +45,25 @@ class LeadFormController extends Controller
     {
         $rules = [];
         foreach ($leadForm->fields as $field) {
-            $rules[$field['name']] = $field['validation'] ?? 'required';
+            $raw = $field['validation'] ?? 'required';
+            $parts = is_array($raw) ? $raw : explode('|', (string) $raw);
+            $filtered = [];
+            foreach ($parts as $rule) {
+                $name = is_string($rule) ? explode(':', $rule)[0] : '';
+                if (! in_array($name, ['regex', 'not_regex'], true)
+                    && ! str_contains((string) $rule, '\\')) {
+                    $filtered[] = $rule;
+                }
+            }
+            $rules[$field['name']] = array_values($filtered) ?: ['required'];
         }
+
         return $rules;
     }
 
     private function createOrUpdateContact(array $data)
     {
-        $contact = Contact::updateOrCreate(
+        return Contact::updateOrCreate(
             ['email' => $data['email']],
             [
                 'name' => $data['name'] ?? null,
@@ -68,10 +73,9 @@ class LeadFormController extends Controller
                 'industry' => $data['industry'] ?? null,
             ]
         );
-        return $contact;
     }
 
-    private function triggerWorkflow(Lead $lead)
+    private function triggerWorkflow(Lead $lead): void
     {
         $workflows = Workflow::whereJsonContains('triggers->type', 'lead_created')->get();
 
@@ -80,7 +84,7 @@ class LeadFormController extends Controller
         }
     }
 
-    private function executeWorkflowActions(Workflow $workflow, Lead $lead)
+    private function executeWorkflowActions(Workflow $workflow, Lead $lead): void
     {
         foreach ($workflow->actions as $action) {
             ExecuteWorkflowAction::dispatch($action, $lead);

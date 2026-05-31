@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\AccountingIntegration;
+use App\Models\User;
 use App\Services\AccountingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class TransactionTest extends TestCase
 {
+    public $mockAccountingService;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -20,7 +21,7 @@ class TransactionTest extends TestCase
         $this->app->instance(AccountingService::class, $this->mockAccountingService);
     }
 
-    public function testAccountingServiceSyncInvoiceMock()
+    public function test_accounting_service_sync_invoice_mock(): void
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
@@ -34,7 +35,7 @@ class TransactionTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testAccountingServiceSyncPaymentMock()
+    public function test_accounting_service_sync_payment_mock(): void
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);
@@ -48,7 +49,7 @@ class TransactionTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testAccountingIntegrationHasConnectionDetails()
+    public function test_accounting_integration_has_connection_details(): void
     {
         $user = User::factory()->create();
         $integration = AccountingIntegration::factory()->create(['user_id' => $user->id]);

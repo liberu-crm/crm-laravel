@@ -5,12 +5,9 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
 use App\Models\Lead;
-use App\Services\TwilioService;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -21,8 +18,9 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-funnel';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-funnel';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -61,6 +59,7 @@ class LeadResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -97,17 +96,15 @@ class LeadResource extends Resource
                         Forms\Components\TextInput::make('score_from')->numeric(),
                         Forms\Components\TextInput::make('score_to')->numeric(),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['score_from'],
-                                fn (Builder $query, $score): Builder => $query->where('score', '>=', $score),
-                            )
-                            ->when(
-                                $data['score_to'],
-                                fn (Builder $query, $score): Builder => $query->where('score', '<=', $score),
-                            );
-                    }),
+                    ->query(fn(Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['score_from'],
+                            fn (Builder $query, $score): Builder => $query->where('score', '>=', $score),
+                        )
+                        ->when(
+                            $data['score_to'],
+                            fn (Builder $query, $score): Builder => $query->where('score', '<=', $score),
+                        )),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -117,6 +114,7 @@ class LeadResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -127,4 +125,3 @@ class LeadResource extends Resource
         ];
     }
 }
-

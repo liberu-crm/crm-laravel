@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\OAuthConfigurationController;
 use App\Models\OAuthConfiguration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SocialMediaOAuthTest extends TestCase
@@ -56,44 +58,42 @@ class SocialMediaOAuthTest extends TestCase
 
     /**
      * Test that all social media platforms can be stored as OAuth configurations.
-     *
-     * @dataProvider socialMediaPlatformsProvider
      */
+    #[DataProvider('socialMediaPlatformsProvider')]
     public function test_can_store_social_media_oauth_configuration(string $platform): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $response = $this->post(route('oauth.configurations.store'), [
+        $this->post(route('oauth.configurations.store'), [
             'service_name' => $platform,
-            'account_name' => 'Test ' . ucfirst($platform) . ' Account',
+            'account_name' => 'Test '.ucfirst($platform).' Account',
         ]);
 
         $this->assertDatabaseHas('oauth_configurations', [
             'service_name' => $platform,
-            'account_name' => 'Test ' . ucfirst($platform) . ' Account',
+            'account_name' => 'Test '.ucfirst($platform).' Account',
         ]);
     }
 
     /**
      * Test that the OAuthConfigurationController maps service names to correct Socialite drivers.
      * We test the behavior indirectly by verifying the authenticate route redirects for supported platforms.
-     *
-     * @dataProvider serviceToDriverProvider
      */
+    #[DataProvider('serviceToDriverProvider')]
     public function test_service_maps_to_correct_socialite_driver(string $service, string $expectedDriver): void
     {
         // Verify the mapping is correct by checking what driver would be used.
         // We test this via the controller method behavior rather than inspecting internals.
-        $controller = app(\App\Http\Controllers\OAuthConfigurationController::class);
+        app(OAuthConfigurationController::class);
 
         // Create a config so authenticate() doesn't fail on missing config
         OAuthConfiguration::create([
-            'service_name'  => $service,
-            'account_name'  => 'Test',
-            'client_id'     => 'test_id',
+            'service_name' => $service,
+            'account_name' => 'Test',
+            'client_id' => 'test_id',
             'client_secret' => 'test_secret',
-            'is_active'     => false,
+            'is_active' => false,
         ]);
 
         // The authenticate method uses $this->serviceToDriver internally.
@@ -144,9 +144,8 @@ class SocialMediaOAuthTest extends TestCase
 
     /**
      * Test that services config has correct Socialite keys for social platforms.
-     *
-     * @dataProvider socialiteServicesProvider
      */
+    #[DataProvider('socialiteServicesProvider')]
     public function test_services_config_has_socialite_keys(string $service): void
     {
         $config = config("services.{$service}");

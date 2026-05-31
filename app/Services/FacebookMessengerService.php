@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ConnectedAccount;
+use Facebook\Facebook;
 
 class FacebookMessengerService
 {
@@ -16,9 +17,9 @@ class FacebookMessengerService
     protected function getFacebook()
     {
         if ($this->facebook === null) {
-            $this->facebook = app(\Facebook\Facebook::class) ?? new \Facebook\Facebook([
-                'app_id'                => config('services.facebook.app_id'),
-                'app_secret'            => config('services.facebook.app_secret'),
+            $this->facebook = app(Facebook::class) ?? new Facebook([
+                'app_id' => config('services.facebook.app_id'),
+                'app_secret' => config('services.facebook.app_secret'),
                 'default_graph_version' => 'v12.0',
             ]);
         }
@@ -37,31 +38,31 @@ class FacebookMessengerService
     {
         $fb = $this->getFacebook();
 
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
             $pageId = $account->provider_id;
         } else {
             $pageId = 'me';
         }
 
-        $response      = $fb->get("/{$pageId}/conversations?fields=messages{message,from,created_time}&unread=true");
+        $response = $fb->get("/{$pageId}/conversations?fields=messages{message,from,created_time}&unread=true");
         $conversations = $response->getGraphEdge();
 
         $unreadMessages = [];
         foreach ($conversations as $conversation) {
             $messages = $conversation->messages ?? ($conversation->getField ? $conversation->getField('messages') : []);
             foreach ($messages as $message) {
-                $id   = is_object($message) && method_exists($message, 'getField') ? $message->getField('id') : ($message->id ?? null);
+                $id = is_object($message) && method_exists($message, 'getField') ? $message->getField('id') : ($message->id ?? null);
                 $from = is_object($message) && method_exists($message, 'getField') ? $message->getField('from') : ($message->from ?? []);
-                $msg  = is_object($message) && method_exists($message, 'getField') ? $message->getField('message') : ($message->message ?? null);
+                $msg = is_object($message) && method_exists($message, 'getField') ? $message->getField('message') : ($message->message ?? null);
                 $time = is_object($message) && method_exists($message, 'getField') ? $message->getField('created_time') : ($message->created_time ?? null);
 
                 $unreadMessages[] = [
-                    'id'           => $id,
-                    'from'         => is_array($from) ? ($from['name'] ?? null) : (is_object($from) ? $from->name ?? null : $from),
-                    'message'      => $msg,
+                    'id' => $id,
+                    'from' => is_array($from) ? ($from['name'] ?? null) : (is_object($from) ? $from->name ?? null : $from),
+                    'message' => $msg,
                     'created_time' => $time,
-                    'account_id'   => $account?->id,
+                    'account_id' => $account?->id,
                 ];
             }
         }
@@ -76,21 +77,21 @@ class FacebookMessengerService
     {
         $fb = $this->getFacebook();
 
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
         }
 
         $response = $fb->get("/{$messageId}?fields=message,from,created_time");
-        $message  = $response->getGraphNode();
+        $message = $response->getGraphNode();
 
         $from = is_object($message) && method_exists($message, 'getField') ? $message->getField('from') : ($message->from ?? []);
 
         return [
-            'id'           => is_object($message) && method_exists($message, 'getField') ? $message->getField('id') : ($message->id ?? null),
-            'from'         => is_array($from) ? ($from['name'] ?? null) : (is_object($from) ? $from->name ?? null : $from),
-            'message'      => is_object($message) && method_exists($message, 'getField') ? $message->getField('message') : ($message->message ?? null),
+            'id' => is_object($message) && method_exists($message, 'getField') ? $message->getField('id') : ($message->id ?? null),
+            'from' => is_array($from) ? ($from['name'] ?? null) : (is_object($from) ? $from->name ?? null : $from),
+            'message' => is_object($message) && method_exists($message, 'getField') ? $message->getField('message') : ($message->message ?? null),
             'created_time' => is_object($message) && method_exists($message, 'getField') ? $message->getField('created_time') : ($message->created_time ?? null),
-            'account_id'   => $account?->id,
+            'account_id' => $account?->id,
         ];
     }
 
@@ -102,14 +103,14 @@ class FacebookMessengerService
         $fb = $this->getFacebook();
 
         $pageId = 'me';
-        if ($account !== null) {
+        if ($account instanceof \App\Models\ConnectedAccount) {
             $fb->setDefaultAccessToken($account->token);
             $pageId = $account->provider_id;
         }
 
         $response = $fb->post("/{$pageId}/messages", [
             'recipient' => ['id' => $recipientId],
-            'message'   => ['text' => $message],
+            'message' => ['text' => $message],
         ]);
 
         return $response->getGraphNode();

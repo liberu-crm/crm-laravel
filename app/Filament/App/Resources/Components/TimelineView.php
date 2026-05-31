@@ -9,6 +9,7 @@ class TimelineView extends Column
 {
     protected string $view = 'filament.resources.components.timeline-view';
 
+    #[\Override]
     public function getState(): array
     {
         $record = $this->getRecord();
@@ -50,9 +51,7 @@ class TimelineView extends Column
         }
 
         // Sort items by date
-        usort($items, function ($a, $b) {
-            return $b['date']->getTimestamp() - $a['date']->getTimestamp();
-        });
+        usort($items, fn(array $a, array $b) => $b['date']->getTimestamp() - $a['date']->getTimestamp());
 
         return $items;
     }

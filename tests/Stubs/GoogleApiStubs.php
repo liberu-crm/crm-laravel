@@ -3,30 +3,25 @@
 /**
  * Stub classes for Google API Client (used in tests when the actual SDK is not installed).
  */
-
-if (!class_exists('Google_Client')) {
+if (! class_exists('Google_Client')) {
     class Google_Client
     {
         public function setAuthConfig($config): void {}
+
         public function addScope($scope): void {}
     }
 }
 
-if (!class_exists('Google_Service_Calendar')) {
+if (! class_exists('Google_Service_Calendar')) {
     class Google_Service_Calendar
     {
         const CALENDAR = 'https://www.googleapis.com/auth/calendar';
 
         public $events;
-
-        public function __construct($client = null)
-        {
-            $this->events = null;
-        }
     }
 }
 
-if (!class_exists('Google_Service_Calendar_Event')) {
+if (! class_exists('Google_Service_Calendar_Event')) {
     class Google_Service_Calendar_Event
     {
         protected $data = [];
@@ -61,11 +56,12 @@ if (!class_exists('Google_Service_Calendar_Event')) {
             $this->data['description'] = $description;
         }
 
-        public function getStart()
+        public function getStart(): ?\stdClass
         {
             if (isset($this->data['start'])) {
                 return (object) $this->data['start'];
             }
+
             return null;
         }
 
@@ -81,7 +77,7 @@ if (!class_exists('Google_Service_Calendar_Event')) {
     }
 }
 
-if (!class_exists('Google_Service_Calendar_Events')) {
+if (! class_exists('Google_Service_Calendar_Events')) {
     class Google_Service_Calendar_Events
     {
         protected $items = [];

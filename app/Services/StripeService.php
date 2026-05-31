@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\Team;
 use App\Models\TeamSubscription;
-use Laravel\Cashier\Exceptions\IncompletePayment;
+use Exception;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
@@ -20,7 +19,7 @@ class StripeService
 
     public function createSubscription(Team $team, string $paymentMethodId): TeamSubscription
     {
-        if (!config('services.stripe.subscriptions_enabled')) {
+        if (! config('services.stripe.subscriptions_enabled')) {
             throw new Exception('Subscriptions are currently disabled');
         }
 
@@ -62,7 +61,7 @@ class StripeService
                 'ends_at' => null,
             ]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to create subscription: ' . $e->getMessage());
+            throw new Exception('Failed to create subscription: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -77,7 +76,7 @@ class StripeService
                 'ends_at' => now(),
             ]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to cancel subscription: ' . $e->getMessage());
+            throw new Exception('Failed to cancel subscription: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -114,7 +113,7 @@ class StripeService
 
             $subscription->update(['quantity' => $quantity]);
         } catch (ApiErrorException $e) {
-            throw new Exception('Failed to update subscription quantity: ' . $e->getMessage());
+            throw new Exception('Failed to update subscription quantity: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 }

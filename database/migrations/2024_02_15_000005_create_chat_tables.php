@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('live_chats', function (Blueprint $table) {
+        Schema::create('live_chats', function (Blueprint $table): void {
             $table->id();
             $table->string('visitor_id');
             $table->foreignId('contact_id')->nullable()->constrained()->onDelete('set null');
@@ -27,13 +27,13 @@ return new class extends Migration
             $table->text('feedback')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['status', 'started_at']);
             $table->index('visitor_id');
             $table->index('contact_id');
         });
 
-        Schema::create('chatbots', function (Blueprint $table) {
+        Schema::create('chatbots', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -45,11 +45,11 @@ return new class extends Migration
             $table->json('integrations')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('is_active');
         });
 
-        Schema::create('chatbot_interactions', function (Blueprint $table) {
+        Schema::create('chatbot_interactions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('chatbot_id')->constrained()->onDelete('cascade');
             $table->string('visitor_id');
@@ -60,7 +60,7 @@ return new class extends Migration
             $table->boolean('converted_to_lead')->default(false);
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['chatbot_id', 'visitor_id']);
             $table->index('contact_id');
         });

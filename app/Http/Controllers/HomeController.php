@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\KnowledgeBaseArticle;
-use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $knowledgeBaseArticles = KnowledgeBaseArticle::latest()->take(5)->get();
-        return view('home', compact('knowledgeBaseArticles'));
+
+        return view('home', ['knowledgeBaseArticles' => $knowledgeBaseArticles]);
     }
 }

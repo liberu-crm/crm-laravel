@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -11,48 +12,41 @@ class ListContactsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreatedAtFilter()
+    public function test_created_at_filter(): void
     {
         Contact::factory()->count(5)->create(['created_at' => now()->subDays(10)]);
         Contact::factory()->count(3)->create(['created_at' => now()->subDays(5)]);
 
         $response = $this->get(route('contacts.list', ['created_at' => now()->subDays(7)]));
-        $response->assertViewHas('contacts', function ($contacts) {
-            return $contacts->count() === 3;
-        });
+        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 3);
     }
 
-    public function testBulkDeleteAction()
+    public function test_bulk_delete_action(): void
     {
+        $user = User::factory()->create();
         $contacts = Contact::factory()->count(5)->create();
         $deleteIds = $contacts->pluck('id')->toArray();
 
-        $response = $this->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
+        $this->actingAs($user)->delete(route('contacts.bulk.delete', ['ids' => $deleteIds]));
         $this->assertDatabaseMissing('contacts', ['id' => $deleteIds]);
     }
 
-    public function testGlobalSearchFunctionality()
+    public function test_global_search_functionality(): void
     {
         Contact::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
         Contact::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
 
         $response = $this->get(route('contacts.list', ['search' => 'John']));
-        $response->assertViewHas('contacts', function ($contacts) {
-            return $contacts->count() === 1 && $contacts->first()->name === 'John Doe';
-        });
+        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
 
         $response = $this->get(route('contacts.list', ['search' => 'example.com']));
-        $response->assertViewHas('contacts', function ($contacts) {
-            return $contacts->count() === 2;
-        });
+        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 2);
 
         $response = $this->get(route('contacts.list', ['search' => 'Nonexistent']));
-        $response->assertViewHas('contacts', function ($contacts) {
-            return $contacts->isEmpty();
-        });
+        $response->assertViewHas('contacts', fn($contacts) => $contacts->isEmpty());
     }
 
-    public function testEnhancedSearchFunctionality()
+    public function test_enhanced_search_functionality(): void
     {
         Contact::factory()->create([
             'name' => 'John',
@@ -60,7 +54,7 @@ class ListContactsTest extends TestCase
             'email' => 'john@example.com',
             'phone_number' => '1234567890',
             'company_size' => 'Small',
-            'industry' => 'Technology'
+            'industry' => 'Technology',
         ]);
         Contact::factory()->create([
             'name' => 'Jane',
@@ -68,7 +62,7 @@ class ListContactsTest extends TestCase
             'email' => 'jane@example.com',
             'phone_number' => '9876543210',
             'company_size' => 'Large',
-            'industry' => 'Finance'
+            'industry' => 'Finance',
         ]);
 
         $searchTerms = ['John', 'Smith', 'example.com', '1234', 'Small', 'Finance'];
@@ -76,20 +70,16 @@ class ListContactsTest extends TestCase
         foreach ($searchTerms as $term) {
             $response = $this->get(route('contacts.list', ['search' => $term]));
             $response->assertSuccessful();
-            $response->assertViewHas('contacts', function ($contacts) use ($term) {
-                return $contacts->contains(function ($contact) use ($term) {
-                    return Str::contains($contact->name, $term) ||
-                        Str::contains($contact->last_name, $term) ||
-                        Str::contains($contact->email, $term) ||
-                        Str::contains($contact->phone_number, $term) ||
-                        Str::contains($contact->company_size, $term) ||
-                        Str::contains($contact->industry, $term);
-                });
-            });
+            $response->assertViewHas('contacts', fn($contacts) => $contacts->contains(fn($contact) => Str::contains($contact->name, $term) ||
+                Str::contains($contact->last_name, $term) ||
+                Str::contains($contact->email, $term) ||
+                Str::contains($contact->phone_number, $term) ||
+                Str::contains($contact->company_size, $term) ||
+                Str::contains($contact->industry, $term)));
         }
     }
 
-    public function testAutocompleteFeature()
+    public function test_autocomplete_feature(): void
     {
         Contact::factory()->count(10)->create();
         Contact::factory()->create(['name' => 'John', 'email' => 'john.autocomplete@example.com']);
@@ -97,13 +87,13 @@ class ListContactsTest extends TestCase
         $response = $this->get(route('contacts.autocomplete', ['query' => 'jo']));
         $response->assertSuccessful();
         $response->assertJsonStructure([
-            '*' => ['id', 'name', 'email']
+            '*' => ['id', 'name', 'email'],
         ]);
 
         $data = $response->json();
         $this->assertNotEmpty($data);
         foreach ($data as $item) {
-            $this->assertTrue(Str::startsWith(strtolower($item['name']), 'jo') || Str::contains(strtolower($item['email']), 'jo'));
+            $this->assertTrue(Str::startsWith(strtolower((string) $item['name']), 'jo') || Str::contains(strtolower((string) $item['email']), 'jo'));
         }
     }
 

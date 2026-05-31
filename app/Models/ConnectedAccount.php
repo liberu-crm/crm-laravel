@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use JoelButcher\Socialstream\ConnectedAccount as SocialstreamConnectedAccount;
@@ -70,7 +72,7 @@ class ConnectedAccount extends SocialstreamConnectedAccount
     /**
      * Scope a query to only include accounts of a given type.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @param  string  $type
      * @return Builder
      */
@@ -82,7 +84,7 @@ class ConnectedAccount extends SocialstreamConnectedAccount
     /**
      * Scope a query to only include primary accounts.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopePrimary($query)
@@ -90,8 +92,3 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         return $query->where('is_primary', true);
     }
 }
-
-
-
-
-

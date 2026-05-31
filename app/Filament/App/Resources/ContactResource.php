@@ -1,37 +1,35 @@
 <?php
+
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\BulkAction;
-use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
-use App\Filament\App\Resources\ContactResource\Pages;
-use App\Models\Contact;
+use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Models\Company;
-use Filament\Forms;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use Filament\Tables;
-use Illuminate\Support\Collection;
-
+use App\Models\Contact;
 use App\Services\TwilioService;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class ContactResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -98,6 +96,7 @@ class ContactResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -181,7 +180,7 @@ class ContactResource extends Resource
                             ->label('SMS Message')
                             ->required(),
                     ])
-                    ->action(function (Contact $record, array $data, TwilioService $twilioService) {
+                    ->action(function (Contact $record, array $data, TwilioService $twilioService): void {
                         $result = $twilioService->sendSMS($record->phone_number, $data['message']);
                         if ($result) {
                             Notification::make()->title('SMS sent successfully')->success()->send();
@@ -191,7 +190,7 @@ class ContactResource extends Resource
                     }),
                 Action::make('makeCall')
                     ->icon('heroicon-o-phone')
-                    ->action(function (Contact $record, TwilioService $twilioService) {
+                    ->action(function (Contact $record, TwilioService $twilioService): void {
                         $result = $twilioService->makeCall($record->phone_number, route('twilio.twiml.outbound'));
                         if ($result) {
                             Notification::make()->title('Call initiated successfully')->success()->send();
@@ -209,7 +208,7 @@ class ContactResource extends Resource
                             ->label('SMS Message')
                             ->required(),
                     ])
-                    ->action(function (Collection $records, array $data, TwilioService $twilioService) {
+                    ->action(function (Collection $records, array $data, TwilioService $twilioService): void {
                         $successCount = 0;
                         $failCount = 0;
                         foreach ($records as $record) {
@@ -222,7 +221,7 @@ class ContactResource extends Resource
                     }),
                 BulkAction::make('bulkMakeCall')
                     ->icon('heroicon-o-phone')
-                    ->action(function (Collection $records, TwilioService $twilioService) {
+                    ->action(function (Collection $records, TwilioService $twilioService): void {
                         $successCount = 0;
                         $failCount = 0;
                         foreach ($records as $record) {
@@ -236,6 +235,7 @@ class ContactResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

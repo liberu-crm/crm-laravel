@@ -8,11 +8,8 @@ use Twilio\TwiML\VoiceResponse;
 
 class TwilioController extends Controller
 {
-    protected $twilioService;
-
-    public function __construct(TwilioService $twilioService)
+    public function __construct(protected \App\Services\TwilioService $twilioService)
     {
-        $this->twilioService = $twilioService;
     }
 
     public function initiateCall(Request $request)
@@ -24,6 +21,7 @@ class TwilioController extends Controller
 
         if ($call) {
             $this->twilioService->logCall($call->sid, $contactId, 'outbound', null, 'initiated');
+
             return response()->json(['success' => true, 'call_sid' => $call->sid]);
         }
 
@@ -32,7 +30,7 @@ class TwilioController extends Controller
 
     public function handleOutboundCall(Request $request)
     {
-        $response = new VoiceResponse();
+        $response = new VoiceResponse;
         $dial = $response->dial('', ['callerId' => config('services.twilio.phone_number')]);
         $dial->number($request->input('To'));
 
@@ -41,18 +39,18 @@ class TwilioController extends Controller
 
     public function handleInboundCall(Request $request)
     {
-        $response = new VoiceResponse();
+        $response = new VoiceResponse;
         $response->say('Welcome to Liberu CRM. Please wait while we connect you to an agent.');
         $response->dial('', ['callerId' => $request->input('To')]);
 
         return response($response)->header('Content-Type', 'text/xml');
     }
 
-    public function handleRecordingCallback(Request $request)
+    public function handleRecordingCallback(Request $request): \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
     {
-        $callSid = $request->input('CallSid');
-        $recordingUrl = $request->input('RecordingUrl');
-        $duration = $request->input('RecordingDuration');
+        $request->input('CallSid');
+        $request->input('RecordingUrl');
+        $request->input('RecordingDuration');
 
         // Here you would typically update your CallLog model with the recording information
         // For example:
@@ -81,7 +79,6 @@ class TwilioController extends Controller
         if ($success) {
             return response()->json(['success' => true]);
         }
-
 
         return response()->json(['success' => false, 'message' => 'Failed to stop recording'], 500);
     }

@@ -11,7 +11,7 @@ class OAuthConfigurationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_oauth_configuration_can_be_created_in_database()
+    public function test_oauth_configuration_can_be_created_in_database(): void
     {
         OAuthConfiguration::create([
             'service_name' => 'facebook',
@@ -25,7 +25,7 @@ class OAuthConfigurationTest extends TestCase
         ]);
     }
 
-    public function test_oauth_redirect_uses_database_configuration()
+    public function test_oauth_redirect_uses_database_configuration(): void
     {
         OAuthConfiguration::create([
             'service_name' => 'facebook',
@@ -40,7 +40,7 @@ class OAuthConfigurationTest extends TestCase
         $this->assertEquals('db_client_secret', $config->client_secret);
     }
 
-    public function test_oauth_configuration_can_be_listed()
+    public function test_oauth_configuration_can_be_listed(): void
     {
         OAuthConfiguration::create(['service_name' => 'facebook', 'client_id' => 'id1', 'client_secret' => 'secret1']);
         OAuthConfiguration::create(['service_name' => 'twitter', 'client_id' => 'id2', 'client_secret' => 'secret2']);
@@ -48,7 +48,7 @@ class OAuthConfigurationTest extends TestCase
         $this->assertEquals(2, OAuthConfiguration::count());
     }
 
-    public function test_oauth_configuration_page_is_accessible_for_authenticated_user()
+    public function test_oauth_configuration_page_is_accessible_for_authenticated_user(): void
     {
         $user = User::factory()->withPersonalTeam()->create();
         $user->current_team_id = $user->ownedTeams->first()->id;

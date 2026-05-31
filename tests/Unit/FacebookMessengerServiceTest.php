@@ -10,6 +10,7 @@ use Tests\TestCase;
 class FacebookMessengerServiceTest extends TestCase
 {
     protected $facebookMock;
+
     protected $facebookMessengerService;
 
     protected function setUp(): void
@@ -19,10 +20,10 @@ class FacebookMessengerServiceTest extends TestCase
         $this->facebookMock = Mockery::mock(Facebook::class);
         $this->app->instance(Facebook::class, $this->facebookMock);
 
-        $this->facebookMessengerService = new FacebookMessengerService();
+        $this->facebookMessengerService = new FacebookMessengerService;
     }
 
-    public function testGetUnreadMessages()
+    public function test_get_unread_messages(): void
     {
         $mockResponse = Mockery::mock();
         $mockResponse->shouldReceive('getGraphEdge')->andReturn([
@@ -49,7 +50,7 @@ class FacebookMessengerServiceTest extends TestCase
         $this->assertEquals('Hello', $unreadMessages[0]['message']);
     }
 
-    public function testGetMessage()
+    public function test_get_message(): void
     {
         $mockResponse = Mockery::mock();
         $mockResponse->shouldReceive('getGraphNode')->andReturn(
@@ -71,7 +72,7 @@ class FacebookMessengerServiceTest extends TestCase
         $this->assertEquals('Hello', $message['message']);
     }
 
-    public function testSendReply()
+    public function test_send_reply(): void
     {
         $mockGraphNode = Mockery::mock();
         $mockGraphNode->shouldReceive('getField')

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\EmailTracking;
-use App\Models\Email;
 use App\Models\Contact;
+use App\Models\Email;
+use App\Models\EmailTracking;
 use Illuminate\Support\Str;
 
 class EmailTrackingService
@@ -44,10 +44,29 @@ class EmailTrackingService
      */
     public function getTrackedLinkUrl(EmailTracking $tracking, string $originalUrl): string
     {
+        $encodedUrl = base64_encode($originalUrl);
+        $signature = $this->generateLinkSignature($tracking->tracking_id, $encodedUrl);
+
         return route('email.tracking.link', [
             'tracking_id' => $tracking->tracking_id,
-            'url' => base64_encode($originalUrl),
+            'url' => $encodedUrl,
+            's' => $signature,
         ]);
+    }
+
+    public function generateLinkSignature(string $trackingId, string $encodedUrl): string
+    {
+        return hash_hmac('sha256', $trackingId.':'.$encodedUrl, (string) config('app.key'));
+    }
+
+    /**
+     * Decode a base64-encoded tracked URL.
+     */
+    public function decodeTrackedUrl(string $encoded): string
+    {
+        $decoded = base64_decode($encoded, true);
+
+        return $decoded === false ? '' : $decoded;
     }
 
     /**
@@ -56,15 +75,15 @@ class EmailTrackingService
     public function injectTrackingPixel(string $html, EmailTracking $tracking): string
     {
         $pixelUrl = $this->getTrackingPixelUrl($tracking);
-        $pixel = '<img src="' . $pixelUrl . '" width="1" height="1" alt="" style="display:none" />';
-        
+        $pixel = '<img src="'.$pixelUrl.'" width="1" height="1" alt="" style="display:none" />';
+
         // Try to inject before closing body tag
         if (stripos($html, '</body>') !== false) {
-            return str_ireplace('</body>', $pixel . '</body>', $html);
+            return str_ireplace('</body>', $pixel.'</body>', $html);
         }
-        
+
         // Otherwise, append to the end
-        return $html . $pixel;
+        return $html.$pixel;
     }
 
     /**
@@ -74,7 +93,7 @@ class EmailTrackingService
     {
         // Find all links in the HTML
         preg_match_all('/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/', $html, $matches);
-        
+
         if (empty($matches[1])) {
             return $html;
         }
@@ -85,14 +104,14 @@ class EmailTrackingService
             if (Str::startsWith($originalUrl, ['mailto:', 'tel:', '#'])) {
                 continue;
             }
-            
+
             $trackedUrl = $this->getTrackedLinkUrl($tracking, $originalUrl);
             $replacements[$originalUrl] = $trackedUrl;
         }
 
         // Replace all links
         foreach ($replacements as $original => $tracked) {
-            $html = str_replace('href="' . $original . '"', 'href="' . $tracked . '"', $html);
+            $html = str_replace('href="'.$original.'"', 'href="'.$tracked.'"', $html);
         }
 
         return $html;
@@ -104,9 +123,8 @@ class EmailTrackingService
     public function processEmailHtml(string $html, EmailTracking $tracking): string
     {
         $html = $this->replaceLinksWithTracked($html, $tracking);
-        $html = $this->injectTrackingPixel($html, $tracking);
-        
-        return $html;
+
+        return $this->injectTrackingPixel($html, $tracking);
     }
 
     /**
@@ -115,16 +133,18 @@ class EmailTrackingService
     public function recordOpen(string $trackingId, ?string $userAgent = null, ?string $ipAddress = null): bool
     {
         $tracking = EmailTracking::where('tracking_id', $trackingId)->first();
-        
-        if (!$tracking) {
+
+        if (! $tracking) {
             return false;
         }
 
         $tracking->recordOpen($userAgent, $ipAddress);
-        
+
         // Update contact engagement score
-        $this->updateContactEngagement($tracking->contact);
-        
+        if ($tracking->contact) {
+            $this->updateContactEngagement($tracking->contact);
+        }
+
         return true;
     }
 
@@ -134,16 +154,18 @@ class EmailTrackingService
     public function recordClick(string $trackingId, string $url, ?string $userAgent = null, ?string $ipAddress = null): bool
     {
         $tracking = EmailTracking::where('tracking_id', $trackingId)->first();
-        
-        if (!$tracking) {
+
+        if (! $tracking) {
             return false;
         }
 
         $tracking->recordClick($url, $userAgent, $ipAddress);
-        
+
         // Update contact engagement score (clicks are worth more than opens)
-        $this->updateContactEngagement($tracking->contact, 2);
-        
+        if ($tracking->contact) {
+            $this->updateContactEngagement($tracking->contact, 2);
+        }
+
         return true;
     }
 
@@ -154,9 +176,9 @@ class EmailTrackingService
     {
         // Get current metadata or initialize
         $metadata = $contact->metadata ?? [];
-        
+
         // Initialize engagement data if not exists
-        if (!isset($metadata['email_engagement'])) {
+        if (! isset($metadata['email_engagement'])) {
             $metadata['email_engagement'] = [
                 'score' => 0,
                 'last_interaction' => null,
@@ -168,7 +190,7 @@ class EmailTrackingService
         // Update engagement
         $metadata['email_engagement']['score'] += $points;
         $metadata['email_engagement']['last_interaction'] = now()->toDateTimeString();
-        
+
         if ($points === 1) {
             $metadata['email_engagement']['total_opens']++;
         } else {
@@ -184,15 +206,15 @@ class EmailTrackingService
     public function getContactEngagementStats(Contact $contact): array
     {
         $tracking = EmailTracking::where('contact_id', $contact->id)->get();
-        
+
         return [
             'total_sent' => $tracking->count(),
             'total_opened' => $tracking->whereNotNull('opened_at')->count(),
             'total_clicked' => $tracking->whereNotNull('clicked_at')->count(),
             'total_bounced' => $tracking->whereNotNull('bounced_at')->count(),
-            'open_rate' => $tracking->count() > 0 ? 
+            'open_rate' => $tracking->count() > 0 ?
                 round(($tracking->whereNotNull('opened_at')->count() / $tracking->count()) * 100, 2) : 0,
-            'click_rate' => $tracking->count() > 0 ? 
+            'click_rate' => $tracking->count() > 0 ?
                 round(($tracking->whereNotNull('clicked_at')->count() / $tracking->count()) * 100, 2) : 0,
             'engagement_score' => $contact->metadata['email_engagement']['score'] ?? 0,
         ];

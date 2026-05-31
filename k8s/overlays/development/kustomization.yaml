@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+namespace: liberu-crm-dev
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 1
+  target:
+    kind: Deployment
+    name: liberu-crm
+
+configMapGenerator:
+- name: liberu-crm-config
+  behavior: merge
+  literals:
+  - APP_ENV=local
+  - APP_DEBUG=true
+  - LOG_LEVEL=debug
+
+images:
+- name: liberu/crm
+  newTag: develop

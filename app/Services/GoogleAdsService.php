@@ -2,14 +2,13 @@
 
 namespace App\Services;
 
-use Exception;
 use App\Models\ConnectedAccount;
-use Google\Ads\GoogleAds\Lib\V14\GoogleAdsClient;
-use Google\Ads\GoogleAds\Lib\V14\GoogleAdsClientBuilder;
+use Exception;
 use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
-use Google\Ads\GoogleAds\V14\Services\CampaignOperation;
-use Google\Ads\GoogleAds\V14\Resources\Campaign;
+use Google\Ads\GoogleAds\Lib\V14\GoogleAdsClientBuilder;
 use Google\Ads\GoogleAds\V14\Enums\CampaignStatusEnum\CampaignStatus;
+use Google\Ads\GoogleAds\V14\Resources\Campaign;
+use Google\Ads\GoogleAds\V14\Services\CampaignOperation;
 use Google\ApiCore\ApiException;
 use Illuminate\Support\Facades\Log;
 
@@ -32,13 +31,13 @@ class GoogleAdsService
 
     protected function createClient(ConnectedAccount $account)
     {
-        $oAuth2Credential = (new OAuth2TokenBuilder())
+        $oAuth2Credential = (new OAuth2TokenBuilder)
             ->withClientId(config('services.google_ads.client_id'))
             ->withClientSecret(config('services.google_ads.client_secret'))
             ->withRefreshToken($account->token)
             ->build();
 
-        return (new GoogleAdsClientBuilder())
+        return (new GoogleAdsClientBuilder)
             ->withOAuth2Credential($oAuth2Credential)
             ->withDeveloperToken(config('services.google_ads.developer_token'))
             ->withLoginCustomerId($account->provider_id)
@@ -48,15 +47,15 @@ class GoogleAdsService
     public function getCampaigns($accountId)
     {
         try {
-            if (!isset($this->clients[$accountId])) {
-                throw new Exception("Google Ads account not found");
+            if (! isset($this->clients[$accountId])) {
+                throw new Exception('Google Ads account not found');
             }
 
             $client = $this->clients[$accountId];
             $customerService = $client->getCustomerService();
             $customer = $customerService->getCustomer($client->getLoginCustomerId());
 
-            $query = "SELECT campaign.id, campaign.name, campaign.status FROM campaign ORDER BY campaign.id";
+            $query = 'SELECT campaign.id, campaign.name, campaign.status FROM campaign ORDER BY campaign.id';
             $stream = $client->getGoogleAdsServiceClient()->search($customer->getResourceName(), $query);
 
             $campaigns = [];
@@ -71,16 +70,16 @@ class GoogleAdsService
 
             return $campaigns;
         } catch (ApiException $e) {
-            Log::error('Google Ads API Error: ' . $e->getMessage());
-            throw new Exception('Failed to fetch campaigns: ' . $e->getMessage());
+            Log::error('Google Ads API Error: '.$e->getMessage());
+            throw new Exception('Failed to fetch campaigns: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function createCampaign($accountId, $campaignData)
+    public function createCampaign($accountId, array $campaignData)
     {
         try {
-            if (!isset($this->clients[$accountId])) {
-                throw new Exception("Google Ads account not found");
+            if (! isset($this->clients[$accountId])) {
+                throw new Exception('Google Ads account not found');
             }
 
             $client = $this->clients[$accountId];
@@ -92,25 +91,26 @@ class GoogleAdsService
                 // Add other campaign settings as needed
             ]);
 
-            $operation = new CampaignOperation();
+            $operation = new CampaignOperation;
             $operation->setCreate($campaign);
 
             $campaignServiceClient = $client->getCampaignServiceClient();
             $response = $campaignServiceClient->mutateCampaigns($customerId, [$operation]);
 
             $createdCampaign = $response->getResults()[0];
+
             return $createdCampaign->getResourceName();
         } catch (ApiException $e) {
-            Log::error('Google Ads API Error: ' . $e->getMessage());
-            throw new Exception('Failed to create campaign: ' . $e->getMessage());
+            Log::error('Google Ads API Error: '.$e->getMessage());
+            throw new Exception('Failed to create campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function updateCampaign($accountId, $campaignId, $campaignData)
+    public function updateCampaign($accountId, $campaignId, array $campaignData)
     {
         try {
-            if (!isset($this->clients[$accountId])) {
-                throw new Exception("Google Ads account not found");
+            if (! isset($this->clients[$accountId])) {
+                throw new Exception('Google Ads account not found');
             }
 
             $client = $this->clients[$accountId];
@@ -123,7 +123,7 @@ class GoogleAdsService
                 // Add other updatable fields as needed
             ]);
 
-            $operation = new CampaignOperation();
+            $operation = new CampaignOperation;
             $operation->setUpdate($campaign);
             $operation->setUpdateMask(['name', 'status']);
 
@@ -131,34 +131,36 @@ class GoogleAdsService
             $response = $campaignServiceClient->mutateCampaigns($customerId, [$operation]);
 
             $updatedCampaign = $response->getResults()[0];
+
             return $updatedCampaign->getResourceName();
         } catch (ApiException $e) {
-            Log::error('Google Ads API Error: ' . $e->getMessage());
-            throw new Exception('Failed to update campaign: ' . $e->getMessage());
+            Log::error('Google Ads API Error: '.$e->getMessage());
+            throw new Exception('Failed to update campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 
     public function deleteCampaign($accountId, $campaignId)
     {
         try {
-            if (!isset($this->clients[$accountId])) {
-                throw new Exception("Google Ads account not found");
+            if (! isset($this->clients[$accountId])) {
+                throw new Exception('Google Ads account not found');
             }
 
             $client = $this->clients[$accountId];
             $customerId = $client->getLoginCustomerId();
 
-            $operation = new CampaignOperation();
+            $operation = new CampaignOperation;
             $operation->setRemove($campaignId);
 
             $campaignServiceClient = $client->getCampaignServiceClient();
             $response = $campaignServiceClient->mutateCampaigns($customerId, [$operation]);
 
             $deletedCampaign = $response->getResults()[0];
+
             return $deletedCampaign->getResourceName();
         } catch (ApiException $e) {
-            Log::error('Google Ads API Error: ' . $e->getMessage());
-            throw new Exception('Failed to delete campaign: ' . $e->getMessage());
+            Log::error('Google Ads API Error: '.$e->getMessage());
+            throw new Exception('Failed to delete campaign: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 

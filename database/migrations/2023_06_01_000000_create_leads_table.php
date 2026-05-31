@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         // Ensure contact_id column exists (it may have been created without it)
-        if (Schema::hasTable('leads') && !Schema::hasColumn('leads', 'contact_id')) {
-            Schema::table('leads', function (Blueprint $table) {
+        if (Schema::hasTable('leads') && ! Schema::hasColumn('leads', 'contact_id')) {
+            Schema::table('leads', function (Blueprint $table): void {
                 $table->foreignId('contact_id')->nullable()->constrained()->nullOnDelete();
             });
         }
@@ -19,7 +19,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('leads') && Schema::hasColumn('leads', 'contact_id')) {
-            Schema::table('leads', function (Blueprint $table) {
+            Schema::table('leads', function (Blueprint $table): void {
                 $table->dropForeign(['contact_id']);
                 $table->dropColumn('contact_id');
             });

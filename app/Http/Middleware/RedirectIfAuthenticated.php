@@ -23,11 +23,11 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request):Response $next
+     * @param  Closure(Request):Response  $next
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
-        $guards = empty($guards) ? [null] : $guards;
+        $guards = $guards === [] ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
@@ -41,8 +41,10 @@ class RedirectIfAuthenticated
                 $userRoles = $user->getRoleNames();
                 if ($userRoles->isNotEmpty()) {
                     $firstRole = $userRoles->first();
-                    return redirect('/' . $firstRole);
+
+                    return redirect('/'.$firstRole);
                 }
+
                 // If user has no roles, redirect to default home
                 return redirect(RouteServiceProvider::HOME);
             }

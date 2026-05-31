@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\CallSetting;
@@ -24,12 +26,12 @@ class CallSettingFactory extends Factory
                 'transcription_enabled' => $this->faker->boolean,
                 'call_forwarding' => [
                     'enabled' => $this->faker->boolean,
-                    'number' => $this->faker->phoneNumber
-                ]
+                    'number' => $this->faker->phoneNumber,
+                ],
             ]),
             'status' => $this->faker->randomElement(['active', 'inactive', 'pending']),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
     }
 }

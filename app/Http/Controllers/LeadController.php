@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
@@ -7,16 +9,16 @@ use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $query = Lead::query();
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -38,7 +40,7 @@ class LeadController extends Controller
 
         $leads = $query->paginate(15);
 
-        return view('leads.index', compact('leads'));
+        return view('leads.index', ['leads' => $leads]);
     }
 
     // Other CRUD methods...

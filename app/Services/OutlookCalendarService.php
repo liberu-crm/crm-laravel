@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Models\Task;
 use DateTime;
+use Microsoft\Graph\Graph;
+use Microsoft\Graph\Model\DateTimeTimeZone;
+use Microsoft\Graph\Model\Event;
+use Microsoft\Graph\Model\ItemBody;
 
 class OutlookCalendarService implements CalendarService
 {
@@ -17,7 +21,7 @@ class OutlookCalendarService implements CalendarService
     protected function getGraph()
     {
         if ($this->graph === null) {
-            $this->graph = new \Microsoft\Graph\Graph();
+            $this->graph = new Graph;
             $this->graph->setAccessToken($this->getAccessToken());
         }
 
@@ -32,14 +36,14 @@ class OutlookCalendarService implements CalendarService
 
     public function createEvent(Task $task): void
     {
-        $event = new \Microsoft\Graph\Model\Event();
+        $event = new Event;
         $event->setSubject($task->name);
-        $event->setBody(new \Microsoft\Graph\Model\ItemBody(['content' => $task->description]));
-        $event->setStart(new \Microsoft\Graph\Model\DateTimeTimeZone([
+        $event->setBody(new ItemBody(['content' => $task->description]));
+        $event->setStart(new DateTimeTimeZone([
             'dateTime' => $task->due_date->format('Y-m-d\TH:i:s'),
             'timeZone' => 'UTC',
         ]));
-        $event->setEnd(new \Microsoft\Graph\Model\DateTimeTimeZone([
+        $event->setEnd(new DateTimeTimeZone([
             'dateTime' => $task->due_date->addHour()->format('Y-m-d\TH:i:s'),
             'timeZone' => 'UTC',
         ]));
@@ -47,7 +51,7 @@ class OutlookCalendarService implements CalendarService
         $newEvent = $this->getGraph()
             ->createRequest('POST', '/me/events')
             ->attachBody($event)
-            ->setReturnType(\Microsoft\Graph\Model\Event::class)
+            ->setReturnType(Event::class)
             ->execute();
 
         $task->outlook_event_id = $newEvent->getId();
@@ -56,20 +60,20 @@ class OutlookCalendarService implements CalendarService
 
     public function updateEvent(Task $task): void
     {
-        $event = new \Microsoft\Graph\Model\Event();
+        $event = new Event;
         $event->setSubject($task->name);
-        $event->setBody(new \Microsoft\Graph\Model\ItemBody(['content' => $task->description]));
-        $event->setStart(new \Microsoft\Graph\Model\DateTimeTimeZone([
+        $event->setBody(new ItemBody(['content' => $task->description]));
+        $event->setStart(new DateTimeTimeZone([
             'dateTime' => $task->due_date->format('Y-m-d\TH:i:s'),
             'timeZone' => 'UTC',
         ]));
-        $event->setEnd(new \Microsoft\Graph\Model\DateTimeTimeZone([
+        $event->setEnd(new DateTimeTimeZone([
             'dateTime' => $task->due_date->addHour()->format('Y-m-d\TH:i:s'),
             'timeZone' => 'UTC',
         ]));
 
         $this->getGraph()
-            ->createRequest('PATCH', '/me/events/' . $task->outlook_event_id)
+            ->createRequest('PATCH', '/me/events/'.$task->outlook_event_id)
             ->attachBody($event)
             ->execute();
     }
@@ -77,7 +81,7 @@ class OutlookCalendarService implements CalendarService
     public function deleteEvent(Task $task): void
     {
         $this->getGraph()
-            ->createRequest('DELETE', '/me/events/' . $task->outlook_event_id)
+            ->createRequest('DELETE', '/me/events/'.$task->outlook_event_id)
             ->execute();
 
         $task->outlook_event_id = null;
@@ -87,14 +91,14 @@ class OutlookCalendarService implements CalendarService
     public function fetchEvents(array $params = []): array
     {
         $queryParams = [
-            '$top'     => $params['maxResults'] ?? 100,
+            '$top' => $params['maxResults'] ?? 100,
             '$orderby' => 'start/dateTime',
-            '$filter'  => 'start/dateTime ge ' . date('c'),
+            '$filter' => 'start/dateTime ge '.date('c'),
         ];
 
         return $this->getGraph()
-            ->createRequest('GET', '/me/events?' . http_build_query($queryParams))
-            ->setReturnType(\Microsoft\Graph\Model\Event::class)
+            ->createRequest('GET', '/me/events?'.http_build_query($queryParams))
+            ->setReturnType(Event::class)
             ->execute();
     }
 
@@ -104,15 +108,15 @@ class OutlookCalendarService implements CalendarService
             $task = Task::where('outlook_event_id', $event->getId())->first();
 
             if ($task) {
-                $task->name        = $event->getSubject();
+                $task->name = $event->getSubject();
                 $task->description = $event->getBody()->getContent();
-                $task->due_date    = new DateTime($event->getStart()->getDateTime());
+                $task->due_date = new DateTime($event->getStart()->getDateTime());
                 $task->save();
             } else {
                 Task::create([
-                    'name'             => $event->getSubject(),
-                    'description'      => $event->getBody()->getContent(),
-                    'due_date'         => new DateTime($event->getStart()->getDateTime()),
+                    'name' => $event->getSubject(),
+                    'description' => $event->getBody()->getContent(),
+                    'due_date' => new DateTime($event->getStart()->getDateTime()),
                     'outlook_event_id' => $event->getId(),
                 ]);
             }

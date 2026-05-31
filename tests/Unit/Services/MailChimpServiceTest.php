@@ -3,13 +3,14 @@
 namespace Tests\Unit\Services;
 
 use App\Services\MailChimpService;
-use Tests\TestCase;
-use Mockery;
 use MailchimpMarketing\ApiClient;
+use Mockery;
+use Tests\TestCase;
 
 class MailChimpServiceTest extends TestCase
 {
     protected $mailChimpService;
+
     protected $mockApiClient;
 
     protected function setUp(): void
@@ -17,16 +18,16 @@ class MailChimpServiceTest extends TestCase
         parent::setUp();
 
         $this->mockApiClient = Mockery::mock(ApiClient::class);
-        $this->mailChimpService = new MailChimpService();
+        $this->mailChimpService = new MailChimpService;
         $this->mailChimpService->setClient($this->mockApiClient);
     }
 
-    public function testMailChimpServiceCanBeInstantiated()
+    public function test_mail_chimp_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(MailChimpService::class, $this->mailChimpService);
     }
 
-    public function testGetListsMethodCanBeCalled()
+    public function test_get_lists_method_can_be_called(): void
     {
         $mockResponse = (object) ['lists' => [
             (object) ['id' => '1', 'name' => 'List 1'],

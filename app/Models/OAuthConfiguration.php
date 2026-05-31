@@ -33,4 +33,3 @@ class OAuthConfiguration extends Model
         return self::where('service_name', $serviceName)->first();
     }
 }
-

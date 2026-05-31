@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Exception;
-use App\Models\SocialMediaPost;
 use App\Models\ConnectedAccount;
+use App\Models\SocialMediaPost;
 use App\Services\FacebookService;
-use App\Services\TwitterService;
 use App\Services\InstagramService;
 use App\Services\LinkedInService;
+use App\Services\TwitterService;
 use App\Services\YouTubeService;
+use Exception;
 use Illuminate\Console\Command;
 
 class PublishScheduledPosts extends Command
@@ -18,7 +18,7 @@ class PublishScheduledPosts extends Command
 
     protected $description = 'Publish scheduled social media posts';
 
-    public function handle()
+    public function handle(): void
     {
         $posts = SocialMediaPost::where('status', SocialMediaPost::STATUS_SCHEDULED)
             ->where('scheduled_at', '<=', now())
@@ -88,7 +88,7 @@ class PublishScheduledPosts extends Command
             case 'youtube':
                 $account = ConnectedAccount::ofType('youtube')->primary()->first();
                 if ($account && $post->video) {
-                    $videoPath = storage_path('app/public/' . $post->video);
+                    $videoPath = storage_path('app/public/'.$post->video);
                     $title = mb_substr(explode("\n", $post->content)[0], 0, 100);
                     $result = app(YouTubeService::class)->uploadVideo($account, $videoPath, $title, $post->content);
                     $ids = $post->platform_post_ids ?? [];

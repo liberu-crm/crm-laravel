@@ -8,19 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('workflow_triggers', function (Blueprint $table) {
+        Schema::create('workflow_triggers', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('type');
             $table->json('config')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['workflow_id', 'type']);
             $table->index('is_active');
         });
 
-        Schema::create('workflow_actions', function (Blueprint $table) {
+        Schema::create('workflow_actions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('type');
@@ -32,11 +32,11 @@ return new class extends Migration
             $table->string('delay_unit')->nullable(); // minutes, hours, days
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['workflow_id', 'order']);
         });
 
-        Schema::create('workflow_conditions', function (Blueprint $table) {
+        Schema::create('workflow_conditions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_action_id')->constrained()->onDelete('cascade');
             $table->string('field');
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('workflow_executions', function (Blueprint $table) {
+        Schema::create('workflow_executions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('workflow_id')->constrained()->onDelete('cascade');
             $table->string('entity_type');
@@ -58,7 +58,7 @@ return new class extends Migration
             $table->text('error_message')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index(['entity_type', 'entity_id']);
             $table->index(['workflow_id', 'status']);
         });

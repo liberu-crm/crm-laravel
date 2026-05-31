@@ -3,6 +3,7 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
@@ -31,7 +32,7 @@ return [
     |
     */
 
-    'deprecations' => fn() => [
+    'deprecations' => [
         'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
         'trace' => env('LOG_DEPRECATIONS_TRACE', false),
     ],
@@ -84,16 +85,16 @@ return [
 
         'papertrail' => [
             'driver' => 'monolog',
-            'level' => match(env('LOG_LEVEL')) {
-                'debug' => Monolog\Logger::DEBUG,
-                'info' => Monolog\Logger::INFO,
-                'notice' => Monolog\Logger::NOTICE,
-                'warning' => Monolog\Logger::WARNING,
-                'error' => Monolog\Logger::ERROR,
-                'critical' => Monolog\Logger::CRITICAL,
-                'alert' => Monolog\Logger::ALERT,
-                'emergency' => Monolog\Logger::EMERGENCY,
-                default => Monolog\Logger::DEBUG,
+            'level' => match (env('LOG_LEVEL')) {
+                'debug' => Logger::DEBUG,
+                'info' => Logger::INFO,
+                'notice' => Logger::NOTICE,
+                'warning' => Logger::WARNING,
+                'error' => Logger::ERROR,
+                'critical' => Logger::CRITICAL,
+                'alert' => Logger::ALERT,
+                'emergency' => Logger::EMERGENCY,
+                default => Logger::DEBUG,
             },
             'handler' => SyslogUdpHandler::class,
             'handler_with' => [
@@ -106,16 +107,16 @@ return [
 
         'stderr' => [
             'driver' => 'monolog',
-            'level' => match(env('LOG_LEVEL')) {
-                'debug' => Monolog\Logger::DEBUG,
-                'info' => Monolog\Logger::INFO,
-                'notice' => Monolog\Logger::NOTICE,
-                'warning' => Monolog\Logger::WARNING,
-                'error' => Monolog\Logger::ERROR,
-                'critical' => Monolog\Logger::CRITICAL,
-                'alert' => Monolog\Logger::ALERT,
-                'emergency' => Monolog\Logger::EMERGENCY,
-                default => Monolog\Logger::DEBUG,
+            'level' => match (env('LOG_LEVEL')) {
+                'debug' => Logger::DEBUG,
+                'info' => Logger::INFO,
+                'notice' => Logger::NOTICE,
+                'warning' => Logger::WARNING,
+                'error' => Logger::ERROR,
+                'critical' => Logger::CRITICAL,
+                'alert' => Logger::ALERT,
+                'emergency' => Logger::EMERGENCY,
+                default => Logger::DEBUG,
             },
             'handler' => StreamHandler::class,
             'formatter' => env('LOG_STDERR_FORMATTER', null),
@@ -143,9 +144,9 @@ return [
             'handler' => NullHandler::class,
         ],
 
-        'emergency' => fn() => [
+        'emergency' => fn () => [
             'path' => storage_path('logs/laravel_emergency.log'),
-            'level' => Monolog\Logger::EMERGENCY,
+            'level' => Logger::EMERGENCY,
         ],
     ],
 

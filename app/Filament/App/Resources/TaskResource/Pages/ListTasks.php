@@ -1,30 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\TaskResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\TaskResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Filters\SelectFilter;
 
 class ListTasks extends ListRecords
 {
     protected static string $resource = TaskResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make(),
-        ];
-    }
-
-    protected function getTableFilters(): array
-    {
-        return [
-            SelectFilter::make('workflow')
-                ->relationship('workflow', 'name')
-                ->label('Workflow'),
         ];
     }
 }

@@ -3,24 +3,25 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 
 class RolePermissionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\RolesSeeder::class);
+        $this->seed(RolesSeeder::class);
     }
 
     #[Test]
-    public function it_creates_required_roles()
+    public function it_creates_required_roles(): void
     {
         $this->assertDatabaseHas('roles', ['name' => 'admin']);
         $this->assertDatabaseHas('roles', ['name' => 'manager']);
@@ -28,7 +29,7 @@ class RolePermissionTest extends TestCase
     }
 
     #[Test]
-    public function it_can_assign_roles_to_users()
+    public function it_can_assign_roles_to_users(): void
     {
         $user = User::factory()->create();
         $adminRole = Role::findByName('admin');
@@ -41,7 +42,7 @@ class RolePermissionTest extends TestCase
     }
 
     #[Test]
-    public function it_can_assign_manager_role()
+    public function it_can_assign_manager_role(): void
     {
         $user = User::factory()->create();
         $managerRole = Role::findByName('manager');
@@ -51,7 +52,7 @@ class RolePermissionTest extends TestCase
     }
 
     #[Test]
-    public function it_can_create_custom_permissions()
+    public function it_can_create_custom_permissions(): void
     {
         $permission = Permission::firstOrCreate(['name' => 'test_custom_permission']);
 
@@ -62,7 +63,7 @@ class RolePermissionTest extends TestCase
     }
 
     #[Test]
-    public function admin_user_can_be_created_with_role()
+    public function admin_user_can_be_created_with_role(): void
     {
         $user = User::factory()->create();
         $user->assignRole('admin');

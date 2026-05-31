@@ -11,7 +11,7 @@ class SendCRMEventNotification implements ShouldQueue
 {
     use InteractsWithQueue;
 
-    public function handle($event)
+    public function handle($event): void
     {
         $eventName = class_basename($event);
         $notificationConfig = config("crm.notifications.events.{$eventName}");

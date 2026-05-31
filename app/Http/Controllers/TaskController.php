@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\ReminderService;
 use Illuminate\Http\Request;
@@ -12,25 +12,24 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    protected $reminderService;
-
-    public function __construct(ReminderService $reminderService)
+    public function __construct(protected \App\Services\ReminderService $reminderService)
     {
-        $this->reminderService = $reminderService;
     }
 
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $tasks = Task::where('assigned_to', Auth::id())->orderBy('due_date')->get();
-        return view('tasks.index', compact('tasks'));
+
+        return view('tasks.index', ['tasks' => $tasks]);
     }
 
-    public function create()
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $contacts = Contact::all();
         $leads = Lead::all();
         $users = User::all();
-        return view('tasks.create', compact('contacts', 'leads', 'users'));
+
+        return view('tasks.create', ['contacts' => $contacts, 'leads' => $leads, 'users' => $users]);
     }
 
     public function store(Request $request)
@@ -54,12 +53,13 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
-    public function edit(Task $task)
+    public function edit(Task $task): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $contacts = Contact::all();
         $leads = Lead::all();
         $users = User::all();
-        return view('tasks.edit', compact('task', 'contacts', 'leads', 'users'));
+
+        return view('tasks.edit', ['task' => $task, 'contacts' => $contacts, 'leads' => $leads, 'users' => $users]);
     }
 
     public function update(Request $request, Task $task)
@@ -86,18 +86,21 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
+
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 
     public function complete(Task $task)
     {
         $task->markAsComplete();
+
         return redirect()->back()->with('success', 'Task marked as complete.');
     }
 
     public function incomplete(Task $task)
     {
         $task->markAsIncomplete();
+
         return redirect()->back()->with('success', 'Task marked as incomplete.');
     }
 

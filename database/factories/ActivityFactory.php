@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Activity;
@@ -12,12 +14,12 @@ class ActivityFactory extends Factory
     public function definition(): array
     {
         return [
-            'type'             => $this->faker->randomElement(['created', 'updated', 'deleted', 'commented']),
-            'date'             => $this->faker->dateTimeThisYear(),
-            'description'      => $this->faker->sentence(),
-            'outcome'          => $this->faker->optional()->sentence(),
-            'activitable_id'   => 1,
-            'activitable_type' => 'App\Models\Contact',
+            'type' => $this->faker->randomElement(['created', 'updated', 'deleted', 'commented']),
+            'date' => $this->faker->dateTimeThisYear(),
+            'description' => $this->faker->sentence(),
+            'outcome' => $this->faker->optional()->sentence(),
+            'activitable_id' => 1,
+            'activitable_type' => \App\Models\Contact::class,
         ];
     }
 }

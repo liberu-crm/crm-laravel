@@ -2,25 +2,31 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\ContactUpdated;
+use App\Models\Contact;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Contact;
-use App\Events\ContactUpdated;
-use Illuminate\Support\Facades\Auth;
 
 class ContactCollaboration extends Component
 {
     use WithPagination;
 
     public $contact;
+
     public $name;
+
     public $email;
+
     public $phone_number;
+
     public $status;
 
     public $search = '';
+
     public $statusFilter = '';
+
     public $sortField = 'name';
+
     public $sortDirection = 'asc';
 
     protected $queryString = ['search', 'statusFilter', 'sortField', 'sortDirection'];
@@ -32,9 +38,9 @@ class ContactCollaboration extends Component
         'status' => 'required|string|in:active,inactive',
     ];
 
-    public function mount(Contact $contact = null)
+    public function mount(?Contact $contact = null): void
     {
-        if ($contact) {
+        if ($contact instanceof \App\Models\Contact) {
             $this->contact = $contact;
             $this->name = $contact->name;
             $this->email = $contact->email;
@@ -43,7 +49,7 @@ class ContactCollaboration extends Component
         }
     }
 
-    public function updateContact()
+    public function updateContact(): void
     {
         $this->validate();
 
@@ -59,7 +65,7 @@ class ContactCollaboration extends Component
         $this->dispatch('contactUpdated');
     }
 
-    public function sortBy($field)
+    public function sortBy($field): void
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
@@ -69,17 +75,17 @@ class ContactCollaboration extends Component
         $this->sortField = $field;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         $contacts = Contact::query()
-            ->when($this->search, function ($query) {
-                $query->where(function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone_number', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($query): void {
+                $query->where(function ($subQuery): void {
+                    $subQuery->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%')
+                        ->orWhere('phone_number', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->statusFilter, function ($query) {
+            ->when($this->statusFilter, function ($query): void {
                 $query->where('status', $this->statusFilter);
             })
             ->orderBy($this->sortField, $this->sortDirection)

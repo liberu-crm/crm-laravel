@@ -2,22 +2,23 @@
 
 namespace Tests\Unit;
 
-use App\Services\Pop3Service;
 use App\Models\OAuthConfiguration;
-use Tests\TestCase;
+use App\Services\Pop3Service;
 use Mockery;
+use Tests\TestCase;
 
 class Pop3ServiceTest extends TestCase
 {
     protected $pop3Service;
+
     protected $mockConfig;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->pop3Service = new Pop3Service();
-        
-        $this->mockConfig = new OAuthConfiguration();
+        $this->pop3Service = new Pop3Service;
+
+        $this->mockConfig = new OAuthConfiguration;
         $this->mockConfig->forceFill([
             'id' => 1,
             'client_id' => 'test@example.com',
@@ -38,14 +39,14 @@ class Pop3ServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testPop3ServiceCanBeInstantiated()
+    public function test_pop3_service_can_be_instantiated(): void
     {
         $this->assertInstanceOf(Pop3Service::class, $this->pop3Service);
     }
 
-    public function testPop3ServiceRequiresConfiguration()
+    public function test_pop3_service_requires_configuration(): void
     {
-        $configWithoutSettings = new OAuthConfiguration();
+        $configWithoutSettings = new OAuthConfiguration;
         $configWithoutSettings->forceFill([
             'id' => 1,
             'client_id' => 'test@example.com',
@@ -55,7 +56,7 @@ class Pop3ServiceTest extends TestCase
 
         // Test that calling methods without proper host configuration will fail
         $this->expectException(\Exception::class);
-        
+
         $this->pop3Service->getUnreadMessages($configWithoutSettings);
     }
 }

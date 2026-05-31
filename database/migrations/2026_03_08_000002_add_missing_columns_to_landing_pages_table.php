@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
-            if (!Schema::hasColumn('landing_pages', 'name')) {
+        Schema::table('landing_pages', function (Blueprint $table): void {
+            if (! Schema::hasColumn('landing_pages', 'name')) {
                 $table->string('name')->nullable()->after('id');
             }
-            if (!Schema::hasColumn('landing_pages', 'slug')) {
+            if (! Schema::hasColumn('landing_pages', 'slug')) {
                 $table->string('slug')->nullable()->after('name');
             }
-            if (!Schema::hasColumn('landing_pages', 'template')) {
+            if (! Schema::hasColumn('landing_pages', 'template')) {
                 $table->string('template')->default('default')->after('slug');
             }
-            if (!Schema::hasColumn('landing_pages', 'settings')) {
+            if (! Schema::hasColumn('landing_pages', 'settings')) {
                 $table->json('settings')->nullable()->after('content');
             }
         });
@@ -26,7 +26,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        Schema::table('landing_pages', function (Blueprint $table): void {
             foreach (['name', 'slug', 'template', 'settings'] as $column) {
                 if (Schema::hasColumn('landing_pages', $column)) {
                     $table->dropColumn($column);

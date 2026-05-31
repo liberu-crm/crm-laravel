@@ -4,67 +4,63 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ContactListController extends Controller
 {
-    /**
-     * Handle the index request for the contacts list.
-     */
-    public function index(Request $request, $created_at = null)
+    public function index(Request $request, ?string $created_at = null): View
     {
         $query = Contact::query();
 
         if ($request->filled('search')) {
-            $term = $request->search;
-            $query->where(function ($q) use ($term) {
-                $q->where('name', 'like', '%' . $term . '%')
-                  ->orWhere('last_name', 'like', '%' . $term . '%')
-                  ->orWhere('email', 'like', '%' . $term . '%')
-                  ->orWhere('phone_number', 'like', '%' . $term . '%')
-                  ->orWhere('company_size', 'like', '%' . $term . '%')
-                  ->orWhere('industry', 'like', '%' . $term . '%');
-            });
+            $term = $request->string('search')->toString();
+            $query->where(fn ($q) => $q
+                ->where('name', 'like', '%'.$term.'%')
+                ->orWhere('last_name', 'like', '%'.$term.'%')
+                ->orWhere('email', 'like', '%'.$term.'%')
+                ->orWhere('phone_number', 'like', '%'.$term.'%')
+                ->orWhere('company_size', 'like', '%'.$term.'%')
+                ->orWhere('industry', 'like', '%'.$term.'%')
+            );
         }
 
         if ($created_at) {
             try {
                 $query->where('created_at', '>=', Carbon::parse($created_at));
-            } catch (\Exception $e) {
-                // Invalid date string; skip filter
+            } catch (\Exception) {
+                // Invalid date string — skip filter
             }
         }
 
         $contacts = $query->get();
 
-        return view('contacts.list', compact('contacts'));
+        return view('contacts.list', ['contacts' => $contacts]);
     }
 
-    /**
-     * Bulk delete contacts by IDs.
-     */
-    public function bulkDelete(Request $request)
+    public function bulkDelete(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:contacts,id',
+        ]);
 
-        if (!empty($ids)) {
-            Contact::whereIn('id', $ids)->delete();
-        }
+        $count = Contact::whereIn('id', $validated['ids'])
+            ->byTeam($request->user()?->currentTeam?->id)
+            ->delete();
 
-        return response()->json(['deleted' => count($ids)]);
+        return response()->json(['deleted' => $count]);
     }
 
-    /**
-     * Autocomplete contacts by name or email.
-     */
-    public function autocomplete(Request $request)
+    public function autocomplete(Request $request): JsonResponse
     {
-        $term = $request->input('query', '');
+        $term = $request->string('query')->toString();
 
-        $contacts = Contact::where(function ($q) use ($term) {
-            $q->where('name', 'like', $term . '%')
-              ->orWhere('email', 'like', '%' . $term . '%');
-        })
+        $contacts = Contact::where(fn ($q) => $q
+            ->where('name', 'like', $term.'%')
+            ->orWhere('email', 'like', '%'.$term.'%')
+        )
             ->limit(10)
             ->get(['id', 'name', 'email']);
 

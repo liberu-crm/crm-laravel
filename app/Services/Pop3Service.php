@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Pop3Service
 {
     protected $connection;
+
     protected $config;
 
     public function getUnreadMessages(OAuthConfiguration $config): Collection
@@ -16,24 +17,25 @@ class Pop3Service
         try {
             $this->config = $config;
             $this->connect();
-            
+
             $messageCount = $this->getMessageCount();
             $messages = collect();
-            
+
             // POP3 doesn't have concept of "unread", so we fetch recent messages
             $limit = min($messageCount, 10); // Fetch last 10 messages
-            
+
             for ($i = $messageCount; $i > max(0, $messageCount - $limit); $i--) {
                 $message = $this->parseMessage($i);
                 if ($message) {
                     $messages->push($message);
                 }
             }
-            
+
             $this->disconnect();
+
             return $messages;
         } catch (\Exception $e) {
-            Log::error('Error fetching POP3 messages: ' . $e->getMessage());
+            Log::error('Error fetching POP3 messages: '.$e->getMessage());
             $this->disconnect();
             throw $e;
         }
@@ -44,13 +46,14 @@ class Pop3Service
         try {
             $this->config = $config;
             $this->connect();
-            
+
             $message = $this->parseMessage($messageId);
-            
+
             $this->disconnect();
+
             return $message;
         } catch (\Exception $e) {
-            Log::error('Error fetching POP3 message: ' . $e->getMessage());
+            Log::error('Error fetching POP3 message: '.$e->getMessage());
             $this->disconnect();
             throw $e;
         }
@@ -61,19 +64,20 @@ class Pop3Service
         try {
             $this->config = $config;
             $this->connect();
-            
+
             // Get original message
             $message = $this->parseMessage($messageId);
             $to = $message['from'];
-            $subject = 'Re: ' . ($message['subject'] ?? '');
-            
+            $subject = 'Re: '.($message['subject'] ?? '');
+
             // Send via SMTP (POP3 is receive-only)
             $this->sendViaSmtp($to, $subject, $content);
-            
+
             $this->disconnect();
+
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending POP3 reply: ' . $e->getMessage());
+            Log::error('Error sending POP3 reply: '.$e->getMessage());
             $this->disconnect();
             throw $e;
         }
@@ -84,9 +88,10 @@ class Pop3Service
         try {
             $this->config = $config;
             $this->sendViaSmtp($to, $subject, $content);
+
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Error sending POP3 message: ' . $e->getMessage());
+            Log::error('Error sending POP3 message: '.$e->getMessage());
             throw $e;
         }
     }
@@ -98,18 +103,18 @@ class Pop3Service
         $username = $this->config->additional_settings['username'] ?? $this->config->client_id;
         $password = $this->config->additional_settings['password'] ?? $this->config->client_secret;
         $ssl = $this->config->additional_settings['ssl'] ?? false;
-        
+
         $connectionString = $ssl ? "ssl://{$host}" : $host;
-        
+
         $this->connection = fsockopen($connectionString, $port, $errno, $errstr, 30);
-        
-        if (!$this->connection) {
+
+        if (! $this->connection) {
             throw new \Exception("Failed to connect to POP3 server: {$errstr} ({$errno})");
         }
-        
+
         // Read greeting
         $this->getResponse();
-        
+
         // Login
         $this->sendCommand("USER {$username}");
         $this->sendCommand("PASS {$password}");
@@ -118,41 +123,43 @@ class Pop3Service
     protected function disconnect()
     {
         if ($this->connection) {
-            $this->sendCommand("QUIT");
+            $this->sendCommand('QUIT');
             fclose($this->connection);
             $this->connection = null;
         }
     }
 
-    protected function sendCommand($command)
+    protected function sendCommand(string $command)
     {
-        fwrite($this->connection, $command . "\r\n");
+        fwrite($this->connection, $command."\r\n");
+
         return $this->getResponse();
     }
 
-    protected function getResponse()
+    protected function getResponse(): string|false
     {
         $response = fgets($this->connection, 512);
-        
+
         if (substr($response, 0, 3) === '-ERR') {
-            throw new \Exception('POP3 Error: ' . $response);
+            throw new \Exception('POP3 Error: '.$response);
         }
-        
+
         return $response;
     }
 
-    protected function getMessageCount()
+    protected function getMessageCount(): int
     {
-        $response = $this->sendCommand("STAT");
-        preg_match('/\+OK (\d+)/', $response, $matches);
-        return isset($matches[1]) ? (int)$matches[1] : 0;
+        $response = $this->sendCommand('STAT');
+        preg_match('/\+OK (\d+)/', (string) $response, $matches);
+
+        return isset($matches[1]) ? (int) $matches[1] : 0;
     }
 
-    protected function parseMessage($messageNumber)
+    protected function parseMessage($messageNumber): array
     {
         // Retrieve message
         $this->sendCommand("RETR {$messageNumber}");
-        
+
         $messageLines = [];
         while (true) {
             $line = fgets($this->connection, 1024);
@@ -161,12 +168,12 @@ class Pop3Service
             }
             $messageLines[] = $line;
         }
-        
+
         $rawMessage = implode('', $messageLines);
-        
+
         // Parse headers and body
-        list($headers, $body) = $this->parseRawMessage($rawMessage);
-        
+        [$headers, $body] = $this->parseRawMessage($rawMessage);
+
         return [
             'id' => $messageNumber,
             'from' => $headers['From'] ?? '',
@@ -182,20 +189,20 @@ class Pop3Service
         ];
     }
 
-    protected function parseRawMessage($rawMessage)
+    protected function parseRawMessage($rawMessage): array
     {
-        $parts = explode("\r\n\r\n", $rawMessage, 2);
+        $parts = explode("\r\n\r\n", (string) $rawMessage, 2);
         $headerLines = explode("\r\n", $parts[0]);
-        $body = isset($parts[1]) ? $parts[1] : '';
-        
+        $body = $parts[1] ?? '';
+
         $headers = [];
         foreach ($headerLines as $line) {
-            if (strpos($line, ':') !== false) {
-                list($key, $value) = explode(':', $line, 2);
+            if (str_contains($line, ':')) {
+                [$key, $value] = explode(':', $line, 2);
                 $headers[trim($key)] = trim($value);
             }
         }
-        
+
         // Decode body if needed
         if (isset($headers['Content-Transfer-Encoding'])) {
             if (strtolower($headers['Content-Transfer-Encoding']) === 'base64') {
@@ -204,22 +211,22 @@ class Pop3Service
                 $body = quoted_printable_decode($body);
             }
         }
-        
+
         return [$headers, $body];
     }
 
     protected function sendViaSmtp($to, $subject, $content)
     {
         $from = $this->config->additional_settings['from_email'] ?? $this->config->additional_settings['username'] ?? $this->config->client_id;
-        
+
         try {
-            \Mail::raw($content, function ($message) use ($to, $subject, $from) {
+            \Mail::raw($content, function ($message) use ($to, $subject, $from): void {
                 $message->to($to)
                     ->subject($subject)
                     ->from($from);
             });
         } catch (\Exception $e) {
-            Log::error('Error sending email via SMTP: ' . $e->getMessage());
+            Log::error('Error sending email via SMTP: '.$e->getMessage());
             throw $e;
         }
     }
