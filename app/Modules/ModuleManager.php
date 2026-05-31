@@ -236,4 +236,23 @@ class ModuleManager
     {
         return $this->modules->map(fn($module) => $this->getModuleInfo($module->getName()))->toArray();
     }
+
+    /**
+     * Clear the module discovery cache.
+     */
+    public function clearCache(): void
+    {
+        $cacheKey = config('modules.cache_key', 'app.modules');
+        \Illuminate\Support\Facades\Cache::forget($cacheKey);
+    }
+
+    /**
+     * Rebuild the module registry by re-scanning the modules directory.
+     */
+    public function rebuild(): void
+    {
+        $this->modules = collect();
+        $this->clearCache();
+        $this->loadModules();
+    }
 }

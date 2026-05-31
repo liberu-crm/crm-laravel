@@ -41,6 +41,8 @@
 
                 <a href="/forgot-password" class="underline text-sm text-gray-600 hover:text-gray-900" >Forgot password?</a>
             </form>
+
+            <x-socialstream::socialstream />
         </div>
     </div>
 @endsection

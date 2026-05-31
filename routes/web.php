@@ -14,6 +14,18 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TwilioController;
 use Illuminate\Support\Facades\Route;
 
+// Health check endpoints (for Kubernetes liveness/readiness probes)
+Route::get('/health/startup', fn() => response()->json(['status' => 'starting']))->name('health.startup');
+Route::get('/health/live', fn() => response()->json(['status' => 'live']))->name('health.live');
+Route::get('/health/ready', function () {
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        return response()->json(['status' => 'ready']);
+    } catch (\Exception) {
+        return response()->json(['status' => 'not ready', 'error' => 'Database unavailable'], 503);
+    }
+})->name('health.ready');
+
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
 Route::delete('/contacts/bulk/delete', [ContactListController::class, 'bulkDelete'])->name('contacts.bulk.delete')->middleware('auth');

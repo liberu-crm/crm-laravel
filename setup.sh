@@ -385,15 +385,16 @@ install_docker() {
 
     # Build and start containers
     print_info "Building and starting Docker containers..."
-    if command_exists docker-compose; then
-        docker-compose up -d --build
-    else
+    if docker compose version >/dev/null 2>&1; then
         docker compose up -d --build
+    elif command_exists docker-compose; then
+        docker-compose up -d --build
     fi
 
     if [ $? -eq 0 ]; then
         print_success "Docker containers started successfully"
-        print_info "Your application should be available at http://localhost:8000"
+        print_info "Application available at: http://localhost:8000"
+        print_info "Run migrations: docker compose exec app php artisan migrate"
     else
         print_error "Failed to start Docker containers"
         exit 1
@@ -438,11 +439,36 @@ install_kubernetes() {
         read -p "Press Enter to continue after editing .env..."
     fi
 
-    # Apply Kubernetes configurations
-    print_info "Applying Kubernetes configurations..."
-    if kubectl apply -f "$K8S_DIR/"; then
+    # Choose environment
+    print_info "Select deployment environment:"
+    echo "  1) production"
+    echo "  2) development"
+    read -p "Choice (1-2, default=1): " env_choice
+    case $env_choice in
+        2) DEPLOY_ENV="development" ;;
+        *) DEPLOY_ENV="production" ;;
+    esac
+
+    print_info "Deploying to Kubernetes ($DEPLOY_ENV)..."
+
+    # Use deploy.sh if available, otherwise fall back to kubectl apply
+    if [ -f "$K8S_DIR/deploy.sh" ]; then
+        print_info "Using $K8S_DIR/deploy.sh for deployment..."
+        ENVIRONMENT="$DEPLOY_ENV" bash "$K8S_DIR/deploy.sh"
+    elif command_exists kustomize; then
+        print_info "Using kustomize..."
+        kustomize build "$K8S_DIR/overlays/$DEPLOY_ENV" | kubectl apply -f -
+    elif kubectl version --client 2>/dev/null | grep -q "kustomize"; then
+        print_info "Using kubectl kustomize..."
+        kubectl apply -k "$K8S_DIR/overlays/$DEPLOY_ENV"
+    else
+        print_warning "kustomize not found, applying base configs directly..."
+        kubectl apply -f "$K8S_DIR/base/"
+    fi
+
+    if [ $? -eq 0 ]; then
         print_success "Kubernetes resources created successfully"
-        print_info "Check status with: kubectl get pods"
+        print_info "Check status with: kubectl get pods -n liberu-crm"
     else
         print_error "Failed to apply Kubernetes configurations"
         exit 1
