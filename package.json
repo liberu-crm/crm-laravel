@@ -19,6 +19,6 @@
     "dependencies": {
         "@tailwindcss/postcss": "^4.3.0",
         "preline": "^4.0.0",
-        "vite-plugin-static-copy": "^3.4.0"
+        "vite-plugin-static-copy": "^4.1.0"
     }
 }
