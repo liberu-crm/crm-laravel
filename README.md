@@ -31,7 +31,7 @@
 
 ## About Liberu CRM
 
-Liberu CRM is a modern, open-source Customer Relationship Management platform built on **Laravel 12**, **PHP 8.5**, **Filament 5**, and **Livewire 4**. Designed to help businesses of every size manage contacts, track deals, automate workflows, and integrate seamlessly with the tools they already use — all from a clean, responsive interface.
+Liberu CRM is a modern, open-source Customer Relationship Management platform built on **Laravel 13**, **PHP 8.5**, **Filament 5**, and **Livewire 4**. Designed to help businesses of every size manage contacts, track deals, automate workflows, and integrate seamlessly with the tools they already use — all from a clean, responsive interface.
 
 Whether you are a solo freelancer managing a handful of clients or an enterprise team coordinating thousands of leads, Liberu CRM gives you a powerful, customisable foundation that you fully own and control. No vendor lock-in. No hidden costs. Just great software you can run anywhere.
 
