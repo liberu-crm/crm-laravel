@@ -101,7 +101,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     {
         return match ($panel->getId()) {
             'super_admin' => $this->hasRole(Role::SuperAdmin),
-            'admin' => $this->hasRole(Role::Admin),
+            'admin' => $this->hasRole(Role::Admin) || $this->hasRole(Role::SuperAdmin),
             default => true,
         };
     }
@@ -124,6 +124,16 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
 
     public function hasRole($role, ?string $guard = null): bool
     {
+        if (is_array($role)) {
+            foreach ($role as $r) {
+                if ($this->hasRole($r, $guard)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         $roleName = $role instanceof Role ? $role->value : strtolower($role);
 
         return $this->roles->contains(fn (SpatieRole $r): bool => strtolower($r->name) === $roleName);
