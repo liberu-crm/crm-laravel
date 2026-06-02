@@ -6,22 +6,38 @@ return [
     |--------------------------------------------------------------------------
     | Modules Path
     |--------------------------------------------------------------------------
-    |
-    | This value determines the path where modules are stored. By default,
-    | modules are stored in the app/Modules directory.
-    |
     */
 
     'path' => app_path('Modules'),
 
     /*
     |--------------------------------------------------------------------------
-    | Auto Discovery
+    | External Module Paths
     |--------------------------------------------------------------------------
     |
-    | When enabled, the module system will automatically discover and register
-    | modules found in the modules directory.
+    | Additional directories (relative to base_path) to scan for modules.
+    | These are scanned alongside the primary modules path.
     |
+    */
+
+    'external_paths' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load Composer Modules
+    |--------------------------------------------------------------------------
+    |
+    | When true, modules in the app-modules/ directory (configured via
+    | modular.module_directory) are also discovered and registered.
+    |
+    */
+
+    'load_composer' => env('MODULES_LOAD_COMPOSER', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auto Discovery
+    |--------------------------------------------------------------------------
     */
 
     'auto_discovery' => true,
@@ -30,10 +46,6 @@ return [
     |--------------------------------------------------------------------------
     | Cache Modules
     |--------------------------------------------------------------------------
-    |
-    | When enabled, module information will be cached to improve performance.
-    | This is recommended for production environments.
-    |
     */
 
     'cache' => env('MODULES_CACHE', true),
@@ -42,20 +54,14 @@ return [
     |--------------------------------------------------------------------------
     | Cache Key
     |--------------------------------------------------------------------------
-    |
-    | The cache key used to store module information.
-    |
     */
 
     'cache_key' => 'app.modules',
 
     /*
     |--------------------------------------------------------------------------
-    | Cache TTL
+    | Cache TTL (seconds)
     |--------------------------------------------------------------------------
-    |
-    | The time-to-live for cached module information in seconds.
-    |
     */
 
     'cache_ttl' => 3600,
@@ -64,9 +70,6 @@ return [
     |--------------------------------------------------------------------------
     | Module Namespace
     |--------------------------------------------------------------------------
-    |
-    | The base namespace for modules.
-    |
     */
 
     'namespace' => 'App\\Modules',
@@ -76,22 +79,17 @@ return [
     | Enabled Modules
     |--------------------------------------------------------------------------
     |
-    | List of modules that should be enabled by default. This is useful
-    | for ensuring critical modules are always available.
+    | Modules not in this list (when non-empty) default to disabled on first
+    | discovery. Leave empty to default all modules to enabled.
     |
     */
 
-    'enabled' => [
-        // 'ExampleModule',
-    ],
+    'enabled' => [],
 
     /*
     |--------------------------------------------------------------------------
     | Module Assets
     |--------------------------------------------------------------------------
-    |
-    | Configuration for module assets publishing.
-    |
     */
 
     'assets' => [
@@ -103,9 +101,6 @@ return [
     |--------------------------------------------------------------------------
     | Module Views
     |--------------------------------------------------------------------------
-    |
-    | Configuration for module views.
-    |
     */
 
     'views' => [
@@ -116,9 +111,6 @@ return [
     |--------------------------------------------------------------------------
     | Module Translations
     |--------------------------------------------------------------------------
-    |
-    | Configuration for module translations.
-    |
     */
 
     'translations' => [
@@ -130,25 +122,22 @@ return [
     | Development Mode
     |--------------------------------------------------------------------------
     |
-    | When enabled, additional debugging information will be available
-    | and modules will be reloaded on each request.
+    | Skips the cache layer so module state changes are reflected immediately.
+    | Automatically true when APP_DEBUG is true; override with MODULES_DEVELOPMENT.
     |
     */
 
-    'development' => env('APP_DEBUG', false),
+    'development' => env('MODULES_DEVELOPMENT', env('APP_DEBUG', false)),
 
     /*
     |--------------------------------------------------------------------------
     | Module Requirements
     |--------------------------------------------------------------------------
-    |
-    | Global requirements that all modules must meet.
-    |
     */
 
     'requirements' => [
-        'php' => '8.1',
-        'laravel' => '11.0',
+        'php' => '8.5',
+        'laravel' => '13.0',
     ],
 
 ];

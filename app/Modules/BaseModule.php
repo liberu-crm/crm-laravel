@@ -2,6 +2,10 @@
 
 namespace App\Modules;
 
+use App\Events\Module\ModuleDisabled;
+use App\Events\Module\ModuleEnabled;
+use App\Events\Module\ModuleInstalled;
+use App\Events\Module\ModuleUninstalled;
 use App\Modules\Contracts\ModuleInterface;
 use Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -12,9 +16,9 @@ abstract class BaseModule implements ModuleInterface
 {
     protected string $name;
 
-    protected string $version;
+    protected string $version = '1.0.0';
 
-    protected string $description;
+    protected string $description = '';
 
     protected array $dependencies = [];
 
@@ -25,126 +29,160 @@ abstract class BaseModule implements ModuleInterface
         $this->loadModuleInfo();
     }
 
-    /**
-     * Get the module name.
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Get the module version.
-     */
     public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * Get the module description.
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * Get the module dependencies.
-     */
     public function getDependencies(): array
     {
         return $this->dependencies;
     }
 
-    /**
-     * Check if the module is enabled.
-     */
     public function isEnabled(): bool
     {
-        return Cache::get("module.{$this->name}.enabled", false);
+        if ($this->isDevelopmentMode()) {
+            return Cache::get("module.{$this->name}.enabled", true);
+        }
+
+        $ttl = config('modules.cache_ttl', 3600);
+
+        return Cache::remember(
+            "module.{$this->name}.enabled",
+            $ttl,
+            fn () => $this->resolveEnabledState()
+        );
     }
 
-    /**
-     * Enable the module.
-     */
     public function enable(): void
     {
-        Cache::put("module.{$this->name}.enabled", true);
+        $this->persistState(true);
+        Cache::forget("module.{$this->name}.enabled");
         $this->onEnable();
+        ModuleEnabled::dispatch($this);
     }
 
-    /**
-     * Disable the module.
-     */
     public function disable(): void
     {
-        Cache::put("module.{$this->name}.enabled", false);
+        $this->persistState(false);
+        Cache::forget("module.{$this->name}.enabled");
         $this->onDisable();
+        ModuleDisabled::dispatch($this);
     }
 
-    /**
-     * Install the module.
-     */
     public function install(): void
     {
         $this->runMigrations();
         $this->publishAssets();
         $this->onInstall();
         $this->enable();
+        ModuleInstalled::dispatch($this);
     }
 
-    /**
-     * Uninstall the module.
-     */
     public function uninstall(): void
     {
         $this->disable();
         $this->rollbackMigrations();
         $this->removeAssets();
         $this->onUninstall();
+        ModuleUninstalled::dispatch($this);
     }
 
-    /**
-     * Get module configuration.
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
     /**
-     * Load module information from module.json file.
+     * @return array{status: string, checks: array<string, mixed>}
      */
+    public function checkHealth(): array
+    {
+        $modulePath = $this->getModulePath();
+        $checks = [
+            'module_json_exists' => File::exists($modulePath.'/module.json'),
+            'is_enabled' => $this->isEnabled(),
+            'version' => $this->version,
+        ];
+
+        $status = collect($checks)->contains(false) ? 'degraded' : 'healthy';
+
+        return compact('status', 'checks');
+    }
+
     protected function loadModuleInfo(): void
     {
         $modulePath = $this->getModulePath();
         $moduleInfoPath = $modulePath.'/module.json';
 
         if (File::exists($moduleInfoPath)) {
-            $moduleInfo = json_decode(File::get($moduleInfoPath), true);
-
+            $moduleInfo = json_decode(File::get($moduleInfoPath), true) ?? [];
             $this->name = $moduleInfo['name'] ?? class_basename($this);
             $this->version = $moduleInfo['version'] ?? '1.0.0';
             $this->description = $moduleInfo['description'] ?? '';
             $this->dependencies = $moduleInfo['dependencies'] ?? [];
             $this->config = $moduleInfo['config'] ?? [];
+        } else {
+            $this->name = class_basename($this);
         }
     }
 
-    /**
-     * Get the module path.
-     */
     protected function getModulePath(): string
     {
-        $reflection = new ReflectionClass($this);
+        return dirname((new ReflectionClass($this))->getFileName());
+    }
 
-        return dirname($reflection->getFileName());
+    protected function isDevelopmentMode(): bool
+    {
+        return (bool) env('MODULES_DEVELOPMENT', config('modules.development', false));
     }
 
     /**
-     * Run module migrations.
+     * Resolve enabled state from DB (with graceful fallback to config defaults).
      */
+    protected function resolveEnabledState(): bool
+    {
+        try {
+            $record = \App\Models\Module::query()->where('name', $this->name)->first();
+
+            if ($record) {
+                return (bool) $record->is_enabled;
+            }
+        } catch (\Exception) {
+            // DB not ready yet
+        }
+
+        $defaults = config('modules.enabled', []);
+
+        return empty($defaults) || in_array($this->name, $defaults);
+    }
+
+    protected function persistState(bool $enabled): void
+    {
+        try {
+            \App\Models\Module::query()->updateOrCreate(
+                ['name' => $this->name],
+                [
+                    'is_enabled' => $enabled,
+                    'installed_at' => $enabled ? now() : null,
+                ]
+            );
+        } catch (\Exception) {
+            // Fallback to cache-only when DB unavailable
+            Cache::put("module.{$this->name}.enabled", $enabled);
+        }
+    }
+
     protected function runMigrations(): void
     {
         $migrationsPath = $this->getModulePath().'/database/migrations';
@@ -157,18 +195,8 @@ abstract class BaseModule implements ModuleInterface
         }
     }
 
-    /**
-     * Rollback module migrations.
-     */
-    protected function rollbackMigrations(): void
-    {
-        // Implementation depends on specific requirements
-        // Could use migration tags or custom rollback logic
-    }
+    protected function rollbackMigrations(): void {}
 
-    /**
-     * Publish module assets.
-     */
     protected function publishAssets(): void
     {
         Artisan::call('vendor:publish', [
@@ -177,9 +205,6 @@ abstract class BaseModule implements ModuleInterface
         ]);
     }
 
-    /**
-     * Remove module assets.
-     */
     protected function removeAssets(): void
     {
         $assetsPath = public_path("modules/{$this->name}");
@@ -188,35 +213,11 @@ abstract class BaseModule implements ModuleInterface
         }
     }
 
-    /**
-     * Hook called when module is enabled.
-     */
-    protected function onEnable(): void
-    {
-        // Override in child classes
-    }
+    protected function onEnable(): void {}
 
-    /**
-     * Hook called when module is disabled.
-     */
-    protected function onDisable(): void
-    {
-        // Override in child classes
-    }
+    protected function onDisable(): void {}
 
-    /**
-     * Hook called when module is installed.
-     */
-    protected function onInstall(): void
-    {
-        // Override in child classes
-    }
+    protected function onInstall(): void {}
 
-    /**
-     * Hook called when module is uninstalled.
-     */
-    protected function onUninstall(): void
-    {
-        // Override in child classes
-    }
+    protected function onUninstall(): void {}
 }

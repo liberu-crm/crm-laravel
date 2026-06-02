@@ -8,48 +8,60 @@ use Illuminate\Support\Str;
 
 class ModuleServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     #[\Override]
     public function register(): void
     {
-        $this->registerModules();
+        $this->app->singleton(ModuleManager::class);
+
+        foreach ($this->discoverModulePaths() as $modulePath) {
+            $this->registerModule(basename((string) $modulePath), $modulePath);
+        }
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        $this->bootModules();
+        foreach ($this->discoverModulePaths() as $modulePath) {
+            $this->bootModule(basename((string) $modulePath), $modulePath);
+        }
     }
 
     /**
-     * Register all modules found in the modules directory.
+     * @return array<string>
      */
-    protected function registerModules(): void
+    protected function discoverModulePaths(): array
     {
-        $modulesPath = app_path('Modules');
+        $paths = [];
 
-        if (! File::exists($modulesPath)) {
-            return;
+        $primary = config('modules.path', app_path('Modules'));
+        if (File::exists($primary)) {
+            foreach (File::directories($primary) as $dir) {
+                $paths[] = $dir;
+            }
         }
 
-        $modules = File::directories($modulesPath);
-
-        foreach ($modules as $modulePath) {
-            $moduleName = basename((string) $modulePath);
-            $this->registerModule($moduleName, $modulePath);
+        foreach (config('modules.external_paths', []) as $ext) {
+            $resolved = base_path($ext);
+            if (File::exists($resolved)) {
+                foreach (File::directories($resolved) as $dir) {
+                    $paths[] = $dir;
+                }
+            }
         }
+
+        if (config('modules.load_composer', env('MODULES_LOAD_COMPOSER', false))) {
+            $composerPath = base_path(config('modular.module_directory', 'app-modules'));
+            if (File::exists($composerPath)) {
+                foreach (File::directories($composerPath) as $dir) {
+                    $paths[] = $dir;
+                }
+            }
+        }
+
+        return $paths;
     }
 
-    /**
-     * Register a specific module.
-     */
     protected function registerModule(string $moduleName, string $modulePath): void
     {
-        // Register module service provider if it exists
         $providerPath = $modulePath.'/Providers/'.$moduleName.'ServiceProvider.php';
         if (File::exists($providerPath)) {
             $providerClass = "App\\Modules\\{$moduleName}\\Providers\\{$moduleName}ServiceProvider";
@@ -58,41 +70,32 @@ class ModuleServiceProvider extends ServiceProvider
             }
         }
 
-        // Register module configuration
         $configPath = $modulePath.'/config';
         if (File::exists($configPath)) {
-            $configFiles = File::files($configPath);
-            foreach ($configFiles as $configFile) {
-                $configName = Str::snake($moduleName).'.'.$configFile->getFilenameWithoutExtension();
-                $this->mergeConfigFrom($configFile->getPathname(), $configName);
+            foreach (File::files($configPath) as $file) {
+                $key = Str::snake($moduleName).'.'.$file->getFilenameWithoutExtension();
+                $this->mergeConfigFrom($file->getPathname(), $key);
             }
         }
 
-        // Register module routes
         $this->registerModuleRoutes($moduleName, $modulePath);
 
-        // Register module views
         $viewsPath = $modulePath.'/resources/views';
         if (File::exists($viewsPath)) {
             $this->loadViewsFrom($viewsPath, Str::snake($moduleName));
         }
 
-        // Register module translations
         $langPath = $modulePath.'/resources/lang';
         if (File::exists($langPath)) {
             $this->loadTranslationsFrom($langPath, Str::snake($moduleName));
         }
 
-        // Register module migrations
         $migrationsPath = $modulePath.'/database/migrations';
         if (File::exists($migrationsPath)) {
             $this->loadMigrationsFrom($migrationsPath);
         }
     }
 
-    /**
-     * Register module routes.
-     */
     protected function registerModuleRoutes(string $moduleName, string $modulePath): void
     {
         $routesPath = $modulePath.'/routes';
@@ -101,65 +104,31 @@ class ModuleServiceProvider extends ServiceProvider
             return;
         }
 
-        // Web routes
-        $webRoutesPath = $routesPath.'/web.php';
-        if (File::exists($webRoutesPath)) {
-            $this->loadRoutesFrom($webRoutesPath);
-        }
-
-        // API routes
-        $apiRoutesPath = $routesPath.'/api.php';
-        if (File::exists($apiRoutesPath)) {
-            $this->loadRoutesFrom($apiRoutesPath);
-        }
-
-        // Admin routes (for Filament integration)
-        $adminRoutesPath = $routesPath.'/admin.php';
-        if (File::exists($adminRoutesPath)) {
-            $this->loadRoutesFrom($adminRoutesPath);
+        foreach (['web', 'api', 'admin'] as $type) {
+            $file = $routesPath."/{$type}.php";
+            if (File::exists($file)) {
+                $this->loadRoutesFrom($file);
+            }
         }
     }
 
-    /**
-     * Boot all registered modules.
-     */
-    protected function bootModules(): void
-    {
-        $modulesPath = app_path('Modules');
-
-        if (! File::exists($modulesPath)) {
-            return;
-        }
-
-        $modules = File::directories($modulesPath);
-
-        foreach ($modules as $modulePath) {
-            $moduleName = basename((string) $modulePath);
-            $this->bootModule($moduleName, $modulePath);
-        }
-    }
-
-    /**
-     * Boot a specific module.
-     */
     protected function bootModule(string $moduleName, string $modulePath): void
     {
-        // Publish module assets
         $assetsPath = $modulePath.'/resources/assets';
         if (File::exists($assetsPath)) {
-            $this->publishes([
-                $assetsPath => public_path("modules/{$moduleName}"),
-            ], Str::snake($moduleName).'-assets');
+            $this->publishes(
+                [$assetsPath => public_path("modules/{$moduleName}")],
+                Str::snake($moduleName).'-assets'
+            );
         }
 
-        // Publish module configuration
         $configPath = $modulePath.'/config';
         if (File::exists($configPath)) {
-            $configFiles = File::files($configPath);
-            foreach ($configFiles as $configFile) {
-                $this->publishes([
-                    $configFile->getPathname() => config_path(Str::snake($moduleName).'.'.$configFile->getFilename()),
-                ], Str::snake($moduleName).'-config');
+            foreach (File::files($configPath) as $file) {
+                $this->publishes(
+                    [$file->getPathname() => config_path(Str::snake($moduleName).'.'.$file->getFilename())],
+                    Str::snake($moduleName).'-config'
+                );
             }
         }
     }

@@ -8,7 +8,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <div class="p-4 bg-red-500/10 text-red-500 border-l-4 border-red-600 rounded font-medium text-sm">
+        <div class="p-4 bg-red-500/10 dark:bg-red-500/5 text-red-500 border-l-4 border-red-600 dark:border-red-700 rounded font-medium text-sm">
             {{ __('If you feel any of your connected accounts have been compromised, you should disconnect them immediately and change your password.') }}
         </div>
 
