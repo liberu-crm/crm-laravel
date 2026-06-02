@@ -22,3 +22,5 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 /.opencode/
+public/build/manifest.json
+public/build/assets/*
