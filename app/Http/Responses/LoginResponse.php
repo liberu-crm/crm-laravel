@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use App\Enums\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +10,13 @@ use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
 {
-    protected $roleRedirects = [
-        'admin' => '/admin',
-        'free' => '/app',
+    protected array $roleRedirects = [
+        Role::Admin->value => '/admin',
+        Role::Free->value => '/app',
     ];
 
     protected function shouldRedirect(Request $request, string $redirect): bool
     {
-        // Check if the current request path matches the redirect path
         return ! $request->is($redirect) && ! $request->is($redirect.'/*');
     }
 
@@ -35,7 +35,6 @@ class LoginResponse implements LoginResponseContract
             }
         }
 
-        // Default redirection
         $redirect = '/app';
 
         return $request->wantsJson()

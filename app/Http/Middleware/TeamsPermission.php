@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class TeamsPermission
             return redirect()->route('login')->with('error', 'You must be logged in to access this area.');
         }
 
-        if ($user->hasRole('admin') || $user->hasRole('super_admin')) {
+        if ($user->hasRole(Role::Admin) || $user->hasRole(Role::SuperAdmin)) {
             return $next($request);
         }
 

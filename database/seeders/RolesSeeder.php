@@ -2,24 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\Team;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 class RolesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $roleNames = ['super_admin', 'admin', 'manager', 'sales_rep', 'free'];
-
-        foreach ($roleNames as $roleName) {
+        foreach (Role::cases() as $roleEnum) {
             $roleData = [
-                'name' => $roleName,
+                'name' => $roleEnum->value,
                 'guard_name' => 'web',
             ];
 
@@ -28,9 +24,9 @@ class RolesSeeder extends Seeder
                 $roleData['team_id'] = $team->id;
             }
 
-            $role = Role::firstOrCreate($roleData);
+            $role = SpatieRole::firstOrCreate($roleData);
 
-            if ($roleName === 'super_admin') {
+            if ($roleEnum === Role::SuperAdmin) {
                 $permissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
                 $role->syncPermissions($permissions);
             }
