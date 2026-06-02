@@ -25,13 +25,27 @@ class MailChimpService
 
     public function getLists()
     {
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
         $response = $this->client->lists->getAllLists();
 
         return collect($response->lists)->pluck('name', 'id')->toArray();
     }
 
+    public function isConfigured(): bool
+    {
+        return ! empty(config('services.mailchimp.api_key'))
+            && ! empty(config('services.mailchimp.server_prefix'));
+    }
+
     public function createList($name, $company, $permission_reminder, $from_name, $from_email)
     {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
         return $this->client->lists->createList([
             'name' => $name,
             'permission_reminder' => $permission_reminder,
@@ -55,6 +69,10 @@ class MailChimpService
 
     public function addMember($list_id, $email, $status = 'subscribed', $merge_fields = [])
     {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
         return $this->client->lists->addListMember($list_id, [
             'email_address' => $email,
             'status' => $status,
@@ -64,6 +82,10 @@ class MailChimpService
 
     public function createCampaign($list_id, $subject, $from_name, $reply_to, $html_content)
     {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
         $campaign = $this->client->campaigns->create([
             'type' => 'regular',
             'recipients' => [
@@ -85,6 +107,10 @@ class MailChimpService
 
     public function createABTestCampaign($list_id, $subject_a, $subject_b, $from_name, $reply_to, $html_content_a, $html_content_b, $test_size = 50, $winner_criteria = 'opens')
     {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
         $campaign = $this->client->campaigns->create([
             'type' => 'abtest',
             'recipients' => [
@@ -116,11 +142,19 @@ class MailChimpService
 
     public function sendCampaign($campaign_id)
     {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
         return $this->client->campaigns->send($campaign_id);
     }
 
     public function getCampaigns()
     {
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
         $response = $this->client->campaigns->list();
 
         return collect($response->campaigns)->map(fn($campaign) => [
@@ -135,6 +169,10 @@ class MailChimpService
 
     public function getCampaignReport($campaign_id): array
     {
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
         $report = $this->client->reports->getCampaignReport($campaign_id);
 
         return [
@@ -151,6 +189,10 @@ class MailChimpService
 
     public function getABTestResults($campaign_id): array
     {
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
         $this->client->reports->getCampaignReport($campaign_id);
         $abResults = $this->client->reports->getABTestReportSummary($campaign_id);
 

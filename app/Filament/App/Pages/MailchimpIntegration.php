@@ -21,8 +21,11 @@ class MailchimpIntegration extends Page
 
     public ?array $campaignData = [];
 
+    public bool $isConfigured = false;
+
     public function mount(MailChimpService $mailchimpService): void
     {
+        $this->isConfigured = $mailchimpService->isConfigured();
         $this->listData = $mailchimpService->getLists();
     }
 
