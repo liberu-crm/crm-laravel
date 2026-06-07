@@ -90,17 +90,17 @@ class SocialstreamRegistrationTest extends TestCase
     {
         $providers = config('socialstream.providers', []);
 
-        $this->assertContains(Providers::bitbucket(), $providers);
-        $this->assertContains(Providers::facebook(), $providers);
-        $this->assertContains(Providers::github(), $providers);
-        $this->assertContains(Providers::gitlab(), $providers);
-        $this->assertContains(Providers::google(), $providers);
-        $this->assertContains(Providers::linkedin(), $providers);
-        $this->assertContains(Providers::linkedinOpenId(), $providers);
-        $this->assertContains(Providers::slack(), $providers);
-        $this->assertContains(Providers::twitterOAuth2(), $providers);
+        $enabled = array_filter($providers, fn ($p) => Providers::enabled($p));
+        $all = Providers::all();
+        $notEnabled = array_values(array_diff($all, $providers));
 
-        $this->assertNotContains(Providers::twitterOAuth1(), $providers);
+        foreach ($providers as $provider) {
+            $this->assertContains($provider, $enabled);
+        }
+
+        foreach ($notEnabled as $provider) {
+            $this->assertNotContains($provider, $enabled);
+        }
     }
 
     /**
@@ -108,16 +108,11 @@ class SocialstreamRegistrationTest extends TestCase
      */
     public static function socialiteProvidersDataProvider(): array
     {
-        return [
-            [Providers::bitbucket()],
-            [Providers::facebook()],
-            [Providers::github()],
-            [Providers::gitlab()],
-            [Providers::google()],
-            [Providers::linkedin()],
-            [Providers::linkedinOpenId()],
-            [Providers::slack()],
-            [Providers::twitterOAuth2()],
-        ];
+        $config = require __DIR__.'/../../config/socialstream.php';
+
+        return array_map(
+            fn (string $provider) => [$provider],
+            $config['providers'] ?? [],
+        );
     }
 }

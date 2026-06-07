@@ -6,7 +6,7 @@
 - **Vite** ^8.0 + **Tailwind CSS** ^4.3 + **PostCSS**
 - **Filament** ^5.0 (admin panel), **Livewire** ^4.0, **Alpine.js**
 - **MySQL** 8.0 / **SQLite** / **PostgreSQL**, **Redis** 7
-- **Jetstream** (Inertia stack) + **Socialstream** (social auth)
+- **Jetstream** (Livewire stack) + **Socialstream** (social auth)
 - **stancl/tenancy** ^3.10 (multi-tenancy)
 - **Laravel Reverb** ^1.0 (WebSockets), **Laravel Horizon** ^5.0 (queues)
 
