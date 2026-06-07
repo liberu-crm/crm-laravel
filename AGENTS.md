@@ -165,3 +165,16 @@ php artisan test
 8. Keep **service classes** thin — one responsibility per class.
 9. Write or update **tests** when adding/changing behavior.
 10. Follow **Laravel naming conventions**: camelCase methods, snake_case database columns, PascalCase classes.
+
+# Project Rules: Strict Anti-Slop Policy
+
+## 1. Output Constraints
+* **Absolute Completeness:** Never write `// TODO`, `// ... implement later`, or leave logic stubbed. Write full, working implementations. If you cannot complete a function, explain why technically in exactly two bullet points rather than leaving empty blocks.
+* **No Obvious Comments:** Do not document self-documenting code. Delete lines like `// increments i` or `// initialize list`. Only write comments for highly complex, unintuitive algorithms.
+* **Zero Conversational Slop:** Do not include conversational preambles or postambles (e.g., "Sure, let's fix that error for you..."). Output **only** the code edits or highly dense, bulleted technical steps.
+* **No Speculative Dependencies:** Only use modern, stable packages that already exist in this local workspace. Do not guess or hallucinate API structures or download untrusted extensions.
+
+## 2. Refactoring & Tool Protocol
+* **Surgical Edits:** When using your `edit` or `write` tools, modify *only* the specific blocks that require changes. Do not replace large sections of unchanged file logic with boilerplate.
+* **LSP Compliance:** All written code must clear local language server (LSP) diagnostics. Check for type safety and resolve errors locally before concluding the task.
+* **Error Hygiene:** Wrap I/O operations, API calls, and unsafe state adjustments in defensive error handling blocks. Do not assume clean input profiles.
