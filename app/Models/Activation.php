@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -30,4 +31,9 @@ class Activation extends Model
      * @var array
      */
     protected $fillable = ['user_id', 'token', 'ip_address', 'created_at', 'updated_at'];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
