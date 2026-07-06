@@ -4,11 +4,10 @@ namespace Tests\Feature\Tenancy;
 
 use App\Models\Team;
 use App\Support\TenantContext;
-use App\Traits\IsTenantModel;
+use App\Support\TenantModels;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\DataProvider;
-use ReflectionClass;
 use Tests\TestCase;
 
 /**
@@ -35,28 +34,15 @@ class CrossTenantLeakageTest extends TestCase
     /** @return array<string, array{class-string}> */
     public static function tenantModels(): array
     {
-        // Filesystem walk — no container helpers: data providers run at
-        // collection time, before the app is booted.
-        $modelDir = dirname(__DIR__, 3).'/app/Models';
+        // Shared enumerator (App\Support\TenantModels) is path-relative and
+        // container-free, so it works here at data-provider collection time —
+        // before the app boots. TeamBackupService consumes the same list, so
+        // this leakage proof and the backup's model set can never diverge.
         $models = [];
 
-        foreach (glob($modelDir.'/*.php') as $file) {
-            $class = 'App\\Models\\'.basename($file, '.php');
-
-            if (! class_exists($class)) {
-                continue;
-            }
-            if (! in_array(IsTenantModel::class, class_uses_recursive($class), true)) {
-                continue;
-            }
-            if (! (new ReflectionClass($class))->isInstantiable()) {
-                continue;
-            }
-
+        foreach (TenantModels::all() as $class) {
             $models[class_basename($class)] = [$class];
         }
-
-        ksort($models);
 
         return $models;
     }
