@@ -35,6 +35,16 @@ class Deal extends Model implements OwnsRecords
         'probability' => 'integer',
     ];
 
+    /** Fire DealClosed when the stage transitions into a closed-won/closed state. */
+    protected static function booted(): void
+    {
+        static::updated(function (self $deal): void {
+            if ($deal->wasChanged('stage') && in_array($deal->stage, ['won', 'closed'], true)) {
+                \App\Events\DealClosed::dispatch($deal);
+            }
+        });
+    }
+
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
