@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\ContactUpdated;
+use App\Listeners\AssignDefaultTeamRole;
 use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\NotifyTeamMembers;
 use App\Listeners\SendCRMEventNotification;
 use App\Models\Task;
 use App\Observers\TaskObserver;
 use App\Services\AuditLogService;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Laravel\Jetstream\Events\TeamMemberAdded;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -26,11 +31,14 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        \App\Events\ContactUpdated::class => [
-            \App\Listeners\NotifyTeamMembers::class,
+        ContactUpdated::class => [
+            NotifyTeamMembers::class,
         ],
         Login::class => [
             LogSuccessfulLogin::class,
+        ],
+        TeamMemberAdded::class => [
+            AssignDefaultTeamRole::class,
         ],
         // 'Illuminate\Auth\Events\Logout' => [
         //     App\Listeners\LogSuccessfulLogout,
@@ -61,7 +69,7 @@ class EventServiceProvider extends ServiceProvider
     {
         Task::observe(TaskObserver::class);
 
-        Event::listen(\Illuminate\Auth\Events\Logout::class, function ($event): void {
+        Event::listen(Logout::class, function ($event): void {
             app(AuditLogService::class)->log('logout', 'User logged out');
         });
     }

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use JoelButcher\Socialstream\HasConnectedAccounts;
 use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -24,6 +25,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
@@ -122,6 +124,19 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->belongsTo(Team::class, 'current_team_id');
     }
 
+    /**
+     * Team-aware role check.
+     *
+     * Spatie runs in teams mode: a role assignment (model_has_roles) carries the
+     * team it applies in. `$this->roles` is the Spatie relation already scoped to
+     * the current permission team (see setPermissionsTeamId in the request
+     * middleware), so per-team roles (admin/manager/sales_rep/free) resolve for
+     * the team the user is acting in.
+     *
+     * A row with team_id = null is a *global* assignment that applies in every
+     * team — this is how super_admin is stored, so hasRole('super_admin') answers
+     * true team-independently (regardless of the current setPermissionsTeamId).
+     */
     public function hasRole($role, ?string $guard = null): bool
     {
         if (is_array($role)) {
@@ -134,8 +149,37 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
             return false;
         }
 
-        $roleName = $role instanceof Role ? $role->value : strtolower($role);
+        $roleName = $role instanceof Role ? $role->value : strtolower((string) $role);
 
-        return $this->roles->contains(fn (SpatieRole $r): bool => strtolower($r->name) === $roleName);
+        if ($this->roles->contains(fn (SpatieRole $r): bool => strtolower($r->name) === $roleName)) {
+            return true;
+        }
+
+        return $this->hasGlobalRole($roleName);
+    }
+
+    /**
+     * True when the user holds the named role in a global (team_id = null)
+     * assignment, which applies in every team. Queried directly so it ignores
+     * the current permission team — this is what makes super_admin platform-wide.
+     */
+    protected function hasGlobalRole(string $roleName): bool
+    {
+        if ($this->getKey() === null) {
+            return false;
+        }
+
+        $tables = config('permission.table_names');
+        $morphKey = config('permission.column_names.model_morph_key');
+        $teamKey = config('permission.column_names.team_foreign_key');
+        $roleKey = app(PermissionRegistrar::class)->pivotRole;
+
+        return DB::table($tables['model_has_roles'])
+            ->join($tables['roles'], $tables['roles'].'.id', '=', $tables['model_has_roles'].'.'.$roleKey)
+            ->where($tables['model_has_roles'].'.model_type', $this->getMorphClass())
+            ->where($tables['model_has_roles'].'.'.$morphKey, $this->getKey())
+            ->whereNull($tables['model_has_roles'].'.'.$teamKey)
+            ->whereRaw('LOWER('.$tables['roles'].'.name) = ?', [$roleName])
+            ->exists();
     }
 }

@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use Filament\Events\TenantSet;
+
 class SwitchTeam
 {
     /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Handle the event.
+     * When the app panel resolves its tenant, scope Spatie permissions to that
+     * team so per-team roles resolve for the team the user is actually viewing
+     * (the authoritative acting team on the panel, which may differ from the
+     * pre-request current_team_id the web middleware used).
      */
     public function handle(object $event): void
     {
-        // dd($event);
+        if ($event instanceof TenantSet) {
+            setPermissionsTeamId($event->getTenant()->getKey());
+        }
     }
 }
