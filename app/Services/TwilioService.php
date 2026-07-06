@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CallLog;
 use Illuminate\Support\Facades\Log;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
@@ -117,6 +118,26 @@ class TwilioService
         foreach ($recordings as $recording) {
             $recording->update('stopped');
         }
+
+        return true;
+    }
+
+    public function logCall(string $sid, ?int $contactId, string $direction, ?int $duration, string $status): CallLog
+    {
+        return CallLog::create([
+            'call_sid' => $sid,
+            'contact_id' => $contactId,
+            'direction' => $direction,
+            'duration' => $duration,
+            'status' => $status,
+        ]);
+    }
+
+    public function endCall(string $sid): bool
+    {
+        $this->getClient()->calls($sid)->update(['status' => 'completed']);
+
+        CallLog::where('call_sid', $sid)->update(['status' => 'completed']);
 
         return true;
     }
