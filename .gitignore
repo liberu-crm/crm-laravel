@@ -24,3 +24,5 @@ Homestead.json
 /.opencode/
 public/build/manifest.json
 public/build/assets/*
+.idea
+.idea/CRM.iml

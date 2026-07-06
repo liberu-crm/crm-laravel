@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\OwnsRecords;
 use App\Traits\IsTenantModel;
+use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,11 +12,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Notifications\Notifiable;
 use InvalidArgumentException;
 
-class Lead extends Model
+class Lead extends Model implements OwnsRecords
 {
     use HasFactory;
     use IsTenantModel;
     use Notifiable;
+    use RestrictsToOwner;
 
     protected $fillable = [
         'status',
