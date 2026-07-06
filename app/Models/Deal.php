@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Contracts\OwnsRecords;
 use App\Traits\IsTenantModel;
+use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Deal extends Model
+class Deal extends Model implements OwnsRecords
 {
     use HasFactory;
     use IsTenantModel;
+    use RestrictsToOwner;
 
     protected $fillable = [
         'team_id',

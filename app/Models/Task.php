@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Contracts\OwnsRecords;
 use App\Traits\IsTenantModel;
+use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class Task extends Model implements OwnsRecords
 {
     use HasFactory;
     use IsTenantModel;
+    use RestrictsToOwner;
+
+    /** Record-level ownership keys off the assignee, not a creator. */
+    protected $ownerColumn = 'assigned_to';
 
     protected $primaryKey = 'id';
 
