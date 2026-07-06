@@ -33,6 +33,7 @@ class Contact extends Model
         'lifecycle_stage',
         'company_id',
         'custom_fields',
+        'metadata',
     ];
 
     protected $with = ['notes', 'deals', 'activities', 'company'];
@@ -44,6 +45,7 @@ class Contact extends Model
     {
         return [
             'custom_fields' => 'array',
+            'metadata' => 'array',
         ];
     }
 
