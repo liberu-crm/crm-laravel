@@ -8,11 +8,15 @@ use App\Actions\Socialstream\CreateConnectedAccount;
 use App\Actions\Socialstream\CreateUserWithTeamsFromProvider;
 use App\Actions\Socialstream\HandleInvalidState;
 use App\Actions\Socialstream\SetUserPassword;
+use App\Models\ConnectedAccount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use JoelButcher\Socialstream\Events\ConnectedAccountCreated;
+use JoelButcher\Socialstream\Socialstream;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 use Laravel\Socialite\Two\InvalidStateException;
 use Mockery;
@@ -148,6 +152,35 @@ class SocialstreamActionsTest extends TestCase
         ]);
 
         $this->assertTrue(Hash::check('S3cret-Passw0rd', $user->fresh()->password));
+    }
+
+    /**
+     * The SocialstreamServiceProvider must wire the app's ConnectedAccount model
+     * so social sign-up gets the IsTenantModel/account_type/is_primary behaviour
+     * and the app's event map — not the base package model. The package provider
+     * boots first and resets the resolver to its own base model, so this only
+     * holds because the app provider overrides it in boot().
+     */
+    public function test_socialstream_resolves_the_app_connected_account_model(): void
+    {
+        $this->assertSame(ConnectedAccount::class, Socialstream::connectedAccountModel());
+    }
+
+    public function test_create_connected_account_returns_app_model_and_dispatches_created_event(): void
+    {
+        Event::fake([ConnectedAccountCreated::class]);
+
+        $user = User::factory()->create();
+
+        $account = (new CreateConnectedAccount())->create($user, 'google', $this->fakeProviderUser());
+
+        $this->assertInstanceOf(ConnectedAccount::class, $account);
+
+        Event::assertDispatched(
+            ConnectedAccountCreated::class,
+            fn (ConnectedAccountCreated $event): bool => $event->connectedAccount instanceof ConnectedAccount
+                && $event->connectedAccount->is($account),
+        );
     }
 
     public function test_handle_invalid_state_rethrows(): void

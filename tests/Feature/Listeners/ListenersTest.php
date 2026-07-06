@@ -111,12 +111,14 @@ class ListenersTest extends TestCase
     public function test_send_crm_event_notification_notifies_users_for_configured_event(): void
     {
         Notification::fake();
-        $users = User::factory()->count(2)->create();
+        // getUsersToNotify is team-scoped: only the lead's team is notified,
+        // for the truthy config/crm.php key "new_lead" (snake of NewLead).
+        $team = Team::factory()->create();
+        $lead = \App\Models\Lead::factory()->create(['team_id' => $team->id]);
 
-        // class_basename(NewLead) → snake → "new_lead", a truthy config/crm.php key.
-        (new SendCRMEventNotification())->handle(new NewLead());
+        (new SendCRMEventNotification())->handle(new \App\Events\NewLead($lead));
 
-        Notification::assertSentTo($users, CRMEventNotification::class);
+        Notification::assertSentTo($team->owner, CRMEventNotification::class);
     }
 
     public function test_send_crm_event_notification_skips_unconfigured_event(): void

@@ -90,6 +90,12 @@ class SocialstreamServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // The package provider boots first and resets the resolver to its base
+        // ConnectedAccount model; override it so sign-up gets the app model
+        // (IsTenantModel, account_type/is_primary, its event map). userModel is
+        // already App\Models\User by default and not reset, so no override needed.
+        Socialstream::useConnectedAccountModel(\App\Models\ConnectedAccount::class);
+
         Socialstream::resolvesSocialiteUsersUsing(ResolveSocialiteUser::class);
         Socialstream::createUsersFromProviderUsing(CreateUserWithTeamsFromProvider::class);
         Socialstream::createConnectedAccountsUsing(CreateConnectedAccount::class);

@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Models\User;
 use App\Notifications\CRMEventNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,9 +28,11 @@ class SendCRMEventNotification implements ShouldQueue
 
     protected function getUsersToNotify($event)
     {
-        // Implement logic to determine which users should be notified
-        // This could be based on user roles, team membership, or other criteria
-        // For now, we'll just notify all users (you should refine this)
-        return User::all();
+        // Anti-leak: notify only the team that owns the event's model, never
+        // every user (User::all() was a cross-tenant notification leak). Each
+        // CRM event exposes its team via team().
+        $team = method_exists($event, 'team') ? $event->team() : null;
+
+        return $team ? $team->allUsers() : collect();
     }
 }

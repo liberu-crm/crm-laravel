@@ -39,6 +39,11 @@ class Lead extends Model implements OwnsRecords
         'score' => 'integer',
     ];
 
+    /** Fire NewLead on create so the CRM notification listener runs. */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\NewLead::class,
+    ];
+
     const LIFECYCLE_STAGES = [
         'subscriber',
         'lead',

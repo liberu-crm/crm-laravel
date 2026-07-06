@@ -20,6 +20,11 @@ class Note extends Model
         'opportunity_id',
     ];
 
+    /** Note is the app's comment model; fire NewComment on create. */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\NewComment::class,
+    ];
+
     public function contact()
     {
         return $this->belongsTo(Contact::class);
