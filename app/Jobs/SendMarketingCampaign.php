@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\MarketingCampaign;
+use App\Jobs\Concerns\TenantAware;
 use App\Services\MailChimpService;
 use App\Services\TwilioService;
 use App\Services\WhatsAppBusinessService;
@@ -16,10 +16,13 @@ use Illuminate\Support\Facades\Log;
 
 class SendMarketingCampaign implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAware;
 
     public function __construct(protected \App\Models\MarketingCampaign $campaign)
     {
+        // Campaign + recipients are tenant-scoped; remember the dispatching team
+        // so the recipient update below can't leak across teams in the worker.
+        $this->captureTenant();
     }
 
     public function handle(MailChimpService $mailchimp, TwilioService $twilio, WhatsAppBusinessService $whatsapp): void
@@ -37,6 +40,8 @@ class SendMarketingCampaign implements ShouldQueue
                     break;
             }
 
+            // Mark this campaign's recipients as sent (tenant-scoped bulk update).
+            $this->campaign->recipients()->update(['status' => 'sent']);
             $this->campaign->update(['status' => 'sent']);
         } catch (Exception $e) {
             Log::error('Failed to send marketing campaign: '.$e->getMessage());
