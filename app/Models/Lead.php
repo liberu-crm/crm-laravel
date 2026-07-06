@@ -29,6 +29,7 @@ class Lead extends Model implements OwnsRecords
         'lifecycle_stage',
         'custom_fields',
         'score',
+        'team_id',
     ];
 
     protected $casts = [

@@ -20,6 +20,7 @@ class MarketingCampaign extends Model
         'subject',
         'content',
         'scheduled_at',
+        'team_id',
     ];
 
     protected $casts = [
