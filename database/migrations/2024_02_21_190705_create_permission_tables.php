@@ -61,10 +61,13 @@ return new class extends Migration
                 ->on($tableNames['permissions'])
                 ->onDelete('cascade');
             if ($teams) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                // team_id is nullable so a global (super_admin) assignment can be
+                // stored with team_id = null. MySQL forbids NULL in a PRIMARY KEY,
+                // so the composite key is a UNIQUE index rather than a primary key.
+                $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
 
-                $table->primary(
+                $table->unique(
                     [$columnNames['team_foreign_key'], $pivotPermission, $columnNames['model_morph_key'], 'model_type'],
                     'model_has_permissions_permission_model_type_primary'
                 );
@@ -88,10 +91,13 @@ return new class extends Migration
                 ->on($tableNames['roles'])
                 ->onDelete('cascade');
             if ($teams) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                // team_id is nullable so a global (super_admin) assignment can be
+                // stored with team_id = null. MySQL forbids NULL in a PRIMARY KEY,
+                // so the composite key is a UNIQUE index rather than a primary key.
+                $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
 
-                $table->primary(
+                $table->unique(
                     [$columnNames['team_foreign_key'], $pivotRole, $columnNames['model_morph_key'], 'model_type'],
                     'model_has_roles_role_model_type_primary'
                 );
