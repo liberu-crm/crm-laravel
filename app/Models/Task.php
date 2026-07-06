@@ -36,12 +36,14 @@ class Task extends Model implements OwnsRecords
         'outlook_event_id',
         'calendar_type',
         'assigned_to',
+        'overdue_notified',
     ];
 
     protected $casts = [
         'reminder_date' => 'datetime',
         'reminder_sent' => 'boolean',
         'due_date' => 'datetime',
+        'overdue_notified' => 'boolean',
     ];
 
     public function contact(): BelongsTo
