@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Workflow extends Model
 {
@@ -44,12 +45,14 @@ class Workflow extends Model
         return $this->belongsToMany(Deal::class);
     }
 
-    public function workflowTriggers()
+    /** @return HasMany<WorkflowTrigger, $this> */
+    public function workflowTriggers(): HasMany
     {
         return $this->hasMany(WorkflowTrigger::class);
     }
 
-    public function workflowActions()
+    /** @return HasMany<WorkflowAction, $this> */
+    public function workflowActions(): HasMany
     {
         return $this->hasMany(WorkflowAction::class);
     }
