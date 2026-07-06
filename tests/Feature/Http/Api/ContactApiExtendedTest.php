@@ -96,6 +96,9 @@ class ContactApiExtendedTest extends TestCase
 
         $response = $this->getJson("/api/v1/contacts/{$contact->id}");
 
-        $response->assertForbidden();
+        // Tenant global scope makes the record invisible, so binding 404s
+        // before any policy runs. 404 (not 403) is intentional: it does not
+        // disclose that another team's record exists.
+        $response->assertNotFound();
     }
 }

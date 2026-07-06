@@ -35,6 +35,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SecurityHeaders::class,
         ]);
+
+        // Establish the tenant from the Sanctum user before route-model
+        // binding runs, so the IsTenantModel global scope filters API queries.
+        $middleware->api(prepend: [
+            \App\Http\Middleware\SetTenantContext::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
