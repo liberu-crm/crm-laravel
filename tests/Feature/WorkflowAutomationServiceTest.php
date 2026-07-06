@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Contact;
+use App\Models\Task;
 use App\Models\Workflow;
 use App\Models\WorkflowAction;
 use App\Models\WorkflowCondition;
@@ -51,6 +52,32 @@ class WorkflowAutomationServiceTest extends TestCase
         $this->assertTrue($workflow->executions()->whereKey($execution->id)->exists());
         // the action actually ran
         $this->assertDatabaseHas('contacts', ['id' => $contact->id, 'status' => 'converted']);
+    }
+
+    public function test_create_task_action_creates_task_for_contact_and_completes(): void
+    {
+        $contact = Contact::factory()->create();
+        $workflow = Workflow::factory()->create(['is_active' => true]);
+        WorkflowAction::create([
+            'workflow_id' => $workflow->id,
+            'type' => WorkflowAction::TYPE_CREATE_TASK,
+            'name' => 'Follow up',
+            'config' => ['title' => 'Follow up with contact'],
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        $execution = $this->service()->executeWorkflow($workflow, $contact);
+
+        // action ran without throwing => execution completed, not failed
+        $this->assertSame(WorkflowExecution::STATUS_COMPLETED, $execution->status);
+        $this->assertNull($execution->error_message);
+
+        $task = Task::query()->where('contact_id', $contact->id)->first();
+        $this->assertNotNull($task);
+        $this->assertSame('Follow up with contact', $task->name);
+        $this->assertSame($contact->id, $task->contact_id);
+        $this->assertNotNull($task->due_date);
     }
 
     public function test_trigger_executes_workflow_with_matching_trigger(): void
