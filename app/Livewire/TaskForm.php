@@ -6,6 +6,8 @@ use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class TaskForm extends Component
@@ -24,7 +26,7 @@ class TaskForm extends Component
 
     public ?int $lead_id = null;
 
-    public int $assigned_to;
+    public ?int $assigned_to = null;
 
     public ?string $reminder_date = null;
 
@@ -81,7 +83,7 @@ class TaskForm extends Component
         return redirect()->route('tasks.index');
     }
 
-    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+    public function render(): Factory|View
     {
         return view('livewire.task-form', [
             'contacts' => Contact::all(),
