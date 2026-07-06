@@ -15,8 +15,8 @@ class SalesForecastingService
     public function generatePipelineForecast(Pipeline $pipeline, Carbon $startDate, Carbon $endDate): SalesForecast
     {
         $deals = Deal::where('pipeline_id', $pipeline->id)
-            ->whereBetween('expected_close_date', [$startDate, $endDate])
-            ->where('status', '!=', 'lost')
+            ->whereBetween('close_date', [$startDate, $endDate])
+            ->where('stage', '!=', 'lost')
             ->get();
 
         $predictedRevenue = $deals->sum(fn($deal) => $deal->value * ($deal->probability / 100));
@@ -69,13 +69,15 @@ class SalesForecastingService
      */
     public function generateWeightedForecast(Carbon $startDate, Carbon $endDate): SalesForecast
     {
-        $deals = Deal::whereBetween('expected_close_date', [$startDate, $endDate])
-            ->where('status', '!=', 'lost')
+        $deals = Deal::whereBetween('close_date', [$startDate, $endDate])
+            ->where('stage', '!=', 'lost')
             ->with('stage')
             ->get();
 
         $weightedRevenue = $deals->sum(function ($deal): float {
-            $stageWeight = $this->getStageWeight($deal->stage);
+            // getRelationValue() returns the eager-loaded Stage model; a plain
+            // $deal->stage would return the `stage` string column that shadows it.
+            $stageWeight = $this->getStageWeight($deal->getRelationValue('stage'));
             $probabilityWeight = $deal->probability / 100;
 
             return $deal->value * $stageWeight * $probabilityWeight;
