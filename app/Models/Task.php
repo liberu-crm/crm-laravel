@@ -7,6 +7,7 @@ use App\Traits\IsTenantModel;
 use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model implements OwnsRecords
 {
@@ -43,27 +44,27 @@ class Task extends Model implements OwnsRecords
         'due_date' => 'datetime',
     ];
 
-    public function contact()
+    public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }
 
-    public function lead()
+    public function lead(): BelongsTo
     {
         return $this->belongsTo(Lead::class);
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function opportunity()
+    public function opportunity(): BelongsTo
     {
         return $this->belongsTo(Opportunity::class);
     }
 
-    public function assignedTo()
+    public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }

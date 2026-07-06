@@ -48,7 +48,7 @@ class ModuleServiceProvider extends ServiceProvider
             }
         }
 
-        if (config('modules.load_composer', env('MODULES_LOAD_COMPOSER', false))) {
+        if (config('modules.load_composer', false)) {
             $composerPath = base_path(config('modular.module_directory', 'app-modules'));
             if (File::exists($composerPath)) {
                 foreach (File::directories($composerPath) as $dir) {
