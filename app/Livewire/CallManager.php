@@ -35,7 +35,7 @@ class CallManager extends Component
             return;
         }
 
-        $call = $twilioService->initiateCall($contact->phone);
+        $call = $twilioService->initiateCall($contact->phone_number);
 
         if ($call) {
             $this->callSid = $call->sid;

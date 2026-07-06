@@ -30,7 +30,7 @@ class TwilioIntegrationTest extends TestCase
 
         $this->twilioService->shouldReceive('logCall')
             ->once()
-            ->andReturn(true);
+            ->andReturn(new \App\Models\CallLog);
 
         $call = app(TwilioService::class)->initiateCall($contact->phone_number);
         app(TwilioService::class)->logCall($call->sid, $contact->id, 'outbound', null, 'initiated');

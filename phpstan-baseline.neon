@@ -37,18 +37,6 @@ parameters:
 			path: app/Actions/Socialstream/CreateConnectedAccount.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\User\:\:setProfilePhotoFromUrl\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Actions/Socialstream/CreateUserFromProvider.php
-
-		-
-			message: '#^Call to an undefined method App\\Models\\User\:\:setProfilePhotoFromUrl\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Actions/Socialstream/CreateUserWithTeamsFromProvider.php
-
-		-
 			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
@@ -115,34 +103,10 @@ parameters:
 			path: app/Filament/App/Pages/EditProfile.php
 
 		-
-			message: '#^Call to an undefined static method Filament\\Facades\\Filament\:\:notify\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Filament/App/Pages/EditProfile.php
-
-		-
 			message: '#^Call to an undefined method App\\Models\\User\:\:canCreateTeams\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Filament/App/Pages/EditTeam.php
-
-		-
-			message: '#^Call to an undefined static method Filament\\Pages\\Page\<Filament\\Pages\\PageConfiguration\>\:\:__construct\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Filament/App/Pages/ReportPage.php
-
-		-
-			message: '#^Call to an undefined method App\\Filament\\App\\Pages\\UpdateProfileInformationPage\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Filament/App/Pages/UpdateProfileInformationPage.php
-
-		-
-			message: '#^Call to an undefined static method Filament\\Pages\\Page\<Filament\\Pages\\PageConfiguration\>\:\:__construct\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Filament/App/Pages/UpdateProfileInformationPage.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$activities\.$#'
@@ -215,18 +179,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: app/Filament/App/Resources/TaskResource/Pages/CreateTask.php
-
-		-
-			message: '#^Call to an undefined static method Filament\\Resources\\Pages\\CreateRecord\<Illuminate\\Database\\Eloquent\\Model\>\:\:getFormSchema\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Filament/App/Resources/TaskResource/Pages/CreateTask.php
-
-		-
-			message: '#^Call to an undefined static method Filament\\Resources\\Pages\\EditRecord\<Illuminate\\Database\\Eloquent\\Model\>\:\:getFormSchema\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Filament/App/Resources/TaskResource/Pages/EditTask.php
 
 		-
 			message: '#^Cannot access property \$sync_to_google_calendar on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
@@ -313,6 +265,12 @@ parameters:
 			path: app/Http/Controllers/LeadFormController.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:markAsRead\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
 			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$refreshToken\.$#'
 			identifier: property.notFound
 			count: 1
@@ -367,6 +325,12 @@ parameters:
 			path: app/Http/Controllers/TeamInvitationController.php
 
 		-
+			message: '#^Call to an undefined method App\\Services\\TwilioService\:\:logCall\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/TwilioController.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Contact\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Contact\>\:\:\$phone\.$#'
 			identifier: property.notFound
 			count: 1
@@ -391,12 +355,6 @@ parameters:
 			path: app/Http/Livewire/CallManager.php
 
 		-
-			message: '#^Relation ''lead'' is not found in App\\Models\\Task model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Livewire/TaskList.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -413,6 +371,24 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/Listeners/EmailTracker.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\TwilioService\:\:endCall\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/CallManager.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\TwilioService\:\:logCall\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/CallManager.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\CallLog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Livewire/CallManager.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Activation\:\:\$team_id\.$#'
@@ -673,16 +649,16 @@ parameters:
 			path: app/Models/WorkflowTrigger.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/TaskReminderNotification.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Task\:\:\$sync_to_google_calendar\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Observers/TaskObserver.php
-
-		-
-			message: '#^Call to an undefined method App\\Models\\User\:\:ownsConnectedAccount\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Policies/ConnectedAccountPolicy.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Contact\:\:\$team_id\.$#'
@@ -835,6 +811,42 @@ parameters:
 			path: app/Providers/TeamServiceProvider.php
 
 		-
+			message: '#^Call to method connect\(\) on an unknown class App\\Services\\QuickBooksService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Call to method connect\(\) on an unknown class App\\Services\\XeroService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Call to method syncInvoice\(\) on an unknown class App\\Services\\QuickBooksService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Call to method syncInvoice\(\) on an unknown class App\\Services\\XeroService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Call to method syncPayment\(\) on an unknown class App\\Services\\QuickBooksService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Call to method syncPayment\(\) on an unknown class App\\Services\\XeroService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
 			message: '#^Instantiated class App\\Exceptions\\AccountingIntegrationException not found\.$#'
 			identifier: class.notFound
 			count: 3
@@ -848,6 +860,18 @@ parameters:
 
 		-
 			message: '#^Parameter \$xeroService of method App\\Services\\AccountingService\:\:__construct\(\) has invalid type App\\Services\\XeroService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Property App\\Services\\AccountingService\:\:\$quickbooksService has unknown class App\\Services\\QuickBooksService as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/AccountingService.php
+
+		-
+			message: '#^Property App\\Services\\AccountingService\:\:\$xeroService has unknown class App\\Services\\XeroService as its type\.$#'
 			identifier: class.notFound
 			count: 1
 			path: app/Services/AccountingService.php
@@ -874,6 +898,12 @@ parameters:
 			message: '#^Call to method getCampaigns\(\) on an unknown class FacebookAds\\Object\\AdAccount\.$#'
 			identifier: class.notFound
 			count: 1
+			path: app/Services/FacebookAdsService.php
+
+		-
+			message: '#^Call to method getCode\(\) on an unknown class FacebookAds\\Exception\\FacebookException\.$#'
+			identifier: class.notFound
+			count: 2
 			path: app/Services/FacebookAdsService.php
 
 		-
@@ -925,6 +955,24 @@ parameters:
 			path: app/Services/FacebookMessengerService.php
 
 		-
+			message: '#^Call to method get\(\) on an unknown class Facebook\\Facebook\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Call to method getCode\(\) on an unknown class Facebook\\Exceptions\\FacebookResponseException\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Call to method getCode\(\) on an unknown class Facebook\\Exceptions\\FacebookSDKException\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/FacebookService.php
+
+		-
 			message: '#^Call to method getMessage\(\) on an unknown class Facebook\\Exceptions\\FacebookResponseException\.$#'
 			identifier: class.notFound
 			count: 2
@@ -934,6 +982,12 @@ parameters:
 			message: '#^Call to method getMessage\(\) on an unknown class Facebook\\Exceptions\\FacebookSDKException\.$#'
 			identifier: class.notFound
 			count: 2
+			path: app/Services/FacebookService.php
+
+		-
+			message: '#^Call to method post\(\) on an unknown class Facebook\\Facebook\.$#'
+			identifier: class.notFound
+			count: 1
 			path: app/Services/FacebookService.php
 
 		-
@@ -955,8 +1009,44 @@ parameters:
 			path: app/Services/FacebookService.php
 
 		-
+			message: '#^Property App\\Services\\FacebookService\:\:\$fb has unknown class Facebook\\Facebook as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/FacebookService.php
+
+		-
 			message: '#^Access to constant GMAIL_MODIFY on an unknown class Google_Service_Gmail\.$#'
 			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setAccessToken\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setAccessType\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setApplicationName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setPrompt\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setScopes\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Services/GmailService.php
 
@@ -985,9 +1075,21 @@ parameters:
 			path: app/Services/GmailService.php
 
 		-
+			message: '#^Method App\\Services\\GmailService\:\:createReplyMessage\(\) has invalid return type Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/GmailService.php
+
+		-
 			message: '#^Access to constant PAUSED on an unknown class Google\\Ads\\GoogleAds\\V14\\Enums\\CampaignStatusEnum\\CampaignStatus\.$#'
 			identifier: class.notFound
 			count: 1
+			path: app/Services/GoogleAdsService.php
+
+		-
+			message: '#^Call to method getCode\(\) on an unknown class Google\\ApiCore\\ApiException\.$#'
+			identifier: class.notFound
+			count: 4
 			path: app/Services/GoogleAdsService.php
 
 		-
@@ -1063,6 +1165,12 @@ parameters:
 			path: app/Services/GoogleAdsService.php
 
 		-
+			message: '#^Class Google_Service_Calendar does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: app/Services/GoogleCalendarService.php
+
+		-
 			message: '#^Parameter \$endDate of method App\\Services\\LiveChatService\:\:getChatAnalytics\(\) has invalid type App\\Services\\Carbon\.$#'
 			identifier: class.notFound
 			count: 1
@@ -1081,9 +1189,39 @@ parameters:
 			path: app/Services/LiveChatService.php
 
 		-
+			message: '#^Access to an undefined property MailchimpMarketing\\ApiClient\:\:\$campaigns\.$#'
+			identifier: property.notFound
+			count: 7
+			path: app/Services/MailChimpService.php
+
+		-
+			message: '#^Access to an undefined property MailchimpMarketing\\ApiClient\:\:\$lists\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/MailChimpService.php
+
+		-
+			message: '#^Access to an undefined property MailchimpMarketing\\ApiClient\:\:\$reports\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/MailChimpService.php
+
+		-
 			message: '#^Access to constant GMAIL_MODIFY on an unknown class Google_Service_Gmail\.$#'
 			identifier: class.notFound
 			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Access to property \$users_messages on an unknown class Google_Service_Gmail\.$#'
+			identifier: class.notFound
+			count: 4
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Call to an undefined method Google_Client\:\:setAccessToken\(\)\.$#'
+			identifier: method.notFound
+			count: 3
 			path: app/Services/MessageService.php
 
 		-
@@ -1135,6 +1273,18 @@ parameters:
 			path: app/Services/MessageService.php
 
 		-
+			message: '#^Method App\\Services\\MessageService\:\:createReplyMessage\(\) has invalid return type Google_Service_Gmail_Message\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
+			message: '#^Property App\\Services\\MessageService\:\:\$gmailService has unknown class Google_Service_Gmail as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/MessageService.php
+
+		-
 			message: '#^Call to an undefined method DateTimeInterface\:\:subMinutes\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -1153,21 +1303,9 @@ parameters:
 			path: app/Services/PersonalizationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Task\:\:\$assignedTo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ReminderService.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Task\:\:\$contact\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/ReminderService.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Task\:\:\$lead\.$#'
-			identifier: property.notFound
-			count: 1
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 3
 			path: app/Services/ReminderService.php
 
 		-
@@ -1207,6 +1345,12 @@ parameters:
 			path: app/Services/StripeService.php
 
 		-
+			message: '#^Call to method getCode\(\) on an unknown class Stripe\\Exception\\ApiErrorException\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/StripeService.php
+
+		-
 			message: '#^Call to method getMessage\(\) on an unknown class Stripe\\Exception\\ApiErrorException\.$#'
 			identifier: class.notFound
 			count: 3
@@ -1237,7 +1381,31 @@ parameters:
 			path: app/Services/TeamManagementService.php
 
 		-
+			message: '#^Call to method get\(\) on an unknown class Abraham\\TwitterOAuth\\TwitterOAuth\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/TwitterService.php
+
+		-
+			message: '#^Call to method post\(\) on an unknown class Abraham\\TwitterOAuth\\TwitterOAuth\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/TwitterService.php
+
+		-
+			message: '#^Call to method setOauthToken\(\) on an unknown class Abraham\\TwitterOAuth\\TwitterOAuth\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/TwitterService.php
+
+		-
 			message: '#^Instantiated class Abraham\\TwitterOAuth\\TwitterOAuth not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/TwitterService.php
+
+		-
+			message: '#^Property App\\Services\\TwitterService\:\:\$connection has unknown class Abraham\\TwitterOAuth\\TwitterOAuth as its type\.$#'
 			identifier: class.notFound
 			count: 1
 			path: app/Services/TwitterService.php

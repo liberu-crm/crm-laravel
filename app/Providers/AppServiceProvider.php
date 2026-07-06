@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Contact;
+use App\Models\Deal;
+use App\Models\Lead;
+use App\Models\Opportunity;
+use App\Models\Task;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
+use App\Observers\AuditObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        // Audit core tenant models. Never observe AuditLog itself -> infinite recursion.
+        foreach ([Contact::class, Deal::class, Lead::class, Opportunity::class, Task::class] as $model) {
+            $model::observe(AuditObserver::class);
+        }
     }
 }
