@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
-use App\Services\AuditLogService;
+use App\Models\AuditLog;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,11 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AuditObserver
 {
-    public function __construct(private readonly AuditLogService $audit) {}
-
     public function created(Model $model): void
     {
-        $this->record($model, 'created');
+        $this->record($model, 'created', $model->getAttributes());
     }
 
     public function updated(Model $model): void
@@ -30,13 +28,13 @@ class AuditObserver
 
     public function deleted(Model $model): void
     {
-        $this->record($model, 'deleted');
+        $this->record($model, 'deleted', null);
     }
 
     /**
-     * @param  array<string, mixed>  $changes
+     * @param  array<string, mixed>|null  $changes
      */
-    private function record(Model $model, string $action, array $changes = []): void
+    private function record(Model $model, string $action, ?array $changes): void
     {
         // audit_logs.user_id is NOT NULL + FK; nothing to attribute unauthenticated
         // writes to (seeders, console, queue), so skip rather than blow the constraint.
@@ -46,11 +44,20 @@ class AuditObserver
 
         $description = $model::class.'#'.$model->getKey().' '.$action;
 
-        if ($changes !== []) {
+        // Legacy description behaviour: only the update event appended the diff.
+        if ($action === 'updated' && $changes) {
             $description .= ' '.json_encode($changes);
         }
 
-        // Reuse the existing service: it stamps user_id + ip_address for us.
-        $this->audit->log($action, $description);
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => $action,
+            'description' => $description,
+            'ip_address' => request()->ip(),
+            'auditable_type' => $model::class,
+            'auditable_id' => $model->getKey(),
+            'team_id' => $model->getAttribute('team_id'),
+            'changes' => $changes,
+        ]);
     }
 }
