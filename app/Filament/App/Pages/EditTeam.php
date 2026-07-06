@@ -21,12 +21,6 @@ class EditTeam extends EditTenantProfile
     }
 
     #[\Override]
-    public function mount(): void
-    {
-        abort_unless($this->user()->canCreateTeams(), 403);
-    }
-
-    #[\Override]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -52,6 +46,16 @@ class EditTeam extends EditTenantProfile
         $this->user()->switchTeam($team);
 
         return redirect()->route('filament.app.tenant.profile', ['tenant' => $team]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getViewData(): array
+    {
+        // The blade view embeds Jetstream team Livewire components that expect $team.
+        return ['team' => $this->tenant];
     }
 
     #[\Override]
