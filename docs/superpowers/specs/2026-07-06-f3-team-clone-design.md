@@ -33,11 +33,13 @@ table.
 
 ## FK-remap engine — copy-then-patch under FK-off
 
-New team → new PKs → intra-config FKs must be rewired. Declared edge map (small):
+New team → new PKs → intra-config FKs must be rewired. Declared edge map, **verified
+against the live schema** (the Pipeline model declares a `stage_id` relation but the
+`pipelines` table has no such column — model↔schema drift — so it is excluded; a
+`Schema::hasColumn` guard also skips any edge whose column is absent):
 
 ```
 Stage.pipeline_id            -> Pipeline
-Pipeline.stage_id            -> Stage           (circular pair)
 WorkflowAction.workflow_id   -> Workflow
 WorkflowCondition.workflow_action_id -> WorkflowAction
 WorkflowTrigger.workflow_id  -> Workflow
@@ -56,8 +58,9 @@ transaction is open; the test DB enforces FKs).
   (`new = map[referencedModel][old]`); a value with no mapping (or null) is nulled/left.
 
 Keeping old values then patching (rather than null-then-patch) avoids depending on each
-FK column being nullable, and handles the **circular** Pipeline↔Stage and **self-ref** Menu
-uniformly with no dependency ordering.
+FK column being nullable, and handles the **self-ref** Menu (parent may be inserted after
+child) with no dependency ordering — and would absorb a genuine circular edge for free if
+one ever appeared.
 
 Only the declared edge columns are remapped. Config models are self-contained (no user_id
 refs among the cloneable set), so no user remapping is needed. Any other `*_id` column is
@@ -86,10 +89,9 @@ only into the freshly created team.
 - New team created with the given name + owner; `personal_team = false`.
 - Cloned config rows exist under the **new** team_id with **new PKs**; source rows
   untouched (count unchanged, ids unchanged).
-- **Remap correctness:** cloned `Stage.pipeline_id` → the cloned Pipeline; cloned
-  `Pipeline.stage_id` → the cloned Stage (circular); `WorkflowAction.workflow_id` → cloned
-  Workflow; `WorkflowCondition.workflow_action_id` → cloned action; `Menu.parent_id` →
-  cloned parent.
+- **Remap correctness:** cloned `Stage.pipeline_id` → the cloned Pipeline (tree edge);
+  `Menu.parent_id` → the cloned parent (self-ref). The workflow-tree edges use the identical
+  generic code path.
 - **Data NOT copied:** contacts/leads/deals/tasks count 0 under the new team.
 - Command clones; unknown source id fails. Admin action gated to super_admin.
 - MySQL 8.4 verify (FK-off + copy-then-patch).

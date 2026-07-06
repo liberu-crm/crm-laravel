@@ -7,7 +7,12 @@ namespace App\Filament\Resources;
 use App\Enums\Role;
 use App\Filament\Resources\TeamResource\Pages\ListTeams;
 use App\Models\Team;
+use App\Models\User;
+use App\Services\TeamCloneService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
@@ -69,6 +74,38 @@ class TeamResource extends Resource
                     ->requiresConfirmation()
                     ->visible(fn (Team $record): bool => $record->isArchived())
                     ->action(fn (Team $record) => $record->restore()),
+                Action::make('clone')
+                    ->label('Clone')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('gray')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('New team name')
+                            ->required()
+                            ->default(fn (Team $record): string => "Copy of {$record->name}"),
+                        Select::make('owner_id')
+                            ->label('Owner')
+                            ->options(fn (): array => User::query()->pluck('name', 'id')->all())
+                            ->searchable()
+                            ->required()
+                            ->default(fn (Team $record): int => $record->user_id),
+                    ])
+                    ->action(function (Team $record, array $data): void {
+                        $owner = User::find((int) $data['owner_id']);
+                        if (! $owner) {
+                            Notification::make()->title('Owner not found')->danger()->send();
+
+                            return;
+                        }
+
+                        $new = app(TeamCloneService::class)->clone($record, (string) $data['name'], $owner);
+
+                        Notification::make()
+                            ->title('Team cloned')
+                            ->body("Created “{$new->name}” from “{$record->name}”.")
+                            ->success()
+                            ->send();
+                    }),
             ]);
     }
 
