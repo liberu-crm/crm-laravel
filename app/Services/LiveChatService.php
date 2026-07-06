@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\ChatMessage;
 use App\Models\Contact;
 use App\Models\LiveChat;
-use App\Models\Message;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,14 +77,12 @@ class LiveChatService
     /**
      * Send message in chat
      */
-    public function sendMessage(LiveChat $chat, string $content, bool $isAgent = false): Message
+    public function sendMessage(LiveChat $chat, string $content, bool $isAgent = false): ChatMessage
     {
-        return Message::create([
-            'chat_id' => $chat->id,
-            'sender_type' => $isAgent ? 'agent' : 'visitor',
+        return $chat->messages()->create([
+            'sender' => $isAgent ? 'agent' : 'visitor',
             'sender_id' => $isAgent ? Auth::id() : null,
             'content' => $content,
-            'sent_at' => now(),
         ]);
     }
 

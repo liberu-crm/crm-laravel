@@ -29,7 +29,7 @@ class WorkflowAutomationService
      */
     public function trigger(string $triggerType, $entity, array $context = []): void
     {
-        $workflows = Workflow::whereHas('triggers', function ($query) use ($triggerType): void {
+        $workflows = Workflow::whereHas('workflowTriggers', function ($query) use ($triggerType): void {
             $query->where('type', $triggerType)
                 ->where('is_active', true);
         })->where('is_active', true)->get();
@@ -58,7 +58,7 @@ class WorkflowAutomationService
                 'started_at' => now(),
             ]);
 
-            $actions = $workflow->actions()->orderBy('order')->get();
+            $actions = $workflow->workflowActions()->orderBy('order')->get();
 
             foreach ($actions as $action) {
                 if (! $action->is_active) {
