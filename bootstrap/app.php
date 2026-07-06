@@ -3,10 +3,13 @@
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetPermissionsTeamContext;
+use App\Http\Middleware\SetTenantContext;
 use App\Http\Middleware\VerifyTwilioRequest;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         then: function () {
-            \Illuminate\Support\Facades\Route::middleware('web')
+            Route::middleware('web')
                 ->group(base_path('routes/socialstream.php'));
         },
     )
@@ -34,12 +37,17 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             SecurityHeaders::class,
+            // Scope Spatie permissions to the user's current team so per-team
+            // roles resolve. Appended so the session guard is available.
+            SetPermissionsTeamContext::class,
         ]);
 
         // Establish the tenant from the Sanctum user before route-model
         // binding runs, so the IsTenantModel global scope filters API queries.
+        // SetPermissionsTeamContext does the same for per-team role resolution.
         $middleware->api(prepend: [
-            \App\Http\Middleware\SetTenantContext::class,
+            SetTenantContext::class,
+            SetPermissionsTeamContext::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
