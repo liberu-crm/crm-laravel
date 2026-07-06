@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\Role;
 use App\Models\Branch;
 use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 class TeamManagementService
 {
@@ -18,19 +20,45 @@ class TeamManagementService
             throw new Exception('No default branch found. Please set up at least one branch.');
         }
 
-        return $user->ownedTeams()->create([
+        $team = $user->ownedTeams()->create([
             'name' => $defaultBranch->name.' Team',
             'personal_team' => false,
             'branch_id' => $defaultBranch->id,
         ]);
+
+        $this->assignTeamRole($user, $team, Role::Admin);
+
+        return $team;
     }
 
     public function createPersonalTeamForUser(User $user): Team
     {
-        return $user->ownedTeams()->create([
+        $team = $user->ownedTeams()->create([
             'name' => $user->name."'s Team",
             'personal_team' => true,
         ]);
+
+        $this->assignTeamRole($user, $team, Role::Admin);
+
+        return $team;
+    }
+
+    /**
+     * Assign a Spatie role to a user scoped to a specific team.
+     *
+     * The role definition is global (team_id = null); the assignment carries the
+     * team. Wrapping setPermissionsTeamId around assignRole is what writes the
+     * per-team pivot row. firstOrCreate keeps it safe when roles are not seeded.
+     */
+    public function assignTeamRole(User $user, Team $team, Role $role): void
+    {
+        setPermissionsTeamId($team->getKey());
+        SpatieRole::firstOrCreate([
+            'name' => $role->value,
+            'guard_name' => 'web',
+            'team_id' => null,
+        ]);
+        $user->assignRole($role->value);
     }
 
     public function assignUserToDefaultTeam(User $user): void
@@ -58,6 +86,9 @@ class TeamManagementService
         if (! $user->belongsToTeam($team)) {
             $user->teams()->attach($team, ['role' => 'member']);
             $user->unsetRelation('teams'); // drop cached (pre-attach) relation so switchTeam re-checks membership
+            // New member of an existing team → sales_rep in that team. Raw
+            // attach() fires no Jetstream event, so assign here.
+            $this->assignTeamRole($user, $team, Role::SalesRep);
         }
         $user->switchTeam($team);
     }
