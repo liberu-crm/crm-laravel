@@ -17,6 +17,7 @@ class CallLog extends Model
         'duration',
         'status',
         'team_id',
+        'notes',
     ];
 
     protected $casts = [

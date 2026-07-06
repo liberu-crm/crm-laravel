@@ -19,12 +19,16 @@ class TaskFactory extends Factory
 
     public function definition()
     {
+        // Keep reminder_date on/before due_date so consumers that enforce
+        // reminder <= due (e.g. TaskForm) get self-consistent data.
+        $dueDate = $this->faker->dateTimeBetween('now', '+30 days');
+
         return [
             'name' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),
-            'due_date' => $this->faker->dateTimeBetween('now', '+30 days'),
+            'due_date' => $dueDate,
             'status' => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
-            'reminder_date' => $this->faker->optional()->dateTimeBetween('now', '+7 days'),
+            'reminder_date' => $this->faker->optional()->dateTimeBetween('now', $dueDate),
             'reminder_sent' => false,
             'google_event_id' => $this->faker->optional()->uuid(),
             'outlook_event_id' => $this->faker->optional()->uuid(),

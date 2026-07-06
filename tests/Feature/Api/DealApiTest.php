@@ -12,76 +12,254 @@ class DealApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    private function actingUser(): User
     {
-        parent::setUp();
-        $user = User::factory()->create();
+        $user = User::factory()->withPersonalTeam()->create();
         Sanctum::actingAs($user);
+
+        return $user;
     }
 
-    public function test_can_list_deals(): void
+    private function foreignTeamId(): int
     {
-        $beforeCount = Deal::count();
-        Deal::factory()->count(3)->create();
-
-        $response = $this->getJson('/api/v1/deals');
-
-        $response->assertStatus(200)
-            ->assertJsonCount($beforeCount + 3);
+        return User::factory()->withPersonalTeam()->create()->currentTeam->id;
     }
+
+    public function test_api_requires_authentication(): void
+    {
+        $this->getJson('/api/v1/deals')->assertUnauthorized();
+    }
+
+    // -------------------------------------------------------------- index
+
+    public function test_index_returns_only_own_team_deals(): void
+    {
+        $user = $this->actingUser();
+        Deal::factory()->count(2)->create(['team_id' => $user->currentTeam->id]);
+        Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
+
+        $this->getJson('/api/v1/deals')
+            ->assertOk()
+            ->assertJsonCount(2);
+    }
+
+    // --------------------------------------------------------------- show
+
+    public function test_can_show_own_deal(): void
+    {
+        $user = $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+
+        $this->getJson("/api/v1/deals/{$deal->id}")
+            ->assertOk()
+            ->assertJsonFragment(['id' => $deal->id]);
+    }
+
+    public function test_cannot_show_other_team_deal_returns_404(): void
+    {
+        $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
+
+        // Tenant global scope hides foreign records, so binding 404s before the
+        // controller runs — no disclosure that the record exists.
+        $this->getJson("/api/v1/deals/{$deal->id}")->assertNotFound();
+    }
+
+    // -------------------------------------------------------------- store
 
     public function test_can_create_deal(): void
     {
-        $dealData = [
-            'name' => 'New Deal',
-            'value' => 1000,
+        $user = $this->actingUser();
+
+        $this->postJson('/api/v1/deals', [
+            'name' => 'Big Deal',
+            'value' => 5000,
             'stage' => 'prospect',
-        ];
+        ])
+            ->assertCreated()
+            ->assertJsonFragment(['name' => 'Big Deal', 'stage' => 'prospect']);
 
-        $response = $this->postJson('/api/v1/deals', $dealData);
-
-        $response->assertStatus(201)
-            ->assertJsonFragment([
-                'name' => 'New Deal',
-                'stage' => 'prospect',
-            ]);
+        $this->assertDatabaseHas('deals', [
+            'name' => 'Big Deal',
+            'team_id' => $user->currentTeam->id,
+        ]);
     }
 
-    public function test_can_show_deal(): void
+    public function test_store_validates_required_fields(): void
     {
-        $deal = Deal::factory()->create();
+        $this->actingUser();
 
-        $response = $this->getJson("/api/v1/deals/{$deal->id}");
-
-        $response->assertStatus(200)
-            ->assertJson($deal->toArray());
+        $this->postJson('/api/v1/deals', [])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['name', 'value']);
     }
 
-    public function test_can_update_deal(): void
+    public function test_store_validates_value_is_numeric(): void
     {
-        $deal = Deal::factory()->create();
-        $updatedData = [
-            'name' => 'Updated Deal',
-            'value' => 2000,
-            'stage' => 'won',
-        ];
+        $this->actingUser();
 
-        $response = $this->putJson("/api/v1/deals/{$deal->id}", $updatedData);
-
-        $response->assertStatus(200)
-            ->assertJsonFragment([
-                'name' => 'Updated Deal',
-                'stage' => 'won',
-            ]);
+        $this->postJson('/api/v1/deals', ['name' => 'X', 'value' => 'not-a-number'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['value']);
     }
 
-    public function test_can_delete_deal(): void
+    // ------------------------------------------------------------- update
+
+    public function test_can_update_own_deal(): void
     {
-        $deal = Deal::factory()->create();
+        $user = $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
 
-        $response = $this->deleteJson("/api/v1/deals/{$deal->id}");
+        $this->putJson("/api/v1/deals/{$deal->id}", ['name' => 'Renamed'])
+            ->assertOk()
+            ->assertJsonFragment(['name' => 'Renamed']);
 
-        $response->assertStatus(204);
+        $this->assertDatabaseHas('deals', ['id' => $deal->id, 'name' => 'Renamed']);
+    }
+
+    public function test_cannot_update_other_team_deal_returns_404(): void
+    {
+        $this->actingUser();
+        $deal = Deal::factory()->create([
+            'team_id' => $this->foreignTeamId(),
+            'name' => 'Original',
+        ]);
+
+        $this->putJson("/api/v1/deals/{$deal->id}", ['name' => 'Hijacked'])
+            ->assertNotFound();
+
+        $this->assertDatabaseHas('deals', ['id' => $deal->id, 'name' => 'Original']);
+    }
+
+    public function test_update_validates_probability_range(): void
+    {
+        $user = $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+
+        $this->putJson("/api/v1/deals/{$deal->id}", ['probability' => 150])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['probability']);
+    }
+
+    // ------------------------------------------------------------ destroy
+
+    public function test_can_delete_own_deal(): void
+    {
+        $user = $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+
+        $this->deleteJson("/api/v1/deals/{$deal->id}")->assertNoContent();
+
         $this->assertDatabaseMissing('deals', ['id' => $deal->id]);
+    }
+
+    public function test_cannot_delete_other_team_deal_returns_404(): void
+    {
+        $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
+
+        $this->deleteJson("/api/v1/deals/{$deal->id}")->assertNotFound();
+
+        $this->assertDatabaseHas('deals', ['id' => $deal->id]);
+    }
+
+    // --------------------------------------------------------- bulk update
+
+    public function test_bulk_update_updates_own_deals_stage(): void
+    {
+        $user = $this->actingUser();
+        $deals = Deal::factory()->count(2)->create([
+            'team_id' => $user->currentTeam->id,
+            'stage' => 'prospect',
+        ]);
+
+        $this->postJson('/api/v1/deals/bulk/update', [
+            'ids' => $deals->pluck('id')->all(),
+            'data' => ['stage' => 'won'],
+        ])
+            ->assertOk()
+            ->assertJson(['updated' => 2]);
+
+        $this->assertDatabaseHas('deals', ['id' => $deals->first()->id, 'stage' => 'won']);
+    }
+
+    public function test_bulk_update_ignores_phantom_status_field(): void
+    {
+        // Regression: 'status' is not a column on deals (it lives on contacts).
+        // It used to be in the allow-list, so a mass-update 500'd with an
+        // unknown-column SQL error. Now it is dropped and returns a clean 422.
+        $user = $this->actingUser();
+        $deal = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+
+        $this->postJson('/api/v1/deals/bulk/update', [
+            'ids' => [$deal->id],
+            'data' => ['status' => 'won'],
+        ])->assertUnprocessable()
+            ->assertJsonFragment(['message' => 'No valid fields to update.']);
+    }
+
+    public function test_bulk_update_does_not_touch_other_team_deals(): void
+    {
+        $user = $this->actingUser();
+        $own = Deal::factory()->create(['team_id' => $user->currentTeam->id, 'stage' => 'prospect']);
+        $foreign = Deal::factory()->create(['team_id' => $this->foreignTeamId(), 'stage' => 'prospect']);
+
+        $this->postJson('/api/v1/deals/bulk/update', [
+            'ids' => [$own->id, $foreign->id],
+            'data' => ['stage' => 'won'],
+        ])
+            ->assertOk()
+            ->assertJson(['updated' => 1]);
+
+        $this->assertDatabaseHas('deals', ['id' => $foreign->id, 'stage' => 'prospect']);
+    }
+
+    public function test_bulk_update_validates_ids_required(): void
+    {
+        $this->actingUser();
+
+        $this->postJson('/api/v1/deals/bulk/update', ['data' => ['stage' => 'won']])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['ids']);
+    }
+
+    // --------------------------------------------------------- bulk delete
+
+    public function test_bulk_delete_removes_only_own_deals(): void
+    {
+        $user = $this->actingUser();
+        $own = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+        $foreign = Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
+
+        $this->postJson('/api/v1/deals/bulk/delete', [
+            'ids' => [$own->id, $foreign->id],
+        ])
+            ->assertOk()
+            ->assertJson(['deleted' => 1]);
+
+        $this->assertDatabaseMissing('deals', ['id' => $own->id]);
+        $this->assertDatabaseHas('deals', ['id' => $foreign->id]);
+    }
+
+    // --------------------------------------------------------- bulk assign
+
+    public function test_bulk_assign_sets_user_only_on_own_deals(): void
+    {
+        $user = $this->actingUser();
+        // Distinct assignee so the foreign deal's pre-stamped creator (this
+        // caller) can't masquerade as a successful cross-team assignment.
+        $assignee = User::factory()->create();
+        $own = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
+        $foreign = Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
+
+        $this->postJson('/api/v1/deals/bulk/assign', [
+            'ids' => [$own->id, $foreign->id],
+            'user_id' => $assignee->id,
+        ])
+            ->assertOk()
+            ->assertJson(['assigned' => 1]);
+
+        $this->assertDatabaseHas('deals', ['id' => $own->id, 'user_id' => $assignee->id]);
+        $this->assertDatabaseMissing('deals', ['id' => $foreign->id, 'user_id' => $assignee->id]);
     }
 }

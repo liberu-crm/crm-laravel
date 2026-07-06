@@ -81,11 +81,13 @@ class DealController extends Controller
             'ids' => 'required|array|min:1',
             'ids.*' => 'integer|exists:deals,id',
             'data' => 'required|array',
-            'data.status' => 'sometimes|string|in:open,closed,won,lost',
+            'data.stage' => 'sometimes|string|max:255',
             'data.stage_id' => 'sometimes|integer|exists:stages,id',
         ]);
 
-        $allowedFields = ['status', 'stage_id', 'pipeline_id'];
+        // 'stage' is the real string column on deals; there is no 'status'
+        // column (that lives on contacts), so updating it 500s.
+        $allowedFields = ['stage', 'stage_id', 'pipeline_id'];
         $updateData = array_intersect_key($request->input('data'), array_flip($allowedFields));
 
         if ($updateData === []) {

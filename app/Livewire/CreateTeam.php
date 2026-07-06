@@ -11,13 +11,19 @@ class CreateTeam extends CreateTeamForm
     #[\Override]
     public function createTeam(CreatesTeams $creator): mixed
     {
-        $this->validate();
+        // Validation lives in the CreatesTeams action (validateWithBag('createTeam'));
+        // the component defines no rules(), so calling $this->validate() here throws
+        // MissingRulesException. Clear stale errors like the parent does instead.
+        $this->resetErrorBag();
 
         $team = $creator->create(
             Auth::user(),
-            ['name' => $this->state['name']]
+            ['name' => $this->state['name'] ?? null]
         );
 
-        return redirect()->route('filament.pages.edit-team', ['team' => $team]);
+        // 'filament.pages.edit-team' is the tenant-profile page's $view string, not a
+        // registered route — route() throws RouteNotFoundException. The real route is
+        // 'filament.app.tenant.profile' (app/{tenant}/profile), keyed by {tenant}.
+        return redirect()->route('filament.app.tenant.profile', ['tenant' => $team]);
     }
 }

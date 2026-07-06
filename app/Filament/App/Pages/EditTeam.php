@@ -51,7 +51,7 @@ class EditTeam extends EditTenantProfile
         $this->user()->teams()->attach($team, ['role' => 'admin']);
         $this->user()->switchTeam($team);
 
-        return redirect()->route('filament.pages.edit-team', ['team' => $team]);
+        return redirect()->route('filament.app.tenant.profile', ['tenant' => $team]);
     }
 
     #[\Override]

@@ -15,8 +15,19 @@ class DealCard extends Component
         $this->deal = $deal;
     }
 
-    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+    // ponytail: inline Blade — the `livewire.deal-card` file view never existed,
+    // so `view('livewire.deal-card')` fataled on every render. Livewire renders a
+    // string return as a Blade template. Move to a file view when the markup grows.
+    public function render(): string
     {
-        return view('livewire.deal-card');
+        return <<<'HTML'
+            <div class="deal-card">
+                @if ($deal)
+                    <h3 class="deal-name">{{ $deal->name }}</h3>
+                    <span class="deal-stage">{{ $deal->stage }}</span>
+                    <span class="deal-value">{{ $deal->value }}</span>
+                @endif
+            </div>
+        HTML;
     }
 }
