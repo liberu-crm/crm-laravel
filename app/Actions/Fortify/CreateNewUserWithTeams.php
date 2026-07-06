@@ -42,8 +42,11 @@ class CreateNewUserWithTeams implements CreatesNewUsers
      */
     protected function createTeam(User $user): void
     {
-        $teamManagementService = app(TeamManagementService::class);
-        $teamManagementService->assignUserToDefaultTeam($user);
-        $teamManagementService->createPersonalTeamForUser($user);
+        // A new registrant owns a single personal team (creator = admin) and
+        // acts in it. Previously this called assignUserToDefaultTeam() AND
+        // createPersonalTeamForUser(), producing two teams in the no-default
+        // fallback.
+        $team = app(TeamManagementService::class)->createPersonalTeamForUser($user);
+        $user->forceFill(['current_team_id' => $team->id])->save();
     }
 }
