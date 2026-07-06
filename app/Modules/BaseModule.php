@@ -52,7 +52,10 @@ abstract class BaseModule implements ModuleInterface
     public function isEnabled(): bool
     {
         if ($this->isDevelopmentMode()) {
-            return Cache::get("module.{$this->name}.enabled", true);
+            // Skip the cache layer entirely so state changes reflect immediately.
+            // (enable()/disable() forget this key, so reading it here always
+            // returned the default and never reflected the persisted state.)
+            return $this->resolveEnabledState();
         }
 
         $ttl = config('modules.cache_ttl', 3600);
