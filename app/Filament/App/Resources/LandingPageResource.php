@@ -11,8 +11,8 @@ use App\Models\LandingPage;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -34,7 +34,11 @@ class LandingPageResource extends Resource
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                RichEditor::make('content')
+                // ponytail: content is an uncast longText (may hold HTML or JSON
+                // page data); RichEditor fatals on non-tiptap content, so Textarea
+                // tolerates any stored string. Restore RichEditor only if content
+                // is guaranteed HTML.
+                Textarea::make('content')
                     ->required(),
                 Select::make('campaign_id')
                     ->relationship('campaign', 'name')
