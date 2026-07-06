@@ -25,6 +25,7 @@ class Company extends Model
         'size',
         'location',
         'domain',
+        'annual_revenue',
     ];
 
     public function notes(): HasMany

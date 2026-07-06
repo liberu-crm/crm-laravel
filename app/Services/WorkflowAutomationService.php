@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Deal;
+use App\Models\Lead;
+use App\Models\Opportunity;
 use App\Models\Task;
 use App\Models\Workflow;
 use App\Models\WorkflowAction;
@@ -183,13 +186,30 @@ class WorkflowAutomationService
 
     protected function createTask($entity, array $config): void
     {
-        Task::create([
-            'title' => $config['title'] ?? 'Workflow Task',
+        $data = [
+            'name' => $config['title'] ?? $config['name'] ?? 'Workflow Task',
             'description' => $config['description'] ?? '',
-            'due_date' => $config['due_date'] ?? null,
-            'taskable_type' => $entity::class,
-            'taskable_id' => $entity->id,
-        ]);
+            'due_date' => $config['due_date'] ?? now()->addDay(), // due_date is NOT NULL
+            'status' => $config['status'] ?? 'pending',
+        ];
+
+        // Task has no polymorphic relation; link by the entity's typed FK column.
+        $column = match (true) {
+            $entity instanceof Contact => 'contact_id',
+            $entity instanceof Lead => 'lead_id',
+            $entity instanceof Company => 'company_id',
+            $entity instanceof Opportunity => 'opportunity_id',
+            default => null,
+        };
+        if ($column) {
+            $data[$column] = $entity->id;
+        }
+
+        if (! empty($entity->team_id)) {
+            $data['team_id'] = $entity->team_id;
+        }
+
+        Task::create($data);
     }
 
     protected function addTag($entity, array $config): void
