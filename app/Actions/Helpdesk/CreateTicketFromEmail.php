@@ -24,7 +24,12 @@ class CreateTicketFromEmail
             $emailId = $message->getId();
         }
 
-        $user = User::firstOrCreate(['email' => $headers['From']]);
+        // users.name is NOT NULL with no default; a new sender needs one or the
+        // insert fails. Fall back to the From value when we have nothing better.
+        $user = User::firstOrCreate(
+            ['email' => $headers['From']],
+            ['name' => $headers['From']]
+        );
 
         return Ticket::create([
             'subject' => $headers['Subject'],
