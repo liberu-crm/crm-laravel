@@ -20,6 +20,7 @@ class CampaignRecipient extends Model
         'email',
         'phone',
         'status',
+        'team_id',
     ];
 
     public function campaign()

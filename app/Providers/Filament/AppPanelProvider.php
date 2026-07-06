@@ -146,6 +146,9 @@ class AppPanelProvider extends PanelProvider
 
     public function shouldRegisterMenuItem(): bool
     {
-        return true; // auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant();
+        // Only register tenant-scoped menu items (Profile/Team Settings) when a
+        // tenant is set — otherwise their getUrl() throws on the tenant-less
+        // /app/new registration route (UrlGenerationException, missing {tenant}).
+        return (bool) (auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant());
     }
 }

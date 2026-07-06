@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Notifications\CRMEventNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class SendCRMEventNotification implements ShouldQueue
 {
@@ -13,7 +14,9 @@ class SendCRMEventNotification implements ShouldQueue
 
     public function handle($event): void
     {
-        $eventName = class_basename($event);
+        // config/crm.php keys are snake_case (new_lead); class_basename is StudlyCase
+        // (NewLead). Without snake() the lookup always missed and nothing notified.
+        $eventName = Str::snake(class_basename($event));
         $notificationConfig = config("crm.notifications.events.{$eventName}");
 
         if ($notificationConfig) {
