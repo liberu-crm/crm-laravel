@@ -40,7 +40,7 @@ class TeamManagementService
         if (! $defaultTeam) {
             try {
                 $defaultTeam = $this->createDefaultTeamForUser($user);
-            } catch (Exception) {
+            } catch (\Throwable) {
                 // Fallback: create a personal team when no branch/default team exists
                 $defaultTeam = $this->createPersonalTeamForUser($user);
                 $user->current_team_id = $defaultTeam->id;
@@ -57,6 +57,7 @@ class TeamManagementService
     {
         if (! $user->belongsToTeam($team)) {
             $user->teams()->attach($team, ['role' => 'member']);
+            $user->unsetRelation('teams'); // drop cached (pre-attach) relation so switchTeam re-checks membership
         }
         $user->switchTeam($team);
     }
