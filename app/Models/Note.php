@@ -13,8 +13,6 @@ class Note extends Model
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = 'note_id';
-
     protected $fillable = [
         'content',
         'contact_id',
