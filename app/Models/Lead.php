@@ -71,28 +71,42 @@ class Lead extends Model implements OwnsRecords
         return $this->morphMany(Note::class, 'notable');
     }
 
+    /**
+     * Calculate this lead's score and persist it to the `score` column.
+     *
+     * Scoring rules (each term added, then the total clamped to 0..100):
+     *   - source:          referral +30, website +20, social_media +10, otherwise +5
+     *   - potential_value: + min(30, floor(potential_value / 1000))
+     *   - contact present: +15
+     *   - lifecycle_stage: customer +25, opportunity +20, lead +10, otherwise 0
+     *
+     * The maximum reachable total is exactly 100 (30 + 30 + 15 + 25); the clamp
+     * guards against future rule changes and negative/oversized inputs.
+     */
     public function calculateScore(): int
     {
-        $score = 0;
+        $score = match ($this->source) {
+            'referral' => 30,
+            'website' => 20,
+            'social_media' => 10,
+            default => 5,
+        };
 
-        // Score based on potential value
-        $score += min(100, $this->potential_value / 1000);
+        $score += (int) min(30, floor((float) $this->potential_value / 1000));
 
-        // Score based on lifecycle stage
-        $lifecycleStageScores = [
-            'subscriber' => 10,
-            'lead' => 20,
-            'marketing_qualified_lead' => 40,
-            'sales_qualified_lead' => 60,
-            'opportunity' => 80,
-        ];
-        $score += $lifecycleStageScores[$this->lifecycle_stage] ?? 0;
+        if ($this->contact_id !== null) {
+            $score += 15;
+        }
 
-        // Score based on activity count
-        $activityCount = $this->activities()->count();
-        $score += min(50, $activityCount * 5);
+        $score += match ($this->lifecycle_stage) {
+            'customer' => 25,
+            'opportunity' => 20,
+            'lead' => 10,
+            default => 0,
+        };
 
-        // Update the score
+        $score = (int) max(0, min(100, $score));
+
         $this->update(['score' => $score]);
 
         return $score;

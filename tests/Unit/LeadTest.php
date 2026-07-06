@@ -71,23 +71,22 @@ class LeadTest extends TestCase
 
     public function test_lead_score_calculation(): void
     {
+        // Scoring rules: source referral +30, potential_value +min(30, value/1000),
+        // lifecycle opportunity +20, contact +15, clamp 0..100. NOTE: the rules
+        // rewrite dropped the old activity-engagement and mql/sql lifecycle
+        // signals — revisit if product wants engagement-weighted scoring back.
         $lead = Lead::factory()->create([
+            'source' => 'referral',
             'potential_value' => 50000,
-            'lifecycle_stage' => 'marketing_qualified_lead',
-        ]);
-
-        // Create some activities for the lead
-        Activity::factory()->count(5)->create([
-            'activitable_id' => $lead->id,
-            'activitable_type' => Lead::class,
+            'lifecycle_stage' => 'opportunity',
+            'contact_id' => null,
         ]);
 
         $score = $lead->calculateScore();
 
-        // Expected score:
-        // 50 (from potential value) + 40 (from lifecycle stage) + 25 (from activities) = 115
-        $this->assertEquals(115, $score);
-        $this->assertEquals(115, $lead->score);
+        // 30 (referral) + 30 (value, capped) + 20 (opportunity) = 80
+        $this->assertEquals(80, $score);
+        $this->assertEquals(80, $lead->score);
     }
 
     public function test_lead_custom_fields(): void
