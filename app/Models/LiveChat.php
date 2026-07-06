@@ -55,9 +55,9 @@ class LiveChat extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function messages()
+    public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Message::class, 'chat_id');
+        return $this->hasMany(ChatMessage::class, 'chat_id');
     }
 
     public function getDurationAttribute(): ?int
