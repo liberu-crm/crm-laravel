@@ -75,6 +75,85 @@ class SalesForecastingServiceTest extends TestCase
         ]);
     }
 
+    public function test_generate_historical_forecast_sums_won_deals_from_same_period_last_year(): void
+    {
+        // Growth factor reads now(); freeze it. No deals fall in the current/previous
+        // quarter windows, so calculateGrowthFactor() returns 0 -> predicted == historical.
+        Carbon::setTestNow('2026-07-06');
+
+        // Forecast period 2026-Q1 -> historical window is 2025-01-01..2025-03-31.
+        Deal::factory()->create(['value' => 5000, 'stage' => 'won', 'close_date' => '2025-02-10']);
+        Deal::factory()->create(['value' => 3000, 'stage' => 'won', 'close_date' => '2025-03-15']);
+        // Excluded: won but outside the historical window.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'won', 'close_date' => '2025-06-01']);
+        // Excluded: inside the window but not won.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'lost', 'close_date' => '2025-02-15']);
+
+        $forecast = $this->service->generateHistoricalForecast(
+            Carbon::parse('2026-01-01'),
+            Carbon::parse('2026-03-31'),
+        );
+
+        $this->assertInstanceOf(SalesForecast::class, $forecast);
+        $this->assertSame(SalesForecast::TYPE_HISTORICAL, $forecast->forecast_type);
+        $this->assertEqualsWithDelta(8000.0, (float) $forecast->metadata['historical_revenue'], 0.01);
+        $this->assertEqualsWithDelta(0.0, (float) $forecast->metadata['growth_factor'], 0.001);
+        $this->assertEqualsWithDelta(8000.0, (float) $forecast->predicted_revenue, 0.01);
+
+        Carbon::setTestNow();
+    }
+
+    public function test_update_forecast_actuals_sums_won_deals_in_the_forecast_period(): void
+    {
+        $forecast = SalesForecast::create([
+            'name' => 'Q1 Forecast',
+            'period_start' => '2026-01-01',
+            'period_end' => '2026-03-31',
+            'forecast_type' => SalesForecast::TYPE_WEIGHTED,
+            'predicted_revenue' => 12345,
+            'confidence_level' => 50,
+        ]);
+
+        // Counted: won, in period.
+        Deal::factory()->create(['value' => 4000, 'stage' => 'won', 'close_date' => '2026-01-20']);
+        Deal::factory()->create(['value' => 2500, 'stage' => 'won', 'close_date' => '2026-03-10']);
+        // Excluded: not won.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'lost', 'close_date' => '2026-02-01']);
+        // Excluded: won but out of period.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'won', 'close_date' => '2026-05-01']);
+
+        $this->service->updateForecastActuals($forecast);
+
+        $this->assertEqualsWithDelta(6500.0, (float) $forecast->fresh()->actual_revenue, 0.01);
+    }
+
+    public function test_get_revenue_trend_returns_monthly_won_totals(): void
+    {
+        Carbon::setTestNow('2026-07-15');
+
+        // Trend window for 3 months from 2026-07-15: May, June, July 2026.
+        Deal::factory()->create(['value' => 1000, 'stage' => 'won', 'close_date' => '2026-05-10']);
+        Deal::factory()->create(['value' => 2000, 'stage' => 'won', 'close_date' => '2026-06-20']);
+        Deal::factory()->create(['value' => 4000, 'stage' => 'won', 'close_date' => '2026-07-05']);
+        // Excluded: not won.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'lost', 'close_date' => '2026-06-10']);
+        // Excluded: won but before the window.
+        Deal::factory()->create(['value' => 99999, 'stage' => 'won', 'close_date' => '2026-01-01']);
+
+        $trend = $this->service->getRevenueTrend(3);
+
+        $this->assertCount(3, $trend);
+        $this->assertSame('May 2026', $trend[0]['month']);
+        $this->assertEqualsWithDelta(1000.0, $trend[0]['revenue'], 0.01);
+        $this->assertSame('Jun 2026', $trend[1]['month']);
+        $this->assertEqualsWithDelta(2000.0, $trend[1]['revenue'], 0.01);
+        $this->assertSame('Jul 2026', $trend[2]['month']);
+        $this->assertEqualsWithDelta(4000.0, $trend[2]['revenue'], 0.01);
+        $this->assertEqualsWithDelta(7000.0, array_sum(array_column($trend, 'revenue')), 0.01);
+
+        Carbon::setTestNow();
+    }
+
     public function test_get_stage_weight_for_known_orders_and_default(): void
     {
         // No stage -> default 0.5

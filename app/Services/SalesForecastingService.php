@@ -42,8 +42,8 @@ class SalesForecastingService
         $historicalStart = $startDate->copy()->subYear();
         $historicalEnd = $endDate->copy()->subYear();
 
-        $historicalRevenue = Deal::where('status', 'won')
-            ->whereBetween('closed_at', [$historicalStart, $historicalEnd])
+        $historicalRevenue = Deal::where('stage', 'won')
+            ->whereBetween('close_date', [$historicalStart, $historicalEnd])
             ->sum('value');
 
         // Apply growth factor based on recent trends
@@ -179,12 +179,12 @@ class SalesForecastingService
      */
     protected function calculateGrowthFactor(): float
     {
-        $currentQuarter = Deal::where('status', 'won')
-            ->whereBetween('closed_at', [now()->startOfQuarter(), now()])
+        $currentQuarter = Deal::where('stage', 'won')
+            ->whereBetween('close_date', [now()->startOfQuarter(), now()])
             ->sum('value');
 
-        $previousQuarter = Deal::where('status', 'won')
-            ->whereBetween('closed_at', [
+        $previousQuarter = Deal::where('stage', 'won')
+            ->whereBetween('close_date', [
                 now()->subQuarter()->startOfQuarter(),
                 now()->subQuarter()->endOfQuarter(),
             ])
@@ -218,8 +218,8 @@ class SalesForecastingService
      */
     public function updateForecastActuals(SalesForecast $forecast): void
     {
-        $actualRevenue = Deal::where('status', 'won')
-            ->whereBetween('closed_at', [$forecast->period_start, $forecast->period_end])
+        $actualRevenue = Deal::where('stage', 'won')
+            ->whereBetween('close_date', [$forecast->period_start, $forecast->period_end])
             ->sum('value');
 
         $forecast->update([
@@ -269,8 +269,8 @@ class SalesForecastingService
             $startDate = $date->copy()->startOfMonth();
             $endDate = $date->copy()->endOfMonth();
 
-            $revenue = Deal::where('status', 'won')
-                ->whereBetween('closed_at', [$startDate, $endDate])
+            $revenue = Deal::where('stage', 'won')
+                ->whereBetween('close_date', [$startDate, $endDate])
                 ->sum('value');
 
             $data[] = [
