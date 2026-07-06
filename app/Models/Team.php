@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DomainException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,6 +15,24 @@ use Laravel\Jetstream\Team as JetstreamTeam;
 class Team extends JetstreamTeam
 {
     use HasFactory;
+
+    /**
+     * Hide archived teams from every default query. Removable so the admin
+     * panel and restore paths can still see them (->withArchived()). This one
+     * gate cascades: allTeams()/the team switcher, the User::currentTeam
+     * relation, and route-model binding all stop resolving archived teams.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('archived', function (Builder $builder): void {
+            $builder->whereNull($builder->getModel()->qualifyColumn('archived_at'));
+        });
+    }
+
+    public function scopeWithArchived(Builder $query): void
+    {
+        $query->withoutGlobalScope('archived');
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +82,42 @@ class Team extends JetstreamTeam
     {
         return [
             'personal_team' => 'boolean',
+            'archived_at' => 'datetime',
         ];
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
+    }
+
+    /**
+     * Freeze the team: hide it everywhere, keep the data. Any member whose
+     * active team was this one falls back to their personal team so no session
+     * is stranded. Personal teams are a user's home and cannot be archived.
+     */
+    public function archive(): void
+    {
+        if ($this->personal_team) {
+            throw new DomainException('Personal teams cannot be archived.');
+        }
+
+        if ($this->isArchived()) {
+            return;
+        }
+
+        $this->archived_at = now();
+        $this->save();
+
+        foreach (User::query()->where('current_team_id', $this->id)->get() as $user) {
+            $user->forceFill(['current_team_id' => $user->personalTeam()?->id])->save();
+        }
+    }
+
+    public function restore(): void
+    {
+        $this->archived_at = null;
+        $this->save();
     }
 
     public function contacts(): HasMany

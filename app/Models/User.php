@@ -91,11 +91,17 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
 
     public function getTenants(Panel $panel): array|Collection
     {
+        // Archived teams are excluded by Team's global 'archived' scope, which
+        // filters the ownedTeams/teams relations allTeams() re-queries.
         return $this->allTeams();
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
+        if ($tenant instanceof Team && $tenant->isArchived()) {
+            return false;
+        }
+
         return $this->ownsTeam($tenant) || $this->teams->contains($tenant);
     }
 
@@ -116,7 +122,9 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
 
     public function getDefaultTenant(Panel $panel): ?Model
     {
-        return $this->latestTeam;
+        $team = $this->latestTeam;
+
+        return $team instanceof Team && $team->isArchived() ? null : $team;
     }
 
     public function latestTeam(): BelongsTo
