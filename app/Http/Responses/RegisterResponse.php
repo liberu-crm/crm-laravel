@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use App\Enums\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,27 +11,21 @@ use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
 class RegisterResponse implements RegisterResponseContract
 {
-    protected $roleRedirects = [
-        'admin' => '/admin',
-        'free' => '/app',
+    protected array $roleRedirects = [
+        Role::Admin->value => '/admin',
+        Role::Free->value => '/app',
     ];
 
     protected function shouldRedirect(Request $request, string $redirect): bool
     {
-        // Check if the current request path matches the redirect path
         return ! $request->is($redirect) && ! $request->is($redirect.'/*');
     }
 
-    /**
-     * @param  Request  $request
-     * @return RedirectResponse|JsonResponse
-     */
     public function toResponse($request)
     {
         setPermissionsTeamId(Auth::user()->current_team_id);
         $user = Auth::user();
 
-        // Check if the user has a role and redirect accordingly
         foreach ($this->roleRedirects as $role => $redirect) {
             if ($user->hasRole($role)) {
                 return $request->wantsJson()
@@ -41,7 +36,6 @@ class RegisterResponse implements RegisterResponseContract
             }
         }
 
-        // Default redirection
         $redirect = '/app';
 
         return $request->wantsJson()

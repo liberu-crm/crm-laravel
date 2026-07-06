@@ -1,4 +1,8 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@plugin "@tailwindcss/forms";
 
-@source '../../../../app/Filament/Admin/**/*';
-@source '../../../../resources/views/filament/admin/**/*';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/profile/**/*';
+@source '../../../../resources/views/components/**/*';
+@source '../../../../vendor/laravel/jetstream/**/*';

@@ -5,10 +5,13 @@
 ])
 
 @php
+    use App\Enums\Role;
+
     if (auth()->check()) {
         $user = auth()->user();
-        $role = $user->hasRole('admin') ? 'admin' : 'user';
-        $dashboardUrl = $role === 'admin' ? '/admin' : '/app';
+        $isAdmin = $user->hasRole(Role::Admin) || $user->hasRole(Role::SuperAdmin);
+        $role = $isAdmin ? 'admin' : 'user';
+        $dashboardUrl = $isAdmin ? '/admin' : '/app';
     }
 @endphp
 

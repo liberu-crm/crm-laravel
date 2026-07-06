@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Enums\Role;
 use App\Models\Team;
 use App\Models\User;
 use Exception;
@@ -19,8 +20,6 @@ class CreateNewUser implements CreatesNewUsers
     use PasswordValidationRules;
 
     /**
-     * Validate and create a newly registered user.
-     *
      * @param  array<string, string>  $input
      *
      * @throws ValidationException
@@ -39,7 +38,6 @@ class CreateNewUser implements CreatesNewUsers
                     Rule::unique(User::class),
                 ],
                 'password' => $this->passwordRules(),
-                // 'role' => ['required', 'string', Rule::in(['tenant', 'buyer', 'seller', 'landlord', 'contractor'])],
             ])->validate();
 
             return DB::transaction(fn() => tap(User::create([
@@ -50,7 +48,7 @@ class CreateNewUser implements CreatesNewUsers
                 $team = $this->assignOrCreateTeam($user);
                 $user->switchTeam($team);
                 setPermissionsTeamId($team->id);
-                $user->assignRole('free');
+                $user->assignRole(Role::Free->value);
             }));
         } catch (ValidationException $e) {
             Log::error('User creation validation failed', [
@@ -93,8 +91,6 @@ class CreateNewUser implements CreatesNewUsers
     }
 
     /**
-     * Assign the user to the first team or create a personal team.
-     *
      * @throws Exception
      */
     protected function assignOrCreateTeam(User $user): Team

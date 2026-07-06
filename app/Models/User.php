@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
@@ -22,6 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
@@ -98,8 +100,8 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            'super_admin' => $this->hasRole('super_admin'),
-            'admin' => $this->hasRole('admin'),
+            'super_admin' => $this->hasRole(Role::SuperAdmin),
+            'admin' => $this->hasRole(Role::Admin) || $this->hasRole(Role::SuperAdmin),
             default => true,
         };
     }
@@ -107,7 +109,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     public function canAccessFilament(): bool
     {
         return $this->hasVerifiedEmail()
-            && $this->hasAnyRole(['super_admin', 'admin', 'manager', 'sales_rep']);
+            && $this->hasAnyRole(Role::values());
     }
 
     public function getDefaultTenant(Panel $panel): ?Model
@@ -122,6 +124,18 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
 
     public function hasRole($role, ?string $guard = null): bool
     {
-        return $this->roles->contains('name', $role);
+        if (is_array($role)) {
+            foreach ($role as $r) {
+                if ($this->hasRole($r, $guard)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        $roleName = $role instanceof Role ? $role->value : strtolower($role);
+
+        return $this->roles->contains(fn (SpatieRole $r): bool => strtolower($r->name) === $roleName);
     }
 }

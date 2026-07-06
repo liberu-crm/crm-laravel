@@ -1,4 +1,5 @@
-<x-authentication-card>
+<x-guest-layout>
+    <x-authentication-card>
     <x-slot name="logo">
         <x-authentication-card-logo />
     </x-slot>
@@ -59,4 +60,5 @@
     @if (JoelButcher\Socialstream\Socialstream::show())
         <x-socialstream />
     @endif
-</x-authentication-card>
+    </x-authentication-card>
+</x-guest-layout>

@@ -22,5 +22,7 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 /.opencode/
+public/build/manifest.json
+public/build/assets/*
 .idea
 .idea/CRM.iml
