@@ -53,7 +53,9 @@ class UpdatePostAnalytics extends Command
         switch ($platform) {
             case 'facebook':
                 if (isset($postIds['facebook'])) {
-                    $service = new FacebookService;
+                    // Resolve via the container (not `new`) so the client is swappable
+                    // and matches PublishScheduledPosts; the ctor builds a live SDK client.
+                    $service = app(FacebookService::class);
                     $insights = $service->getPostInsights($postIds['facebook']);
 
                     return [
