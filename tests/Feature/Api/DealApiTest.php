@@ -249,6 +249,9 @@ class DealApiTest extends TestCase
         // Distinct assignee so the foreign deal's pre-stamped creator (this
         // caller) can't masquerade as a successful cross-team assignment.
         $assignee = User::factory()->create();
+        // Bulk-assign now rejects cross-team/teamless assignees, so the
+        // assignee must be a member of the caller's team.
+        $assignee->teams()->attach($user->currentTeam, ['role' => 'member']);
         $own = Deal::factory()->create(['team_id' => $user->currentTeam->id]);
         $foreign = Deal::factory()->create(['team_id' => $this->foreignTeamId()]);
 

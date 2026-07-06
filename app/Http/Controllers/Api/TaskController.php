@@ -131,9 +131,16 @@ class TaskController extends Controller
             'user_id' => 'required|integer|exists:users,id',
         ]);
 
+        // Assignee must be a member of the caller's current team, else this
+        // leaks records across tenants. Refuse before touching any record.
+        $team = $request->user()?->currentTeam;
+        $assignee = \App\Models\User::find($request->input('user_id'));
+        abort_unless($team && $assignee?->belongsToTeam($team), 403);
+
         $query = Task::whereIn('id', $request->input('ids'));
         $query->byTeam($request->user()?->currentTeam?->id);
-        $count = $query->update(['user_id' => $request->input('user_id')]);
+        // Tasks store the assignee in `assigned_to` (there is no user_id column).
+        $count = $query->update(['assigned_to' => $request->input('user_id')]);
 
         return response()->json(['assigned' => $count]);
     }

@@ -133,6 +133,12 @@ class DealController extends Controller
             'user_id' => 'required|integer|exists:users,id',
         ]);
 
+        // Assignee must be a member of the caller's current team, else this
+        // leaks records across tenants. Refuse before touching any record.
+        $team = $request->user()?->currentTeam;
+        $assignee = \App\Models\User::find($request->input('user_id'));
+        abort_unless($team && $assignee?->belongsToTeam($team), 403);
+
         $query = Deal::whereIn('id', $request->input('ids'));
         $query->byTeam($request->user()?->currentTeam?->id);
         $count = $query->update(['user_id' => $request->input('user_id')]);
