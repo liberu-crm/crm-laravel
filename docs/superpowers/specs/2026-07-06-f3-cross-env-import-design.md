@@ -86,8 +86,15 @@ Zip-slip-safe (fixed entry names only). Import writes solely into the freshly cr
 
 ## Out of scope / ceilings (stated, not hidden)
 
-- **Undeclared** references (a `*_id` with no FK constraint, non-user) are absent from
-  `information_schema` → not remapped (left as-is). Most references here are declared FKs.
+- **Undeclared** FKs (a `*_id` column with no DB constraint) aren't in the schema graph, so
+  they are remapped **best-effort by Laravel naming convention** (`contact_id` → `contacts`)
+  — the remap only fires when the guessed table was actually imported, so a wrong guess is
+  harmless. A reference that follows neither a declared FK nor the naming convention is left
+  as-is.
+- **Unique-constraint collisions**: importing verbatim rows into a target env that already
+  holds a colliding unique value (e.g. a contact email) fails — the whole import rolls back
+  atomically (no partial team). Cross-env assumes a disjoint/fresh target; this is a loud,
+  safe failure, not corruption.
 - The ~7 `team_id` tables that are neither `IsTenantModel` nor a backup extra aren't in the
   backup → not imported.
 - No email-based user mapping, no cross-env user/role import, no merge into an existing
