@@ -6,9 +6,13 @@ namespace App\Filament\Resources;
 
 use App\Enums\Role;
 use App\Filament\Resources\TeamBackupResource\Pages\ListTeamBackups;
+use App\Jobs\RestoreTeamBackup;
+use App\Models\Team;
 use App\Models\TeamBackup;
+use App\Services\TeamRestoreService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -62,6 +66,30 @@ class TeamBackupResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->visible(fn (TeamBackup $record): bool => $record->status === 'completed' && $record->path !== null)
                     ->action(fn (TeamBackup $record) => Storage::disk($record->disk)->download((string) $record->path)),
+                Action::make('restore')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Restore this backup?')
+                    ->modalDescription('Re-inserts this team\'s data from the backup. Only runs when the team currently has no data — nothing is overwritten.')
+                    ->visible(fn (TeamBackup $record): bool => $record->status === 'completed' && $record->path !== null)
+                    ->action(function (TeamBackup $record): void {
+                        $team = Team::withoutGlobalScope('archived')->find($record->team_id);
+
+                        if ($team && app(TeamRestoreService::class)->firstPopulatedTable($team) !== null) {
+                            Notification::make()
+                                ->title('Cannot restore')
+                                ->body('That team still has data — restore only runs into an empty team.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        RestoreTeamBackup::dispatch($record->id, auth()->id());
+
+                        Notification::make()->title('Restore queued')->success()->send();
+                    }),
                 DeleteAction::make()
                     ->before(function (TeamBackup $record): void {
                         if ($record->path !== null) {

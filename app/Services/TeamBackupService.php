@@ -55,14 +55,21 @@ class TeamBackupService
         // ponytail: loads each model's rows into memory to serialize; fine for
         // realistic team sizes. If a team ever holds millions of rows, stream
         // chunkById to NDJSON temp files and addFile instead.
+        //
+        // Raw DB rows (not Eloquent ->toJson()) so values are DB-native and the
+        // restore is a verbatim DB::table()->insert() — no cast round-trip
+        // ambiguity (json columns, dates). Keyed by model basename; restore
+        // resolves basename -> table via the same TenantModels enumeration.
         foreach (TenantModels::all() as $class) {
+            $table = (new $class)->getTable();
+
             // A tenant-scoped model with no table is dead/pending schema drift
             // (e.g. SiteSettings) — it holds no rows, so skip rather than fatal.
-            if (! Schema::hasTable((new $class)->getTable())) {
+            if (! Schema::hasTable($table)) {
                 continue;
             }
 
-            $rows = $class::query()->withoutGlobalScope('tenant')->where('team_id', $team->id)->get();
+            $rows = DB::table($table)->where('team_id', $team->id)->get();
             $name = class_basename($class);
             $zip->addFromString("models/{$name}.json", (string) $rows->toJson(JSON_PRETTY_PRINT));
             $manifest['models'][$name] = $rows->count();
