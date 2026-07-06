@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Support\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class SetTenantContext
 {
     public function handle(Request $request, Closure $next): Response
     {
-        TenantContext::set(auth('sanctum')->user()?->currentTeam?->id);
+        $user = auth('sanctum')->user();
+        TenantContext::set($user instanceof User ? $user->currentTeam?->getKey() : null);
 
         return $next($request);
     }

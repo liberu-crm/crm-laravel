@@ -144,7 +144,7 @@ abstract class BaseModule implements ModuleInterface
 
     protected function isDevelopmentMode(): bool
     {
-        return (bool) env('MODULES_DEVELOPMENT', config('modules.development', false));
+        return (bool) config('modules.development', false);
     }
 
     /**
