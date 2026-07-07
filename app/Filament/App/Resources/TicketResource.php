@@ -24,6 +24,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class TicketResource extends Resource
 {
@@ -153,6 +154,13 @@ class TicketResource extends Resource
                     ]))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->label('View Messages'),
+                Action::make('downloadAttachment')
+                    ->label('Attachment')
+                    ->icon('heroicon-o-paper-clip')
+                    // Shown only for portal-raised tickets that carry a customer
+                    // upload. Tenant scoping restricts staff to their team's tickets.
+                    ->visible(fn (Ticket $record): bool => filled($record->getAttribute('attachment')))
+                    ->action(fn (Ticket $record) => Storage::disk('local')->download($record->getAttribute('attachment'))),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
