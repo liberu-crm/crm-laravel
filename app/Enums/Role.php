@@ -9,6 +9,7 @@ enum Role: string
     case Manager = 'manager';
     case SalesRep = 'sales_rep';
     case Free = 'free';
+    case Customer = 'customer';
 
     public static function values(): array
     {

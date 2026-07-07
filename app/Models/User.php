@@ -110,7 +110,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return match ($panel->getId()) {
             'super_admin' => $this->hasRole(Role::SuperAdmin),
             'admin' => $this->hasRole(Role::Admin) || $this->hasRole(Role::SuperAdmin),
-            default => true,
+            'portal' => $this->hasRole(Role::Customer),
+            // app + any future panel: staff only. A customer (external end user)
+            // must never reach the staff surfaces, so fence them out explicitly
+            // rather than falling through to the permissive default.
+            default => ! $this->hasRole(Role::Customer),
         };
     }
 
