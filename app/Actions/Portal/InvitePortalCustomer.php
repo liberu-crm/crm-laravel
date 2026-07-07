@@ -9,6 +9,7 @@ use App\Exceptions\PortalOnboardingException;
 use App\Models\Contact;
 use App\Models\User;
 use App\Notifications\PortalInvitation;
+use App\Services\AuditLogService;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,8 @@ use Spatie\Permission\PermissionRegistrar;
  */
 class InvitePortalCustomer
 {
+    public function __construct(private readonly AuditLogService $audit) {}
+
     public function __invoke(Contact $contact): User
     {
         $email = $contact->getAttribute('email');
@@ -61,6 +64,8 @@ class InvitePortalCustomer
         $token = $broker->createToken($user);
         $url = Filament::getPanel('portal')->getResetPasswordUrl($token, $user);
         $user->notify(new PortalInvitation($url));
+
+        $this->audit->record('portal.invited', "Invited {$email} to the customer portal.", $user);
 
         return $user;
     }
