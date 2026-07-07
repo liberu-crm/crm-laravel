@@ -59,6 +59,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\MeetingScheduled' => [
             SendCRMEventNotification::class,
         ],
+        'App\Events\NewTicket' => [
+            SendCRMEventNotification::class,
+        ],
     ];
 
     /**

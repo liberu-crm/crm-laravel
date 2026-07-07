@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\Portal\Resources;
 
+use App\Filament\Portal\Resources\TicketResource\Pages\CreateTicket;
 use App\Filament\Portal\Resources\TicketResource\Pages\ListTickets;
 use App\Filament\Portal\Resources\TicketResource\Pages\ViewTicket;
 use App\Models\Ticket;
+use App\Models\User;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -36,21 +40,38 @@ class TicketResource extends Resource
         return parent::getEloquentQuery()->where('user_id', Auth::id());
     }
 
+    /**
+     * A customer can only raise a ticket once they belong to a tenant — the new
+     * ticket's team_id comes from their current_team_id, so without one the
+     * ticket could not route to any staff. Gates the button and the create route.
+     */
     #[\Override]
     public static function canCreate(): bool
     {
-        return false;
+        $user = Auth::user();
+
+        return $user instanceof User && filled($user->getAttribute('current_team_id'));
     }
 
     #[\Override]
     public static function form(Schema $schema): Schema
     {
-        // Rendered read-only by the View page.
+        // Editable on the Create page; the View page (ViewRecord) renders it
+        // read-only. Ticket routing fields (user_id/team_id/source/email_id/status)
+        // are set server-side in CreateTicket, never exposed here.
         return $schema->components([
-            TextInput::make('subject')->disabled(),
-            TextInput::make('status')->disabled(),
-            TextInput::make('priority')->disabled(),
-            Textarea::make('body')->disabled()->columnSpanFull(),
+            TextInput::make('subject')->required()->maxLength(255),
+            Textarea::make('body')->label('Description')->required()->columnSpanFull(),
+            Select::make('priority')
+                ->options(['low' => 'Low', 'medium' => 'Medium', 'high' => 'High'])
+                ->default('medium')
+                ->required(),
+            FileUpload::make('attachment')
+                ->disk('local')
+                ->directory('ticket-attachments')
+                ->visibility('private')
+                ->acceptedFileTypes(['image/png', 'image/jpeg', 'application/pdf'])
+                ->maxSize(5120),
         ]);
     }
 
@@ -75,6 +96,7 @@ class TicketResource extends Resource
     {
         return [
             'index' => ListTickets::route('/'),
+            'create' => CreateTicket::route('/create'),
             'view' => ViewTicket::route('/{record}'),
         ];
     }

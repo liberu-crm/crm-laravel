@@ -8,6 +8,7 @@ return [
             'task_overdue' => true,
             'new_comment' => true,
             'meeting_scheduled' => true,
+            'new_ticket' => true,
         ],
     ],
 ];
