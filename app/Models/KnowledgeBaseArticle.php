@@ -17,5 +17,12 @@ class KnowledgeBaseArticle extends Model
         'title',
         'content',
         'category',
+        'is_published',
+        'helpful_count',
+        'not_helpful_count',
+    ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
     ];
 }
