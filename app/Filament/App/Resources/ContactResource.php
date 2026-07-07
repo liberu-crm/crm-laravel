@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\Portal\InvitePortalCustomer;
+use App\Exceptions\PortalOnboardingException;
 use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
@@ -196,6 +198,19 @@ class ContactResource extends Resource
                             Notification::make()->title('Call initiated successfully')->success()->send();
                         } else {
                             Notification::make()->title('Failed to initiate call')->danger()->send();
+                        }
+                    }),
+                Action::make('inviteToPortal')
+                    ->label('Invite to portal')
+                    ->icon('heroicon-o-user-plus')
+                    ->visible(fn (Contact $record): bool => filled($record->email))
+                    ->requiresConfirmation()
+                    ->action(function (Contact $record, InvitePortalCustomer $invite): void {
+                        try {
+                            $invite($record);
+                            Notification::make()->title('Portal invitation sent')->success()->send();
+                        } catch (PortalOnboardingException $e) {
+                            Notification::make()->title('Could not invite')->body($e->getMessage())->danger()->send();
                         }
                     }),
             ])
