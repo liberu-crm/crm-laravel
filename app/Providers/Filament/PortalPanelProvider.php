@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Filament\Portal\Widgets\PortalOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -37,7 +39,12 @@ class PortalPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Portal/Resources'), for: 'App\\Filament\\Portal\\Resources')
-            ->pages([])
+            ->pages([
+                Dashboard::class,
+            ])
+            ->widgets([
+                PortalOverview::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
