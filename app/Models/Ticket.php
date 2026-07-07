@@ -23,6 +23,8 @@ class Ticket extends Model
         'source',
         'source_id',
         'account_id',
+        'team_id',
+        'attachment',
     ];
 
     public function user()

@@ -12,6 +12,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ViewTicket extends ViewRecord
 {
@@ -20,6 +21,13 @@ class ViewTicket extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // The record is already ownership-scoped (TicketResource::getEloquentQuery),
+            // so a customer can only stream their own ticket's file, off the private disk.
+            Action::make('download_attachment')
+                ->label('Download attachment')
+                ->icon('heroicon-o-paper-clip')
+                ->visible(fn (): bool => filled($this->getRecord()->getAttribute('attachment')))
+                ->action(fn () => Storage::disk('local')->download($this->getRecord()->getAttribute('attachment'))),
             Action::make('reply')
                 ->label('Reply')
                 ->icon('heroicon-o-arrow-uturn-left')
