@@ -7,6 +7,7 @@ namespace App\Actions\Portal;
 use App\Enums\Role;
 use App\Exceptions\PortalOnboardingException;
 use App\Models\Contact;
+use App\Services\AuditLogService;
 use App\Support\PortalCustomer;
 
 /**
@@ -17,6 +18,8 @@ use App\Support\PortalCustomer;
  */
 class RevokePortalCustomer
 {
+    public function __construct(private readonly AuditLogService $audit) {}
+
     public function __invoke(Contact $contact): void
     {
         $user = PortalCustomer::forEmail($contact->getAttribute('email'));
@@ -26,5 +29,8 @@ class RevokePortalCustomer
 
         setPermissionsTeamId(null);
         $user->removeRole(Role::Customer->value);
+
+        $email = $user->getAttribute('email');
+        $this->audit->record('portal.revoked', "Revoked portal access for {$email}.", $user);
     }
 }
