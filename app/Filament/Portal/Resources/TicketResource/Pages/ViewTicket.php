@@ -21,6 +21,26 @@ class ViewTicket extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // Owner-scoped lifecycle: the record resolves through the scoped
+            // resource query, so a customer only ever transitions their own ticket.
+            Action::make('close')
+                ->label('Close ticket')
+                ->icon('heroicon-o-check-circle')
+                ->color('gray')
+                ->visible(fn (): bool => $this->getRecord()->getAttribute('status') !== 'closed')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->getRecord()->update(['status' => 'closed']);
+                    Notification::make()->title('Ticket closed')->success()->send();
+                }),
+            Action::make('reopen')
+                ->label('Reopen ticket')
+                ->icon('heroicon-o-arrow-path')
+                ->visible(fn (): bool => $this->getRecord()->getAttribute('status') === 'closed')
+                ->action(function (): void {
+                    $this->getRecord()->update(['status' => 'open']);
+                    Notification::make()->title('Ticket reopened')->success()->send();
+                }),
             // The record is already ownership-scoped (TicketResource::getEloquentQuery),
             // so a customer can only stream their own ticket's file, off the private disk.
             Action::make('download_attachment')
