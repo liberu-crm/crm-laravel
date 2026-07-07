@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\Portal\InvitePortalCustomer;
+use App\Actions\Portal\RevokePortalCustomer;
 use App\Exceptions\PortalOnboardingException;
 use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
@@ -10,6 +11,7 @@ use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Services\TwilioService;
+use App\Support\PortalCustomer;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
@@ -211,6 +213,20 @@ class ContactResource extends Resource
                             Notification::make()->title('Portal invitation sent')->success()->send();
                         } catch (PortalOnboardingException $e) {
                             Notification::make()->title('Could not invite')->body($e->getMessage())->danger()->send();
+                        }
+                    }),
+                Action::make('revokePortalAccess')
+                    ->label('Revoke portal access')
+                    ->icon('heroicon-o-user-minus')
+                    ->color('danger')
+                    ->visible(fn (Contact $record): bool => PortalCustomer::existsForEmail($record->email))
+                    ->requiresConfirmation()
+                    ->action(function (Contact $record, RevokePortalCustomer $revoke): void {
+                        try {
+                            $revoke($record);
+                            Notification::make()->title('Portal access revoked')->success()->send();
+                        } catch (PortalOnboardingException $e) {
+                            Notification::make()->title('Could not revoke')->body($e->getMessage())->danger()->send();
                         }
                     }),
             ])
