@@ -35,6 +35,10 @@ class PortalPanelProvider extends PanelProvider
             ->path('portal')
             ->login()
             ->passwordReset()
+            // Customer-facing branding: a configurable name and top navigation so
+            // the portal reads as a product, not the staff admin chrome.
+            ->brandName(fn (): string => (string) config('portal.brand_name'))
+            ->topNavigation()
             ->colors([
                 'primary' => Color::Blue,
             ])
