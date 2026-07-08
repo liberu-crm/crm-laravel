@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Webhook;
+use App\Models\WebhookDelivery;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -60,13 +61,41 @@ class WebhookService
                     'failure_count' => 0,
                 ]);
 
+                WebhookDelivery::create([
+                    'webhook_id' => $webhook->id,
+                    'team_id' => $webhook->team_id,
+                    'event' => $event,
+                    'success' => true,
+                    'status_code' => $response->status(),
+                ]);
+
                 return true;
             }
 
-            $this->handleFailure($webhook, "HTTP {$response->status()}");
+            $message = "HTTP {$response->status()}";
+
+            WebhookDelivery::create([
+                'webhook_id' => $webhook->id,
+                'team_id' => $webhook->team_id,
+                'event' => $event,
+                'success' => false,
+                'status_code' => $response->status(),
+                'error' => $message,
+            ]);
+
+            $this->handleFailure($webhook, $message);
 
             return false;
         } catch (\Throwable $e) {
+            WebhookDelivery::create([
+                'webhook_id' => $webhook->id,
+                'team_id' => $webhook->team_id,
+                'event' => $event,
+                'success' => false,
+                'status_code' => null,
+                'error' => $e->getMessage(),
+            ]);
+
             $this->handleFailure($webhook, $e->getMessage());
 
             return false;
