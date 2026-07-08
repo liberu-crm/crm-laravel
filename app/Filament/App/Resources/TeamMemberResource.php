@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 /**
  * Team-admin self-service role management (F4 phase 2). Team-scoped: a team admin
@@ -89,20 +90,45 @@ class TeamMemberResource extends Resource
                     })
                     ->schema([
                         Select::make('role')
-                            ->options([
-                                Role::Admin->value => 'Admin',
-                                Role::Manager->value => 'Manager',
-                                Role::SalesRep->value => 'Sales rep',
-                                Role::Free->value => 'Free',
-                            ])
+                            // Four fixed team roles plus this team's custom roles
+                            // (created via TeamRoleResource, team_id = tenant).
+                            ->options(function (): array {
+                                $tenant = Filament::getTenant();
+                                $custom = $tenant instanceof Team
+                                    ? SpatieRole::where('team_id', $tenant->getKey())->pluck('name', 'name')->all()
+                                    : [];
+
+                                return [
+                                    Role::Admin->value => 'Admin',
+                                    Role::Manager->value => 'Manager',
+                                    Role::SalesRep->value => 'Sales rep',
+                                    Role::Free->value => 'Free',
+                                ] + $custom;
+                            })
                             ->required(),
                     ])
                     ->action(function (User $record, array $data, TeamManagementService $service): void {
                         $tenant = Filament::getTenant();
-                        if ($tenant instanceof Team) {
-                            $service->changeTeamRole($record, $tenant, Role::from($data['role']));
-                            Notification::make()->title('Role updated')->success()->send();
+                        if (! $tenant instanceof Team) {
+                            return;
                         }
+
+                        $value = $data['role'];
+                        $fixed = [Role::Admin->value, Role::Manager->value, Role::SalesRep->value, Role::Free->value];
+
+                        if (in_array($value, $fixed, true)) {
+                            $service->changeTeamRole($record, $tenant, Role::from($value));
+                        } else {
+                            $customRole = SpatieRole::where('team_id', $tenant->getKey())
+                                ->where('name', $value)
+                                ->first();
+
+                            if ($customRole) {
+                                $service->assignCustomRole($record, $tenant, $customRole);
+                            }
+                        }
+
+                        Notification::make()->title('Role updated')->success()->send();
                     }),
                 Action::make('removeMember')
                     ->label('Remove')
