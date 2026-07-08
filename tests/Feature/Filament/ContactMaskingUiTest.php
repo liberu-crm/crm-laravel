@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Models\Contact;
 use App\Models\Territory;
@@ -36,6 +37,7 @@ class ContactMaskingUiTest extends TestCase
             'territory_id' => $territory->id,
             'name' => 'Jane',
             'email' => 'jane@example.com',
+            'company_id' => null,
         ]);
 
         $this->actingAs($user);
@@ -88,5 +90,33 @@ class ContactMaskingUiTest extends TestCase
         Livewire::test(ListContacts::class)
             ->searchTable('jane@example.com')
             ->assertCanSeeTableRecords([$contact]);
+    }
+
+    public function test_free_user_sees_masked_email_in_the_edit_form(): void
+    {
+        [, $contact] = $this->setUpViewer('free');
+
+        Livewire::test(EditContact::class, ['record' => $contact->getKey()])
+            ->assertSee('[hidden]')
+            ->assertDontSee('jane@example.com');
+    }
+
+    public function test_real_email_field_is_hidden_from_a_free_user_on_edit(): void
+    {
+        // A hidden Filament field is neither validated nor dehydrated, so a save
+        // cannot overwrite the stored email/phone with the mask — no corruption.
+        [, $contact] = $this->setUpViewer('free');
+
+        Livewire::test(EditContact::class, ['record' => $contact->getKey()])
+            ->assertFormFieldIsHidden('email')
+            ->assertFormFieldIsHidden('phone_number');
+    }
+
+    public function test_manager_sees_the_real_email_in_the_edit_form(): void
+    {
+        [, $contact] = $this->setUpViewer('manager');
+
+        Livewire::test(EditContact::class, ['record' => $contact->getKey()])
+            ->assertFormSet(['email' => 'jane@example.com']);
     }
 }
