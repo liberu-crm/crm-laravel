@@ -6,8 +6,10 @@ namespace App\Filament\App\Resources;
 
 use App\Enums\Role;
 use App\Filament\App\Resources\AuditLogResource\Pages\ListAuditLogs;
+use App\Filament\App\Resources\AuditLogResource\Pages\ViewAuditLog;
 use App\Models\AuditLog;
 use App\Models\User;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -78,6 +80,9 @@ class AuditLogResource extends Resource
                         default => $query,
                     }),
             ])
+            ->recordActions([
+                ViewAction::make(),
+            ])
             ->defaultSort('created_at', 'desc');
     }
 
@@ -86,6 +91,7 @@ class AuditLogResource extends Resource
     {
         return [
             'index' => ListAuditLogs::route('/'),
+            'view' => ViewAuditLog::route('/{record}'),
         ];
     }
 }
