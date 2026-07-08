@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.0
+
+Encrypt stored credentials at rest (v1.4.0-rc.1–rc.3).
+
+- **Credential encryption (Security)** — secrets that were stored in plaintext are now encrypted
+  at rest via Laravel's `encrypted` cast, matching how `SsoConnection.client_secret` was already
+  handled: AdvertisingAccount `access_token` + `refresh_token` (#536), OAuthConfiguration
+  `client_secret` (#537), and Webhook `secret` (#538). Reads decrypt transparently, so services
+  and webhook signing are unchanged. **Operational note:** existing plaintext rows must be
+  re-saved (re-authorized) after upgrading, and these columns can no longer be queried by value.
+
 ## 1.3.0
 
 Audit detail view + wider field-masking coverage (v1.3.0-rc.1–rc.3).
