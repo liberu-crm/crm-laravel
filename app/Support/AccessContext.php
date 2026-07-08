@@ -59,4 +59,28 @@ class AccessContext
 
         return null;
     }
+
+    /**
+     * Territory ids a restricted user is limited to (RestrictsToTerritory models),
+     * or null for see-all. Same restricted-role gate + guard resolution as
+     * restrictToOwnerId. An empty array means a restricted user with no territories.
+     *
+     * @return array<int, int>|null
+     */
+    public static function restrictedTerritoryIds(): ?array
+    {
+        $user = Auth::guard('sanctum')->user() ?? Auth::user();
+
+        if (! $user instanceof User) {
+            return null;
+        }
+
+        foreach (self::RESTRICTED_ROLES as $role) {
+            if ($user->hasRole($role)) {
+                return $user->territories()->pluck('territories.id')->all();
+            }
+        }
+
+        return null;
+    }
 }
