@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Events\ContactUpdated;
 use App\Listeners\AssignDefaultTeamRole;
+use App\Listeners\LogFailedLogin;
+use App\Listeners\LogPasswordReset;
 use App\Listeners\LogSsoLogout;
 use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\NotifyTeamMembers;
@@ -13,8 +15,10 @@ use App\Listeners\SendCRMEventNotification;
 use App\Models\Task;
 use App\Observers\TaskObserver;
 use App\Services\AuditLogService;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -37,6 +41,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             LogSuccessfulLogin::class,
+        ],
+        Failed::class => [
+            LogFailedLogin::class,
+        ],
+        PasswordReset::class => [
+            LogPasswordReset::class,
         ],
         TeamMemberAdded::class => [
             AssignDefaultTeamRole::class,
