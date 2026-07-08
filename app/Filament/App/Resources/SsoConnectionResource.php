@@ -86,6 +86,9 @@ class SsoConnectionResource extends Resource
                 ->placeholder('example.com')
                 ->helperText('Optional. Only auto-provision emails at this domain.')
                 ->maxLength(255),
+            Toggle::make('require_sso')
+                ->label('Require SSO for team members')
+                ->helperText('Members must sign in via SSO; password login is blocked.'),
         ]);
     }
 

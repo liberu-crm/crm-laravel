@@ -27,11 +27,13 @@ class SsoConnection extends Model
         'enabled',
         'allow_jit',
         'allowed_domain',
+        'require_sso',
     ];
 
     protected $casts = [
         'client_secret' => 'encrypted',
         'enabled' => 'boolean',
         'allow_jit' => 'boolean',
+        'require_sso' => 'boolean',
     ];
 }

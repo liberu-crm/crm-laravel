@@ -23,6 +23,7 @@ class SsoConnectionFactory extends Factory
             'enabled' => false,
             'allow_jit' => false,
             'allowed_domain' => null,
+            'require_sso' => false,
         ];
     }
 }

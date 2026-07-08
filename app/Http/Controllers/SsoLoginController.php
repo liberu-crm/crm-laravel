@@ -58,6 +58,8 @@ class SsoLoginController extends Controller
         $user->forceFill(['current_team_id' => $team->getKey()])->save();
         Auth::login($user);
         $request->session()->regenerate();
+        // Marks this session as SSO-established so enforcement doesn't bounce it.
+        $request->session()->put('sso_authenticated', true);
 
         return redirect()->intended('/app');
     }
