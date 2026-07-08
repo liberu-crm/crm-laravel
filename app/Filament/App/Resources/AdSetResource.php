@@ -8,9 +8,11 @@ use App\Filament\App\Resources\AdSetResource\Pages\CreateAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\EditAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\ListAdSets;
 use App\Models\AdSet;
+use App\Support\AccessContext;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -58,9 +60,17 @@ class AdSetResource extends Resource
                     ])
                     ->default('active')
                     ->required(),
+                // Masked-role viewers get the read-only placeholder on edit; the
+                // hidden real field isn't validated or dehydrated, so a save keeps
+                // the stored value.
                 TextInput::make('budget')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('$')
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('budget_masked')
+                    ->label('Budget')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 Select::make('budget_type')
                     ->options([
                         'daily' => 'Daily',
@@ -84,7 +94,10 @@ class AdSetResource extends Resource
                     'secondary' => 'archived',
                     'danger' => 'deleted',
                 ]),
-                TextColumn::make('budget')->money('USD'),
+                TextColumn::make('budget')
+                    ->formatStateUsing(fn (?string $state): string => AccessContext::shouldMaskFields()
+                        ? '[hidden]'
+                        : '$'.number_format((float) $state, 2)),
                 TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->filters([
