@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Portal\Widgets\PortalOverview;
+use App\Filament\Portal\Widgets\RecentTickets;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -51,6 +52,7 @@ class PortalPanelProvider extends PanelProvider
             ])
             ->widgets([
                 PortalOverview::class,
+                RecentTickets::class,
             ])
             ->middleware([
                 EncryptCookies::class,
