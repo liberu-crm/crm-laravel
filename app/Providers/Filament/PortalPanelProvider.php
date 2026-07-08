@@ -6,6 +6,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Portal\Widgets\PortalOverview;
 use App\Filament\Portal\Widgets\RecentTickets;
+use App\Support\PortalBranding;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -41,8 +42,8 @@ class PortalPanelProvider extends PanelProvider
             ->databaseNotifications()
             // Customer-facing branding: a configurable name and top navigation so
             // the portal reads as a product, not the staff admin chrome.
-            ->brandName(fn (): string => (string) config('portal.brand_name'))
-            ->brandLogo(fn (): ?string => config('portal.logo'))
+            ->brandName(fn (): string => PortalBranding::brandName())
+            ->brandLogo(fn (): ?string => PortalBranding::logo())
             ->favicon(fn (): ?string => config('portal.favicon'))
             ->topNavigation()
             ->colors([

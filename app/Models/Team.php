@@ -42,6 +42,8 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'portal_brand_name',
+        'portal_logo_url',
     ];
 
     /**
