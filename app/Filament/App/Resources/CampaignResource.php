@@ -8,11 +8,13 @@ use App\Filament\App\Resources\CampaignResource\Pages\CreateCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\EditCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
 use App\Filament\App\Resources\CampaignResource\Pages\ViewCampaign;
+use App\Filament\Exports\CampaignExporter;
 use App\Models\Campaign;
 use App\Support\AccessContext;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
@@ -121,6 +123,12 @@ class CampaignResource extends Resource
                         'consideration' => 'Consideration',
                         'conversion' => 'Conversion',
                     ]),
+            ])
+            ->headerActions([
+                // Hidden for masked (`free`) roles so a CSV can't bypass budget masking.
+                ExportAction::make()
+                    ->exporter(CampaignExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 ViewAction::make(),
