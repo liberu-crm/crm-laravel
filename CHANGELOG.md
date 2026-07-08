@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.0
+
+Custom per-team roles (F4), a webhook delivery log, and dead-code cleanup (v1.10.0-rc.1–rc.4).
+
+- **Custom per-team roles (F4)** — a team admin can define custom roles scoped to their team
+  (`roles.team_id`) with a chosen permission set (#560), and assign members to them alongside the
+  four fixed roles (#561). Role/permission/user-management permissions are **not grantable** to a
+  custom role (anti-escalation, enforced server-side), and a custom role from another team can't be
+  assigned.
+- **Webhook delivery log** (#563) — every webhook send (success / HTTP failure / exception) is
+  recorded in a team-scoped `webhook_deliveries` table, surfaced read-only on the app panel.
+- **Cleanup** (#562) — removed the unreachable `OpportunityPipeline` kanban (dead code that rendered
+  a masked field unmasked).
+
 ## 1.9.0
 
 More masking-safe detail View pages (v1.9.0-rc.1–rc.3).
