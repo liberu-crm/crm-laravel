@@ -102,6 +102,26 @@ class TeamMemberResource extends Resource
                             Notification::make()->title('Role updated')->success()->send();
                         }
                     }),
+                Action::make('removeMember')
+                    ->label('Remove')
+                    ->icon('heroicon-o-user-minus')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    // Hidden on the acting admin's own row and the owner's row
+                    // (the service rejects removing the owner too).
+                    ->visible(function (User $record): bool {
+                        $tenant = Filament::getTenant();
+                        $ownerId = $tenant instanceof Team ? $tenant->getAttribute('user_id') : null;
+
+                        return $record->getKey() !== Auth::id() && $record->getKey() !== $ownerId;
+                    })
+                    ->action(function (User $record, TeamManagementService $service): void {
+                        $tenant = Filament::getTenant();
+                        if ($tenant instanceof Team) {
+                            $service->removeTeamMember($record, $tenant);
+                            Notification::make()->title('Member removed')->success()->send();
+                        }
+                    }),
             ])
             ->defaultSort('name');
     }

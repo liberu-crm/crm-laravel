@@ -34,6 +34,33 @@ class TeamManagementService
         $this->changeTeamRole($user, $team, $role);
     }
 
+    /**
+     * Remove a user from a team: strips their team roles, detaches membership,
+     * and audits it. The team owner cannot be removed (mirrors the role guard).
+     */
+    public function removeTeamMember(User $user, Team $team): void
+    {
+        if ($user->getKey() === $team->getAttribute('user_id')) {
+            throw new InvalidArgumentException('The team owner cannot be removed.');
+        }
+
+        setPermissionsTeamId($team->getKey());
+
+        foreach (self::TEAM_ROLES as $existing) {
+            if ($user->hasRole($existing->value)) {
+                $user->removeRole($existing->value);
+            }
+        }
+
+        $team->users()->detach($user);
+
+        app(AuditLogService::class)->record(
+            'team.member_removed',
+            "Removed {$user->getAttribute('email')} from the team",
+            $user,
+        );
+    }
+
     public function changeTeamRole(User $user, Team $team, Role $role): void
     {
         if (! in_array($role, self::TEAM_ROLES, true)) {
