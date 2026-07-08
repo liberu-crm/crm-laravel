@@ -10,10 +10,12 @@ use App\Models\SsoConnection;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\Sso\OidcClient;
+use App\Services\TeamManagementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 /**
  * OIDC login for a team's members (G2 slice 2). No just-in-time provisioning
@@ -74,6 +76,22 @@ class SsoLoginController extends Controller
             // allows it and the email is in the allowed domain, else deny.
             abort_unless(is_string($email) && $this->jitAllowed($connection, $email), 403, 'No access for this account.');
             $user = app(ProvisionSsoUser::class)($team, $email, is_string($name) ? $name : null);
+        }
+
+        // Sync the team role from the IdP's groups claim, if the connection maps
+        // one. Only when it differs (avoids re-roling + auditing on every login);
+        // the owner is left as-is (changeTeamRole throws, caught).
+        $groups = $claims['groups'] ?? [];
+        $mappedRole = is_array($groups) ? $connection->roleForGroups($groups) : null;
+        if ($mappedRole !== null) {
+            setPermissionsTeamId($team->getKey());
+            if (! $user->hasRole($mappedRole->value)) {
+                try {
+                    app(TeamManagementService::class)->changeTeamRole($user, $team, $mappedRole);
+                } catch (InvalidArgumentException) {
+                    // Owner or otherwise unassignable — keep the existing role.
+                }
+            }
         }
 
         $user->forceFill(['current_team_id' => $team->getKey()])->save();
