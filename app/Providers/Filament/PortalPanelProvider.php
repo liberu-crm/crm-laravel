@@ -35,6 +35,9 @@ class PortalPanelProvider extends PanelProvider
             ->path('portal')
             ->login()
             ->passwordReset()
+            // Surfaces the notification bell so customers see in-portal alerts
+            // (ticket replies #492, document shares) — not just the email copy.
+            ->databaseNotifications()
             // Customer-facing branding: a configurable name and top navigation so
             // the portal reads as a product, not the staff admin chrome.
             ->brandName(fn (): string => (string) config('portal.brand_name'))

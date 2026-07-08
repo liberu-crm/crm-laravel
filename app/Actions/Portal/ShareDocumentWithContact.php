@@ -6,7 +6,9 @@ namespace App\Actions\Portal;
 
 use App\Models\Contact;
 use App\Models\Document;
+use App\Notifications\DocumentSharedNotification;
 use App\Services\DocumentService;
+use App\Support\PortalCustomer;
 use Illuminate\Http\UploadedFile;
 
 /**
@@ -29,6 +31,11 @@ class ShareDocumentWithContact
             'name' => $name,
             'type' => $type,
         ])->save();
+
+        // Tell the customer, if this Contact has a portal account. Null-safe:
+        // a Contact with no portal user notifies no one.
+        PortalCustomer::forEmail($contact->getAttribute('email'))
+            ?->notify(new DocumentSharedNotification($document));
 
         return $document;
     }
