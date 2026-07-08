@@ -6,8 +6,10 @@ namespace App\Models;
 
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Crypt;
 use JoelButcher\Socialstream\ConnectedAccount as SocialstreamConnectedAccount;
 use JoelButcher\Socialstream\Events\ConnectedAccountCreated;
 use JoelButcher\Socialstream\Events\ConnectedAccountDeleted;
@@ -48,6 +50,9 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         'created_at' => 'datetime',
         'expires_at' => 'datetime',
         'is_primary' => 'boolean',
+        'token' => 'encrypted',
+        'secret' => 'encrypted',
+        'refresh_token' => 'encrypted',
     ];
 
     /**
@@ -60,6 +65,28 @@ class ConnectedAccount extends SocialstreamConnectedAccount
         'updated' => ConnectedAccountUpdated::class,
         'deleted' => ConnectedAccountDeleted::class,
     ];
+
+    /**
+     * Decrypt the stored token before the inherited HasOAuth2Tokens::token()
+     * accessor runs its refresh logic.
+     *
+     * A get-mutator wins over the 'encrypted' cast on read (Laravel's
+     * transformModelValue calls the mutator and returns before the cast
+     * branch), so the parent accessor would otherwise hand callers the raw
+     * ciphertext. Writes still encrypt via the cast — this accessor defines
+     * no setter, so setAttribute falls through to the encrypted cast.
+     */
+    protected function token(): Attribute
+    {
+        $accessor = parent::token();
+
+        return Attribute::make(
+            get: fn ($value, array $attributes) => ($accessor->get)(
+                $value === null ? null : Crypt::decryptString($value),
+                $attributes,
+            ),
+        );
+    }
 
     /**
      * Get the user that owns the connected account.

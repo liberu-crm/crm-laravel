@@ -8,6 +8,7 @@ use App\Actions\Socialstream\CreateConnectedAccount;
 use App\Actions\Socialstream\CreateUserWithTeamsFromProvider;
 use App\Actions\Socialstream\HandleInvalidState;
 use App\Actions\Socialstream\SetUserPassword;
+use App\Actions\Socialstream\UpdateConnectedAccount;
 use App\Models\ConnectedAccount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -51,7 +52,7 @@ class SocialstreamActionsTest extends TestCase
     {
         $providerUser = $this->fakeProviderUser();
 
-        $action = new CreateUserWithTeamsFromProvider(new CreateConnectedAccount());
+        $action = new CreateUserWithTeamsFromProvider(new CreateConnectedAccount);
         $user = $action->create('google', $providerUser);
 
         $this->assertInstanceOf(User::class, $user);
@@ -103,7 +104,7 @@ class SocialstreamActionsTest extends TestCase
             'expiresIn' => 7200,
         ]);
 
-        $account = (new CreateConnectedAccount())->create($user, 'Google', $providerUser);
+        $account = (new CreateConnectedAccount)->create($user, 'Google', $providerUser);
 
         $this->assertTrue($account->exists);
         $this->assertDatabaseHas('connected_accounts', [
@@ -111,9 +112,10 @@ class SocialstreamActionsTest extends TestCase
             'user_id' => $user->id,
             'provider' => 'google', // lower-cased by the action
             'provider_id' => '1234567890',
-            'token' => 'tok-1',
-            'refresh_token' => 'ref-1',
         ]);
+        // token/refresh_token are encrypted at rest — assert via the model, which decrypts.
+        $this->assertSame('tok-1', $account->fresh()->token);
+        $this->assertSame('ref-1', $account->fresh()->refresh_token);
         $this->assertNotNull($account->fresh()->expires_at);
     }
 
@@ -121,13 +123,13 @@ class SocialstreamActionsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $account = (new CreateConnectedAccount())->create(
+        $account = (new CreateConnectedAccount)->create(
             $user,
             'google',
             $this->fakeProviderUser(['token' => 'old-token', 'refreshToken' => 'old-refresh']),
         );
 
-        $updated = app(\App\Actions\Socialstream\UpdateConnectedAccount::class)->update(
+        $updated = app(UpdateConnectedAccount::class)->update(
             $user,
             $account,
             'google',
@@ -137,16 +139,17 @@ class SocialstreamActionsTest extends TestCase
         $this->assertDatabaseHas('connected_accounts', [
             'id' => $updated->id,
             'user_id' => $user->id,
-            'token' => 'new-token',
-            'refresh_token' => 'new-refresh',
         ]);
+        // token/refresh_token are encrypted at rest — assert via the model, which decrypts.
+        $this->assertSame('new-token', $updated->fresh()->token);
+        $this->assertSame('new-refresh', $updated->fresh()->refresh_token);
     }
 
     public function test_set_user_password_hashes_and_persists(): void
     {
         $user = User::factory()->create();
 
-        (new SetUserPassword())->set($user, [
+        (new SetUserPassword)->set($user, [
             'password' => 'S3cret-Passw0rd',
             'password_confirmation' => 'S3cret-Passw0rd',
         ]);
@@ -172,7 +175,7 @@ class SocialstreamActionsTest extends TestCase
 
         $user = User::factory()->create();
 
-        $account = (new CreateConnectedAccount())->create($user, 'google', $this->fakeProviderUser());
+        $account = (new CreateConnectedAccount)->create($user, 'google', $this->fakeProviderUser());
 
         $this->assertInstanceOf(ConnectedAccount::class, $account);
 
@@ -187,6 +190,6 @@ class SocialstreamActionsTest extends TestCase
     {
         $this->expectException(InvalidStateException::class);
 
-        (new HandleInvalidState())->handle(new InvalidStateException());
+        (new HandleInvalidState)->handle(new InvalidStateException);
     }
 }
