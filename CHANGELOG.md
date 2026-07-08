@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.0
+
+More masking-safe detail View pages (v1.9.0-rc.1–rc.3).
+
+- **Contact / Opportunity / Campaign detail View** (#556, #557, #558) — read-only View pages,
+  completing detail views across the core and masked-money records. Each infolist masks its
+  sensitive fields (Contact `email` + `phone_number`, Opportunity `deal_size`, Campaign `budget`)
+  with the same gate as the table columns, so a detail view can't bypass field masking for the
+  `free` role.
+
 ## 1.8.0
 
 Read-only detail View pages for the core records, masking-safe (v1.8.0-rc.1–rc.3).
