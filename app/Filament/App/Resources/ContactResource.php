@@ -8,6 +8,7 @@ use App\Exceptions\PortalOnboardingException;
 use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
+use App\Filament\App\Resources\ContactResource\Pages\ViewContact;
 use App\Filament\App\Resources\ContactResource\RelationManagers\DocumentsRelationManager;
 use App\Filament\Exports\ContactExporter;
 use App\Models\Company;
@@ -20,6 +21,7 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -205,6 +207,7 @@ class ContactResource extends Resource
                     ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 Action::make('sendSMS')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
@@ -309,6 +312,7 @@ class ContactResource extends Resource
         return [
             'index' => ListContacts::route('/'),
             'create' => CreateContact::route('/create'),
+            'view' => ViewContact::route('/{record}'),
             'edit' => EditContact::route('/{record}/edit'),
         ];
     }
