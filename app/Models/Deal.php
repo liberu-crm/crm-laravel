@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Contracts\OwnsRecords;
+use App\Events\DealClosed;
 use App\Traits\IsTenantModel;
+use App\Traits\MasksFields;
 use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,11 @@ class Deal extends Model implements OwnsRecords
 {
     use HasFactory;
     use IsTenantModel;
+    use MasksFields;
     use RestrictsToOwner;
+
+    /** Sensitive fields masked in serialized output for masked-role viewers. */
+    protected $maskedFields = ['value'];
 
     protected $fillable = [
         'team_id',
@@ -40,7 +46,7 @@ class Deal extends Model implements OwnsRecords
     {
         static::updated(function (self $deal): void {
             if ($deal->wasChanged('stage') && in_array($deal->stage, ['won', 'closed'], true)) {
-                \App\Events\DealClosed::dispatch($deal);
+                DealClosed::dispatch($deal);
             }
         });
     }

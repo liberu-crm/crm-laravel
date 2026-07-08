@@ -7,10 +7,12 @@ use App\Filament\App\Resources\DealResource\Pages\EditDeal;
 use App\Filament\App\Resources\DealResource\Pages\ListDeals;
 use App\Models\Deal;
 use App\Models\Stage;
+use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -34,9 +36,17 @@ class DealResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                // Masked-role viewers get the read-only placeholder on edit; the
+                // hidden real field isn't validated or dehydrated, so a save keeps
+                // the stored value.
                 TextInput::make('value')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('$')
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('value_masked')
+                    ->label('Value')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 TextInput::make('stage')
                     ->maxLength(255),
                 DatePicker::make('close_date')
@@ -76,7 +86,9 @@ class DealResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('value')
-                    ->money('usd')
+                    ->formatStateUsing(fn (?string $state): string => AccessContext::shouldMaskFields()
+                        ? '[hidden]'
+                        : '$'.number_format((float) $state, 2))
                     ->sortable(),
                 TextColumn::make('stage')
                     ->searchable()
