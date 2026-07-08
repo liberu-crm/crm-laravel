@@ -10,9 +10,12 @@ use App\Filament\App\Resources\SamlConnectionResource\Pages\EditSamlConnection;
 use App\Filament\App\Resources\SamlConnectionResource\Pages\ListSamlConnections;
 use App\Models\SamlConnection;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
@@ -69,7 +72,57 @@ class SamlConnectionResource extends Resource
                 TextColumn::make('idp_entity_id')->label('IdP entity ID')->searchable(),
                 IconColumn::make('enabled')->boolean(),
                 TextColumn::make('updated_at')->dateTime()->sortable(),
+            ])
+            ->recordActions([
+                EditAction::make(),
+                Action::make('validate')
+                    ->label('Validate')
+                    ->icon('heroicon-o-check-badge')
+                    // Local well-formedness check (no network) so an admin can catch
+                    // a bad cert / URL before enabling the connection.
+                    ->action(function (SamlConnection $record): void {
+                        $problems = self::validationProblems($record);
+
+                        if ($problems === []) {
+                            Notification::make()->title('SAML configuration looks valid')->success()->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title('SAML configuration has problems')
+                            ->body(implode(' ', $problems))
+                            ->danger()
+                            ->send();
+                    }),
             ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function validationProblems(SamlConnection $connection): array
+    {
+        $problems = [];
+
+        $cert = trim((string) $connection->getAttribute('idp_x509_cert'));
+        $pem = str_contains($cert, 'BEGIN CERTIFICATE')
+            ? $cert
+            : "-----BEGIN CERTIFICATE-----\n".chunk_split($cert, 64, "\n").'-----END CERTIFICATE-----';
+        if (@openssl_x509_parse($pem) === false) {
+            $problems[] = 'The x509 certificate is not valid.';
+        }
+
+        $url = (string) $connection->getAttribute('idp_sso_url');
+        if (filter_var($url, FILTER_VALIDATE_URL) === false || ! str_starts_with($url, 'https://')) {
+            $problems[] = 'The SSO URL must be a valid https URL.';
+        }
+
+        if (blank($connection->getAttribute('idp_entity_id'))) {
+            $problems[] = 'The IdP entity ID is required.';
+        }
+
+        return $problems;
     }
 
     #[\Override]
