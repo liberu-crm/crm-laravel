@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0
+
+Compliance visibility + wider field-masking coverage (v1.2.0-rc.1–rc.4).
+
+- **App-panel audit log** (#527) — a read-only, team-scoped Audit log for team admins, with a
+  category filter (record changes / team / portal / auth). The full trail was previously
+  admin-panel only.
+- **Field masking extended (G3 ABAC)** — sensitive money/PII fields now masked for `free`-role
+  viewers on three more core models: Lead `potential_value` (#528), Company `phone_number` +
+  `annual_revenue` (#529), Opportunity `deal_size` (#530). Masking now covers Contact, Deal,
+  Lead, Company, and Opportunity across serialization, tables, search, and edit forms; stored
+  values are never mutated.
+
 ## 1.1.0
 
 SSO configuration UX and portal branding polish (v1.1.0-rc.1–rc.3).
