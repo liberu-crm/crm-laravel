@@ -7,6 +7,7 @@ namespace App\Support;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Resolves the customer portal's branding for the authenticated customer's team,
@@ -37,6 +38,14 @@ class PortalBranding
 
     public static function logo(): ?string
     {
-        return self::currentTeam()?->getAttribute('portal_logo_url') ?: config('portal.logo');
+        $team = self::currentTeam();
+
+        // Prefer an uploaded file, then an external URL, then the global config.
+        $path = $team?->getAttribute('portal_logo_path');
+        if ($path) {
+            return Storage::disk('public')->url($path);
+        }
+
+        return $team?->getAttribute('portal_logo_url') ?: config('portal.logo');
     }
 }

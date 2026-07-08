@@ -11,6 +11,7 @@ use App\Models\Team;
 use App\Models\User;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -67,6 +68,13 @@ class PortalBrandingResource extends Resource
                 ->label('Portal brand name')
                 ->placeholder(config('portal.brand_name'))
                 ->maxLength(255),
+            FileUpload::make('portal_logo_path')
+                ->label('Portal logo (upload)')
+                ->image()
+                ->disk('public')
+                ->directory('portal-logos')
+                ->maxSize(1024)
+                ->helperText('Overrides the URL below.'),
             TextInput::make('portal_logo_url')
                 ->label('Portal logo URL')
                 ->url()
