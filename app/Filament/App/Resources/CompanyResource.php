@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
+use App\Filament\Exports\CompanyExporter;
 use App\Models\Company;
 use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -96,6 +98,13 @@ class CompanyResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                // Gated off for masked (`free`) roles: a CSV would otherwise
+                // bypass the phone_number/annual_revenue masking applied in the UI.
+                ExportAction::make()
+                    ->exporter(CompanyExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 EditAction::make(),
