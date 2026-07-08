@@ -9,6 +9,7 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
+use App\Http\Controllers\SamlMetadataController;
 use App\Http\Controllers\SsoLoginController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TicketController;
@@ -33,6 +34,9 @@ Route::get('/health/ready', function () {
 // Per-team SSO (OIDC) login — unauthenticated; state stored in the session.
 Route::get('/sso/{team}/redirect', [SsoLoginController::class, 'redirect'])->name('sso.redirect');
 Route::get('/sso/{team}/callback', [SsoLoginController::class, 'callback'])->name('sso.callback');
+
+// SAML SP metadata (the XML handed to a team's IdP). The login flow / ACS is a later slice.
+Route::get('/saml/{team}/metadata', SamlMetadataController::class)->name('saml.metadata');
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
