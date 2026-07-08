@@ -5,11 +5,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\OpportunityResource\Pages\CreateOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\EditOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
+use App\Filament\App\Resources\OpportunityResource\Pages\ViewOpportunity;
 use App\Models\Opportunity;
 use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
@@ -72,6 +74,7 @@ class OpportunityResource extends Resource
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -95,6 +98,7 @@ class OpportunityResource extends Resource
         return [
             'index' => ListOpportunities::route('/'),
             'create' => CreateOpportunity::route('/create'),
+            'view' => ViewOpportunity::route('/{record}'),
             'edit' => EditOpportunity::route('/{record}/edit'),
         ];
     }
