@@ -8,6 +8,7 @@ use App\Exceptions\PortalOnboardingException;
 use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
+use App\Filament\App\Resources\ContactResource\RelationManagers\DocumentsRelationManager;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Services\TwilioService;
@@ -264,6 +265,14 @@ class ContactResource extends Resource
                             ->send();
                     }),
             ]);
+    }
+
+    #[\Override]
+    public static function getRelations(): array
+    {
+        return [
+            DocumentsRelationManager::class,
+        ];
     }
 
     #[\Override]
