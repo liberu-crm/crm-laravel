@@ -77,6 +77,14 @@ class SsoConnectionResource extends Resource
                 ->required(fn (string $operation): bool => $operation === 'create')
                 ->dehydrated(fn (?string $state): bool => filled($state)),
             TextInput::make('issuer_url')->url()->required()->maxLength(255),
+            Select::make('token_auth_method')
+                ->label('Token endpoint auth')
+                ->options([
+                    'client_secret_post' => 'Client secret (POST body)',
+                    'client_secret_basic' => 'Client secret (Basic auth)',
+                ])
+                ->default('client_secret_post')
+                ->required(),
             Toggle::make('enabled'),
             Toggle::make('allow_jit')
                 ->label('Auto-provision new users (JIT)')

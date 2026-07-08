@@ -24,6 +24,7 @@ class SsoConnectionFactory extends Factory
             'allow_jit' => false,
             'allowed_domain' => null,
             'require_sso' => false,
+            'token_auth_method' => 'client_secret_post',
         ];
     }
 }
