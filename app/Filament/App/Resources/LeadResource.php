@@ -4,12 +4,14 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
+use App\Filament\App\Resources\LeadResource\Pages\ViewLead;
 use App\Filament\Exports\LeadExporter;
 use App\Models\Lead;
 use App\Support\AccessContext;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -127,6 +129,7 @@ class LeadResource extends Resource
                     ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -140,6 +143,7 @@ class LeadResource extends Resource
         return [
             'index' => Pages\ListLeads::route('/'),
             'create' => Pages\CreateLead::route('/create'),
+            'view' => ViewLead::route('/{record}'),
             'edit' => Pages\EditLead::route('/{record}/edit'),
             'quality-report' => LeadQualityReport::route('/quality-report'),
         ];
