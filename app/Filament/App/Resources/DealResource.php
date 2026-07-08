@@ -5,12 +5,14 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\DealResource\Pages\CreateDeal;
 use App\Filament\App\Resources\DealResource\Pages\EditDeal;
 use App\Filament\App\Resources\DealResource\Pages\ListDeals;
+use App\Filament\Exports\DealExporter;
 use App\Models\Deal;
 use App\Models\Stage;
 use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -115,6 +117,13 @@ class DealResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                // Gated off for masked (`free`) roles: a CSV would otherwise
+                // bypass the `value` masking applied in the UI.
+                ExportAction::make()
+                    ->exporter(DealExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 EditAction::make(),
