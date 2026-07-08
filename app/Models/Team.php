@@ -44,6 +44,7 @@ class Team extends JetstreamTeam
         'personal_team',
         'portal_brand_name',
         'portal_logo_url',
+        'portal_logo_path',
     ];
 
     /**
