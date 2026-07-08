@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
+use App\Traits\MasksFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +12,10 @@ class Company extends Model
 {
     use HasFactory;
     use IsTenantModel;
+    use MasksFields;
+
+    /** Sensitive fields masked in serialized output for masked-role viewers. */
+    protected $maskedFields = ['phone_number', 'annual_revenue'];
 
     protected $fillable = [
         'name',
