@@ -30,6 +30,8 @@ class TeamManagementService
         setPermissionsTeamId($team->getKey());
         SpatieRole::firstOrCreate(['name' => $role->value, 'guard_name' => 'web', 'team_id' => null]);
 
+        $previous = $user->getRoleNames()->first() ?? 'none';
+
         foreach (self::TEAM_ROLES as $existing) {
             if ($user->hasRole($existing->value)) {
                 $user->removeRole($existing->value);
@@ -37,6 +39,12 @@ class TeamManagementService
         }
 
         $user->assignRole($role->value);
+
+        app(AuditLogService::class)->record(
+            'team.role_changed',
+            "Changed {$user->getAttribute('email')} from {$previous} to {$role->value}",
+            $user,
+        );
     }
 
     public function createDefaultTeamForUser(User $user): Team
