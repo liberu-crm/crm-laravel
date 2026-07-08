@@ -21,6 +21,19 @@ class TeamManagementService
      * user holds in this team, then assigns the new one — never touching global
      * super_admin/customer. Guards the role so the UI Select can't be bypassed.
      */
+    /**
+     * Add an existing user to a team with a team role. Attaches membership if
+     * needed, then delegates to changeTeamRole (role guard + owner guard + audit).
+     */
+    public function addTeamMember(User $user, Team $team, Role $role): void
+    {
+        if (! $user->belongsToTeam($team)) {
+            $team->users()->attach($user);
+        }
+
+        $this->changeTeamRole($user, $team, $role);
+    }
+
     public function changeTeamRole(User $user, Team $team, Role $role): void
     {
         if (! in_array($role, self::TEAM_ROLES, true)) {
