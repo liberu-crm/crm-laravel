@@ -25,6 +25,7 @@ class SsoConnectionFactory extends Factory
             'allowed_domain' => null,
             'require_sso' => false,
             'token_auth_method' => 'client_secret_post',
+            'role_mappings' => null,
         ];
     }
 }

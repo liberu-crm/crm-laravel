@@ -10,6 +10,7 @@ use App\Filament\App\Resources\SsoConnectionResource\Pages\EditSsoConnection;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\ListSsoConnections;
 use App\Models\SsoConnection;
 use App\Models\User;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -97,6 +98,11 @@ class SsoConnectionResource extends Resource
             Toggle::make('require_sso')
                 ->label('Require SSO for team members')
                 ->helperText('Members must sign in via SSO; password login is blocked.'),
+            KeyValue::make('role_mappings')
+                ->label('IdP group → role')
+                ->keyLabel('IdP group')
+                ->valueLabel('Team role')
+                ->helperText('Map an IdP group to a team role (admin / manager / sales_rep / free).'),
         ]);
     }
 
