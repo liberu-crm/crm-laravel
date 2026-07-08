@@ -157,12 +157,6 @@ parameters:
 			path: app/Filament/App/Resources/MailchimpCampaignResource/Pages/ViewCampaignPerformance.php
 
 		-
-			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:groupedBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Filament/App/Resources/OpportunityResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\SocialMediaPost\:\:\$advertising_account\.$#'
 			identifier: property.notFound
 			count: 4
