@@ -27,6 +27,12 @@ class TeamManagementService
             throw new InvalidArgumentException("Role {$role->value} is not assignable to a team member.");
         }
 
+        // The owner manages the team; their role is immutable here, so a team can
+        // never be left without its owner as a stable admin.
+        if ($user->getKey() === $team->getAttribute('user_id')) {
+            throw new InvalidArgumentException("The team owner's role cannot be changed.");
+        }
+
         setPermissionsTeamId($team->getKey());
         SpatieRole::firstOrCreate(['name' => $role->value, 'guard_name' => 'web', 'team_id' => null]);
 

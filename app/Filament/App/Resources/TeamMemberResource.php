@@ -76,8 +76,15 @@ class TeamMemberResource extends Resource
                 Action::make('changeRole')
                     ->label('Change role')
                     ->icon('heroicon-o-key')
-                    // Self-guard: an admin can't re-role their own row (no self-lockout).
-                    ->visible(fn (User $record): bool => $record->getKey() !== Auth::id())
+                    // Hidden on the acting admin's own row (no self-lockout) and on
+                    // the team owner's row (their role is immutable — changeTeamRole
+                    // rejects it too).
+                    ->visible(function (User $record): bool {
+                        $tenant = Filament::getTenant();
+                        $ownerId = $tenant instanceof Team ? $tenant->getAttribute('user_id') : null;
+
+                        return $record->getKey() !== Auth::id() && $record->getKey() !== $ownerId;
+                    })
                     ->schema([
                         Select::make('role')
                             ->options([
