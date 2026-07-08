@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
+use App\Traits\MasksFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,10 @@ class Campaign extends Model
 {
     use HasFactory;
     use IsTenantModel;
+    use MasksFields;
+
+    /** Sensitive fields masked in serialized output for masked-role viewers. */
+    protected $maskedFields = ['budget'];
 
     protected $fillable = [
         'team_id',
