@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.0
+
+Auth-event auditing, masking-safe contact export, and a territory detail view (v1.6.0-rc.1–rc.3).
+
+- **Auth-event audit** (#544) — failed logins against a known account (`auth.failed`) and password
+  resets (`auth.password_reset`) are now recorded, extending the trail beyond login/logout.
+- **Contact CSV export** (#545) — the app-panel Contacts gains a Filament CSV export, **gated off
+  for field-masked (`free`) roles** so an export can't bypass email/phone masking. This also
+  publishes the Filament `exports` table (previously unpublished), fixing the audit-log export from
+  1.5.0 which lacked it at runtime.
+- **Territory detail view** (#546) — a read-only View page showing a territory's name, created
+  date, and assigned members.
+
 ## 1.5.0
 
 Finish credential encryption, add SSO-logout auditing and audit-log export (v1.5.0-rc.1–rc.3).
