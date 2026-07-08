@@ -7,8 +7,10 @@ namespace App\Filament\App\Resources;
 use App\Enums\Role;
 use App\Filament\App\Resources\AuditLogResource\Pages\ListAuditLogs;
 use App\Filament\App\Resources\AuditLogResource\Pages\ViewAuditLog;
+use App\Filament\Exports\AuditLogExporter;
 use App\Models\AuditLog;
 use App\Models\User;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
@@ -79,6 +81,9 @@ class AuditLogResource extends Resource
                             ->orWhere('action', 'like', 'login%')),
                         default => $query,
                     }),
+            ])
+            ->headerActions([
+                ExportAction::make()->exporter(AuditLogExporter::class),
             ])
             ->recordActions([
                 ViewAction::make(),
