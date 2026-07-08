@@ -69,14 +69,27 @@ class OidcClient
     {
         $endpoint = (string) $this->discover($connection)['token_endpoint'];
 
-        $response = Http::asForm()->acceptJson()->post($endpoint, [
+        $body = [
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $redirectUri,
             'client_id' => $connection->getAttribute('client_id'),
-            'client_secret' => $connection->getAttribute('client_secret'),
             'code_verifier' => $codeVerifier,
-        ]);
+        ];
+
+        $request = Http::asForm()->acceptJson();
+
+        if ($connection->getAttribute('token_auth_method') === 'client_secret_basic') {
+            // Client id/secret go in an HTTP Basic Authorization header, not the body.
+            $request = $request->withBasicAuth(
+                (string) $connection->getAttribute('client_id'),
+                (string) $connection->getAttribute('client_secret'),
+            );
+        } else {
+            $body['client_secret'] = $connection->getAttribute('client_secret');
+        }
+
+        $response = $request->post($endpoint, $body);
 
         if (! $response->successful() || ! is_string($response->json('access_token'))) {
             throw new SsoException('The identity provider rejected the login.');

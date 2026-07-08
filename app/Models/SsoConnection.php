@@ -28,6 +28,7 @@ class SsoConnection extends Model
         'allow_jit',
         'allowed_domain',
         'require_sso',
+        'token_auth_method',
     ];
 
     protected $casts = [
