@@ -12,6 +12,7 @@ use App\Filament\App\Resources\ContactResource\RelationManagers\DocumentsRelatio
 use App\Models\Company;
 use App\Models\Contact;
 use App\Services\TwilioService;
+use App\Support\AccessContext;
 use App\Support\PortalCustomer;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -114,10 +115,12 @@ class ContactResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('email', $state))
-                    ->searchable(),
+                    // Not searchable for masked-role viewers, else search would
+                    // query the real column and confirm a value the UI masks.
+                    ->searchable(! AccessContext::shouldMaskFields()),
                 TextColumn::make('phone_number')
                     ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('phone_number', $state))
-                    ->searchable(),
+                    ->searchable(! AccessContext::shouldMaskFields()),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

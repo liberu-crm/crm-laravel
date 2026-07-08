@@ -70,4 +70,23 @@ class ContactMaskingUiTest extends TestCase
         Livewire::test(ListContacts::class)
             ->assertSee('jane@example.com');
     }
+
+    public function test_free_user_cannot_find_a_contact_by_searching_its_masked_email(): void
+    {
+        [, $contact] = $this->setUpViewer('free');
+
+        Livewire::test(ListContacts::class)
+            ->assertCanSeeTableRecords([$contact])
+            ->searchTable('jane@example.com')
+            ->assertCanNotSeeTableRecords([$contact]);
+    }
+
+    public function test_manager_can_find_a_contact_by_searching_its_email(): void
+    {
+        [, $contact] = $this->setUpViewer('manager');
+
+        Livewire::test(ListContacts::class)
+            ->searchTable('jane@example.com')
+            ->assertCanSeeTableRecords([$contact]);
+    }
 }
