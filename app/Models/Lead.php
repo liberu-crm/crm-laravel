@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Contracts\OwnsRecords;
+use App\Events\NewLead;
 use App\Traits\IsTenantModel;
+use App\Traits\MasksFields;
 use App\Traits\RestrictsToOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +18,12 @@ class Lead extends Model implements OwnsRecords
 {
     use HasFactory;
     use IsTenantModel;
+    use MasksFields;
     use Notifiable;
     use RestrictsToOwner;
+
+    /** Sensitive fields masked in serialized output for masked-role viewers. */
+    protected $maskedFields = ['potential_value'];
 
     protected $fillable = [
         'status',
@@ -41,7 +47,7 @@ class Lead extends Model implements OwnsRecords
 
     /** Fire NewLead on create so the CRM notification listener runs. */
     protected $dispatchesEvents = [
-        'created' => \App\Events\NewLead::class,
+        'created' => NewLead::class,
     ];
 
     const LIFECYCLE_STAGES = [
