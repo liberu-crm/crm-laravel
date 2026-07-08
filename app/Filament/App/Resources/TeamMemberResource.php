@@ -10,6 +10,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\TeamManagementService;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
@@ -17,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -122,6 +124,46 @@ class TeamMemberResource extends Resource
                             Notification::make()->title('Member removed')->success()->send();
                         }
                     }),
+            ])
+            ->toolbarActions([
+                BulkAction::make('setRole')
+                    ->label('Set role')
+                    ->icon('heroicon-o-key')
+                    ->schema([
+                        Select::make('role')
+                            ->options([
+                                Role::Admin->value => 'Admin',
+                                Role::Manager->value => 'Manager',
+                                Role::SalesRep->value => 'Sales rep',
+                                Role::Free->value => 'Free',
+                            ])
+                            ->required(),
+                    ])
+                    ->action(function (Collection $records, array $data, TeamManagementService $service): void {
+                        $tenant = Filament::getTenant();
+                        if (! $tenant instanceof Team) {
+                            return;
+                        }
+
+                        $role = Role::from($data['role']);
+                        $ownerId = $tenant->getAttribute('user_id');
+
+                        foreach ($records as $record) {
+                            // Skip the acting admin (self) and the owner.
+                            if ($record->getKey() === Auth::id() || $record->getKey() === $ownerId) {
+                                continue;
+                            }
+
+                            try {
+                                $service->changeTeamRole($record, $tenant, $role);
+                            } catch (\InvalidArgumentException) {
+                                // Owner or otherwise unassignable — skip.
+                            }
+                        }
+
+                        Notification::make()->title('Roles updated')->success()->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
             ])
             ->defaultSort('name');
     }
