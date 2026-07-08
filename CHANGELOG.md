@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.0
+
+CSV export for the core CRM records, masking-safe (v1.7.0-rc.1–rc.3).
+
+- **Deal / Lead / Company CSV export** (#548, #549, #550) — each app-panel resource gains a Filament
+  CSV export, **gated off for field-masked (`free`) roles** so an export can't bypass the value /
+  potential_value / phone / revenue masking. Combined with the Contact and audit-log exports from
+  1.6.0, all core records are now exportable.
+
 ## 1.6.0
 
 Auth-event auditing, masking-safe contact export, and a territory detail view (v1.6.0-rc.1–rc.3).
