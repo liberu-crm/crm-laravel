@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.0
+
+Upload-security hardening and Campaign export (v1.11.0-rc.1–rc.2).
+
+- **Ticket attachment content validation (Security)** (#565) — portal ticket uploads now validate
+  the file's real content type (Finfo magic bytes) against an allowlist, not just the spoofable
+  declared MIME, matching `DocumentService`'s guard.
+- **Campaign CSV export** (#566) — the masking-gated CSV export now covers Campaign too
+  (previously skipped), completing export for the core + advertising money records.
+
 ## 1.10.0
 
 Custom per-team roles (F4), a webhook delivery log, and dead-code cleanup (v1.10.0-rc.1–rc.4).
