@@ -21,6 +21,8 @@ class SsoConnectionFactory extends Factory
             'client_secret' => 'secret-'.$this->faker->uuid(),
             'issuer_url' => 'https://idp.example.com',
             'enabled' => false,
+            'allow_jit' => false,
+            'allowed_domain' => null,
         ];
     }
 }

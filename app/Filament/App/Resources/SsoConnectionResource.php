@@ -78,6 +78,14 @@ class SsoConnectionResource extends Resource
                 ->dehydrated(fn (?string $state): bool => filled($state)),
             TextInput::make('issuer_url')->url()->required()->maxLength(255),
             Toggle::make('enabled'),
+            Toggle::make('allow_jit')
+                ->label('Auto-provision new users (JIT)')
+                ->helperText('Create an account on first SSO login for users not yet on the team.'),
+            TextInput::make('allowed_domain')
+                ->label('Restrict JIT to email domain')
+                ->placeholder('example.com')
+                ->helperText('Optional. Only auto-provision emails at this domain.')
+                ->maxLength(255),
         ]);
     }
 
