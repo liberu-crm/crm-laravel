@@ -9,6 +9,7 @@ use App\Filament\App\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Filament\App\Resources\ContactResource\RelationManagers\DocumentsRelationManager;
+use App\Filament\Exports\ContactExporter;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Services\TwilioService;
@@ -18,6 +19,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -194,6 +196,13 @@ class ContactResource extends Resource
                         'Real Estate' => 'Real Estate',
                         'Other' => 'Other',
                     ]),
+            ])
+            ->headerActions([
+                // Gated off for masked (`free`) roles: a CSV would otherwise
+                // bypass the email/phone_number masking applied in the UI.
+                ExportAction::make()
+                    ->exporter(ContactExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 EditAction::make(),
