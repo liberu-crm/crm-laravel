@@ -4,10 +4,12 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
+use App\Filament\Exports\LeadExporter;
 use App\Models\Lead;
 use App\Support\AccessContext;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -116,6 +118,13 @@ class LeadResource extends Resource
                             $data['score_to'],
                             fn (Builder $query, $score): Builder => $query->where('score', '<=', $score),
                         )),
+            ])
+            ->headerActions([
+                // Gated off for masked (`free`) roles: a CSV would otherwise
+                // bypass the potential_value masking applied in the UI.
+                ExportAction::make()
+                    ->exporter(LeadExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 EditAction::make(),
