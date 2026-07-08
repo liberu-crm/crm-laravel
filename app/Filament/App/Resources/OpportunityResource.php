@@ -18,9 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
 
 class OpportunityResource extends Resource
 {
@@ -101,40 +99,5 @@ class OpportunityResource extends Resource
             'view' => ViewOpportunity::route('/{record}'),
             'edit' => EditOpportunity::route('/{record}/edit'),
         ];
-    }
-
-    public static function getPipelineView(): View
-    {
-        return view('livewire.opportunity-pipeline');
-    }
-
-    public static function getPipelineTable(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('stage')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('deal_size')
-                    ->money('usd')
-                    ->sortable(),
-                TextColumn::make('closing_date')
-                    ->date()
-                    ->sortable(),
-            ])
-            ->defaultSort('stage', 'asc')
-            ->groupedBy('stage')
-            ->filters([
-                SelectFilter::make('stage')
-                    ->options(Opportunity::distinct()->pluck('stage', 'stage')->toArray()),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
     }
 }
