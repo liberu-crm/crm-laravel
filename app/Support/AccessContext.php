@@ -23,6 +23,9 @@ class AccessContext
     /** Roles restricted to records they own; all other roles see everything in scope. */
     private const RESTRICTED_ROLES = ['sales_rep', 'free'];
 
+    /** Roles whose serialized output has sensitive fields masked (MasksFields models). */
+    private const MASKED_ROLES = ['free'];
+
     protected static ?int $ownerId = null;
 
     protected static bool $overridden = false;
@@ -82,5 +85,26 @@ class AccessContext
         }
 
         return null;
+    }
+
+    /**
+     * Whether the current user's serialized output should mask sensitive fields
+     * (MasksFields models). Same guard resolution as the other methods.
+     */
+    public static function shouldMaskFields(): bool
+    {
+        $user = Auth::guard('sanctum')->user() ?? Auth::user();
+
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        foreach (self::MASKED_ROLES as $role) {
+            if ($user->hasRole($role)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
+use App\Traits\MasksFields;
 use App\Traits\RestrictsToTerritory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,8 +19,12 @@ class Contact extends Model
 {
     use HasFactory;
     use IsTenantModel;
+    use MasksFields;
     use Notifiable;
     use RestrictsToTerritory;
+
+    /** Sensitive fields masked in serialized output for masked-role viewers. */
+    protected $maskedFields = ['email', 'phone_number'];
 
     protected $fillable = [
         'team_id',
