@@ -9,6 +9,7 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\OAuthConfigurationController;
 use App\Http\Controllers\QuoteRequestController;
+use App\Http\Controllers\SsoLoginController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TwilioController;
@@ -28,6 +29,10 @@ Route::get('/health/ready', function () {
         return response()->json(['status' => 'not ready', 'error' => 'Database unavailable'], 503);
     }
 })->name('health.ready');
+
+// Per-team SSO (OIDC) login — unauthenticated; state stored in the session.
+Route::get('/sso/{team}/redirect', [SsoLoginController::class, 'redirect'])->name('sso.redirect');
+Route::get('/sso/{team}/callback', [SsoLoginController::class, 'callback'])->name('sso.callback');
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
