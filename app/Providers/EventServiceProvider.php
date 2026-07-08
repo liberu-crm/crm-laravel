@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Events\ContactUpdated;
 use App\Listeners\AssignDefaultTeamRole;
+use App\Listeners\LogSsoLogout;
 use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\NotifyTeamMembers;
 use App\Listeners\SendCRMEventNotification;
@@ -40,9 +41,9 @@ class EventServiceProvider extends ServiceProvider
         TeamMemberAdded::class => [
             AssignDefaultTeamRole::class,
         ],
-        // 'Illuminate\Auth\Events\Logout' => [
-        //     App\Listeners\LogSuccessfulLogout,
-        // ],
+        Logout::class => [
+            LogSsoLogout::class,
+        ],
         // Add CRM event listeners
         'App\Events\NewLead' => [
             SendCRMEventNotification::class,
