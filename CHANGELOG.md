@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0
+
+Read-only detail View pages for the core records, masking-safe (v1.8.0-rc.1–rc.3).
+
+- **Deal / Lead / Company detail View** (#552, #553, #554) — each app-panel resource gains a
+  read-only View page (previously only List/Create/Edit). The infolist **masks the sensitive
+  money/PII fields** (Deal `value`, Lead `potential_value`, Company `phone_number` +
+  `annual_revenue`) with the same gate as the table columns, so the detail view can't bypass field
+  masking for the `free` role.
+
 ## 1.7.0
 
 CSV export for the core CRM records, masking-safe (v1.7.0-rc.1–rc.3).
