@@ -8,11 +8,13 @@ use App\Enums\Role;
 use App\Filament\App\Resources\TerritoryResource\Pages\CreateTerritory;
 use App\Filament\App\Resources\TerritoryResource\Pages\EditTerritory;
 use App\Filament\App\Resources\TerritoryResource\Pages\ListTerritories;
+use App\Filament\App\Resources\TerritoryResource\Pages\ViewTerritory;
 use App\Models\Team;
 use App\Models\Territory;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -70,6 +72,7 @@ class TerritoryResource extends Resource
                 TextColumn::make('updated_at')->dateTime()->sortable(),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -84,6 +87,7 @@ class TerritoryResource extends Resource
         return [
             'index' => ListTerritories::route('/'),
             'create' => CreateTerritory::route('/create'),
+            'view' => ViewTerritory::route('/{record}'),
             'edit' => EditTerritory::route('/{record}/edit'),
         ];
     }
