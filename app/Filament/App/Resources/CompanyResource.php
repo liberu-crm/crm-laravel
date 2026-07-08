@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
+use App\Filament\App\Resources\CompanyResource\Pages\ViewCompany;
 use App\Filament\Exports\CompanyExporter;
 use App\Models\Company;
 use App\Support\AccessContext;
@@ -14,6 +15,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -107,6 +109,7 @@ class CompanyResource extends Resource
                     ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -130,6 +133,7 @@ class CompanyResource extends Resource
         return [
             'index' => ListCompanies::route('/'),
             'create' => CreateCompany::route('/create'),
+            'view' => ViewCompany::route('/{record}'),
             'edit' => EditCompany::route('/{record}/edit'),
         ];
     }
