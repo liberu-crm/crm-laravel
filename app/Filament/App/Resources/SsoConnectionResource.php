@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace App\Filament\App\Resources;
 
 use App\Enums\Role;
+use App\Exceptions\SsoException;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\CreateSsoConnection;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\EditSsoConnection;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\ListSsoConnections;
 use App\Models\SsoConnection;
 use App\Models\User;
+use App\Services\Sso\OidcClient;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
@@ -115,6 +120,30 @@ class SsoConnectionResource extends Resource
                 TextColumn::make('issuer_url')->searchable(),
                 IconColumn::make('enabled')->boolean(),
                 TextColumn::make('updated_at')->dateTime()->sortable(),
+            ])
+            ->recordActions([
+                EditAction::make(),
+                Action::make('testConnection')
+                    ->label('Test')
+                    ->icon('heroicon-o-signal')
+                    // Validates the config by fetching the IdP discovery document,
+                    // so an admin can verify a connection before enabling it.
+                    ->action(function (SsoConnection $record): void {
+                        try {
+                            app(OidcClient::class)->discover($record);
+                            Notification::make()
+                                ->title('Connection OK')
+                                ->body('Reached the identity provider and found its endpoints.')
+                                ->success()
+                                ->send();
+                        } catch (SsoException $e) {
+                            Notification::make()
+                                ->title('Connection failed')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
             ]);
     }
 
