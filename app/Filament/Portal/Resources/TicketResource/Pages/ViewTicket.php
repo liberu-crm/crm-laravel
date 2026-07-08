@@ -9,8 +9,12 @@ use App\Models\Message;
 use App\Models\Ticket;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -82,5 +86,32 @@ class ViewTicket extends ViewRecord
                     Notification::make()->title('Reply sent')->success()->send();
                 }),
         ];
+    }
+
+    // The record is ownership-scoped by TicketResource::getEloquentQuery, so the
+    // thread only ever renders the customer's own ticket's messages (their replies
+    // and any staff replies persisted via ReplyToPortalTicket).
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Ticket')
+                ->columns(2)
+                ->schema([
+                    TextEntry::make('subject'),
+                    TextEntry::make('status')->badge(),
+                    TextEntry::make('priority')->badge(),
+                    TextEntry::make('body')->label('Description')->columnSpanFull(),
+                ]),
+            Section::make('Conversation')
+                ->schema([
+                    RepeatableEntry::make('messages')
+                        ->hiddenLabel()
+                        ->schema([
+                            TextEntry::make('sender'),
+                            TextEntry::make('timestamp')->dateTime(),
+                            TextEntry::make('content')->columnSpanFull(),
+                        ]),
+                ]),
+        ]);
     }
 }

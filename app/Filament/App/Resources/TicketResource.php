@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\Portal\ReplyToPortalTicket;
 use App\Filament\App\Resources\RelationManagers\MessagesRelationManager;
 use App\Filament\App\Resources\TicketResource\Pages\CreateTicket;
 use App\Filament\App\Resources\TicketResource\Pages\EditTicket;
 use App\Filament\App\Resources\TicketResource\Pages\ListTickets;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\UnifiedHelpDeskService;
 use Exception;
 use Filament\Actions\Action;
@@ -23,6 +25,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -119,14 +122,24 @@ class TicketResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('reply')
-                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService): void {
+                    ->action(function (Ticket $record, array $data, UnifiedHelpDeskService $helpDeskService, ReplyToPortalTicket $replyToPortal): void {
                         try {
-                            $helpDeskService->sendReply(
-                                $record->source_id,
-                                $data['reply_content'],
-                                $record->source,
-                                $record->account_id
-                            );
+                            // Portal tickets have no external channel — persist the
+                            // reply to the thread + notify the customer. Everything
+                            // else (email/social) routes through the help-desk service.
+                            if ($record->getAttribute('source') === 'portal') {
+                                $staff = Auth::user();
+                                if ($staff instanceof User) {
+                                    $replyToPortal($record, $data['reply_content'], $staff);
+                                }
+                            } else {
+                                $helpDeskService->sendReply(
+                                    $record->getAttribute('source_id'),
+                                    $data['reply_content'],
+                                    $record->getAttribute('source'),
+                                    (string) $record->getAttribute('account_id')
+                                );
+                            }
 
                             $record->update(['status' => 'in_progress']);
                             Cache::tags(['messages'])->flush();
