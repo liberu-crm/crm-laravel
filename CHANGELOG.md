@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0
+
+Audit detail view + wider field-masking coverage (v1.3.0-rc.1–rc.3).
+
+- **Audit log detail view** (#532) — the app-panel Audit log gains a read-only View page (row
+  action + infolist) showing the entry detail and the field-level `changes` diff.
+- **Field masking extended (G3 ABAC)** — money fields now masked for `free`-role viewers on
+  Campaign `budget` (#533) and AdSet `budget` (#534). Masking now spans Contact, Deal, Lead,
+  Company, Opportunity, Campaign, and AdSet across serialization, tables, search, and edit forms;
+  stored values are never mutated.
+
 ## 1.2.0
 
 Compliance visibility + wider field-masking coverage (v1.2.0-rc.1–rc.4).
