@@ -8,10 +8,12 @@ use App\Filament\App\Resources\CampaignResource\Pages\CreateCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\EditCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
 use App\Models\Campaign;
+use App\Support\AccessContext;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -59,9 +61,17 @@ class CampaignResource extends Resource
                         'consideration' => 'Consideration',
                         'conversion' => 'Conversion',
                     ]),
+                // Masked-role viewers get the read-only placeholder on edit; the
+                // hidden real field isn't validated or dehydrated, so a save keeps
+                // the stored value.
                 TextInput::make('budget')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('$')
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('budget_masked')
+                    ->label('Budget')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 Select::make('budget_type')
                     ->options([
                         'daily' => 'Daily',
@@ -87,7 +97,10 @@ class CampaignResource extends Resource
                     'danger' => 'deleted',
                 ]),
                 BadgeColumn::make('objective'),
-                TextColumn::make('budget')->money('USD'),
+                TextColumn::make('budget')
+                    ->formatStateUsing(fn (?string $state): string => AccessContext::shouldMaskFields()
+                        ? '[hidden]'
+                        : '$'.number_format((float) $state, 2)),
                 TextColumn::make('start_date')->dateTime(),
                 TextColumn::make('end_date')->dateTime(),
                 TextColumn::make('created_at')->dateTime()->sortable(),
