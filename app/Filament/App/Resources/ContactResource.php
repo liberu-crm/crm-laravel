@@ -113,8 +113,10 @@ class ContactResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
+                    ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('email', $state))
                     ->searchable(),
                 TextColumn::make('phone_number')
+                    ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('phone_number', $state))
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()

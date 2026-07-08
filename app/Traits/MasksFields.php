@@ -27,17 +27,31 @@ trait MasksFields
     }
 
     /**
+     * The value to display for a field: the mask when the field is masked and the
+     * viewer is a masked role, otherwise the real value. Reused by attribute
+     * serialization and by display surfaces (e.g. Filament columns).
+     */
+    public function maskFor(string $field, mixed $value): mixed
+    {
+        if ($value !== null
+            && in_array($field, $this->maskedFields(), true)
+            && AccessContext::shouldMaskFields()) {
+            return self::MASK;
+        }
+
+        return $value;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function attributesToArray(): array
     {
         $attributes = parent::attributesToArray();
 
-        if (AccessContext::shouldMaskFields()) {
-            foreach ($this->maskedFields() as $field) {
-                if (array_key_exists($field, $attributes) && $attributes[$field] !== null) {
-                    $attributes[$field] = self::MASK;
-                }
+        foreach ($this->maskedFields() as $field) {
+            if (array_key_exists($field, $attributes)) {
+                $attributes[$field] = $this->maskFor($field, $attributes[$field]);
             }
         }
 
