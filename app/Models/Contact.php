@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
+use App\Traits\RestrictsToTerritory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,9 +19,11 @@ class Contact extends Model
     use HasFactory;
     use IsTenantModel;
     use Notifiable;
+    use RestrictsToTerritory;
 
     protected $fillable = [
         'team_id',
+        'territory_id',
         'name',
         'last_name',
         'email',

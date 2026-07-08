@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -193,5 +194,15 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
             ->whereNull($tables['model_has_roles'].'.'.$teamKey)
             ->whereRaw('LOWER('.$tables['roles'].'.name) = ?', [$roleName])
             ->exists();
+    }
+
+    /**
+     * Territories this user is assigned to (G3 ABAC).
+     *
+     * @return BelongsToMany<Territory, $this>
+     */
+    public function territories(): BelongsToMany
+    {
+        return $this->belongsToMany(Territory::class, 'territory_user');
     }
 }
