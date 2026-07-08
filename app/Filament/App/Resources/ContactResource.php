@@ -18,6 +18,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -45,14 +46,27 @@ class ContactResource extends Resource
                     ->maxLength(255),
                 TextInput::make('last_name')
                     ->maxLength(255),
+                // On edit, a masked-role viewer gets the read-only placeholder below
+                // instead of the real input. The hidden real field is neither
+                // validated nor dehydrated, so a save preserves the stored value.
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('email_masked')
+                    ->label('Email')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 TextInput::make('phone_number')
                     ->tel()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('phone_masked')
+                    ->label('Phone number')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 Select::make('status')
                     ->options([
                         'active' => 'Active',
