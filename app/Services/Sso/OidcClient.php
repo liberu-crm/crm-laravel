@@ -46,7 +46,7 @@ class OidcClient
         });
     }
 
-    public function authorizeUrl(SsoConnection $connection, string $redirectUri, string $state, string $nonce): string
+    public function authorizeUrl(SsoConnection $connection, string $redirectUri, string $state, string $nonce, string $codeChallenge): string
     {
         $endpoint = (string) $this->discover($connection)['authorization_endpoint'];
 
@@ -57,13 +57,15 @@ class OidcClient
             'scope' => 'openid email profile',
             'state' => $state,
             'nonce' => $nonce,
+            'code_challenge' => $codeChallenge,
+            'code_challenge_method' => 'S256',
         ]);
     }
 
     /**
      * @return array<string, mixed> the full token response (access_token, id_token, ...)
      */
-    public function exchangeCode(SsoConnection $connection, string $code, string $redirectUri): array
+    public function exchangeCode(SsoConnection $connection, string $code, string $redirectUri, string $codeVerifier): array
     {
         $endpoint = (string) $this->discover($connection)['token_endpoint'];
 
@@ -73,6 +75,7 @@ class OidcClient
             'redirect_uri' => $redirectUri,
             'client_id' => $connection->getAttribute('client_id'),
             'client_secret' => $connection->getAttribute('client_secret'),
+            'code_verifier' => $codeVerifier,
         ]);
 
         if (! $response->successful() || ! is_string($response->json('access_token'))) {

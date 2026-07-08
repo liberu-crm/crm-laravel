@@ -27,10 +27,13 @@ class SsoLoginController extends Controller
 
         $state = Str::random(40);
         $nonce = Str::random(40);
-        session(['sso_state' => $state, 'sso_nonce' => $nonce, 'sso_team' => $team->getKey()]);
+        // PKCE (RFC 7636): bind the auth code to this session's secret verifier.
+        $verifier = Str::random(64);
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
+        session(['sso_state' => $state, 'sso_nonce' => $nonce, 'sso_verifier' => $verifier, 'sso_team' => $team->getKey()]);
 
         return redirect()->away(
-            $oidc->authorizeUrl($connection, route('sso.callback', $team), $state, $nonce)
+            $oidc->authorizeUrl($connection, route('sso.callback', $team), $state, $nonce, $challenge)
         );
     }
 
@@ -40,12 +43,13 @@ class SsoLoginController extends Controller
         $state = $request->query('state');
         abort_unless(is_string($state) && $state === session('sso_state'), 403, 'Invalid SSO state.');
         $nonce = (string) session('sso_nonce');
-        $request->session()->forget(['sso_state', 'sso_nonce', 'sso_team']);
+        $verifier = (string) session('sso_verifier');
+        $request->session()->forget(['sso_state', 'sso_nonce', 'sso_verifier', 'sso_team']);
 
         $connection = $this->enabledConnection($team);
 
         try {
-            $tokens = $oidc->exchangeCode($connection, (string) $request->query('code'), route('sso.callback', $team));
+            $tokens = $oidc->exchangeCode($connection, (string) $request->query('code'), route('sso.callback', $team), $verifier);
 
             // Prefer the cryptographically verified id_token; fall back to userinfo
             // for providers/flows that don't return one (keeps older configs working).
