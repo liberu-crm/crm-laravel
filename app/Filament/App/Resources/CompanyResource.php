@@ -8,9 +8,11 @@ use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
 use App\Models\Company;
+use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -40,9 +42,17 @@ class CompanyResource extends Resource
                 TextInput::make('zip')
                     ->label('ZIP')
                     ->numeric(),
+                // On edit, a masked-role viewer gets the read-only placeholder below
+                // instead of the real input. The hidden real field is neither
+                // validated nor dehydrated, so a save preserves the stored value.
                 TextInput::make('phone_number')
                     ->label('Phone Number')
-                    ->numeric(),
+                    ->numeric()
+                    ->visible(fn (string $operation): bool => $operation === 'create' || ! AccessContext::shouldMaskFields()),
+                Placeholder::make('phone_masked')
+                    ->label('Phone Number')
+                    ->content('[hidden]')
+                    ->visible(fn (string $operation): bool => $operation !== 'create' && AccessContext::shouldMaskFields()),
                 TextInput::make('website')
                     ->label('Website'),
                 TextInput::make('industry')
@@ -73,7 +83,10 @@ class CompanyResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('phone_number')
-                    ->searchable()
+                    ->formatStateUsing(fn (?string $state, Company $record): mixed => $record->maskFor('phone_number', $state))
+                    // Not searchable for masked-role viewers, else search would
+                    // query the real column and confirm a value the UI masks.
+                    ->searchable(! AccessContext::shouldMaskFields())
                     ->sortable(),
                 TextColumn::make('website'),
                 TextColumn::make('industry')
