@@ -93,6 +93,54 @@ class TeamManagementService
         );
     }
 
+    /**
+     * Assign one of this team's *custom* Spatie roles (team_id = this team) to a
+     * member, replacing their current team role. Mirrors changeTeamRole's owner
+     * guard + audit, but the role is a per-team custom role instead of a fixed
+     * enum role. Removes any fixed team role AND any of this team's custom roles
+     * the member already holds, then assigns the new one.
+     */
+    public function assignCustomRole(User $user, Team $team, SpatieRole $customRole): void
+    {
+        // Cast: the retrieved role's team_id may come back as a string on some
+        // drivers, so compare as ints — a role from another team is not assignable.
+        if ((int) $customRole->getAttribute('team_id') !== (int) $team->getKey()) {
+            throw new InvalidArgumentException('The role does not belong to this team.');
+        }
+
+        // The owner manages the team; their role is immutable here (mirrors changeTeamRole).
+        if ($user->getKey() === $team->getAttribute('user_id')) {
+            throw new InvalidArgumentException("The team owner's role cannot be changed.");
+        }
+
+        setPermissionsTeamId($team->getKey());
+
+        $previous = $user->getRoleNames()->first() ?? 'none';
+
+        // Drop any fixed team role...
+        foreach (self::TEAM_ROLES as $existing) {
+            if ($user->hasRole($existing->value)) {
+                $user->removeRole($existing->value);
+            }
+        }
+
+        // ...and any of this team's custom roles the member currently holds.
+        foreach (SpatieRole::where('team_id', $team->getKey())->pluck('name') as $name) {
+            if ($user->hasRole($name)) {
+                $user->removeRole($name);
+            }
+        }
+
+        $newRole = $customRole->getAttribute('name');
+        $user->assignRole($newRole);
+
+        app(AuditLogService::class)->record(
+            'team.role_changed',
+            "Changed {$user->getAttribute('email')} from {$previous} to {$newRole}",
+            $user,
+        );
+    }
+
     public function createDefaultTeamForUser(User $user): Team
     {
         try {
