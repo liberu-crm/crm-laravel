@@ -9,6 +9,7 @@ use App\Filament\Portal\Resources\TicketResource\Pages\ListTickets;
 use App\Filament\Portal\Resources\TicketResource\Pages\ViewTicket;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Rules\ContentMimeType;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -71,6 +72,8 @@ class TicketResource extends Resource
                 ->directory('ticket-attachments')
                 ->visibility('private')
                 ->acceptedFileTypes(['image/png', 'image/jpeg', 'application/pdf'])
+                // Enforce the type by actual content, not the spoofable declared MIME.
+                ->rules([new ContentMimeType(['image/png', 'image/jpeg', 'application/pdf'])])
                 ->maxSize(5120),
         ]);
     }

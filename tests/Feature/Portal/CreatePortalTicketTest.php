@@ -77,7 +77,10 @@ class CreatePortalTicketTest extends TestCase
         Storage::fake('local');
         $team = null;
         $customer = $this->actingTeamedCustomer($team);
-        $file = UploadedFile::fake()->create('screenshot.png', 20, 'image/png');
+        // Real PNG bytes (1x1) so the server-side content-type guard (ContentMimeType)
+        // detects a genuine image/png, not a content-less fake.
+        $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+        $file = UploadedFile::fake()->createWithContent('screenshot.png', $png);
 
         Livewire::test(CreateTicket::class)
             ->fillForm([
