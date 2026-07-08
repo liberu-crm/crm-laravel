@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Sso\ProvisionSsoUser;
+use App\Exceptions\SsoException;
 use App\Models\SsoConnection;
 use App\Models\Team;
 use App\Models\User;
@@ -25,10 +26,11 @@ class SsoLoginController extends Controller
         $connection = $this->enabledConnection($team);
 
         $state = Str::random(40);
-        session(['sso_state' => $state, 'sso_team' => $team->getKey()]);
+        $nonce = Str::random(40);
+        session(['sso_state' => $state, 'sso_nonce' => $nonce, 'sso_team' => $team->getKey()]);
 
         return redirect()->away(
-            $oidc->authorizeUrl($connection, route('sso.callback', $team), $state)
+            $oidc->authorizeUrl($connection, route('sso.callback', $team), $state, $nonce)
         );
     }
 
@@ -37,12 +39,27 @@ class SsoLoginController extends Controller
         // CSRF: the state we minted on redirect must come back unchanged.
         $state = $request->query('state');
         abort_unless(is_string($state) && $state === session('sso_state'), 403, 'Invalid SSO state.');
-        $request->session()->forget(['sso_state', 'sso_team']);
+        $nonce = (string) session('sso_nonce');
+        $request->session()->forget(['sso_state', 'sso_nonce', 'sso_team']);
 
         $connection = $this->enabledConnection($team);
 
-        $accessToken = $oidc->exchangeCode($connection, (string) $request->query('code'), route('sso.callback', $team));
-        $claims = $oidc->userinfo($connection, $accessToken);
+        try {
+            $tokens = $oidc->exchangeCode($connection, (string) $request->query('code'), route('sso.callback', $team));
+
+            // Prefer the cryptographically verified id_token; fall back to userinfo
+            // for providers/flows that don't return one (keeps older configs working).
+            $idToken = $tokens['id_token'] ?? null;
+            if (is_string($idToken) && $idToken !== '') {
+                $claims = $oidc->validateIdToken($connection, $idToken, $nonce);
+            } else {
+                $accessToken = $tokens['access_token'] ?? null;
+                $claims = is_string($accessToken) ? $oidc->userinfo($connection, $accessToken) : [];
+            }
+        } catch (SsoException) {
+            abort(403, 'SSO verification failed.');
+        }
+
         $email = $claims['email'] ?? null;
         $name = $claims['name'] ?? null;
 
