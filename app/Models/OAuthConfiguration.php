@@ -24,6 +24,7 @@ class OAuthConfiguration extends Model
     ];
 
     protected $casts = [
+        'client_secret' => 'encrypted',
         'additional_settings' => 'array',
         'is_active' => 'boolean',
     ];
