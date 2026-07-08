@@ -26,6 +26,8 @@ class AdvertisingAccount extends Model
     ];
 
     protected $casts = [
+        'access_token' => 'encrypted',
+        'refresh_token' => 'encrypted',
         'status' => 'boolean',
         'last_sync' => 'datetime',
         'metadata' => 'array',
