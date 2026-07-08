@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+SSO configuration UX and portal branding polish (v1.1.0-rc.1–rc.3).
+
+- **Portal logo upload** — a team's portal logo can be an uploaded file (public disk), not only
+  a URL; resolution prefers the upload, then a URL, then global config.
+- **SSO connection test** — a Test action on the OIDC connection validates the config by
+  fetching the IdP discovery document before it is enabled.
+- **SAML connection validate** — a Validate action checks the IdP x509 certificate parses, the
+  SSO URL is https, and the entity ID is set (local, no network).
+
 ## 1.0.0
 
 First stable release. Multi-tenant CRM (Laravel 13 / Filament 5 / Jetstream Teams) with
