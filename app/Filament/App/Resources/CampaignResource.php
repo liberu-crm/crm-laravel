@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\CampaignResource\Pages\CreateCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\EditCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
+use App\Filament\App\Resources\CampaignResource\Pages\ViewCampaign;
 use App\Models\Campaign;
 use App\Support\AccessContext;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -121,6 +123,7 @@ class CampaignResource extends Resource
                     ]),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -141,6 +144,7 @@ class CampaignResource extends Resource
         return [
             'index' => ListCampaigns::route('/'),
             'create' => CreateCampaign::route('/create'),
+            'view' => ViewCampaign::route('/{record}'),
             'edit' => EditCampaign::route('/{record}/edit'),
         ];
     }
