@@ -8,10 +8,37 @@ use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use InvalidArgumentException;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class TeamManagementService
 {
+    /** Roles a team admin may assign to a member (super_admin is global, customer is portal). */
+    public const TEAM_ROLES = [Role::Admin, Role::Manager, Role::SalesRep, Role::Free];
+
+    /**
+     * Replace a member's team-scoped role. Removes any of the four team roles the
+     * user holds in this team, then assigns the new one — never touching global
+     * super_admin/customer. Guards the role so the UI Select can't be bypassed.
+     */
+    public function changeTeamRole(User $user, Team $team, Role $role): void
+    {
+        if (! in_array($role, self::TEAM_ROLES, true)) {
+            throw new InvalidArgumentException("Role {$role->value} is not assignable to a team member.");
+        }
+
+        setPermissionsTeamId($team->getKey());
+        SpatieRole::firstOrCreate(['name' => $role->value, 'guard_name' => 'web', 'team_id' => null]);
+
+        foreach (self::TEAM_ROLES as $existing) {
+            if ($user->hasRole($existing->value)) {
+                $user->removeRole($existing->value);
+            }
+        }
+
+        $user->assignRole($role->value);
+    }
+
     public function createDefaultTeamForUser(User $user): Team
     {
         try {
