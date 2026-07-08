@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.5.0
+
+Finish credential encryption, add SSO-logout auditing and audit-log export (v1.5.0-rc.1–rc.3).
+
+- **ConnectedAccount tokens encrypted (Security)** (#540) — social-auth `token` / `secret` /
+  `refresh_token` now encrypted at rest, completing the credential-encryption sweep (SsoConnection,
+  AdvertisingAccount, OAuthConfiguration, Webhook, ConnectedAccount all covered).
+- **SSO logout audit** (#541) — logging out of an SSO session records an `auth.sso_logout` entry,
+  the counterpart to the existing SSO login audit.
+- **Audit log export** (#542) — the app-panel Audit log gains a CSV export (Filament ExportAction),
+  tenant-scoped and admin-gated.
+
+**Operational note:** existing plaintext ConnectedAccount tokens won't decrypt after upgrade —
+users must re-connect their social accounts.
+
 ## 1.4.0
 
 Encrypt stored credentials at rest (v1.4.0-rc.1–rc.3).
