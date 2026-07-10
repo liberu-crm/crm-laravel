@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\TaskResource\Pages\CreateTask;
 use App\Filament\App\Resources\TaskResource\Pages\EditTask;
 use App\Filament\App\Resources\TaskResource\Pages\ListTasks;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Task;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,6 +23,8 @@ use Filament\Tables\Table;
 
 class TaskResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Task::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';

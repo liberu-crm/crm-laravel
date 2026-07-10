@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\NoteResource\Pages\CreateNote;
 use App\Filament\App\Resources\NoteResource\Pages\EditNote;
 use App\Filament\App\Resources\NoteResource\Pages\ListNotes;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Note;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -20,6 +21,8 @@ use Filament\Tables\Table;
 
 class NoteResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Note::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';

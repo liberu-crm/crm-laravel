@@ -26,6 +26,8 @@ class ContactResourceTest extends TestCase
         $team = $user->ownedTeams->first();
         $user->current_team_id = $team->id;
         $user->save();
+        setPermissionsTeamId($team->id);
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)->get('/app/'.$team->id.'/contacts');
         $this->assertTrue(

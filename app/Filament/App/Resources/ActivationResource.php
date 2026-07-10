@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\ActivationResource\Pages\CreateActivation;
 use App\Filament\App\Resources\ActivationResource\Pages\EditActivation;
 use App\Filament\App\Resources\ActivationResource\Pages\ListActivations;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Activation;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -20,6 +21,8 @@ use Filament\Tables\Table;
 
 class ActivationResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Activation::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';

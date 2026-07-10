@@ -8,6 +8,7 @@ use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
 use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
 use App\Filament\App\Resources\CompanyResource\Pages\ViewCompany;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\CompanyExporter;
 use App\Models\Company;
 use App\Support\AccessContext;
@@ -26,6 +27,8 @@ use Filament\Tables\Table;
 
 class CompanyResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Company::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';

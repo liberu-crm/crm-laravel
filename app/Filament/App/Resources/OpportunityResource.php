@@ -6,6 +6,7 @@ use App\Filament\App\Resources\OpportunityResource\Pages\CreateOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\EditOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
 use App\Filament\App\Resources\OpportunityResource\Pages\ViewOpportunity;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\OpportunityExporter;
 use App\Models\Opportunity;
 use App\Support\AccessContext;
@@ -24,6 +25,8 @@ use Filament\Tables\Table;
 
 class OpportunityResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Opportunity::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
