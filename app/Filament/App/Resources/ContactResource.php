@@ -10,6 +10,7 @@ use App\Filament\App\Resources\ContactResource\Pages\EditContact;
 use App\Filament\App\Resources\ContactResource\Pages\ListContacts;
 use App\Filament\App\Resources\ContactResource\Pages\ViewContact;
 use App\Filament\App\Resources\ContactResource\RelationManagers\DocumentsRelationManager;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\ContactExporter;
 use App\Models\Company;
 use App\Models\Contact;
@@ -36,6 +37,8 @@ use Illuminate\Support\Collection;
 
 class ContactResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Contact::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';

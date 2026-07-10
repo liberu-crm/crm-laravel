@@ -6,6 +6,7 @@ use App\Filament\App\Resources\DealResource\Pages\CreateDeal;
 use App\Filament\App\Resources\DealResource\Pages\EditDeal;
 use App\Filament\App\Resources\DealResource\Pages\ListDeals;
 use App\Filament\App\Resources\DealResource\Pages\ViewDeal;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\DealExporter;
 use App\Models\Deal;
 use App\Models\Stage;
@@ -26,6 +27,8 @@ use Filament\Tables\Table;
 
 class DealResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Deal::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
