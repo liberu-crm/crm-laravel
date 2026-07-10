@@ -11,6 +11,7 @@ use Tests\TestCase;
 class ABTestingMailchimpCampaignTest extends TestCase
 {
     public $mockMailChimpService;
+
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -75,6 +76,8 @@ class ABTestingMailchimpCampaignTest extends TestCase
         $team = $user->ownedTeams->first();
         $user->current_team_id = $team->id;
         $user->save();
+        setPermissionsTeamId($team->id);
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)->get('/app/'.$team->id.'/mailchimp-campaigns');
         $this->assertTrue(

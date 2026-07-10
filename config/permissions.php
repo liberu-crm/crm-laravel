@@ -31,7 +31,7 @@ return [
         'advertising' => [
             'advertising_account', 'campaign', 'ad_set', 'ad',
             'marketing_campaign', 'mailchimp_campaign', 'social_media_post',
-            'landing_page', 'form_builder', 'workflow', 'knowledge_base_article',
+            'landing_page', 'form_builder', 'workflow',
             'dashboard_widget', 'call_setting', 'whatsapp_number',
         ],
         'settings' => [
@@ -40,6 +40,11 @@ return [
         ],
         'logs' => [
             'audit_log', 'portal_access_log', 'team_role_log',
+        ],
+        // Staff-authoring resources: minted into the catalog but granted only
+        // per-role (no group-wide grant), so e.g. sales_rep doesn't get them.
+        'staff' => [
+            'knowledge_base_article',
         ],
     ],
 
@@ -55,16 +60,25 @@ return [
                 'settings' => ['view', 'create', 'update', 'delete'],
                 'logs' => ['view'],
             ],
+            // knowledge_base is staff-authoring (not part of a group): admin +
+            // manager only, matching its historical [admin, manager] gate.
+            'resources' => [
+                'knowledge_base_article' => ['view', 'create', 'update', 'delete'],
+            ],
         ],
         'manager' => [
             'groups' => [
                 'core' => ['view', 'create', 'update', 'delete'],
                 'advertising' => ['view', 'create', 'update', 'delete'],
-                'logs' => ['view'],
             ],
+            // territory + knowledge_base CRUD (knowledge_base is already in the
+            // advertising group); portal_access_log view only — the audit_log /
+            // team_role_log gates historically excluded manager, so it does NOT
+            // get those.
             'resources' => [
                 'territory' => ['view', 'create', 'update', 'delete'],
                 'knowledge_base_article' => ['view', 'create', 'update', 'delete'],
+                'portal_access_log' => ['view'],
             ],
         ],
         'sales_rep' => [

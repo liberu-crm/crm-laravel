@@ -9,6 +9,7 @@ use App\Filament\App\Resources\AdvertisingAccountResource\Pages\ViewAdvertisingA
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdSetsRelationManager;
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdsRelationManager;
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\CampaignsRelationManager;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\AdvertisingAccount;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -32,6 +33,8 @@ use Filament\Tables\Table;
 
 class AdvertisingAccountResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = AdvertisingAccount::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';

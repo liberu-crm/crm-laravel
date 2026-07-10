@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\WhatsAppNumberResource\Pages\CreateWhatsAppNumber;
 use App\Filament\App\Resources\WhatsAppNumberResource\Pages\EditWhatsAppNumber;
 use App\Filament\App\Resources\WhatsAppNumberResource\Pages\ListWhatsAppNumbers;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\WhatsAppNumber;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -21,7 +22,14 @@ use Filament\Tables\Table;
 
 class WhatsAppNumberResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = WhatsAppNumber::class;
+
+    public static function permissionResource(): string
+    {
+        return 'whatsapp_number';
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-phone';
 

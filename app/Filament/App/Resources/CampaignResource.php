@@ -8,6 +8,7 @@ use App\Filament\App\Resources\CampaignResource\Pages\CreateCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\EditCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
 use App\Filament\App\Resources\CampaignResource\Pages\ViewCampaign;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\CampaignExporter;
 use App\Models\Campaign;
 use App\Support\AccessContext;
@@ -29,6 +30,8 @@ use Filament\Tables\Table;
 
 class CampaignResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Campaign::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';

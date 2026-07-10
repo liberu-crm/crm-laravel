@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\CreateMarketingCampaign;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\EditMarketingCampaign;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\ListMarketingCampaigns;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\MarketingCampaign;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -22,6 +23,8 @@ use Filament\Tables\Table;
 
 class MarketingCampaignResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = MarketingCampaign::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';

@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LandingPageResource\Pages\CreateLandingPage;
 use App\Filament\App\Resources\LandingPageResource\Pages\EditLandingPage;
 use App\Filament\App\Resources\LandingPageResource\Pages\ListLandingPages;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\LandingPage;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -22,6 +23,8 @@ use Filament\Tables\Table;
 
 class LandingPageResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = LandingPage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';

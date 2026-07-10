@@ -6,13 +6,12 @@ namespace App\Filament\App\Resources;
 
 use App\Enums\Role;
 use App\Filament\App\Resources\TeamRoleLogResource\Pages\ListTeamRoleLogs;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\AuditLog;
-use App\Models\User;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Team-scoped, read-only view of team role changes (the `team.*` audit entries
@@ -22,6 +21,13 @@ use Illuminate\Support\Facades\Auth;
  */
 class TeamRoleLogResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
+    public static function permissionResource(): string
+    {
+        return 'team_role_log';
+    }
+
     protected static ?string $model = AuditLog::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
@@ -31,13 +37,6 @@ class TeamRoleLogResource extends Resource
     protected static ?string $navigationLabel = 'Role change log';
 
     protected static ?string $slug = 'team-role-log';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

@@ -6,6 +6,7 @@ namespace App\Filament\App\Resources;
 
 use App\Enums\Role;
 use App\Filament\App\Resources\TeamMemberResource\Pages\ListTeamMembers;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\TeamManagementService;
@@ -29,6 +30,13 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class TeamMemberResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
+    public static function permissionResource(): string
+    {
+        return 'team_member';
+    }
+
     protected static ?string $model = User::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
@@ -44,13 +52,6 @@ class TeamMemberResource extends Resource
     // tenant scoping. Opt out and scope to the tenant's members manually in
     // getEloquentQuery (else Filament throws resolving the `team` relationship).
     protected static bool $isScopedToTenant = false;
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::Admin, Role::SuperAdmin]);
-    }
 
     #[\Override]
     public static function getEloquentQuery(): Builder

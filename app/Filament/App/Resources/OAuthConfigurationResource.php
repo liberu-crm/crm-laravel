@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\OAuthConfigurationResource\Pages\CreateOAuthConfiguration;
 use App\Filament\App\Resources\OAuthConfigurationResource\Pages\EditOAuthConfiguration;
 use App\Filament\App\Resources\OAuthConfigurationResource\Pages\ListOAuthConfigurations;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\OAuthConfiguration;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -20,6 +21,13 @@ use Filament\Tables\Table;
 
 class OAuthConfigurationResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
+    public static function permissionResource(): string
+    {
+        return 'oauth_configuration';
+    }
+
     protected static ?string $model = OAuthConfiguration::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';
