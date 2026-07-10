@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.12.0
+
+Finish masking-gated exports and add an ad-account detail view (v1.12.0-rc.1–rc.3).
+
+- **Opportunity / AdSet CSV export** (#568, #569) — the masking-gated CSV export now
+  covers Opportunity (`deal_size`) and AdSet (`budget`), both hidden for field-masked
+  (`free`) roles so a CSV can't bypass masking. AdSet was the last masked money/PII
+  record without an export — every masked record is now exportable and every export is
+  gated off for `free`.
+- **AdvertisingAccount detail view** (#570) — a read-only View page for the app-panel
+  ad accounts. Its infolist renders only the non-secret display fields (name, platform,
+  account_id, status, last sync, created) and **deliberately omits the encrypted
+  `access_token` / `refresh_token`**, so the detail view is never a secret-disclosure
+  surface.
+
 ## 1.11.0
 
 Upload-security hardening and Campaign export (v1.11.0-rc.1–rc.2).
