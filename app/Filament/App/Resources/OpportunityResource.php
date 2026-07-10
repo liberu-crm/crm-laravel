@@ -6,11 +6,13 @@ use App\Filament\App\Resources\OpportunityResource\Pages\CreateOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\EditOpportunity;
 use App\Filament\App\Resources\OpportunityResource\Pages\ListOpportunities;
 use App\Filament\App\Resources\OpportunityResource\Pages\ViewOpportunity;
+use App\Filament\Exports\OpportunityExporter;
 use App\Models\Opportunity;
 use App\Support\AccessContext;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
@@ -67,6 +69,12 @@ class OpportunityResource extends Resource
                 TextColumn::make('closing_date')
                     ->searchable()
                     ->sortable(),
+            ])
+            ->headerActions([
+                // Hidden for masked (`free`) roles so a CSV can't bypass deal_size masking.
+                ExportAction::make()
+                    ->exporter(OpportunityExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->filters([
                 //
