@@ -39,6 +39,8 @@ class LeadManagementUITest extends TestCase
     public function test_lead_index_page_loads(): void
     {
         $team = $this->user->ownedTeams->first();
+        setPermissionsTeamId($team->id);
+        $this->user->assignRole('admin');
         $response = $this->actingAs($this->user)->get('/app/'.$team->id.'/leads');
         $this->assertTrue(
             in_array($response->status(), [200, 302]),

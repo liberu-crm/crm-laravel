@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\MessageResource\Pages\CreateMessage;
 use App\Filament\App\Resources\MessageResource\Pages\EditMessage;
 use App\Filament\App\Resources\MessageResource\Pages\ListMessages;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Message;
 use App\Services\UnifiedHelpDeskService;
 use Exception;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Cache;
 
 class MessageResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     // protected static ?string $model = Message::class;
     protected static ?string $model = Message::class;
 

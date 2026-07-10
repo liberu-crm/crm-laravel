@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LeadResource\Pages;
 use App\Filament\App\Resources\LeadResource\Pages\LeadQualityReport;
 use App\Filament\App\Resources\LeadResource\Pages\ViewLead;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\LeadExporter;
 use App\Models\Lead;
 use App\Support\AccessContext;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LeadResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Lead::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-funnel';

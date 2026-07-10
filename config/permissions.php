@@ -73,9 +73,11 @@ return [
                 'advertising' => ['view'],
             ],
         ],
+        // free is a limited editor of core records: it can view/create/update
+        // (sensitive money/PII stays masked via MasksFields), but not delete.
         'free' => [
             'groups' => [
-                'core' => ['view'],
+                'core' => ['view', 'create', 'update'],
             ],
         ],
     ],

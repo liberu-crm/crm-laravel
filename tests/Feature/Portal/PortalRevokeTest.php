@@ -96,6 +96,10 @@ class PortalRevokeTest extends TestCase
 
         [$contact, $user] = $this->provision($team, 'lead@example.com');
 
+        // provision() resets the permission team context to null; restore it so
+        // the manager's core-CRM permissions resolve for the ListContacts mount.
+        setPermissionsTeamId($team->id);
+
         Livewire::test(ListContacts::class)
             ->callTableAction('revokePortalAccess', $contact);
 

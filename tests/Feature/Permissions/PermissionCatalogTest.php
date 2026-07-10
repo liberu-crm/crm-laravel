@@ -85,13 +85,17 @@ class PermissionCatalogTest extends TestCase
         $this->assertFalse($rep->hasPermissionTo('view_audit_log'));
     }
 
-    public function test_free_is_view_only_core(): void
+    public function test_free_is_a_limited_core_editor(): void
     {
         PermissionCatalog::sync();
         $free = $this->role('free');
 
+        // Limited editor of core records: view/create/update, no delete, no
+        // non-core resources.
         $this->assertTrue($free->hasPermissionTo('view_contact'));
-        $this->assertFalse($free->hasPermissionTo('create_contact'));
+        $this->assertTrue($free->hasPermissionTo('create_contact'));
+        $this->assertTrue($free->hasPermissionTo('update_contact'));
+        $this->assertFalse($free->hasPermissionTo('delete_contact'));
         $this->assertFalse($free->hasPermissionTo('view_campaign'));
     }
 
