@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\CreateSocialMediaPost;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\EditSocialMediaPost;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\ListSocialMediaPosts;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookAdsService;
 use App\Services\LinkedInAdsService;
@@ -34,6 +35,8 @@ use Illuminate\Support\Facades\Log;
 
 class SocialMediaPostResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = SocialMediaPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-share';
@@ -116,7 +119,7 @@ class SocialMediaPostResource extends Resource
                         Section::make('Analytics')
                             ->schema([
                                 Placeholder::make('Analytics')
-                                    ->content(fn(SocialMediaPost $record) => view('filament.components.social-media-analytics', [
+                                    ->content(fn (SocialMediaPost $record) => view('filament.components.social-media-analytics', [
                                         'post' => $record,
                                         'detailed' => true,
                                     ])),

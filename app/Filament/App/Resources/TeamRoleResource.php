@@ -8,6 +8,7 @@ use App\Enums\Role;
 use App\Filament\App\Resources\TeamRoleResource\Pages\CreateTeamRole;
 use App\Filament\App\Resources\TeamRoleResource\Pages\EditTeamRole;
 use App\Filament\App\Resources\TeamRoleResource\Pages\ListTeamRoles;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -32,6 +33,13 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class TeamRoleResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
+    public static function permissionResource(): string
+    {
+        return 'team_role';
+    }
+
     protected static ?string $model = SpatieRole::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
@@ -54,21 +62,26 @@ class TeamRoleResource extends Resource
      */
     public static function grantablePermissions(): array
     {
-        return Permission::query()
+        $query = Permission::query()
             ->where('guard_name', 'web')
             ->whereNotIn('name', ['manage_roles', 'manage_permissions', 'manage_users'])
             ->where('name', 'not like', '%_role%')
-            ->where('name', 'not like', '%_permission%')
+            ->where('name', 'not like', '%_permission%');
+
+        // Security / settings / audit resources are never grantable to a custom
+        // team role — a team admin can't hand a member SSO/SAML/OAuth/webhook
+        // config, audit-log or team-member access. (team_role[_log] are already
+        // excluded by the %_role% filter above.)
+        foreach (['sso_connection', 'saml_connection', 'oauth_configuration',
+            'webhook_delivery', 'audit_log', 'team_member', 'portal_branding',
+            'portal_access_log'] as $securityToken) {
+            $query->where('name', 'not like', '%_'.$securityToken);
+        }
+
+        return $query
             ->orderBy('name')
             ->pluck('name', 'name')
             ->all();
-    }
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
     }
 
     #[\Override]

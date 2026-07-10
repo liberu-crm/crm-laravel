@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\App\Resources\CampaignResource;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
 use App\Filament\Exports\CampaignExporter;
 use App\Models\User;
-use App\Support\AccessContext;
 use Database\Seeders\RolesSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -50,16 +50,11 @@ class CampaignExportTest extends TestCase
             ->assertTableHeaderActionsExistInOrder(['export']);
     }
 
-    public function test_free_role_export_action_is_hidden(): void
+    public function test_free_role_cannot_access_campaigns(): void
     {
         $this->actAs('free');
-        $this->assertTrue(AccessContext::shouldMaskFields());
-
-        $component = Livewire::test(ListCampaigns::class)->assertOk();
-        $export = collect($component->instance()->getTable()->getHeaderActions())
-            ->first(fn ($action): bool => $action->getName() === 'export');
-
-        $this->assertNotNull($export);
-        $this->assertFalse($export->isVisible());
+        // free (advertising = no access under enforcement) can't reach the
+        // Campaign list at all, so there is no export path to gate.
+        $this->assertFalse(CampaignResource::canViewAny());
     }
 }

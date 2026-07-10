@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\TerritoryResource\Pages\CreateTerritory;
 use App\Filament\App\Resources\TerritoryResource\Pages\EditTerritory;
 use App\Filament\App\Resources\TerritoryResource\Pages\ListTerritories;
 use App\Filament\App\Resources\TerritoryResource\Pages\ViewTerritory;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Team;
 use App\Models\Territory;
-use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -23,7 +22,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Manage a team's sales territories and their members (G3 ABAC foundation).
@@ -31,6 +29,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class TerritoryResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Territory::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map';
@@ -40,13 +40,6 @@ class TerritoryResource extends Resource
     protected static ?string $navigationLabel = 'Territories';
 
     protected static ?string $slug = 'territories';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin, Role::Manager]);
-    }
 
     #[\Override]
     public static function form(Schema $schema): Schema

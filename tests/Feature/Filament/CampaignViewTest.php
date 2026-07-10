@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\App\Resources\CampaignResource;
 use App\Filament\App\Resources\CampaignResource\Pages\ViewCampaign;
 use App\Models\Campaign;
 use App\Models\User;
@@ -48,14 +49,13 @@ class CampaignViewTest extends TestCase
             ->assertOk();
     }
 
-    public function test_free_role_sees_masked_budget(): void
+    public function test_free_role_cannot_view_campaigns(): void
     {
-        [, $campaign] = $this->setUpViewer('free');
+        // free has no advertising access under enforcement, so it can't reach a
+        // Campaign detail view at all (stronger than budget masking).
+        $this->setUpViewer('free');
 
-        Livewire::test(ViewCampaign::class, ['record' => $campaign->getKey()])
-            ->assertOk()
-            ->assertSee('[hidden]')
-            ->assertDontSee('50,000');
+        $this->assertFalse(CampaignResource::canViewAny());
     }
 
     public function test_manager_sees_real_budget(): void

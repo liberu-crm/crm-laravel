@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\KnowledgeBaseArticleResource\Pages\CreateKnowledgeBaseArticle;
 use App\Filament\App\Resources\KnowledgeBaseArticleResource\Pages\EditKnowledgeBaseArticle;
 use App\Filament\App\Resources\KnowledgeBaseArticleResource\Pages\ListKnowledgeBaseArticles;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\KnowledgeBaseArticle;
-use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -21,7 +20,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Staff-facing authoring for the customer portal knowledge base (#483 is the
@@ -32,6 +30,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class KnowledgeBaseArticleResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = KnowledgeBaseArticle::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-book-open';
@@ -41,13 +41,6 @@ class KnowledgeBaseArticleResource extends Resource
     protected static ?string $navigationLabel = 'Knowledge base';
 
     protected static ?string $slug = 'knowledge-base';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin, Role::Manager]);
-    }
 
     #[\Override]
     public static function form(Schema $schema): Schema

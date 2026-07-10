@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdResource\Pages\CreateAd;
 use App\Filament\App\Resources\AdResource\Pages\EditAd;
 use App\Filament\App\Resources\AdResource\Pages\ListAds;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Ad;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -23,6 +24,8 @@ use Filament\Tables\Table;
 
 class AdResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Ad::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';

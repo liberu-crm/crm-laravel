@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\WebhookDeliveryResource\Pages\ListWebhookDeliveries;
-use App\Models\User;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\WebhookDelivery;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Team-scoped, read-only delivery log for outgoing webhooks. WebhookDelivery is
@@ -22,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class WebhookDeliveryResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = WebhookDelivery::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-on-square-stack';
@@ -31,13 +31,6 @@ class WebhookDeliveryResource extends Resource
     protected static ?string $navigationLabel = 'Webhook deliveries';
 
     protected static ?string $slug = 'webhook-deliveries';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

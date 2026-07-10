@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\App\Resources\CampaignResource;
 use App\Filament\App\Resources\CampaignResource\Pages\EditCampaign;
 use App\Filament\App\Resources\CampaignResource\Pages\ListCampaigns;
 use App\Models\Campaign;
@@ -69,13 +70,14 @@ class CampaignBudgetMaskingTest extends TestCase
             ->assertDontSee('50,000');
     }
 
-    public function test_free_user_budget_field_is_hidden_on_edit(): void
+    public function test_free_user_cannot_edit_campaigns(): void
     {
+        // free has no advertising access under enforcement — it can't reach the
+        // Campaign edit form (stronger than the budget field being masked).
         [, $campaign] = $this->setUpViewer('free');
 
-        Livewire::test(EditCampaign::class, ['record' => $campaign->getKey()])
-            ->assertFormFieldIsHidden('budget')
-            ->assertSee('[hidden]');
+        $this->assertFalse(CampaignResource::canViewAny());
+        $this->assertFalse(CampaignResource::canEdit($campaign));
     }
 
     public function test_manager_sees_the_real_budget_on_edit(): void

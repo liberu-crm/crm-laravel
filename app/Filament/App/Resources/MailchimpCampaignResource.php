@@ -6,6 +6,7 @@ use App\Filament\App\Resources\MailchimpCampaignResource\Pages\CreateMailchimpCa
 use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ListMailchimpCampaigns;
 use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewABTestResults;
 use App\Filament\App\Resources\MailchimpCampaignResource\Pages\ViewMailchimpCampaign;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\MailchimpCampaign;
 use App\Services\MailChimpService;
 use Filament\Actions\Action;
@@ -21,6 +22,8 @@ use Filament\Tables\Table;
 
 class MailchimpCampaignResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = MailchimpCampaign::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
