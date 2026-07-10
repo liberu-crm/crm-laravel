@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdSetResource\Pages\CreateAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\EditAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\ListAdSets;
+use App\Filament\Exports\AdSetExporter;
 use App\Models\AdSet;
 use App\Support\AccessContext;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -108,6 +110,12 @@ class AdSetResource extends Resource
                         'archived' => 'Archived',
                         'deleted' => 'Deleted',
                     ]),
+            ])
+            ->headerActions([
+                // Hidden for masked (`free`) roles so a CSV can't bypass budget masking.
+                ExportAction::make()
+                    ->exporter(AdSetExporter::class)
+                    ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
                 EditAction::make(),
