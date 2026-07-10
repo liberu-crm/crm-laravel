@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\AuditLogResource\Pages\ListAuditLogs;
 use App\Filament\App\Resources\AuditLogResource\Pages\ViewAuditLog;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\AuditLogExporter;
 use App\Models\AuditLog;
-use App\Models\User;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
@@ -28,6 +27,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class AuditLogResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = AuditLog::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
@@ -37,13 +38,6 @@ class AuditLogResource extends Resource
     protected static ?string $navigationLabel = 'Audit log';
 
     protected static ?string $slug = 'audit-log';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

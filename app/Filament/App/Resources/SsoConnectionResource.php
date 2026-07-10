@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Exceptions\SsoException;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\CreateSsoConnection;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\EditSsoConnection;
 use App\Filament\App\Resources\SsoConnectionResource\Pages\ListSsoConnections;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\SsoConnection;
-use App\Models\User;
 use App\Services\Sso\OidcClient;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -24,7 +23,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * A team admin manages their team's SSO (OIDC) connection (G2 slice 1). Team is
@@ -34,6 +32,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class SsoConnectionResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = SsoConnection::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-finger-print';
@@ -43,13 +43,6 @@ class SsoConnectionResource extends Resource
     protected static ?string $navigationLabel = 'Single sign-on';
 
     protected static ?string $slug = 'sso';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

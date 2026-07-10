@@ -12,30 +12,31 @@ use App\Filament\App\Resources\WhatsAppNumberResource;
 use App\Filament\App\Resources\WorkflowResource;
 use App\Models\Team;
 use App\Models\User;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class OpsResourceMountTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function actingManagerWithTeam(): Team
+    private function actingWithTeam(string $role): Team
     {
-        Role::findOrCreate('manager', 'web');
+        $this->seed(RolesSeeder::class);
         $user = User::factory()->withPersonalTeam()->create(['email_verified_at' => now()]);
         $team = $user->ownedTeams->first();
         $user->current_team_id = $team->id;
         $user->save();
-        $user->assignRole('manager');
+        setPermissionsTeamId($team->id);
+        $user->assignRole($role);
         $this->actingAs($user);
 
         return $team;
     }
 
-    private function assertResourceMounts(string $resource): void
+    private function assertResourceMounts(string $resource, string $role = 'manager'): void
     {
-        $team = $this->actingManagerWithTeam();
+        $team = $this->actingWithTeam($role);
         $url = '/app/'.$team->id.'/'.$resource::getSlug();
         $this->get($url)->assertStatus(200);
     }
@@ -67,7 +68,9 @@ class OpsResourceMountTest extends TestCase
 
     public function test_oauth_configuration_resource_index_mounts(): void
     {
-        $this->assertResourceMounts(OAuthConfigurationResource::class);
+        // OAuth config holds client secrets — a security/settings resource that
+        // is admin-only under permission enforcement.
+        $this->assertResourceMounts(OAuthConfigurationResource::class, 'admin');
     }
 
     public function test_call_setting_resource_index_mounts(): void

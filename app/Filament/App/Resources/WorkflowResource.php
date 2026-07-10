@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\WorkflowResource\Pages\CreateWorkflow;
 use App\Filament\App\Resources\WorkflowResource\Pages\EditWorkflow;
 use App\Filament\App\Resources\WorkflowResource\Pages\ListWorkflows;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Workflow;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -21,6 +22,8 @@ use Filament\Tables\Table;
 
 class WorkflowResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = Workflow::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document';

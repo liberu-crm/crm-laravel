@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\CallSettingResource\Pages\CreateCallSetting;
 use App\Filament\App\Resources\CallSettingResource\Pages\EditCallSetting;
 use App\Filament\App\Resources\CallSettingResource\Pages\ListCallSettings;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\CallSetting;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -19,6 +20,8 @@ use Filament\Tables\Table;
 
 class CallSettingResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = CallSetting::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-bottom-center';

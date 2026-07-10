@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\App\Resources\AdSetResource;
 use App\Filament\App\Resources\AdSetResource\Pages\ListAdSets;
 use App\Filament\Exports\AdSetExporter;
 use App\Models\User;
-use App\Support\AccessContext;
 use Database\Seeders\RolesSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,14 +48,11 @@ class AdSetExportTest extends TestCase
             ->assertTableHeaderActionsExistInOrder(['export']);
     }
 
-    public function test_free_role_export_action_is_hidden(): void
+    public function test_free_role_cannot_access_ad_sets(): void
     {
         $this->actAs('free');
-        $this->assertTrue(AccessContext::shouldMaskFields());
-        $component = Livewire::test(ListAdSets::class)->assertOk();
-        $export = collect($component->instance()->getTable()->getHeaderActions())
-            ->first(fn ($action): bool => $action->getName() === 'export');
-        $this->assertNotNull($export);
-        $this->assertFalse($export->isVisible());
+        // free (advertising = no access under enforcement) can't reach the AdSet
+        // list at all, so there is no export path to gate.
+        $this->assertFalse(AdSetResource::canViewAny());
     }
 }

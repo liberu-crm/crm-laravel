@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\SamlConnectionResource\Pages\CreateSamlConnection;
 use App\Filament\App\Resources\SamlConnectionResource\Pages\EditSamlConnection;
 use App\Filament\App\Resources\SamlConnectionResource\Pages\ListSamlConnections;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\SamlConnection;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -21,7 +20,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * A team admin manages their team's SAML (SP<->IdP) connection (G2 SAML slice 1).
@@ -30,6 +28,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class SamlConnectionResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = SamlConnection::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-identification';
@@ -39,13 +39,6 @@ class SamlConnectionResource extends Resource
     protected static ?string $navigationLabel = 'SAML';
 
     protected static ?string $slug = 'saml';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources;
 
-use App\Enums\Role;
 use App\Filament\App\Resources\PortalBrandingResource\Pages\EditPortalBranding;
 use App\Filament\App\Resources\PortalBrandingResource\Pages\ListPortalBranding;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Team;
-use App\Models\User;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
@@ -18,7 +17,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * A team admin edits their own team's customer-portal branding (name + logo).
@@ -27,6 +25,13 @@ use Illuminate\Support\Facades\Auth;
  */
 class PortalBrandingResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
+    public static function permissionResource(): string
+    {
+        return 'portal_branding';
+    }
+
     protected static ?string $model = Team::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
@@ -38,13 +43,6 @@ class PortalBrandingResource extends Resource
     protected static ?string $slug = 'portal-branding';
 
     protected static bool $isScopedToTenant = false;
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->hasRole([Role::SuperAdmin, Role::Admin]);
-    }
 
     #[\Override]
     public static function canCreate(): bool

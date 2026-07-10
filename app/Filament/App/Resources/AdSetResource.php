@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdSetResource\Pages\CreateAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\EditAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\ListAdSets;
+use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\AdSetExporter;
 use App\Models\AdSet;
 use App\Support\AccessContext;
@@ -26,6 +27,8 @@ use Filament\Tables\Table;
 
 class AdSetResource extends Resource
 {
+    use EnforcesResourcePermissions;
+
     protected static ?string $model = AdSet::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
