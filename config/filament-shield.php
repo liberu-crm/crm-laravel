@@ -57,7 +57,10 @@ return [
     'super_admin' => [
         'enabled' => true,
         'name' => 'super_admin',
-        'define_via_gate' => false,
+        // Registers a Gate::before that grants super_admin every ability, so
+        // permission-gated resources never lock out super_admin (incl. new
+        // resources/permissions added later). See PermissionCatalog / F4 slice 3.
+        'define_via_gate' => true,
         'intercept_gate' => 'before',
     ],
 
