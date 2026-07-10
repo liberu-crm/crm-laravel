@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.13.0
+
+Role enforcement (F4) — make per-team roles actually gate the app panel
+(v1.13.0-rc.1–rc.3).
+
+- **Permission foundation (#572)** — a real permission catalog
+  (`{action}_{resource}` for ~34 resources) and a system-role → permission
+  matrix, seeded on fresh installs and backfilled on existing deploys by an
+  idempotent migration so no role loses access. `super_admin` gains a global
+  gate bypass. The permission table previously seeded empty (a dead generator),
+  so custom roles couldn't grant anything and nothing enforced them.
+- **Core-CRM enforcement (#575)** — a reusable `EnforcesResourcePermissions`
+  trait gates view/create/update/delete on the nine core records
+  (Contact, Deal, Lead, Company, Opportunity, Task, Note, Message, Activation).
+  `free` becomes a limited editor (view/create/update, no delete) with sensitive
+  fields still masked; other roles are scoped per the matrix.
+- **All-resource enforcement (#576)** — the trait now covers the remaining 25
+  resources: advertising/marketing (previously open to every role) and the
+  settings/security/log resources (migrated off ad-hoc `hasRole` gates onto one
+  permission model). Custom per-team roles finally restrict access, and
+  security/settings/audit permissions can't be granted to a custom role.
+
+**Operational note:** run migrations on upgrade — the role-permission seed must
+apply before enforcement takes effect, or non-super-admins lose access.
+
 ## 1.12.0
 
 Finish masking-gated exports and add an ad-account detail view (v1.12.0-rc.1–rc.3).
