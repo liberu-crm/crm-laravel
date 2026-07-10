@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages\CreateAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages\EditAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\Pages\ListAdvertisingAccounts;
+use App\Filament\App\Resources\AdvertisingAccountResource\Pages\ViewAdvertisingAccount;
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdSetsRelationManager;
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\AdsRelationManager;
 use App\Filament\App\Resources\AdvertisingAccountResource\RelationManagers\CampaignsRelationManager;
@@ -13,6 +14,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\TextInput;
@@ -118,6 +120,7 @@ class AdvertisingAccountResource extends Resource
                 // BooleanFilter::make('status'),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 Action::make('refresh_token')
@@ -146,6 +149,7 @@ class AdvertisingAccountResource extends Resource
     {
         return [
             'index' => ListAdvertisingAccounts::route('/'),
+            'view' => ViewAdvertisingAccount::route('/{record}'),
             'create' => CreateAdvertisingAccount::route('/create'),
             'edit' => EditAdvertisingAccount::route('/{record}/edit'),
         ];
