@@ -100,6 +100,16 @@ class SsoLoginController extends Controller
         // Marks this session as SSO-established so enforcement doesn't bounce it.
         $request->session()->put('sso_authenticated', true);
 
+        // Persist what RP-initiated single-logout needs: the id_token (as the
+        // id_token_hint) and the IdP end-session endpoint. Stored only when both
+        // exist — an IdP without an end_session_endpoint falls back to local logout.
+        $idToken = $tokens['id_token'] ?? null;
+        $endSession = $oidc->discover($connection)['end_session_endpoint'] ?? null;
+        if (is_string($idToken) && $idToken !== '' && is_string($endSession) && $endSession !== '') {
+            $request->session()->put('sso_id_token', $idToken);
+            $request->session()->put('sso_end_session_endpoint', $endSession);
+        }
+
         return redirect()->intended('/app');
     }
 

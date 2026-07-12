@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
 use App\Observers\AuditObserver;
+use App\Support\SsoLogoutState;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
     #[\Override]
     public function register(): void
     {
-        $this->app->singleton(ModuleManager::class, fn (): \App\Modules\ModuleManager => new ModuleManager());
+        $this->app->singleton(ModuleManager::class, fn (): ModuleManager => new ModuleManager);
+        // Request-scoped holder for the SSO single-logout redirect URL.
+        $this->app->singleton(SsoLogoutState::class);
         $this->app->register(ModuleServiceProvider::class);
     }
 
