@@ -12,9 +12,13 @@ return [
 
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    // For production, replace '*' with your specific frontend origins.
-    // e.g. [env('FRONTEND_URL', 'https://app.example.com')]
-    'allowed_origins' => [env('FRONTEND_URL', '*')],
+    // Explicit allowlist only — never '*' (this config sets supports_credentials,
+    // and a wildcard origin with credentials is invalid + unsafe). Comma-separate
+    // multiple origins in CORS_ALLOWED_ORIGINS; empty = no cross-origin access.
+    'allowed_origins' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', (string) env('FRONTEND_URL', ''))),
+    ))),
 
     'allowed_origins_patterns' => [],
 
