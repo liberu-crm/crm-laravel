@@ -39,8 +39,12 @@ Route::get('/sso/{team}/callback', [SsoLoginController::class, 'callback'])->nam
 // SAML SP metadata (the XML handed to a team's IdP).
 Route::get('/saml/{team}/metadata', SamlMetadataController::class)->name('saml.metadata');
 // Per-team SAML login — SP-initiated AuthnRequest, unauthenticated; request id
-// stored in the session for InResponseTo validation at the ACS (later slice).
+// stored in the session for InResponseTo validation at the ACS.
 Route::get('/saml/{team}/login', [SamlLoginController::class, 'redirect'])->name('saml.login');
+// Assertion Consumer Service — the IdP POSTs the signed SAMLResponse here.
+// CSRF-exempt (cross-site IdP POST); the signed assertion + InResponseTo are the
+// protection instead. See bootstrap/app.php for the CSRF exception.
+Route::post('/saml/{team}/acs', [SamlLoginController::class, 'acs'])->name('saml.acs');
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts
