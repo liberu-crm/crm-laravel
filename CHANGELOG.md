@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.14.0
+
+Detail Views for ad sets, tasks, and notes (v1.14.0-rc.1–rc.3).
+
+- **AdSet / Task / Note detail View** (#578, #579, #580) — each app-panel resource
+  gains a read-only View page (previously List/Create/Edit only). AdSet's infolist
+  **masks `budget`** with the same gate as its table column, so the detail view
+  isn't a masking bypass. Access is permission-gated by the role-enforcement trait.
+
 ## 1.13.0
 
 Role enforcement (F4) — make per-team roles actually gate the app panel
