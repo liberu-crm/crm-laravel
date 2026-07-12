@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.16.0
+
+Detail Views for the advertising records (v1.16.0-rc.1–rc.3).
+
+- **Ad / MarketingCampaign / SocialMediaPost detail View** (#588, #589, #590) —
+  each app-panel resource gains a read-only View page (previously List/Create/Edit
+  only), completing detail-view coverage across the advertising/marketing records
+  (alongside Campaign, AdSet, and AdvertisingAccount). Access is permission-gated
+  by the role-enforcement trait.
+
 ## 1.15.0
 
 SAML SSO login — end-to-end (v1.15.0-rc.1–rc.3).
