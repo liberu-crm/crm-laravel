@@ -20,8 +20,8 @@ class ContactListController extends Controller
                 ->where('name', 'like', '%'.$term.'%')
                 ->orWhere('last_name', 'like', '%'.$term.'%')
                 // email is encrypted — exact match via the blind index only.
+                // phone_number is encrypted too and not searchable.
                 ->orWhere('email_hash', Contact::hashEmail($term))
-                ->orWhere('phone_number', 'like', '%'.$term.'%')
                 ->orWhere('company_size', 'like', '%'.$term.'%')
                 ->orWhere('industry', 'like', '%'.$term.'%')
             );

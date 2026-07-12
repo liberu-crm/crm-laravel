@@ -71,13 +71,15 @@ class CompanyMaskingUiTest extends TestCase
             ->assertCanNotSeeTableRecords([$company]);
     }
 
-    public function test_manager_can_find_a_company_by_searching_its_phone(): void
+    public function test_phone_is_not_searchable_now_that_it_is_encrypted(): void
     {
+        // phone_number is encrypted at rest with no blind index, so it is no
+        // longer searchable for anyone (not just masked roles).
         [, $company] = $this->setUpViewer('manager');
 
         Livewire::test(ListCompanies::class)
             ->searchTable('+15551234567')
-            ->assertCanSeeTableRecords([$company]);
+            ->assertCanNotSeeTableRecords([$company]);
     }
 
     public function test_free_user_sees_masked_phone_in_the_edit_form(): void
