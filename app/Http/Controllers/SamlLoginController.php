@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Sso\ProvisionSsoUser;
 use App\Models\SamlConnection;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\Sso\SamlSettings;
+use App\Services\TeamManagementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use OneLogin\Saml2\Auth as SamlAuth;
 
 /**
@@ -62,10 +66,32 @@ class SamlLoginController extends Controller
         abort_if($auth->getErrors() !== [] || ! $auth->isAuthenticated(), 403, 'SAML verification failed.');
 
         $email = $auth->getNameId();
+        $attributes = $auth->getAttributes();
         $user = is_string($email) ? User::where('email', $email)->first() : null;
 
-        // Existing members only in this slice — no just-in-time provisioning yet.
-        abort_unless($user instanceof User && $user->belongsToTeam($team), 403, 'No access for this account.');
+        if (! ($user instanceof User && $user->belongsToTeam($team))) {
+            // Not already a member — provision just-in-time if the connection
+            // allows it and the email is in the allowed domain, else deny.
+            abort_unless(is_string($email) && $this->jitAllowed($connection, $email), 403, 'No access for this account.');
+            $name = $attributes['name'][0] ?? $attributes['displayName'][0] ?? null;
+            $user = app(ProvisionSsoUser::class)($team, $email, is_string($name) ? $name : null);
+        }
+
+        // Map the IdP's groups attribute to a team role, if the connection maps
+        // one and it differs (avoids re-roling + auditing every login; the owner
+        // is left as-is — changeTeamRole throws, caught).
+        $groups = $attributes['groups'] ?? [];
+        $mappedRole = is_array($groups) ? $connection->roleForGroups($groups) : null;
+        if ($mappedRole !== null) {
+            setPermissionsTeamId($team->getKey());
+            if (! $user->hasRole($mappedRole->value)) {
+                try {
+                    app(TeamManagementService::class)->changeTeamRole($user, $team, $mappedRole);
+                } catch (InvalidArgumentException) {
+                    // Owner or otherwise unassignable — keep the existing role.
+                }
+            }
+        }
 
         $user->forceFill(['current_team_id' => $team->getKey()])->save();
         Auth::login($user);
@@ -74,6 +100,20 @@ class SamlLoginController extends Controller
         $request->session()->put('sso_authenticated', true);
 
         return redirect()->intended('/app');
+    }
+
+    private function jitAllowed(SamlConnection $connection, string $email): bool
+    {
+        if (! $connection->getAttribute('allow_jit')) {
+            return false;
+        }
+
+        $domain = $connection->getAttribute('allowed_domain');
+        if (blank($domain)) {
+            return true;
+        }
+
+        return Str::endsWith(Str::lower($email), '@'.Str::lower((string) $domain));
     }
 
     private function enabledConnection(Team $team): SamlConnection
