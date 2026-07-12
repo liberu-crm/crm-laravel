@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.0.0
+
+Feature-complete milestone. PII encrypted at rest (v2.0.0-rc.1–rc.2), and the
+full scoped roadmap is done.
+
+- **PII encrypt-at-rest (Security)** (#596, #598) — the masked PII columns are now
+  encrypted at rest: `Contact.email` (with a deterministic `email_hash` blind
+  index that carries equality lookups + uniqueness, since encrypted ciphertext
+  can't be uniquely indexed) and `Contact.phone_number` + `Company.phone_number`
+  (encrypted, no blind index). Email search is now exact-match; phone search is
+  dropped. Money columns are intentionally left plaintext — they need database
+  sort/range/aggregation for forecasting, and masking already hides them from the
+  `free` role. An idempotent backfill encrypts existing rows on upgrade.
+
+Since 1.0.0, this release also completed: the customer portal, SSO (OIDC + SAML,
+login **and** single-logout), per-team role enforcement (F4), attribute-based
+access control (territory scoping + field masking), and detail views / exports
+across the CRM.
+
+**Operational note:** run migrations on upgrade — existing email/phone rows are
+encrypted in place. `APP_KEY` rotation orphans the email blind index (and the
+ciphertext); re-run the backfill after a rotation.
+
 ## 1.17.0
 
 SSO single-logout — OIDC and SAML (v1.17.0-rc.1–rc.2).
