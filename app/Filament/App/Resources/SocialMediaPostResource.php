@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\CreateSocialMediaPost;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\EditSocialMediaPost;
 use App\Filament\App\Resources\SocialMediaPostResource\Pages\ListSocialMediaPosts;
+use App\Filament\App\Resources\SocialMediaPostResource\Pages\ViewSocialMediaPost;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\SocialMediaPost;
 use App\Services\FacebookAdsService;
@@ -198,6 +199,7 @@ class SocialMediaPostResource extends Resource
     {
         return [
             'index' => ListSocialMediaPosts::route('/'),
+            'view' => ViewSocialMediaPost::route('/{record}'),
             'create' => CreateSocialMediaPost::route('/create'),
             'edit' => EditSocialMediaPost::route('/{record}/edit'),
         ];
