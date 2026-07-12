@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.1
+
+Security hardening from an OWASP audit (v2.0.1-rc.1–rc.3).
+
+- **SSRF guard on OIDC discovery (Security)** (#600) — `OidcClient` fetched the
+  admin-configured issuer and every endpoint the discovery document advertises
+  with no host restriction. A new `SsrfGuard` now requires https and blocks
+  localhost / private / reserved / link-local addresses (cloud metadata, internal
+  network) before each outbound request — closing an SSRF that could also
+  exfiltrate the `client_secret` via a hostile `token_endpoint`.
+- **CORS allowlist + SSO route throttling (Security)** (#601) — CORS
+  `allowed_origins` no longer defaults to `*` (it set credentials too); it is now
+  an explicit allowlist. The unauthenticated, crypto-heavy SSO/SAML routes are
+  rate-limited (30/min per IP).
+- **Removed a dead unauthorized controller (Security)** (#602) — an unrouted
+  `DocumentController` with no authorization checks (a latent IDOR) was deleted.
+
 ## 2.0.0
 
 Feature-complete milestone. PII encrypted at rest (v2.0.0-rc.1–rc.2), and the
