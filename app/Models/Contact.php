@@ -54,7 +54,20 @@ class Contact extends Model
         return [
             'custom_fields' => 'array',
             'metadata' => 'array',
+            // Encrypted at rest. Queries by value go through the email_hash blind
+            // index instead (see hashEmail + the saving hook).
+            'email' => 'encrypted',
         ];
+    }
+
+    /**
+     * Deterministic blind index for email equality lookups + uniqueness. The
+     * encrypted column can't be queried or uniquely indexed (random IV), so the
+     * hash carries both. Normalised (lowercased) so lookups are case-insensitive.
+     */
+    public static function hashEmail(string $email): string
+    {
+        return hash_hmac('sha256', mb_strtolower(trim($email)), (string) config('app.key'));
     }
 
     public function notes(): HasMany
@@ -102,6 +115,12 @@ class Contact extends Model
     {
         static::creating(fn ($contact) => $contact->associateWithCompany());
         static::updating(fn ($contact) => $contact->associateWithCompany());
+        // Keep the blind index in sync with the (plaintext) email on every write.
+        static::saving(function ($contact): void {
+            $contact->email_hash = filled($contact->email)
+                ? static::hashEmail((string) $contact->email)
+                : null;
+        });
     }
 
     protected function associateWithCompany(): void
@@ -119,7 +138,10 @@ class Contact extends Model
     public function scopeSearch(Builder $query, string $search): Builder
     {
         return $query->where(function (Builder $q) use ($search): void {
-            $q->whereFullText(['name', 'last_name', 'email', 'phone_number', 'industry', 'lifecycle_stage'], $search)
+            // email is encrypted at rest — match it exactly via the blind index
+            // instead of full-text (partial email search is not possible).
+            $q->whereFullText(['name', 'last_name', 'phone_number', 'industry', 'lifecycle_stage'], $search)
+                ->orWhere('email_hash', static::hashEmail($search))
                 ->orWhere('company_size', 'like', '%'.$search.'%')
                 ->orWhere('annual_revenue', 'like', '%'.$search.'%')
                 ->orWhereHas('company', fn (Builder $cq) => $cq->whereFullText('name', $search))

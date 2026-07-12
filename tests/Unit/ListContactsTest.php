@@ -39,8 +39,8 @@ class ListContactsTest extends TestCase
         $response = $this->get(route('contacts.list', ['search' => 'John']));
         $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
 
-        $response = $this->get(route('contacts.list', ['search' => 'example.com']));
-        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 2);
+        $response = $this->get(route('contacts.list', ['search' => 'john@example.com']));
+        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
 
         $response = $this->get(route('contacts.list', ['search' => 'Nonexistent']));
         $response->assertViewHas('contacts', fn($contacts) => $contacts->isEmpty());
@@ -65,7 +65,7 @@ class ListContactsTest extends TestCase
             'industry' => 'Finance',
         ]);
 
-        $searchTerms = ['John', 'Smith', 'example.com', '1234', 'Small', 'Finance'];
+        $searchTerms = ['John', 'Smith', 'john@example.com', '1234', 'Small', 'Finance'];
 
         foreach ($searchTerms as $term) {
             $response = $this->get(route('contacts.list', ['search' => $term]));

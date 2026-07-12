@@ -33,6 +33,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class ContactResource extends Resource
@@ -136,9 +137,12 @@ class ContactResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('email', $state))
-                    // Not searchable for masked-role viewers, else search would
-                    // query the real column and confirm a value the UI masks.
-                    ->searchable(! AccessContext::shouldMaskFields()),
+                    // email is encrypted at rest, so search matches the blind index
+                    // (exact, full-email only). Still gated off for masked viewers.
+                    ->searchable(
+                        condition: ! AccessContext::shouldMaskFields(),
+                        query: fn (Builder $query, string $search): Builder => $query->where('email_hash', Contact::hashEmail($search)),
+                    ),
                 TextColumn::make('phone_number')
                     ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('phone_number', $state))
                     ->searchable(! AccessContext::shouldMaskFields()),

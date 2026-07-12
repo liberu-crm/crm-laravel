@@ -40,7 +40,7 @@ class ContactSearchPerformanceTest extends TestCase
     {
         $contact = Contact::factory()->create(['email' => 'uniquesearch12345@example.com']);
 
-        $results = Contact::where('email', 'like', '%uniquesearch12345%')->get();
+        $results = Contact::where('email_hash', Contact::hashEmail('uniquesearch12345@example.com'))->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals($contact->id, $results->first()->id);

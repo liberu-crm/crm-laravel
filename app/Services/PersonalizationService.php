@@ -146,7 +146,7 @@ class PersonalizationService
         $user = Auth::user();
 
         // Enrich with contact / lead data when available
-        $contact = Contact::where('email', $user->email)->first();
+        $contact = Contact::where('email_hash', Contact::hashEmail($user->email))->first();
         $lead = Lead::where('email', $user->email)->first();
 
         return [

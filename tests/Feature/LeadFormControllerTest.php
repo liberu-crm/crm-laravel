@@ -35,7 +35,7 @@ class LeadFormControllerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('contacts', ['email' => 'john@example.com']);
+        $this->assertDatabaseHas('contacts', ['email_hash' => Contact::hashEmail('john@example.com')]);
         $this->assertDatabaseHas('leads', ['status' => 'new']);
     }
 
@@ -142,12 +142,12 @@ class LeadFormControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('contacts', [
-            'email' => 'jane@example.com',
+            'email_hash' => Contact::hashEmail('jane@example.com'),
             'name' => 'Jane Smith',
         ]);
         $this->assertDatabaseHas('leads', [
             'status' => 'new',
-            'contact_id' => Contact::where('email', 'jane@example.com')->first()->id,
+            'contact_id' => Contact::where('email_hash', Contact::hashEmail('jane@example.com'))->first()->id,
         ]);
     }
 }

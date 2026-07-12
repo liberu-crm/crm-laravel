@@ -46,7 +46,7 @@ class ContactApiExtendedTest extends TestCase
         $response->assertCreated()
             ->assertJsonFragment(['name' => 'Jane']);
 
-        $this->assertDatabaseHas('contacts', ['email' => 'jane@example.com']);
+        $this->assertDatabaseHas('contacts', ['email_hash' => Contact::hashEmail('jane@example.com')]);
     }
 
     public function test_api_contact_store_validates_required_fields(): void
