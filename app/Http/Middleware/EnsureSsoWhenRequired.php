@@ -31,7 +31,7 @@ class EnsureSsoWhenRequired
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('sso.redirect', $team);
+                return redirect()->route(SsoEnforcement::loginRouteFor($team), $team);
             }
         }
 

@@ -11,6 +11,7 @@ use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\SamlConnection;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -54,6 +55,21 @@ class SamlConnectionResource extends Resource
             TextInput::make('idp_sso_url')->label('IdP SSO URL')->url()->required()->maxLength(255),
             Textarea::make('idp_x509_cert')->label('IdP x509 certificate')->required()->rows(6),
             Toggle::make('enabled'),
+            Toggle::make('require_sso')
+                ->label('Require SSO')
+                ->helperText('Force team members onto SAML — non-SSO sessions are bounced to the IdP.'),
+            Toggle::make('allow_jit')
+                ->label('Just-in-time provisioning')
+                ->helperText('Create a team member on first SAML login (lands as Free).'),
+            TextInput::make('allowed_domain')
+                ->label('Allowed email domain')
+                ->helperText('Optional. JIT only provisions addresses at this domain (e.g. corp.example).')
+                ->maxLength(255),
+            KeyValue::make('role_mappings')
+                ->label('Group → role mappings')
+                ->keyLabel('IdP group')
+                ->valueLabel('Team role')
+                ->helperText('Maps a groups attribute value to a team role (admin/manager/sales_rep/free).'),
         ]);
     }
 
