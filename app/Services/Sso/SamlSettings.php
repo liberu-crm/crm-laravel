@@ -28,6 +28,10 @@ class SamlSettings
             // Reject anything that doesn't validate — never trust an unsigned or
             // malformed response.
             'strict' => true,
+            // Pin the SP host so OneLogin's self-URL (used to validate the
+            // response Destination) matches our ACS URL regardless of proxy/
+            // $_SERVER quirks.
+            'baseurl' => rtrim((string) config('app.url'), '/'),
             'sp' => [
                 'entityId' => url('/saml/'.$teamId.'/metadata'),
                 'assertionConsumerService' => [

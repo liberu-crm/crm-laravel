@@ -35,6 +35,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'password_confirmation',
         ]);
 
+        // The SAML ACS is a cross-site POST from the IdP with no CSRF token; the
+        // signed assertion + InResponseTo (bound to our session) protect it.
+        $middleware->validateCsrfTokens(except: [
+            'saml/*/acs',
+        ]);
+
         $middleware->web(append: [
             SecurityHeaders::class,
             // Scope Spatie permissions to the user's current team so per-team
