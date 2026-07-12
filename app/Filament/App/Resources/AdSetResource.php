@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdSetResource\Pages\CreateAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\EditAdSet;
 use App\Filament\App\Resources\AdSetResource\Pages\ListAdSets;
+use App\Filament\App\Resources\AdSetResource\Pages\ViewAdSet;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Filament\Exports\AdSetExporter;
 use App\Models\AdSet;
@@ -15,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -121,6 +123,7 @@ class AdSetResource extends Resource
                     ->visible(fn (): bool => ! AccessContext::shouldMaskFields()),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -140,6 +143,7 @@ class AdSetResource extends Resource
     {
         return [
             'index' => ListAdSets::route('/'),
+            'view' => ViewAdSet::route('/{record}'),
             'create' => CreateAdSet::route('/create'),
             'edit' => EditAdSet::route('/{record}/edit'),
         ];
