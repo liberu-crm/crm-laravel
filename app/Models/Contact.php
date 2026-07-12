@@ -57,6 +57,8 @@ class Contact extends Model
             // Encrypted at rest. Queries by value go through the email_hash blind
             // index instead (see hashEmail + the saving hook).
             'email' => 'encrypted',
+            // Encrypted at rest — not looked up by value anywhere (search dropped).
+            'phone_number' => 'encrypted',
         ];
     }
 
@@ -140,7 +142,9 @@ class Contact extends Model
         return $query->where(function (Builder $q) use ($search): void {
             // email is encrypted at rest — match it exactly via the blind index
             // instead of full-text (partial email search is not possible).
-            $q->whereFullText(['name', 'last_name', 'phone_number', 'industry', 'lifecycle_stage'], $search)
+            // email + phone_number are encrypted at rest — email matches via the
+            // blind index (exact); phone is not searchable.
+            $q->whereFullText(['name', 'last_name', 'industry', 'lifecycle_stage'], $search)
                 ->orWhere('email_hash', static::hashEmail($search))
                 ->orWhere('company_size', 'like', '%'.$search.'%')
                 ->orWhere('annual_revenue', 'like', '%'.$search.'%')

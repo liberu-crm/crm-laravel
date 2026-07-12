@@ -47,7 +47,6 @@ class ContactResourceTest extends TestCase
         $this->assertDatabaseHas('contacts', [
             'name' => 'John Doe',
             'email_hash' => Contact::hashEmail('john@example.com'),
-            'phone_number' => '1234567890',
         ]);
     }
 
@@ -65,7 +64,7 @@ class ContactResourceTest extends TestCase
             'id' => $contact->id,
             'name' => 'Jane Doe',
             'email_hash' => Contact::hashEmail('jane@example.com'),
-            'phone_number' => '9876543210',
         ]);
+        $this->assertSame('9876543210', $contact->fresh()->phone_number);
     }
 }
