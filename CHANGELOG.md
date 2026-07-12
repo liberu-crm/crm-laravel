@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.17.0
+
+SSO single-logout — OIDC and SAML (v1.17.0-rc.1–rc.2).
+
+- **OIDC RP-initiated logout** (#592) — logging out of an OIDC SSO session now
+  redirects to the IdP's `end_session_endpoint` (with `id_token_hint` +
+  `post_logout_redirect_uri`) so the IdP session ends too. The `id_token` +
+  endpoint are captured at login; a `Logout`-event listener stashes the logout
+  URL before the session is invalidated. IdPs without an end-session endpoint fall
+  back to local logout.
+- **SAML SP-initiated single-logout** (#594) — SAML sessions log out through the
+  IdP's Single Logout Service: a OneLogin `LogoutRequest` (built from the
+  `NameID` + `SessionIndex` captured at login) targets the new `idp_slo_url`, and
+  a `/saml/{team}/sls` endpoint handles the IdP's `LogoutResponse`. The SP metadata
+  now advertises the `SingleLogoutService`.
+
+With this, G2 SSO is complete end-to-end for both OIDC and SAML — login and
+logout.
+
+**Operational note:** run migrations on upgrade (`saml_connections` gains
+`idp_slo_url`). Set the IdP's Single Logout URL on the SAML connection to enable
+SAML SLO.
+
 ## 1.16.0
 
 Detail Views for the advertising records (v1.16.0-rc.1–rc.3).
