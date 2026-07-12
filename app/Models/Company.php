@@ -33,6 +33,15 @@ class Company extends Model
         'annual_revenue',
     ];
 
+    #[\Override]
+    protected function casts(): array
+    {
+        return [
+            // Encrypted at rest — not looked up by value (search dropped).
+            'phone_number' => 'encrypted',
+        ];
+    }
+
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class);

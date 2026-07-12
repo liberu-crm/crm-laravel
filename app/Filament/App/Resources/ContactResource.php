@@ -144,8 +144,8 @@ class ContactResource extends Resource
                         query: fn (Builder $query, string $search): Builder => $query->where('email_hash', Contact::hashEmail($search)),
                     ),
                 TextColumn::make('phone_number')
-                    ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('phone_number', $state))
-                    ->searchable(! AccessContext::shouldMaskFields()),
+                    // Encrypted at rest — not searchable (no blind index for phone).
+                    ->formatStateUsing(fn (?string $state, Contact $record): mixed => $record->maskFor('phone_number', $state)),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

@@ -18,7 +18,7 @@ class ListContactsTest extends TestCase
         Contact::factory()->count(3)->create(['created_at' => now()->subDays(5)]);
 
         $response = $this->get(route('contacts.list', ['created_at' => now()->subDays(7)]));
-        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 3);
+        $response->assertViewHas('contacts', fn ($contacts) => $contacts->count() === 3);
     }
 
     public function test_bulk_delete_action(): void
@@ -37,13 +37,13 @@ class ListContactsTest extends TestCase
         Contact::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
 
         $response = $this->get(route('contacts.list', ['search' => 'John']));
-        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
+        $response->assertViewHas('contacts', fn ($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
 
         $response = $this->get(route('contacts.list', ['search' => 'john@example.com']));
-        $response->assertViewHas('contacts', fn($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
+        $response->assertViewHas('contacts', fn ($contacts) => $contacts->count() === 1 && $contacts->first()->name === 'John Doe');
 
         $response = $this->get(route('contacts.list', ['search' => 'Nonexistent']));
-        $response->assertViewHas('contacts', fn($contacts) => $contacts->isEmpty());
+        $response->assertViewHas('contacts', fn ($contacts) => $contacts->isEmpty());
     }
 
     public function test_enhanced_search_functionality(): void
@@ -65,12 +65,13 @@ class ListContactsTest extends TestCase
             'industry' => 'Finance',
         ]);
 
-        $searchTerms = ['John', 'Smith', 'john@example.com', '1234', 'Small', 'Finance'];
+        // phone ('1234') is encrypted at rest and no longer searchable.
+        $searchTerms = ['John', 'Smith', 'john@example.com', 'Small', 'Finance'];
 
         foreach ($searchTerms as $term) {
             $response = $this->get(route('contacts.list', ['search' => $term]));
             $response->assertSuccessful();
-            $response->assertViewHas('contacts', fn($contacts) => $contacts->contains(fn($contact) => Str::contains($contact->name, $term) ||
+            $response->assertViewHas('contacts', fn ($contacts) => $contacts->contains(fn ($contact) => Str::contains($contact->name, $term) ||
                 Str::contains($contact->last_name, $term) ||
                 Str::contains($contact->email, $term) ||
                 Str::contains($contact->phone_number, $term) ||

@@ -90,11 +90,8 @@ class CompanyResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('phone_number')
-                    ->formatStateUsing(fn (?string $state, Company $record): mixed => $record->maskFor('phone_number', $state))
-                    // Not searchable for masked-role viewers, else search would
-                    // query the real column and confirm a value the UI masks.
-                    ->searchable(! AccessContext::shouldMaskFields())
-                    ->sortable(),
+                    // Encrypted at rest — not searchable/sortable (no blind index).
+                    ->formatStateUsing(fn (?string $state, Company $record): mixed => $record->maskFor('phone_number', $state)),
                 TextColumn::make('website'),
                 TextColumn::make('industry')
                     ->searchable()
