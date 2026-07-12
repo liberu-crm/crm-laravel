@@ -7,10 +7,12 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\CreateMarketingCampaign;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\EditMarketingCampaign;
 use App\Filament\App\Resources\MarketingCampaignResource\Pages\ListMarketingCampaigns;
+use App\Filament\App\Resources\MarketingCampaignResource\Pages\ViewMarketingCampaign;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\MarketingCampaign;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -77,6 +79,7 @@ class MarketingCampaignResource extends Resource
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -97,6 +100,7 @@ class MarketingCampaignResource extends Resource
     {
         return [
             'index' => ListMarketingCampaigns::route('/'),
+            'view' => ViewMarketingCampaign::route('/{record}'),
             'create' => CreateMarketingCampaign::route('/create'),
             'edit' => EditMarketingCampaign::route('/{record}/edit'),
         ];
