@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.15.0
+
+SAML SSO login — end-to-end (v1.15.0-rc.1–rc.3).
+
+- **SAML login flow (G2)** (#582, #585, #586) — completes the SAML feature whose
+  config + SP metadata shipped in v1.0. A team's members now log in through their
+  IdP: SP-initiated `AuthnRequest` → IdP → ACS, where the signed assertion is
+  validated (XML-DSig against the IdP cert, audience, `InResponseTo`, replay) via
+  the audited `onelogin/php-saml` toolkit. Non-members are just-in-time
+  provisioned when the connection allows it (domain allowlist, lands as a limited
+  role), IdP groups map to team roles, and teams with `require_sso` are enforced
+  onto SAML — full parity with the OIDC flow.
+
+**Operational note:** run migrations on upgrade (SAML connections gain
+`allow_jit` / `allowed_domain` / `require_sso` / `role_mappings`). The ACS
+(`/saml/{team}/acs`) is CSRF-exempt by design — it's protected by the signed
+assertion and `InResponseTo`.
+
 ## 1.14.0
 
 Detail Views for ad sets, tasks, and notes (v1.14.0-rc.1–rc.3).
