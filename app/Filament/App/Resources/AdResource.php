@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\AdResource\Pages\CreateAd;
 use App\Filament\App\Resources\AdResource\Pages\EditAd;
 use App\Filament\App\Resources\AdResource\Pages\ListAds;
+use App\Filament\App\Resources\AdResource\Pages\ViewAd;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Ad;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -109,6 +111,7 @@ class AdResource extends Resource
                     ]),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -128,6 +131,7 @@ class AdResource extends Resource
     {
         return [
             'index' => ListAds::route('/'),
+            'view' => ViewAd::route('/{record}'),
             'create' => CreateAd::route('/create'),
             'edit' => EditAd::route('/{record}/edit'),
         ];
