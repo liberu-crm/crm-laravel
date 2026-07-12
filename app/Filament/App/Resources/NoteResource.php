@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\NoteResource\Pages\CreateNote;
 use App\Filament\App\Resources\NoteResource\Pages\EditNote;
 use App\Filament\App\Resources\NoteResource\Pages\ListNotes;
+use App\Filament\App\Resources\NoteResource\Pages\ViewNote;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Note;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
@@ -67,6 +69,7 @@ class NoteResource extends Resource
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -89,6 +92,7 @@ class NoteResource extends Resource
     {
         return [
             'index' => ListNotes::route('/'),
+            'view' => ViewNote::route('/{record}'),
             'create' => CreateNote::route('/create'),
             'edit' => EditNote::route('/{record}/edit'),
         ];
