@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Events\ContactUpdated;
 use App\Listeners\AssignDefaultTeamRole;
+use App\Listeners\BuildSamlLogoutRedirect;
 use App\Listeners\BuildSsoLogoutRedirect;
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogPasswordReset;
@@ -55,6 +56,7 @@ class EventServiceProvider extends ServiceProvider
         Logout::class => [
             LogSsoLogout::class,
             BuildSsoLogoutRedirect::class,
+            BuildSamlLogoutRedirect::class,
         ],
         // Add CRM event listeners
         'App\Events\NewLead' => [

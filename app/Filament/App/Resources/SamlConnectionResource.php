@@ -53,6 +53,11 @@ class SamlConnectionResource extends Resource
         return $schema->components([
             TextInput::make('idp_entity_id')->label('IdP entity ID')->required()->maxLength(255),
             TextInput::make('idp_sso_url')->label('IdP SSO URL')->url()->required()->maxLength(255),
+            TextInput::make('idp_slo_url')
+                ->label('IdP Single Logout URL')
+                ->url()
+                ->helperText('Optional. The IdP Single Logout Service URL — enables SP-initiated single-logout.')
+                ->maxLength(255),
             Textarea::make('idp_x509_cert')->label('IdP x509 certificate')->required()->rows(6),
             Toggle::make('enabled'),
             Toggle::make('require_sso')

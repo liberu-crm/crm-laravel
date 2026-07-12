@@ -98,8 +98,40 @@ class SamlLoginController extends Controller
         $request->session()->regenerate();
         // Marks the session SSO-established so enforcement doesn't bounce it.
         $request->session()->put('sso_authenticated', true);
+        // Persist what SP-initiated single-logout needs: the NameID + SessionIndex
+        // (to build the LogoutRequest) and the team (to find the connection).
+        $request->session()->put('sso_saml_nameid', $auth->getNameId());
+        $request->session()->put('sso_saml_session_index', $auth->getSessionIndex());
+        $request->session()->put('sso_team', $team->getKey());
 
         return redirect()->intended('/app');
+    }
+
+    public function sls(Team $team, Request $request): RedirectResponse
+    {
+        $connection = $this->enabledConnection($team);
+
+        // OneLogin reads the SAMLResponse from $_GET (HTTP-Redirect binding);
+        // bridge the Laravel request into it for the test client.
+        if ($request->filled('SAMLResponse')) {
+            $_GET['SAMLResponse'] = $request->query('SAMLResponse');
+        }
+        if ($request->filled('SAMLRequest')) {
+            $_GET['SAMLRequest'] = $request->query('SAMLRequest');
+        }
+        if ($request->filled('Signature')) {
+            $_GET['Signature'] = $request->query('Signature');
+            $_GET['SigAlg'] = $request->query('SigAlg');
+        }
+
+        $auth = new SamlAuth(SamlSettings::for($team, $connection));
+        // Local session is already gone (logout ran before the IdP round-trip),
+        // so keep it as-is; OneLogin only validates the IdP's LogoutResponse here.
+        $auth->processSLO(keepLocalSession: true);
+
+        abort_if($auth->getErrors() !== [], 403, 'SAML logout verification failed.');
+
+        return redirect('/login');
     }
 
     private function jitAllowed(SamlConnection $connection, string $email): bool
