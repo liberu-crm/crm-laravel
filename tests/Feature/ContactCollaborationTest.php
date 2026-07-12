@@ -29,7 +29,7 @@ class ContactCollaborationTest extends TestCase
         $this->assertDatabaseHas('contacts', [
             'id' => $contact->id,
             'name' => 'John Doe',
-            'email' => 'john@example.com',
+            'email_hash' => Contact::hashEmail('john@example.com'),
         ]);
     }
 

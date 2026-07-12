@@ -88,7 +88,8 @@ class DocumentResource extends Resource
 
         return Contact::query()
             ->where('team_id', $user->getAttribute('current_team_id'))
-            ->where('email', $user->getAttribute('email'))
+            // email is encrypted — match via the deterministic blind index.
+            ->where('email_hash', Contact::hashEmail((string) $user->getAttribute('email')))
             ->value('id');
     }
 }

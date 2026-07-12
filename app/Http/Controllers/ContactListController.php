@@ -19,7 +19,8 @@ class ContactListController extends Controller
             $query->where(fn ($q) => $q
                 ->where('name', 'like', '%'.$term.'%')
                 ->orWhere('last_name', 'like', '%'.$term.'%')
-                ->orWhere('email', 'like', '%'.$term.'%')
+                // email is encrypted — exact match via the blind index only.
+                ->orWhere('email_hash', Contact::hashEmail($term))
                 ->orWhere('phone_number', 'like', '%'.$term.'%')
                 ->orWhere('company_size', 'like', '%'.$term.'%')
                 ->orWhere('industry', 'like', '%'.$term.'%')
@@ -59,7 +60,8 @@ class ContactListController extends Controller
 
         $contacts = Contact::where(fn ($q) => $q
             ->where('name', 'like', $term.'%')
-            ->orWhere('email', 'like', '%'.$term.'%')
+            // email is encrypted — exact match via the blind index only.
+            ->orWhere('email_hash', Contact::hashEmail($term))
         )
             ->limit(10)
             ->get(['id', 'name', 'email']);

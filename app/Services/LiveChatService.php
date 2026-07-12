@@ -19,7 +19,7 @@ class LiveChatService
         // Try to find existing contact
         $contact = null;
         if (! empty($visitorData['email'])) {
-            $contact = Contact::where('email', $visitorData['email'])->first();
+            $contact = Contact::where('email_hash', Contact::hashEmail($visitorData['email']))->first();
         }
 
         return LiveChat::create([
