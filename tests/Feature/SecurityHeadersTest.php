@@ -39,13 +39,15 @@ class SecurityHeadersTest extends TestCase
         $this->assertContains($response->status(), [200, 503]);
     }
 
-    public function test_api_has_cors_headers_for_preflight(): void
+    public function test_api_has_cors_headers_for_an_allowed_origin(): void
     {
-        $response = $this->options('/api/v1/contacts', [], [
+        // CORS is an explicit allowlist now (no wildcard) — a configured origin
+        // gets the headers; an unlisted one does not.
+        config(['cors.allowed_origins' => ['http://localhost']]);
+
+        $this->options('/api/v1/contacts', [], [
             'Origin' => 'http://localhost',
             'Access-Control-Request-Method' => 'GET',
-        ]);
-
-        $response->assertHeader('Access-Control-Allow-Methods');
+        ])->assertHeader('Access-Control-Allow-Origin', 'http://localhost');
     }
 }
