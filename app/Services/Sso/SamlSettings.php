@@ -38,12 +38,20 @@ class SamlSettings
                     'url' => url('/saml/'.$teamId.'/acs'),
                     'binding' => Constants::BINDING_HTTP_POST,
                 ],
+                'singleLogoutService' => [
+                    'url' => url('/saml/'.$teamId.'/sls'),
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
+                ],
                 'NameIDFormat' => Constants::NAMEID_EMAIL_ADDRESS,
             ],
             'idp' => [
                 'entityId' => (string) $connection->getAttribute('idp_entity_id'),
                 'singleSignOnService' => [
                     'url' => (string) $connection->getAttribute('idp_sso_url'),
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
+                ],
+                'singleLogoutService' => [
+                    'url' => (string) $connection->getAttribute('idp_slo_url'),
                     'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'x509cert' => (string) $connection->getAttribute('idp_x509_cert'),

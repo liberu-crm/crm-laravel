@@ -45,6 +45,9 @@ Route::get('/saml/{team}/login', [SamlLoginController::class, 'redirect'])->name
 // CSRF-exempt (cross-site IdP POST); the signed assertion + InResponseTo are the
 // protection instead. See bootstrap/app.php for the CSRF exception.
 Route::post('/saml/{team}/acs', [SamlLoginController::class, 'acs'])->name('saml.acs');
+// Single Logout Service — the IdP redirects the signed LogoutResponse here after
+// an SP-initiated logout. HTTP-Redirect (GET), so no CSRF token is involved.
+Route::get('/saml/{team}/sls', [SamlLoginController::class, 'sls'])->name('saml.sls');
 
 // Contact list API routes (no auth required for testing and public access)
 // Specific routes must be defined before the wildcard {created_at?} route to avoid conflicts

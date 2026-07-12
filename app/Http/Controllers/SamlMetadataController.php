@@ -25,11 +25,13 @@ class SamlMetadataController extends Controller
 
         $entityId = url('/saml/'.$team->getKey().'/metadata');
         $acsUrl = url('/saml/'.$team->getKey().'/acs');
+        $slsUrl = url('/saml/'.$team->getKey().'/sls');
 
         $xml = <<<XML
         <?xml version="1.0" encoding="UTF-8"?>
         <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="{$entityId}">
           <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="false" WantAssertionsSigned="true">
+            <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{$slsUrl}"/>
             <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
             <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{$acsUrl}" index="1"/>
           </SPSSODescriptor>
