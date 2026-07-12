@@ -7,11 +7,13 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\TaskResource\Pages\CreateTask;
 use App\Filament\App\Resources\TaskResource\Pages\EditTask;
 use App\Filament\App\Resources\TaskResource\Pages\ListTasks;
+use App\Filament\App\Resources\TaskResource\Pages\ViewTask;
 use App\Filament\Concerns\EnforcesResourcePermissions;
 use App\Models\Task;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -82,6 +84,7 @@ class TaskResource extends Resource
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -104,6 +107,7 @@ class TaskResource extends Resource
     {
         return [
             'index' => ListTasks::route('/'),
+            'view' => ViewTask::route('/{record}'),
             'create' => CreateTask::route('/create'),
             'edit' => EditTask::route('/{record}/edit'),
         ];
