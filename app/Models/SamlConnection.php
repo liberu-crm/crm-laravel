@@ -23,6 +23,7 @@ class SamlConnection extends Model
         'team_id',
         'idp_entity_id',
         'idp_sso_url',
+        'idp_slo_url',
         'idp_x509_cert',
         'enabled',
         'allow_jit',
