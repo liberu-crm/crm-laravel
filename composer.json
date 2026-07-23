@@ -25,7 +25,7 @@
         "mailchimp/marketing": "^3.0",
         "onelogin/php-saml": "^4.3",
         "spatie/laravel-menu": "^4.2",
-        "spatie/laravel-permission": "^6.0",
+        "spatie/laravel-permission": "^7.4",
         "stancl/tenancy": "^3.10",
         "twilio/sdk": "*",
         "webklex/laravel-imap": "^6.2"
